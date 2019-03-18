@@ -1,0 +1,12 @@
+.idea/
+.pyc
+
+migrations/
+__pycache__/
+test/
+*.bak
+db.sqlite3
+
+venv/
+
+wechat_data.json
