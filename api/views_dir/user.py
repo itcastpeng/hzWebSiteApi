@@ -11,8 +11,8 @@ import re
 import datetime
 from publicFunc import base64_encryption
 
-# cerf  token验证 用户展示模块
-@account.is_token(models.Userprofile)
+
+@account.is_token(models.UserProfile)
 def user(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -95,7 +95,7 @@ def user(request):
 
 # 增删改
 # token验证
-@account.is_token(models.Userprofile)
+@account.is_token(models.UserProfile)
 def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
@@ -107,7 +107,7 @@ def user_oper(request, oper_type, o_id):
             if classify_id:
                 recommend_classify_list = [int(i) for i in classify_id]
                 print("recommend_classify_list -->", recommend_classify_list)
-                user_obj = models.Userprofile.objects.get(id=user_id)
+                user_obj = models.UserProfile.objects.get(id=user_id)
                 user_obj.recommend_classify = recommend_classify_list
                 response.code = 200
                 response.msg = "设置成功"
@@ -219,4 +219,30 @@ def user_oper(request, oper_type, o_id):
                 'remaining_days': "剩余天数"
             }
 
+    return JsonResponse(response.__dict__)
+
+
+# 获取用户信息
+def get_userinfo(request):
+    response = Response.ResponseObj()
+    if request.method == "GET":
+
+        token = request.GET.get('token')
+        objs = models.UserProfile.objects.filter(token=token)
+
+        if objs:
+            obj = objs[0]
+            response.code = 200
+            response.data = {
+                # 'token': obj.token,
+                'id': obj.id,
+                'username': obj.username,
+                'head_portrait': obj.head_portrait
+            }
+        else:
+            response.code = 402
+            response.msg = "token异常"
+    else:
+        response.code = 402
+        response.msg = "请求异常"
     return JsonResponse(response.__dict__)

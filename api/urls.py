@@ -5,12 +5,20 @@ from django.conf.urls import url
 # from api.views_dir import user, wechat, classify, article, posters, customer, small_shop, brand, team, goods_classify, \
 #     upload_file, renewal, prepaidManagement, day_eye, letter_operation
 
-from api.views_dir import upload_img
+from api.views_dir import upload_img, login, user
+# from api.views_dir import login
 
 
 urlpatterns = [
 
     url(r'^upload_img$', upload_img.upload_img),                  # base64 上传分片
+    url(r'^login$', login.login),                  # base64 上传分片
+
+
+    # 用户管理
+    url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),
+    url(r'^user/get_info$', user.get_userinfo),
+    url(r'^user', user.user),
 
 
     # # 分类管理
