@@ -1,20 +1,25 @@
 from django.db import models
 
+
 # Create your models here.
 
 
+# 用户表
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128)
     password = models.CharField(verbose_name="密码", max_length=128)
+    role = models.ForeignKey('Role', verbose_name="角色", null=True)
     token = models.CharField(verbose_name="token值", max_length=128)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     head_portrait = models.CharField(
         verbose_name='头像',
-        default='http://api.zhugeyingxiao.com/statics/imgs/head_portrait.jpg',
+        default='/statics/admin_imgs/head_portrait.jpg',
         max_length=256
     )
 
-    name = models.CharField(verbose_name="姓名", max_length=128)
+    # name = models.CharField(verbose_name="姓名", max_length=128)
+    is_update_pwd = models.BooleanField(verbose_name="是否修改密码", default=False)
+
 
 # class UserProfile(models.Model):
 #     name = models.CharField(verbose_name="姓名", max_length=128)
@@ -60,3 +65,41 @@ class UserProfile(models.Model):
 #     )
 
 
+# 模板表
+
+
+# 角色表
+class Role(models.Model):
+    name = models.CharField(verbose_name="模板名称", max_length=256)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", related_name="role_create_user")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 模板表
+class Template(models.Model):
+    name = models.CharField(verbose_name="模板名称", max_length=256)
+    share_qr_code = models.CharField(verbose_name="微信分享二维码", max_length=256, null=True, blank=True)
+    logo_img = models.CharField(
+        verbose_name="logo图片",
+        max_length=256,
+        default="/statics/admin_imgs/logo_70_70.png"
+    )
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 页面分组表
+class PageGroup(models.Model):
+    name = models.CharField(verbose_name="分组名称", max_length=256)
+    template = models.ForeignKey('Template', verbose_name="所属模板")
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 页面表
+class Page(models.Model):
+    name = models.CharField(verbose_name="页面名称", max_length=256)
+    page_group = models.ForeignKey('PageGroup', verbose_name="所属模板")
+    data = models.TextField(verbose_name="模板数据", null=True, blank=True)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

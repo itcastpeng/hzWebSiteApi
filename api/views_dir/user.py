@@ -32,7 +32,7 @@ def user(request):
             q = conditionCom(request, field_dict)
 
             print('q -->', q)
-            objs = models.Userprofile.objects.filter(q).order_by(order)
+            objs = models.UserProfile.objects.filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -45,7 +45,7 @@ def user(request):
             for obj in objs:
                 # 返回的数据
                 team_list = []
-                team_objs = models.UserprofileTeam.objects.filter(user_id=obj.id)
+                team_objs = models.UserProfileTeam.objects.filter(user_id=obj.id)
                 for team_obj in team_objs:
                     team_list.append(team_obj.team_id)
                 brand_list = [i['name'] for i in obj.brand_classify.values('name')]
@@ -119,7 +119,7 @@ def user_oper(request, oper_type, o_id):
         elif oper_type == "update_head_portrait":
             img_path = request.POST.get('img_path')
             if img_path:
-                models.Userprofile.objects.filter(id=user_id).update(set_avator=img_path)
+                models.UserProfile.objects.filter(id=user_id).update(set_avator=img_path)
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -131,7 +131,7 @@ def user_oper(request, oper_type, o_id):
             name = request.POST.get('name')
             if name:
                 name = base64_encryption.b64encode(name)
-                models.Userprofile.objects.filter(id=user_id).update(name=name)
+                models.UserProfile.objects.filter(id=user_id).update(name=name)
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -143,7 +143,7 @@ def user_oper(request, oper_type, o_id):
             phone_number = request.POST.get('phone_number')
             flag = re.match(r"^1\d{10}$", phone_number)      # 验证是否以1开头，并且是11位的数字
             if phone_number and flag:
-                models.Userprofile.objects.filter(id=user_id).update(phone_number=phone_number)
+                models.UserProfile.objects.filter(id=user_id).update(phone_number=phone_number)
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -154,7 +154,7 @@ def user_oper(request, oper_type, o_id):
         elif oper_type == "update_qr_code":
             qr_code = request.POST.get('qr_code')
             if qr_code:
-                models.Userprofile.objects.filter(id=user_id).update(qr_code=qr_code)
+                models.UserProfile.objects.filter(id=user_id).update(qr_code=qr_code)
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -165,7 +165,7 @@ def user_oper(request, oper_type, o_id):
         elif oper_type == "update_signature":
             signature = request.POST.get('signature')
             if signature:
-                models.Userprofile.objects.filter(id=user_id).update(signature=signature)
+                models.UserProfile.objects.filter(id=user_id).update(signature=signature)
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -178,7 +178,7 @@ def user_oper(request, oper_type, o_id):
             flag = re.match(r"^[01]$", show_product)
 
             if show_product and flag:
-                models.Userprofile.objects.filter(id=user_id).update(show_product=int(show_product))
+                models.UserProfile.objects.filter(id=user_id).update(show_product=int(show_product))
                 response.code = 200
                 response.msg = "修改成功"
             else:
@@ -187,7 +187,7 @@ def user_oper(request, oper_type, o_id):
 
     else:
         if oper_type == "member_info":
-            obj = models.Userprofile.objects.get(id=user_id)
+            obj = models.UserProfile.objects.get(id=user_id)
 
             # vip 类型
             vip_type = obj.get_vip_type_display()

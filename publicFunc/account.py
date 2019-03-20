@@ -50,6 +50,15 @@ def is_token(table_obj):
     def is_token_decorator(func):
         def inner(request, *args, **kwargs):
 
+            # 本机ip不进行token验证
+            if request.META.get('HTTP_X_FORWARDED_FOR'):
+                ip = request.META['HTTP_X_FORWARDED_FOR']
+            else:
+                ip = request.META['REMOTE_ADDR']
+
+            if ip == "127.0.0.1":
+                return func(request, *args, **kwargs)
+
             # 不需要验证token的路由直接跳过
             for route in NoValidationTokenRoute:
                 if request.get_full_path().startswith(route):

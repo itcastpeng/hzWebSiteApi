@@ -5,15 +5,13 @@ from publicFunc import account
 from django.http import JsonResponse
 
 from publicFunc.condition_com import conditionCom
-from api.forms.brand import AddForm, SelectForm
+from api.forms.page_group import AddForm, UpdateForm, SelectForm
 import json
 
 
-# token验证 用户展示模块
-@account.is_token(models.Userprofile)
-def brand(request):
+@account.is_token(models.UserProfile)
+def page_group(request):
     response = Response.ResponseObj()
-    # user_id = request.GET.get('user_id')
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
         if forms_obj.is_valid():
@@ -23,15 +21,13 @@ def brand(request):
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
+                'template_id': '',
                 'name': '__contains',
-                'classify_id': '__in',
-                'create_user_id': '',
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
-
             print('q -->', q)
-            objs = models.Classify.objects.filter(create_user__isnull=False).filter(q).order_by(order)
+            objs = models.PageGroup.objects.filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -43,10 +39,20 @@ def brand(request):
             ret_data = []
 
             for obj in objs:
+                # 获取分组下面的页面数据
+                page_objs = obj.page_set.all()
+                page_data = []
+                for page_obj in page_objs:
+                    page_data.append({
+                        'id': page_obj.id,
+                        'name': page_obj.name
+                    })
+
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
+                    'page_data': page_data,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -56,13 +62,11 @@ def brand(request):
                 'ret_data': ret_data,
                 'data_count': count,
             }
-
             response.note = {
-                'id': "品牌id",
-                'title': "品牌名称",
-                'create_datetime': "创建时间",
+                'id': "页面分组id",
+                'name': '页面分组名称',
+                'create_datetime': '创建时间',
             }
-
         else:
             response.code = 402
             response.msg = "请求异常"
@@ -70,82 +74,64 @@ def brand(request):
     return JsonResponse(response.__dict__)
 
 
-# 增删改
-# token验证
-@account.is_token(models.Userprofile)
-def brand_oper(request, oper_type, o_id):
+@account.is_token(models.UserProfile)
+def page_group_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
-    user_id = request.GET.get('user_id')
-
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
-                'create_user_id': user_id,
+                'create_user_id': request.GET.get('user_id'),
                 'name': request.POST.get('name'),
+                'template_id': request.POST.get('template_id'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
-                name = forms_obj.cleaned_data.get('name')
-
-                # 判断需要添加的品牌名称是否存在，如果不存在则添加
-                classify_objs = models.Classify.objects.filter(
-                    create_user__isnull=False,
-                    name=name
-                )
-
-                if classify_objs:   # 品牌分类已经存在
-                    classify_id = classify_objs[0].id
-
-                else:   # 品牌分类不存在
-                    obj = models.Classify.objects.create(name=name, create_user_id=user_id)
-                    print(obj.id)
-                    classify_id = obj.id
-
-                models.Userprofile.objects.get(id=user_id).brand_classify.add(classify_id)
-
+                print("验证通过")
+                obj = models.PageGroup.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
-                response.data = {'id': classify_id}
+                response.data = {'testCase': obj.id}
             else:
                 print("验证不通过")
-                # print(forms_obj.errors)
                 response.code = 301
-                # print(forms_obj.errors.as_json())
+                response.msg = json.loads(forms_obj.errors.as_json())
+        elif oper_type == "delete":
+            # 删除 ID
+            objs = models.PageGroup.objects.filter(id=o_id)
+            if objs:
+                objs.delete()
+                response.code = 200
+                response.msg = "删除成功"
+            else:
+                response.code = 302
+                response.msg = '删除ID不存在'
+        elif oper_type == "update":
+            # 获取需要修改的信息
+            form_data = {
+                'o_id': o_id,
+                'name': request.POST.get('name'),
+            }
+
+            forms_obj = UpdateForm(form_data)
+            if forms_obj.is_valid():
+                o_id = forms_obj.cleaned_data['o_id']
+                update_data = {
+                    'name': forms_obj.cleaned_data['name'],
+                }
+
+                # 更新数据
+                models.PageGroup.objects.filter(id=o_id).update(**update_data)
+
+                response.code = 200
+                response.msg = "修改成功"
+
+            else:
+                response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        elif oper_type == "delete":
-            models.Userprofile.objects.get(id=user_id).brand_classify.remove(o_id)
-
-            response.code = 200
-            response.msg = "删除成功"
-
     else:
-        # 获取我的品牌列表
-        if oper_type == "get_brand_list":
-            brand_objs = models.Userprofile.objects.get(id=user_id).brand_classify.all()
-
-            # 返回的数据
-            ret_data = []
-
-            for obj in brand_objs:
-                ret_data.append({
-                    'id': obj.id,
-                    'name': obj.name,
-                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                })
-
-            #  查询成功 返回200 状态码
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = {
-                'ret_data': ret_data,
-            }
-
-            response.note = {
-                'id': "品牌id",
-                'title': "品牌名称",
-                'create_datetime': "创建时间",
-            }
+        response.code = 402
+        response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)

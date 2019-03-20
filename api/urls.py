@@ -1,12 +1,6 @@
 
 from django.conf.urls import url
-
-
-# from api.views_dir import user, wechat, classify, article, posters, customer, small_shop, brand, team, goods_classify, \
-#     upload_file, renewal, prepaidManagement, day_eye, letter_operation
-
-from api.views_dir import upload_img, login, user
-# from api.views_dir import login
+from api.views_dir import upload_img, login, user, template, page_group, page
 
 
 urlpatterns = [
@@ -19,6 +13,18 @@ urlpatterns = [
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),
     url(r'^user/get_info$', user.get_userinfo),
     url(r'^user', user.user),
+
+    # 模板管理
+    url(r'^template/(?P<oper_type>\w+)/(?P<o_id>\d+)', template.template_oper),
+    url(r'^template$', template.template),
+
+    # 页面分组管理
+    url(r'^page_group/(?P<oper_type>\w+)/(?P<o_id>\d+)', page_group.page_group_oper),
+    url(r'^page_group$', page_group.page_group),
+
+    # 页面管理
+    url(r'^page/(?P<oper_type>\w+)/(?P<o_id>\d+)', page.page_oper),
+    # url(r'^page$', page.page),
 
 
     # # 分类管理

@@ -5,13 +5,13 @@ from publicFunc import account
 from django.http import JsonResponse
 
 from publicFunc.condition_com import conditionCom
-from api.forms.classify import AddForm, UpdateForm, SelectForm
+from api.forms.template import AddForm, UpdateForm, SelectForm
 import json
+from api.views_dir.page import page_base_data
 
 
-# token验证 用户展示模块
-@account.is_token(models.Userprofile)
-def classify(request):
+@account.is_token(models.UserProfile)
+def template(request):
     response = Response.ResponseObj()
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
@@ -27,7 +27,7 @@ def classify(request):
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
-            objs = models.Classify.objects.filter(q).order_by(order)
+            objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -44,6 +44,8 @@ def classify(request):
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
+                    'share_qr_code': obj.share_qr_code,
+                    'logo_img': obj.logo_img,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -54,9 +56,11 @@ def classify(request):
                 'data_count': count,
             }
             response.note = {
-                'id': "分类id",
-                'name': '分类名称',
+                'id': "模板id",
+                'name': '模板名称',
                 'create_datetime': '创建时间',
+                'share_qr_code': '分享二维码',
+                'logo_img': 'logo图片',
             }
         else:
             response.code = 402
@@ -65,81 +69,78 @@ def classify(request):
     return JsonResponse(response.__dict__)
 
 
-# 增删改
-# token验证
-@account.is_token(models.Userprofile)
-def classify_oper(request, oper_type, o_id):
+@account.is_token(models.UserProfile)
+def template_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
-                'user_id': o_id,
-                'oper_user_id': request.GET.get('user_id'),
+                'create_user_id': request.GET.get('user_id'),
                 'name': request.POST.get('name'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-                # print(forms_obj.cleaned_data)
-                #  添加数据库
-                # print('forms_obj.cleaned_data-->',forms_obj.cleaned_data)
-                obj = models.Classify.objects.create(**forms_obj.cleaned_data)
+                template_obj = models.Template.objects.create(**forms_obj.cleaned_data)
+                page_group_obj = models.PageGroup.objects.create(
+                    name="默认组",
+                    template=template_obj
+                )
+
+                print('page_base_data -->', page_base_data)
+                models.Page.objects.create(
+                    name="首页",
+                    page_group=page_group_obj,
+                    data=json.dumps(page_base_data)
+                )
                 response.code = 200
                 response.msg = "添加成功"
-                response.data = {'testCase': obj.id}
+                response.data = {'testCase': template_obj.id}
             else:
                 print("验证不通过")
-                # print(forms_obj.errors)
                 response.code = 301
-                # print(forms_obj.errors.as_json())
                 response.msg = json.loads(forms_obj.errors.as_json())
-
-        # elif oper_type == "delete":
-        #     # 删除 ID
-        #     objs = models.Classify.objects.filter(id=o_id)
-        #     if objs:
-        #         objs.delete()
-        #         response.code = 200
-        #         response.msg = "删除成功"
-        #     else:
-        #         response.code = 302
-        #         response.msg = '删除ID不存在'
+        elif oper_type == "delete":
+            # 删除 ID
+            objs = models.Template.objects.filter(id=o_id)
+            if objs:
+                objs.delete()
+                response.code = 200
+                response.msg = "删除成功"
+            else:
+                response.code = 302
+                response.msg = '删除ID不存在'
         elif oper_type == "update":
             # 获取需要修改的信息
             form_data = {
                 'o_id': o_id,
                 'name': request.POST.get('name'),
+                'logo_img': request.POST.get('logo_img'),
             }
 
             forms_obj = UpdateForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过")
-                print(forms_obj.cleaned_data)
+                # print("验证通过")
+                # print(forms_obj.cleaned_data)
                 o_id = forms_obj.cleaned_data['o_id']
                 name = forms_obj.cleaned_data['name']
-                #  查询数据库  用户id
-                objs = models.Classify.objects.filter(
-                    id=o_id
-                )
-                #  更新 数据
-                if objs:
-                    objs.update(
-                        name=name
-                    )
+                logo_img = forms_obj.cleaned_data['logo_img']
+                update_data = {}
+                if logo_img:
+                    update_data['logo_img'] = logo_img
 
-                    response.code = 200
-                    response.msg = "修改成功"
-                else:
-                    response.code = 303
-                    response.msg = json.loads(forms_obj.errors.as_json())
+                if name:
+                    update_data['name'] = name
+
+                # 更新数据
+                models.Template.objects.filter(id=o_id).update(**update_data)
+
+                response.code = 200
+                response.msg = "修改成功"
 
             else:
-                print("验证不通过")
-                # print(forms_obj.errors)
                 response.code = 301
-                # print(forms_obj.errors.as_json())
-                #  字符串转换 json 字符串
                 response.msg = json.loads(forms_obj.errors.as_json())
 
     else:

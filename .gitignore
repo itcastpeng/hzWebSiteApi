@@ -10,3 +10,5 @@ db.sqlite3
 venv/
 
 wechat_data.json
+
+bak/
