@@ -4,7 +4,7 @@ from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from api.forms.page import AddForm, UpdateForm
+from api.forms.page import AddForm, UpdateForm, CopyForm
 import json
 
 page_base_data = {
@@ -79,6 +79,7 @@ page_base_data = {
 @account.is_token(models.UserProfile)
 def page_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
@@ -108,6 +109,40 @@ def page_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 复制页面
+        elif oper_type == "copy":
+            form_data = {
+                'page_id': o_id,
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = CopyForm(form_data)
+            if forms_obj.is_valid():
+                page_id = forms_obj.cleaned_data.get('page_id')
+                objs = models.Page.objects.filter(id=page_id)
+                if objs:
+                    old_obj = objs[0]
+                    page_name = old_obj.name + ' - 复制'
+                    obj = models.Page.objects.create(
+                        name=page_name,
+                        page_group=old_obj.page_group,
+                        data=old_obj.data,
+                        create_user_id=user_id
+                    )
+                    response.code = 200
+                    response.msg = "复制成功"
+                    response.data = {
+                        'testCase': obj.id,
+                        'id': obj.id,
+                    }
+                else:
+                    response.code = 301
+                    response.msg = "id异常"
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
         elif oper_type == "delete":
             # 删除 ID
             objs = models.Page.objects.filter(id=o_id)
@@ -118,6 +153,7 @@ def page_oper(request, oper_type, o_id):
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
+
         elif oper_type == "update":
             # 获取需要修改的信息
             print('request.POST -->', request.POST)
@@ -125,6 +161,7 @@ def page_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'name': request.POST.get('name'),
                 'data': request.POST.get('data'),
+                'page_group_id': request.POST.get('page_group_id'),
             }
 
             forms_obj = UpdateForm(form_data)
@@ -133,11 +170,15 @@ def page_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 name = forms_obj.cleaned_data['name']
                 data = forms_obj.cleaned_data['data']
+                page_group_id = forms_obj.cleaned_data['page_group_id']
                 print('data -->', data)
                 if name:
                     update_data['name'] = name
                 if data:
                     update_data['data'] = data
+
+                if page_group_id:
+                    update_data['page_group_id'] = page_group_id
 
                 # 更新数据
                 models.Page.objects.filter(id=o_id).update(**update_data)

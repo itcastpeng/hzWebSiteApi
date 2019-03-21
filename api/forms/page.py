@@ -51,6 +51,24 @@ class UpdateForm(forms.Form):
         }
     )
 
+    page_group_id = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': '页面id不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )
+
+
+# 复制页面
+class CopyForm(forms.Form):
+    page_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '页面id不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )
 
 # # 判断是否是数字
 # class SelectForm(forms.Form):

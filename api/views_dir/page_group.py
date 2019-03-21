@@ -78,6 +78,8 @@ def page_group(request):
 def page_group_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == "POST":
+
+        # 添加页面分组
         if oper_type == "add":
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
@@ -96,16 +98,24 @@ def page_group_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
         elif oper_type == "delete":
             # 删除 ID
             objs = models.PageGroup.objects.filter(id=o_id)
             if objs:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
+                obj = objs[0]
+                page_count = obj.page_set.all().count()
+                if page_count == 0:
+                    objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
+                else:
+                    response.code = 302
+                    response.msg = "删除失败，该分组下存在页面"
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
+
         elif oper_type == "update":
             # 获取需要修改的信息
             form_data = {
