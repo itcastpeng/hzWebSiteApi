@@ -1,4 +1,5 @@
 from django.db import models
+import json
 
 
 # Create your models here.
@@ -84,6 +85,28 @@ class Template(models.Model):
         max_length=256,
         default="/statics/admin_imgs/logo_70_70.png"
     )
+    tab_bar_base_data = {
+        "type": "tab_bar",
+        "txt": "底部导航",
+        "style": {
+
+        },
+        "data": [
+            {
+                "page_id": None,
+                "text": '导航1',
+                "icon_path": '/statics/admin_imgs/tabbar/homepage.png',
+                "selected_icon_path": '/statics/admin_imgs/tabbar/homepage_selected.png'
+            },
+            {
+                "page_id": None,
+                "text": '导航2',
+                "icon_path": '/statics/admin_imgs/tabbar/people.png',
+                "selected_icon_path": '/statics/admin_imgs/tabbar/people_selected.png'
+            }
+        ]
+    }
+    tab_bar_data = models.TextField(verbose_name="底部导航数据", default=json.dumps(tab_bar_base_data))
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

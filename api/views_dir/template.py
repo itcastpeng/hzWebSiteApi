@@ -5,7 +5,7 @@ from publicFunc import account
 from django.http import JsonResponse
 
 from publicFunc.condition_com import conditionCom
-from api.forms.template import AddForm, UpdateForm, SelectForm
+from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm
 import json
 from api.views_dir.page import page_base_data
 
@@ -81,8 +81,10 @@ def template_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过")
-                template_obj = models.Template.objects.create(**forms_obj.cleaned_data)
+                template_obj = models.Template.objects.create(
+                    create_user_id=forms_obj.cleaned_data.get('create_user_id'),
+                    name=forms_obj.cleaned_data.get('name')
+                )
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
                     template=template_obj
@@ -144,7 +146,34 @@ def template_oper(request, oper_type, o_id):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        # 获取底部导航数据
+        if oper_type == "get_tab_bar_data":
+            # 获取需要修改的信息
+            form_data = {
+                'o_id': o_id
+            }
+
+            forms_obj = GetTabBarDataForm(form_data)
+            if forms_obj.is_valid():
+                # print("验证通过")
+                # print(forms_obj.cleaned_data)
+                o_id = forms_obj.cleaned_data['o_id']
+
+                template_objs = models.Template.objects.filter(id=o_id)
+                if template_objs:
+                    response.code = 200
+                    response.data = {
+                        'data': template_objs[0].tab_bar_data
+                    }
+                else:
+                    response.code = 301
+                    response.msg = "模板id异常"
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)

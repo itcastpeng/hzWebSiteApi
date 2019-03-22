@@ -16,7 +16,8 @@ page_base_data = {
             'color': '#000000'
         }
     },
-    'itemData': []
+    'itemData': [],
+    'selectedTabBar': True
 }
 #
 # @account.is_token(models.UserProfile)

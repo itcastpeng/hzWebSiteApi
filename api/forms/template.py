@@ -101,3 +101,14 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
+
+
+# 更新
+class GetTabBarDataForm(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '模板id不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )

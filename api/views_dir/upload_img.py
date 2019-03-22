@@ -31,7 +31,7 @@ def upload_img(request):
 
         response.code = 200
         response.data = {
-            "img_url": img_abs_name
+            "img_url": '/' + img_abs_name
         }
 
     return JsonResponse(response.__dict__)
