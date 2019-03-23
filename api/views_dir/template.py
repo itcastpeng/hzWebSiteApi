@@ -119,6 +119,7 @@ def template_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'name': request.POST.get('name'),
                 'logo_img': request.POST.get('logo_img'),
+                'tab_bar_data': request.POST.get('tab_bar_data'),
             }
 
             forms_obj = UpdateForm(form_data)
@@ -128,12 +129,14 @@ def template_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 name = forms_obj.cleaned_data['name']
                 logo_img = forms_obj.cleaned_data['logo_img']
+                tab_bar_data = forms_obj.cleaned_data['tab_bar_data']
                 update_data = {}
                 if logo_img:
                     update_data['logo_img'] = logo_img
-
                 if name:
                     update_data['name'] = name
+                if tab_bar_data:
+                    update_data['tab_bar_data'] = tab_bar_data
 
                 # 更新数据
                 models.Template.objects.filter(id=o_id).update(**update_data)

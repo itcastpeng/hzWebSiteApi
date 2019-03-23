@@ -57,6 +57,13 @@ class UpdateForm(forms.Form):
         }
     )
 
+    tab_bar_data = forms.CharField(
+        required=False,
+        error_messages={
+            # 'required': "用户名不能为空"
+        }
+    )
+
     # 判断名称是否存在
     def clean_name(self):
         o_id = self.data['o_id']
