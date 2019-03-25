@@ -90,11 +90,11 @@ class Template(models.Model):
         "txt": "底部导航",
         "style": {
             'borderStyle': 'solid',         # 顶部边框 solid->实线  dotted->点线  dashed->虚线
-            'borderColor': '#ffffff',       # 顶部边框颜色
+            'borderColor': '#d8d8d8',       # 顶部边框颜色
             'borderWidth': 1,               # 顶部边框粗细
-            'backGroundColor': '#ffffff',   # 背景颜色
+            'backgroundColor': '#ffffff',   # 背景颜色
             'color': '#515a6e',             # 文字颜色-未选中
-            'selectedColor': '1296db'       # 文字颜色-选中
+            'selectedColor': '#1296db'       # 文字颜色-选中
         },
         "data": [
             {
