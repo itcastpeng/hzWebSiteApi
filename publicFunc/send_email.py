@@ -16,7 +16,6 @@ class SendEmail:
         self.receiver = receiver
         self.subject = subject
         self.text = text
-        self.login_status = False   # 登录状态
         self.send_status = False    # 发送状态
 
     def send_email(self):
@@ -70,13 +69,9 @@ class SendEmail:
         # smtp.set_debuglevel(1)
         try:
             smtp.login(self.username, self.password)
-            self.login_status = True
-        except SMTPAuthenticationError:
-            self.login_status = False
-
-        try:
             smtp.sendmail(sender, self.receiver, msg.as_string())
             self.send_status = True
-        except SMTPSenderRefused:
+        except:
             self.send_status = False
+
         smtp.quit()

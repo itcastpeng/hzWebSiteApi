@@ -195,7 +195,7 @@ def task_list_oper(request, oper_type, o_id):
                     send_email_obj = SendEmail(email_user, email_pwd, send_email_list, send_email_title,
                                                send_email_content)
                     send_email_obj.send_email()
-                    if send_email_obj.login_status and send_email_obj.send_status:
+                    if send_email_obj.send_status:
                         response.code = 200
                         response.msg = "发送成功"
                         response.data = {
