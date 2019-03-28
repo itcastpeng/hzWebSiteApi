@@ -2,7 +2,7 @@
 from hurong import models
 from publicFunc import Response
 from publicFunc import account
-from publicFunc import send_email as SendEmail
+from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.task_list import SelectForm, AddForm, UpdateForm, TestForm
@@ -181,23 +181,32 @@ def task_list_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = TestForm(form_data)
             if forms_obj.is_valid():
-                email_user_obj = models.EmailUserInfo.objects.all().order_by('use_number')[0]
-                email_user_obj.use_number += 1
-                email_user_obj.save()
-                email_user = email_user_obj.email_user
-                email_pwd = email_user_obj.email_pwd
-                print(email_user, email_pwd)
-                send_email_title = forms_obj.cleaned_data.get('send_email_title')
-                send_email_content = forms_obj.cleaned_data.get('send_email_content')
-                send_email_list = forms_obj.cleaned_data.get('send_email_list')
-                SendEmail.send_email(email_user, email_pwd, send_email_list, send_email_title, send_email_content)
 
-                response.code = 200
-                response.msg = "发送成功"
-                response.data = {
-                    'testCase': 1,
-                    'id': 1,
-                }
+                while True:
+                    email_user_obj = models.EmailUserInfo.objects.all().order_by('use_number')[0]
+                    email_user_obj.use_number += 1
+                    email_user_obj.save()
+                    email_user = email_user_obj.email_user
+                    email_pwd = email_user_obj.email_pwd
+                    print(email_user, email_pwd)
+                    send_email_title = forms_obj.cleaned_data.get('send_email_title')
+                    send_email_content = forms_obj.cleaned_data.get('send_email_content')
+                    send_email_list = forms_obj.cleaned_data.get('send_email_list')
+                    send_email_obj = SendEmail(email_user, email_pwd, send_email_list, send_email_title,
+                                               send_email_content)
+                    send_email_obj.send_email()
+                    if send_email_obj.login_status and send_email_obj.send_status:
+                        response.code = 200
+                        response.msg = "发送成功"
+                        response.data = {
+                            'testCase': 1,
+                            'id': 1,
+                        }
+                        break
+                    else:
+                        email_user_obj.is_available = False
+                        email_user_obj.save()
+
             else:
                 print("验证不通过")
                 response.code = 301
