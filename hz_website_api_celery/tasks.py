@@ -12,14 +12,6 @@ from hurong import models
 from publicFunc.send_email import SendEmail
 
 
-@app.task
-def test():
-    task_list_objs = models.TaskList.objects.exclude(percentage_progress=100).filter(is_delete=False)[0: 1]
-    if task_list_objs:
-        task_list_objs.update(status=1)
-        print("task_list_objs -->", task_list_objs)
-
-
 # 发送邮件，每间隔5分钟一次
 @app.task
 def hurong_send_email():
@@ -70,7 +62,4 @@ def hurong_send_email():
                 email_user_obj.is_available = False
                 email_user_obj.save()
 
-
-if __name__ == '__main__':
-    test()
 
