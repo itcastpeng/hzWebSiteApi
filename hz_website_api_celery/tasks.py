@@ -63,7 +63,7 @@ def hurong_send_email():
                 is_send_count = task_objs.filter(status=2).count()  # 已经发送成功的总数
                 count = task_objs.count()   # 该任务的总任务数
                 print(is_send_count, count, is_send_count / count)
-                task_list_obj.percentage_progress = int(is_send_count / count)
+                task_list_obj.percentage_progress = int(is_send_count / count * 100)
                 task_list_obj.save()
                 break
             else:
