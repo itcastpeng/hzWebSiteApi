@@ -7,7 +7,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.task_list import SelectForm, AddForm, UpdateForm, TestForm
 import json
-# from django.db.models import Q
+from django.db.models import Q
 
 
 @account.is_token(models.UserProfile)
@@ -31,6 +31,10 @@ def task_list(request):
 
             print('q -->', q)
             # q.add(Q(**{k + '__contains': value}), Q.AND)
+            role_id = models.UserProfile.objects.get(id=user_id).role_id_id
+            if role_id != 1:    # 非管理员角色只能看自己的
+                q.add(Q(**{'create_user_id': user_id}), Q.AND)
+
             objs = models.TaskList.objects.filter(is_delete=False).filter(q).order_by(order)
             count = objs.count()
 

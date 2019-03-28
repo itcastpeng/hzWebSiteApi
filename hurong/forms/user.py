@@ -77,7 +77,7 @@ class AddForm(forms.Form):
 
     def clean_password(self):
         password = self.data['password']
-        return account.get_token(password)
+        return account.str_encrypt(password)
 
 
 # 修改用户
