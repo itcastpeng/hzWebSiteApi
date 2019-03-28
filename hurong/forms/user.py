@@ -59,6 +59,13 @@ class AddForm(forms.Form):
             'invalid': "数据类型错误"
         }
     )
+    role_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "对应角色不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
 
     def clean_username(self):
         username = self.data['username']
@@ -94,6 +101,13 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "状态不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+    role_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "对应角色不能为空",
             'invalid': "数据类型错误"
         }
     )

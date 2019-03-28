@@ -2,14 +2,12 @@
 from hurong import models
 from publicFunc import Response
 from publicFunc import account
+from publicFunc import send_email as SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.task_list import SelectForm, AddForm, UpdateForm
+from hurong.forms.task_list import SelectForm, AddForm, UpdateForm, TestForm
 import json
-from django.db.models import Q
-# import re
-# import datetime
-# from publicFunc import base64_encryption
+# from django.db.models import Q
 
 
 @account.is_token(models.UserProfile)
@@ -47,6 +45,8 @@ def task_list(request):
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
+                    'status': obj.get_status_display(),
+                    'status_id': obj.status,
                     'percentage_progress': obj.percentage_progress,
                     'send_email_title': obj.send_email_title,
                     'send_email_content': obj.send_email_content,
@@ -68,6 +68,8 @@ def task_list(request):
                 'send_email_content': "发送邮件内容",
                 'create_user__username': "创建人",
                 'create_datetime': "创建时间",
+                'status': "状态名称",
+                'status_id': "状态值",
             }
         else:
             print("forms_obj.errors -->", forms_obj.errors)
@@ -128,9 +130,15 @@ def task_list_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            models.TaskList.objects.filter(id=o_id).update(is_delete=True)
-            response.code = 200
-            response.msg = "删除成功"
+            task_list_objs = models.TaskList.objects.filter(id=o_id)
+            if task_list_objs:
+                if task_list_objs[0].status == 1:
+                    task_list_objs.update(is_delete=True)
+                    response.code = 200
+                    response.msg = "删除成功"
+                else:
+                    response.code = 300
+                    response.msg = "该任务正在操作中，不能删除"
 
         elif oper_type == "update":
             # 获取需要修改的信息
@@ -157,6 +165,37 @@ def task_list_oper(request, oper_type, o_id):
                 response.msg = "修改成功"
 
             else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+        elif oper_type == "test":
+            form_data = {
+                'send_email_title': request.POST.get('send_email_title'),
+                'send_email_content': request.POST.get('send_email_content'),
+                'send_email_list': request.POST.get('send_email_list'),
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = TestForm(form_data)
+            if forms_obj.is_valid():
+                email_user_obj = models.EmailUserInfo.objects.all().order_by('use_number')[0]
+                email_user_obj.use_number += 1
+                email_user_obj.save()
+                email_user = email_user_obj.email_user
+                email_pwd = email_user_obj.email_pwd
+                print(email_user, email_pwd)
+                send_email_title = forms_obj.cleaned_data.get('send_email_title')
+                send_email_content = forms_obj.cleaned_data.get('send_email_content')
+                send_email_list = forms_obj.cleaned_data.get('send_email_list')
+                SendEmail.send_email(email_user, email_pwd, send_email_list, send_email_title, send_email_content)
+
+                response.code = 200
+                response.msg = "发送成功"
+                response.data = {
+                    'testCase': 1,
+                    'id': 1,
+                }
+            else:
+                print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 

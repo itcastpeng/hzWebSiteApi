@@ -3,10 +3,17 @@ from django.db import models
 # Create your models here.
 
 
+class Role(models.Model):
+    name = models.CharField(verbose_name="角色", max_length=128)
+    access_name = models.CharField(verbose_name="角色对应权限名", max_length=128)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
 # 用户表
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128)
     password = models.CharField(verbose_name="密码", max_length=128)
+    role_id = models.ForeignKey("Role", verbose_name="对应角色", null=True, blank=True)
     token = models.CharField(verbose_name="token值", max_length=128, null=True, blank=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     head_portrait = models.CharField(
@@ -22,7 +29,7 @@ class UserProfile(models.Model):
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
     # name = models.CharField(verbose_name="姓名", max_length=128)
     is_update_pwd = models.BooleanField(verbose_name="是否修改密码", default=False)
-    create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人", default=True, blank=True)
+    create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人", null=True, blank=True)
 
 
 # 邮箱账户表
@@ -43,7 +50,19 @@ class TaskList(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
-    delete_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人", related_name='task_list_dekete_user')
+    delete_user = models.ForeignKey(
+        "UserProfile",
+        verbose_name="添加任务的人",
+        related_name='task_list_dekete_user',
+        null=True,
+        blank=True
+    )
+    status_choices = (
+        (1, "等待操作"),
+        (2, "操作中"),
+        (3, "操作完成"),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
 
 
 # 任务详情

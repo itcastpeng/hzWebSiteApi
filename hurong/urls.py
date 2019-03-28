@@ -1,6 +1,6 @@
 
 from django.conf.urls import url
-from hurong.views_dir import upload_img, login, user, task_list, task_info
+from hurong.views_dir import upload_img, login, user, task_list, task_info, role
 
 
 urlpatterns = [
@@ -8,6 +8,9 @@ urlpatterns = [
     url(r'^upload_img$', upload_img.upload_img),                  # base64 上传分片
     url(r'^login$', login.login),                  # base64 上传分片
 
+    # 角色管理
+    # url(r'^role/(?P<oper_type>\w+)/(?P<o_id>\d+)', role.role_oper),
+    url(r'^role', role.role),
 
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),

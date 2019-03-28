@@ -16,20 +16,26 @@ def login(request):
         if forms_obj.is_valid():
 
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
-            objs = models.UserProfile.objects.filter(**forms_obj.cleaned_data)
+            objs = models.UserProfile.objects.select_related('role_id').filter(**forms_obj.cleaned_data)
             if objs:
                 obj = objs[0]
-                if not obj.token:
-                    obj.token = account.get_token(obj.password)
-                    obj.save()
-                response.code = 200
-                response.data = {
-                    'token': obj.token,
-                    'id': obj.id,
-                    'username': obj.username,
-                    'head_portrait': obj.head_portrait,
-                    'is_update_pwd': obj.is_update_pwd,
-                }
+                if obj.status != 1:
+                    response.code = 300
+                    response.msg = "账号异常，请联系管理员处理"
+                else:
+                    if not obj.token:
+                        obj.token = account.get_token(obj.password)
+                        obj.save()
+                    response.code = 200
+                    print(obj.role_id.id)
+                    response.data = {
+                        'token': obj.token,
+                        'id': obj.id,
+                        'username': obj.username,
+                        'access': json.loads(obj.role_id.access_name),
+                        'head_portrait': obj.head_portrait,
+                        'is_update_pwd': obj.is_update_pwd,
+                    }
             else:
                 response.code = 402
                 response.msg = "账号或密码错误"

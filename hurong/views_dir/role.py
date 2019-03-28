@@ -13,7 +13,7 @@ from django.db.models import Q
 
 
 @account.is_token(models.UserProfile)
-def user(request):
+def role(request):
     response = Response.ResponseObj()
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
@@ -33,7 +33,7 @@ def user(request):
 
             print('q -->', q)
             # q.add(Q(**{k + '__contains': value}), Q.AND)
-            objs = models.UserProfile.objects.select_related('role_id').exclude(Q(status=3)).filter(q).order_by(order)
+            objs = models.Role.objects.filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -46,12 +46,7 @@ def user(request):
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
-                    'username': obj.username,
-                    'role_name': obj.role_id.name,
-                    'role_id': obj.role_id_id,
-                    'status': obj.get_status_display(),
-                    'status_id': obj.status,
-                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    'name': obj.name
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -61,10 +56,8 @@ def user(request):
                 'data_count': count,
             }
             response.note = {
-                'id': "用户id",
-                'username': "用户名",
-                'status': "用户状态",
-                'create_datetime': "创建时间"
+                'id': "角色id",
+                'name': "角色名"
             }
         else:
             print("forms_obj.errors -->", forms_obj.errors)
@@ -77,7 +70,7 @@ def user(request):
 # 增删改
 # token验证
 @account.is_token(models.UserProfile)
-def user_oper(request, oper_type, o_id):
+def role_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     print('request.POST -->', request.POST)
@@ -88,7 +81,6 @@ def user_oper(request, oper_type, o_id):
                 'create_user_id': request.GET.get('user_id'),
                 'username': request.POST.get('username'),
                 'password': request.POST.get('password'),
-                'role_id': request.POST.get('role_id'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -98,7 +90,6 @@ def user_oper(request, oper_type, o_id):
                     'create_user_id': forms_obj.cleaned_data.get('create_user_id'),
                     'username': forms_obj.cleaned_data.get('username'),
                     'password': forms_obj.cleaned_data.get('password'),
-                    'role_id_id': forms_obj.cleaned_data.get('role_id'),
                 }
                 print('create_data -->', create_data)
                 obj = models.UserProfile.objects.create(**create_data)
@@ -115,18 +106,9 @@ def user_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            user_profile_objs = models.UserProfile.objects.filter(id=o_id)
-            if user_profile_objs:
-                if user_profile_objs[0].role_id_id == 1:
-                    response.code = 300
-                    response.msg = "不能删除管理员角色的用户"
-                else:
-                    user_profile_objs.update(status=3)
-                    response.code = 200
-                    response.msg = "删除成功"
-            else:
-                response.code = 300
-                response.msg = "用户id异常"
+            models.UserProfile.objects.exclude(id=1).filter(id=o_id).update(status=3)
+            response.code = 200
+            response.msg = "删除成功"
 
         elif oper_type == "update":
             # 获取需要修改的信息
@@ -134,7 +116,6 @@ def user_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'password': request.POST.get('password'),
                 'status': request.POST.get('status'),
-                'role_id': request.POST.get('role_id'),
             }
 
             forms_obj = UpdateForm(form_data)
@@ -142,7 +123,6 @@ def user_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 update_data = {
                     'status': forms_obj.cleaned_data['status'],
-                    'role_id_id': forms_obj.cleaned_data['role_id'],
                 }
                 password = forms_obj.cleaned_data['password']
                 if password:
@@ -163,29 +143,3 @@ def user_oper(request, oper_type, o_id):
         response.msg = "请求异常"
     return JsonResponse(response.__dict__)
 
-
-# 获取用户信息
-def get_userinfo(request):
-    response = Response.ResponseObj()
-    if request.method == "GET":
-
-        token = request.GET.get('token')
-        objs = models.UserProfile.objects.select_related('role_id').filter(token=token)
-
-        if objs:
-            obj = objs[0]
-            response.code = 200
-            response.data = {
-                # 'token': obj.token,
-                'id': obj.id,
-                'username': obj.username,
-                'access': json.loads(obj.role_id.access_name),
-                'head_portrait': obj.head_portrait
-            }
-        else:
-            response.code = 402
-            response.msg = "token异常"
-    else:
-        response.code = 402
-        response.msg = "请求异常"
-    return JsonResponse(response.__dict__)

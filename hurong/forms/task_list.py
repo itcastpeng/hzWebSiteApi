@@ -116,3 +116,35 @@ class UpdateForm(forms.Form):
             return False
 
         return account.str_encrypt(password)
+
+
+# 添加
+class TestForm(forms.Form):
+    send_email_title = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "邮件标题不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+    send_email_content = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "邮件内容不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+    send_email_list = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "收件人列表不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+
+    def clean_send_email_list(self):
+        send_email_list = self.data['send_email_list'].split(';')
+        for send_email in send_email_list:
+            if not re.match(r'\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}', send_email):
+                self.add_error('send_email_list', '存在异常邮箱：{}'.format(send_email))
+        return send_email_list
