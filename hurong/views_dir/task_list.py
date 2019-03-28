@@ -181,6 +181,9 @@ def task_list_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = TestForm(form_data)
             if forms_obj.is_valid():
+                send_email_title = forms_obj.cleaned_data.get('send_email_title')
+                send_email_content = forms_obj.cleaned_data.get('send_email_content')
+                send_email_list = forms_obj.cleaned_data.get('send_email_list')
 
                 while True:
                     email_user_obj = models.EmailUserInfo.objects.all().order_by('use_number')[0]
@@ -189,9 +192,6 @@ def task_list_oper(request, oper_type, o_id):
                     email_user = email_user_obj.email_user
                     email_pwd = email_user_obj.email_pwd
                     print(email_user, email_pwd)
-                    send_email_title = forms_obj.cleaned_data.get('send_email_title')
-                    send_email_content = forms_obj.cleaned_data.get('send_email_content')
-                    send_email_list = forms_obj.cleaned_data.get('send_email_list')
                     send_email_obj = SendEmail(email_user, email_pwd, send_email_list, send_email_title,
                                                send_email_content)
                     send_email_obj.send_email()
