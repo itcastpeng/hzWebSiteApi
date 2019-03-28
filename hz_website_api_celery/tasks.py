@@ -27,6 +27,10 @@ from publicFunc.send_email import SendEmail
 # 发送邮件，每间隔5分钟一次
 @app.task
 def hurong_send_email():
+    # 将已经完成的任务状态改成已完成
+    models.TaskList.objects.filter(percentage_progress=100, status=2).update(status=3)
+
+    # 开始任务
     task_list_objs = models.TaskList.objects.exclude(percentage_progress=100).filter(is_delete=False)[0: 1]
     if task_list_objs:
         # 发送标题和内容
