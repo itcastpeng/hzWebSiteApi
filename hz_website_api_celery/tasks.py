@@ -47,7 +47,7 @@ def hurong_send_email():
             email_user_obj.save()
             email_user = email_user_obj.email_user
             email_pwd = email_user_obj.email_pwd
-            print(email_user, email_pwd)
+            print(email_user, email_pwd, send_email_list)
             send_email_obj = SendEmail(
                 email_user,
                 email_pwd,
@@ -60,7 +60,10 @@ def hurong_send_email():
                 # 计算完成百分比
                 models.TaskInfo.objects.filter(id__in=task_info_id_list).update(status=2)
                 task_objs = models.TaskInfo.objects.filter(task_list=task_list_obj)
-                task_list_obj.percentage_progress = int(task_objs.filter(status=2).count() / task_objs.count())
+                is_send_count = task_objs.filter(status=2).count()  # 已经发送成功的总数
+                count = task_objs.count()   # 该任务的总任务数
+                print(is_send_count, count, is_send_count / count)
+                task_list_obj.percentage_progress = int(is_send_count / count)
                 task_list_obj.save()
                 break
             else:
