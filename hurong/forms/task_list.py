@@ -76,11 +76,12 @@ class AddForm(forms.Form):
     )
 
     def clean_send_email_list(self):
-        send_email_list = self.data['send_email_list'].split(';')
+        send_email_list = self.data['send_email_list'].split()
         for send_email in send_email_list:
+            send_email = send_email.strip()
             if not re.match(r'\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}', send_email):
                 self.add_error('send_email_list', '存在异常邮箱：{}'.format(send_email))
-        return send_email_list
+        return list(set(send_email_list))
 
 
 # 修改用户
@@ -118,7 +119,7 @@ class UpdateForm(forms.Form):
         return account.str_encrypt(password)
 
 
-# 添加
+# 测试
 class TestForm(forms.Form):
     send_email_title = forms.CharField(
         required=True,
@@ -143,8 +144,9 @@ class TestForm(forms.Form):
     )
 
     def clean_send_email_list(self):
-        send_email_list = self.data['send_email_list'].split(';')
+        send_email_list = self.data['send_email_list'].split()
         for send_email in send_email_list:
+            send_email = send_email.strip()
             if not re.match(r'\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}', send_email):
                 self.add_error('send_email_list', '存在异常邮箱：{}'.format(send_email))
-        return send_email_list
+        return list(set(send_email_list))
