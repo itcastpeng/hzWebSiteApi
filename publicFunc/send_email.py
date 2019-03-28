@@ -6,7 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from email.header import Header
-from smtplib import SMTPAuthenticationError
+from smtplib import SMTPAuthenticationError, SMTPSenderRefused
 
 
 class SendEmail:
@@ -73,5 +73,10 @@ class SendEmail:
             self.login_status = True
         except SMTPAuthenticationError:
             self.login_status = False
-        smtp.sendmail(sender, self.receiver, msg.as_string())
+
+        try:
+            smtp.sendmail(sender, self.receiver, msg.as_string())
+            self.send_status = True
+        except SMTPSenderRefused:
+            self.send_status = False
         smtp.quit()
