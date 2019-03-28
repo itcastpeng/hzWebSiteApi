@@ -7,6 +7,18 @@ from __future__ import absolute_import, unicode_literals
 from .celery import app
 import requests
 import datetime
+import os
+import sys
+
+# HOST = 'http://127.0.0.1:8001'
+# HOST = 'http://xmgl.zhugeyingxiao.com'
+project_dir = os.path.dirname(os.getcwd())
+sys.path.append(project_dir)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
+import django
+
+django.setup()
+
 
 from hurong import models
 from publicFunc.send_email import SendEmail
