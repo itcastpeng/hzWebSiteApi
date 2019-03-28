@@ -48,7 +48,7 @@ class SendEmail:
         # 下面的主题，发件人，收件人，日期是显示在邮件页面上的。
         msg = MIMEMultipart('mixed')
         msg['Subject'] = self.subject
-        msg['From'] = '{username} <{username}>'.format(username=username)
+        msg['From'] = '{username} <{username}>'.format(username=self.username)
         # msg['To'] = 'XXX@126.com'
         # 收件人为多个收件人,通过join将列表转换为以;为间隔的字符串
         msg['To'] = ";".join(self.receiver)
