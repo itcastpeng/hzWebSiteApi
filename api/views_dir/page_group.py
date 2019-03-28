@@ -38,11 +38,14 @@ def page_group(request):
             # 返回的数据
             ret_data = []
 
+            default_page_id = None
             for obj in objs:
                 # 获取分组下面的页面数据
                 page_objs = obj.page_set.all()
                 page_data = []
                 for page_obj in page_objs:
+                    if not default_page_id:
+                        default_page_id = page_obj.id
                     page_data.append({
                         'id': page_obj.id,
                         'name': page_obj.name
@@ -61,6 +64,7 @@ def page_group(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+                'default_page_id': default_page_id,
             }
             response.note = {
                 'id': "页面分组id",
