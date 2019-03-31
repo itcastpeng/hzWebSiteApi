@@ -181,7 +181,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'statics')]
 
 # 不验证token的请求
 NoValidationTokenRoute = [
-    "/api/wechat/invite_members",
-    "/api/team/invite_members",
-    "/api/article/share_article"
+    "/api_hurong/task_list/save_task",
+    "/api_hurong/task_list/get_task",
 ]

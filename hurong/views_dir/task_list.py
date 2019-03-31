@@ -212,7 +212,62 @@ def task_list_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        elif oper_type == "save_task":
+            task_info_id_list = request.POST.get('task_info_id_list')
+            task_list_id = request.POST.get('task_list_id')
+            send_status = request.POST.get('send_status')
+            print(send_status)
+            # models.TaskInfo.objects.filter(id__in=task_info_id_list).update(status=2)
+            # task_objs = models.TaskInfo.objects.get(task_list_id=task_list_id)
+            # is_send_count = task_objs.filter(status=2).count()  # 已经发送成功的总数
+            # count = task_objs.count()  # 该任务的总任务数
+            # # print(is_send_count, count, is_send_count / count)
+            # task_objs.percentage_progress = int(is_send_count / count * 100)
+            # task_objs.save()
+
+            response.code = 200
+            response.msg = "保存成功"
+
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        if oper_type == "get_task":
+
+            # 开始任务
+            task_list_objs = models.TaskList.objects.exclude(percentage_progress=100).filter(is_delete=False)[0: 1]
+            if task_list_objs:
+                # 发送标题和内容
+                task_list_obj = task_list_objs[0]
+                task_list_obj.status = 2
+                task_list_obj.save()
+
+                send_email_title = task_list_obj.send_email_title
+                send_email_content = task_list_obj.send_email_content
+
+                # 收件人列表
+                task_info_objs = task_list_obj.taskinfo_set.filter(status=1)[0: 5]
+                task_info_id_list = []
+                send_email_list = []
+                for task_info in task_info_objs:
+                    task_info_id_list.append(task_info.id)
+                    send_email_list.append(task_info.to_email)
+
+                email_user_obj = models.EmailUserInfo.objects.all().order_by('use_number')[0]
+                email_user_obj.use_number += 1
+                email_user_obj.save()
+                email_user = email_user_obj.email_user
+                email_pwd = email_user_obj.email_pwd
+                print(email_user, email_pwd, send_email_list)
+                response.data = {
+                    'email_user': email_user,
+                    'email_pwd': email_pwd,
+                    'send_email_list': send_email_list,
+                    'task_info_id_list': task_info_id_list,
+                    'send_email_title': send_email_title,
+                    'send_email_content': send_email_content,
+                    'task_list_id': task_list_obj.id,
+                }
+            response.code = 200
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
     return JsonResponse(response.__dict__)
