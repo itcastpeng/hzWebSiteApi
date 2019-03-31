@@ -222,12 +222,12 @@ def task_list_oper(request, oper_type, o_id):
             # 发送成功
             if send_status == "True":
                 models.TaskInfo.objects.filter(id__in=json.loads(task_info_id_list)).update(status=2)
-                task_objs = models.TaskInfo.objects.filter(task_list_id=task_list_id)
-                is_send_count = task_objs.filter(status=2).count()  # 已经发送成功的总数
-                count = task_objs.count()  # 该任务的总任务数
+                task_list_objs = models.TaskList.objects.get(id=task_list_id)
+                is_send_count = task_list_objs.taskinfo_set.filter(status=2).count()  # 已经发送成功的总数
+                count = task_list_objs.taskinfo_set.count()  # 该任务的总任务数
                 # print(is_send_count, count, is_send_count / count)
-                task_objs.percentage_progress = int(is_send_count / count * 100)
-                task_objs.save()
+                percentage_progress = int(is_send_count / count * 100)
+                task_list_objs.update(percentage_progress=percentage_progress)
             else:
                 # 发布失败，修改账号状态
                 models.EmailUserInfo.objects.filter(id=email_user_id).update(is_available=False)
