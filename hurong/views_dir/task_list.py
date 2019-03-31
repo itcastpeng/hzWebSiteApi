@@ -222,7 +222,7 @@ def task_list_oper(request, oper_type, o_id):
             # 发送成功
             if send_status == "True":
                 models.TaskInfo.objects.filter(id__in=json.loads(task_info_id_list)).update(status=2)
-                task_objs = models.TaskInfo.objects.get(task_list_id=task_list_id)
+                task_objs = models.TaskInfo.objects.filter(task_list_id=task_list_id)
                 is_send_count = task_objs.filter(status=2).count()  # 已经发送成功的总数
                 count = task_objs.count()  # 该任务的总任务数
                 # print(is_send_count, count, is_send_count / count)
