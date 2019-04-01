@@ -78,7 +78,7 @@ class WeChatApi(WeixinApiPublic):
         :param signature:
         :return:
         """
-        token = 'hfdjsahjklfdhjklhfdkljsa'
+        token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
 
         tmp_str = "".join(sorted([timestamp, nonce, token]))
         hash_obj = hashlib.sha1()
