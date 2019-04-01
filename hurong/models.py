@@ -61,6 +61,7 @@ class TaskList(models.Model):
         (1, "等待操作"),
         (2, "操作中"),
         (3, "操作完成"),
+        (4, "手动完成"),
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
 
