@@ -22,6 +22,14 @@ class UserProfile(models.Model):
     # name = models.CharField(verbose_name="姓名", max_length=128)
     is_update_pwd = models.BooleanField(verbose_name="是否修改密码", default=False)
 
+    sex_choices = (
+        (1, "男"),
+        (2, "女"),
+    )
+    sex = models.SmallIntegerField(verbose_name="性别", choices=sex_choices, null=True, blank=True)
+    country = models.CharField(verbose_name="国家", max_length=128, null=True, blank=True)
+    province = models.CharField(verbose_name="省份", max_length=128, null=True, blank=True)
+    city = models.CharField(verbose_name="城市", max_length=128, null=True, blank=True)
     inviter = models.ForeignKey(
         'self',
         verbose_name="邀请人",

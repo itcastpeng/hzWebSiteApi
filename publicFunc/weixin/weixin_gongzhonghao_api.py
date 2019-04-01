@@ -126,9 +126,9 @@ class WeChatApi(WeixinApiPublic):
 
         ret = requests.post(url, data=json.dumps(post_data))
         print(ret.text)
-        print(json.loads(ret.text))
+        print(ret.json())
 
-        ticket = json.loads(ret.text)["ticket"]
+        ticket = ret.json()["ticket"]
 
         url = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket={TICKET}".format(
             TICKET=ticket
