@@ -239,7 +239,7 @@ def task_list_oper(request, oper_type, o_id):
         if oper_type == "get_task":
 
             # 开始任务
-            task_list_objs = models.TaskList.objects.exclude(percentage_progress=100, status__gte=3).filter(is_delete=False)[0: 1]
+            task_list_objs = models.TaskList.objects.exclude(Q(percentage_progress=100) | Q(status__gte=3)).filter(is_delete=False)[0: 1]
             if task_list_objs:
                 # 发送标题和内容
                 task_list_obj = task_list_objs[0]
