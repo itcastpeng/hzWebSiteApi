@@ -74,6 +74,7 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
         "country": ret_obj.get('country'),
         "province": ret_obj.get('province'),
         "city": ret_obj.get('city'),
+        "login_timestamp": timestamp,
     }
 
     if user_objs:
@@ -94,7 +95,6 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
             subscribe = ret_obj.get('subscribe')
 
         user_data['inviter_id'] = inviter_user_id
-        user_data['login_timestamp'] = timestamp
         user_data['head_portrait'] = ret_obj.get('headimgurl')
         user_data['subscribe'] = subscribe
         user_data['name'] = encode_username
