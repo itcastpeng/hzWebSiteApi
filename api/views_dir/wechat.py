@@ -19,10 +19,11 @@ from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
 from publicFunc import Response
 from publicFunc import account
 from publicFunc import base64_encryption
+import time
 
 
 # 创建或更新用户信息
-def updateUserInfo(openid, inviter_user_id, ret_obj):
+def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
     """
     :param openid:  微信openid
     :param inviter_user_id: 邀请人id
@@ -93,6 +94,7 @@ def updateUserInfo(openid, inviter_user_id, ret_obj):
             subscribe = ret_obj.get('subscribe')
 
         user_data['inviter_id'] = inviter_user_id
+        user_data['login_timestamp'] = timestamp
         user_data['head_portrait'] = ret_obj.get('headimgurl')
         user_data['subscribe'] = subscribe
         user_data['name'] = encode_username
@@ -145,15 +147,15 @@ def wechat(request):
                 # subscribe = 首次关注
                 # SCAN = 已关注
                 # 事件 Key 值
+                ret_obj = weichat_api_obj.get_user_info(openid=openid)
+
                 event_key = collection.getElementsByTagName("EventKey")[0].childNodes[0].data
                 if event == "subscribe":
                     event_key = event_key.split("qrscene_")[-1]
                 event_key = json.loads(event_key)
+                timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
-                print('event_key -->', event_key)
-
-                ret_obj = weichat_api_obj.get_user_info(openid=openid)
-                updateUserInfo(openid, inviter_user_id, ret_obj)
+                update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
             # 取消关注
             elif event == "unsubscribe":
@@ -207,8 +209,11 @@ def wechat_oper(request, oper_type):
         # 获取用于登录的微信二维码
         weichat_api_obj = WeChatApi()
         if oper_type == "generate_qrcode":
-            user_id = request.GET.get('user_id')
-            qc_code_url = weichat_api_obj.generate_qrcode({'inviter_user_id': user_id})
+            timestamp = str(int(time.time() * 1000))
+            qc_code_url = weichat_api_obj.generate_qrcode({
+                'timestamp': timestamp,
+                'type': 'login'
+            })
             print(qc_code_url)
 
             expire_date = (datetime.datetime.now().date() + datetime.timedelta(days=30)).strftime("%Y-%m-%d")

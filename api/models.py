@@ -40,6 +40,7 @@ class UserProfile(models.Model):
     )
     subscribe = models.BooleanField(verbose_name="是否关注公众号", default=False)
     openid = models.CharField(verbose_name="微信公众号openid", max_length=64, null=True, blank=True)
+    login_timestamp = models.CharField(verbose_name="登录时间戳", max_length=64, null=True, blank=True)
 
 
 # class UserProfile(models.Model):
