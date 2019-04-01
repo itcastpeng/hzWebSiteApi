@@ -208,11 +208,10 @@ def wechat_oper(request, oper_type):
     else:
         # 获取用于登录的微信二维码
         weichat_api_obj = WeChatApi()
-        if oper_type == "generate_qrcode":
+        if oper_type == "login_qrcode":
             timestamp = str(int(time.time() * 1000))
             qc_code_url = weichat_api_obj.generate_qrcode({
                 'timestamp': timestamp,
-                'type': 'login'
             })
             print(qc_code_url)
 
@@ -220,7 +219,8 @@ def wechat_oper(request, oper_type):
             response.code = 200
             response.data = {
                 'qc_code_url': qc_code_url,
-                'expire_date': expire_date
+                'expire_date': expire_date,
+                'timestamp': timestamp,
             }
 
         # 邀请成员页面展示信息
