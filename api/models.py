@@ -8,7 +8,8 @@ import json
 # 用户表
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128)
-    password = models.CharField(verbose_name="密码", max_length=128)
+    name = models.CharField(verbose_name="微信昵称", max_length=128, null=True, blank=True)
+    password = models.CharField(verbose_name="密码", max_length=128, null=True, blank=True)
     role = models.ForeignKey('Role', verbose_name="角色", null=True)
     token = models.CharField(verbose_name="token值", max_length=128)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
@@ -20,6 +21,17 @@ class UserProfile(models.Model):
 
     # name = models.CharField(verbose_name="姓名", max_length=128)
     is_update_pwd = models.BooleanField(verbose_name="是否修改密码", default=False)
+
+    inviter = models.ForeignKey(
+        'self',
+        verbose_name="邀请人",
+        related_name="userprofile_inviter",
+        null=True,
+        blank=True,
+        default=None
+    )
+    subscribe = models.BooleanField(verbose_name="是否关注公众号", default=False)
+    openid = models.CharField(verbose_name="微信公众号openid", max_length=64, null=True, blank=True)
 
 
 # class UserProfile(models.Model):

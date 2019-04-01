@@ -93,7 +93,7 @@ def updateUserInfo(openid, inviter_user_id, ret_obj):
             subscribe = ret_obj.get('subscribe')
 
         user_data['inviter_id'] = inviter_user_id
-        user_data['set_avator'] = ret_obj.get('headimgurl')
+        user_data['head_portrait'] = ret_obj.get('headimgurl')
         user_data['subscribe'] = subscribe
         user_data['name'] = encode_username
         user_data['openid'] = ret_obj.get('openid')
