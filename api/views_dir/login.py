@@ -5,6 +5,7 @@ from api import models
 from publicFunc import Response
 from django.http import JsonResponse
 import json
+from publicFunc import base64_encryption
 from api.forms.login import LoginForm
 
 
@@ -32,6 +33,26 @@ def login(request):
         else:
             response.code = 401
             response.msg = json.loads(forms_obj.errors.as_json())
+    else:
+        response.code = 402
+        response.msg = "请求异常"
+    return JsonResponse(response.__dict__)
+
+
+def wechat_login(request):
+    response = Response.ResponseObj()
+    if request.method == "POST":
+        login_timestamp = request.POST.get('login_timestamp')
+        objs = models.UserProfile.objects.filter(login_timestamp=login_timestamp)
+        if objs:
+            obj = objs[0]
+            response.code = 200
+            response.data = {
+                'token': obj.token,
+                'id': obj.id,
+                'name': base64_encryption.b64decode(obj.name),
+                'head_portrait': obj.head_portrait
+            }
     else:
         response.code = 402
         response.msg = "请求异常"

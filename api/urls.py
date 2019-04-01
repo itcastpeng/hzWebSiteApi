@@ -5,8 +5,9 @@ from api.views_dir import upload_img, login, user, template, page_group, page, w
 
 urlpatterns = [
 
-    url(r'^upload_img$', upload_img.upload_img),                  # base64 上传分片
-    url(r'^login$', login.login),                  # base64 上传分片
+    url(r'^upload_img$', upload_img.upload_img),   # 上传图片
+    url(r'^login$', login.login),                  # 账号密码登录
+    url(r'^wechat_login$', login.wechat_login),    # 微信扫码登录
 
 
     # 用户管理
