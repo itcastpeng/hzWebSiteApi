@@ -201,6 +201,8 @@ def task_list_oper(request, oper_type, o_id):
                         response.data = {
                             'testCase': 1,
                             'id': 1,
+                            'email_user': email_user,
+                            'email_pwd': email_pwd,
                         }
                         break
                     else:
