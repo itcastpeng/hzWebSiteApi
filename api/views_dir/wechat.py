@@ -97,7 +97,7 @@ def updateUserInfo(openid, inviter_user_id, ret_obj):
         user_data['subscribe'] = subscribe
         user_data['name'] = encode_username
         user_data['openid'] = ret_obj.get('openid')
-        user_data['overdue_date'] = overdue_date
+        # user_data['overdue_date'] = overdue_date
         user_data['token'] = get_token()
         print("user_data --->", user_data)
         user_obj = models.UserProfile.objects.create(**user_data)
