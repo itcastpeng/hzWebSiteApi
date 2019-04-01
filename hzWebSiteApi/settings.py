@@ -183,4 +183,5 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'statics')]
 NoValidationTokenRoute = [
     "/api_hurong/task_list/save_task",
     "/api_hurong/task_list/get_task",
+    "/api/wechat/generate_qrcode"
 ]
