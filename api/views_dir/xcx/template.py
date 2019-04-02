@@ -11,31 +11,40 @@ from api.views_dir.page import page_base_data
 
 
 @account.is_token(models.ClientUserProfile)
-def template(request):
+def template(request, oper_type):
     response = Response.ResponseObj()
     if request.method == "GET":
-        form_data = {
-            'template_id': request.GET.get('template_id'),
-        }
-        print('form_data -->', form_data)
-        forms_obj = SelectForm(form_data)
-        if forms_obj.is_valid():
-            template_id = forms_obj.cleaned_data.get('template_id')
-            objs = models.Template.objects.filter(id=template_id)
+        if oper_type == "get_tabbar_data":
+            form_data = {
+                'template_id': request.GET.get('template_id'),
+            }
+            print('form_data -->', form_data)
+            forms_obj = SelectForm(form_data)
+            if forms_obj.is_valid():
+                template_id = forms_obj.cleaned_data.get('template_id')
+                objs = models.Template.objects.filter(id=template_id)
 
-            if objs:
-                #  查询成功 返回200 状态码
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = {
-                    'tab_bar_data': objs[0].tab_bar_data,
-                }
-                response.note = {
-                    'tab_bar_data': "底部导航数据"
-                }
-        else:
-            response.code = 402
-            response.msg = "请求异常"
-            response.data = json.loads(forms_obj.errors.as_json())
+                if objs:
+                    # 首页页面对象
+                    first_page_obj = models.Page.objects.filter(page_group__template_id=template_id)[0]
+                    response.code = 200
+                    response.msg = '查询成功'
+                    response.data = {
+                        'tab_bar_data': objs[0].tab_bar_data,
+                        'first_page_id': first_page_obj.id,
+                    }
+                    response.note = {
+                        'tab_bar_data': "底部导航数据"
+                    }
+            else:
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
+
+        # 获取页面数据
+        elif oper_type == "get_page_data":
+            pass
+
+
     return JsonResponse(response.__dict__)
 

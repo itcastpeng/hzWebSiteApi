@@ -36,7 +36,7 @@ urlpatterns = [
 
     # ------------------ 小程序管理 ------------------
     url(r'^xcx/login$', login.xcx_login),    # 小程序登录
-    url(r'^xcx/template$', xcx_template.template),  # 获取底部导航数据
+    url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
 
     # ------------------ 微信三方平台管理 ------------------
 
