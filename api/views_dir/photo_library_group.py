@@ -3,6 +3,7 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
+from django.db.models import Q
 
 from publicFunc.condition_com import conditionCom
 from api.forms.photo_library_group import AddForm, UpdateForm, SelectForm
@@ -18,7 +19,7 @@ def photo_library_group(request):
         if forms_obj.is_valid():
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            group_type = forms_obj.cleaned_data['group_type']
+            get_type = forms_obj.cleaned_data['get_type']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = 'create_datetime'
             # field_dict = {
@@ -28,13 +29,14 @@ def photo_library_group(request):
             # }
             # q = conditionCom(request, field_dict)
             # print('q -->', q)
+            q = Q()
 
-            if group_type == "system":  # 获取系统分组
-                objs = models.PhotoLibraryGroup.objects.filter(create_user_id__isnull=True)
-            elif group_type == "is_me":
-                objs = models.PhotoLibraryGroup.objects.filter(create_user_id=user_id)
+            if get_type == "system":  # 获取系统分组
+                q.add(Q(**{'create_user_id__isnull': True}), Q.AND)
+            elif get_type == "is_me":
+                q.add(Q(**{'create_user_id': user_id}), Q.AND)
 
-            objs = objs.order_by(order)
+            objs = models.PhotoLibraryGroup.objects.filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:

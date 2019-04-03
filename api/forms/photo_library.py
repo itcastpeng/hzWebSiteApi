@@ -70,6 +70,14 @@ class SelectForm(forms.Form):
         }
     )
 
+    get_type = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "数据类型不能为空",
+            'invalid': "分组类型错误"
+        }
+    )
+
     def clean_current_page(self):
         if 'current_page' not in self.data:
             current_page = 1
@@ -83,3 +91,10 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
+
+    def clean_get_type(self):
+        get_type = self.data.get('get_type')
+        if get_type not in ["system", "is_me"]:
+            self.add_error('name', '分组类型异常')
+        else:
+            return get_type

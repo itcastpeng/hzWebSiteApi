@@ -3,6 +3,7 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
+from django.db.models import Q
 
 from publicFunc.condition_com import conditionCom
 from api.forms.photo_library import AddForm, UpdateForm, SelectForm
@@ -18,6 +19,7 @@ def photo_library(request):
         if forms_obj.is_valid():
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
+            get_type = forms_obj.cleaned_data['get_type']
             # create_user_id = forms_obj.cleaned_data['create_user_id']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = 'create_datetime'
@@ -28,6 +30,13 @@ def photo_library(request):
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
+
+            if get_type == "system":  # 获取系统分组
+                q.add(Q(**{'create_user_id__isnull': True}), Q.AND)
+                # objs = models.PhotoLibrary.objects.filter(create_user_id__isnull=True)
+            elif get_type == "is_me":
+                q.add(Q(**{'create_user_id': user_id}), Q.AND)
+
             objs = models.PhotoLibrary.objects.filter(q).order_by(order)
             count = objs.count()
 
