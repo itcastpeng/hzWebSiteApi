@@ -2,9 +2,6 @@ from django.db import models
 import json
 
 
-# Create your models here.
-
-
 # 用户表
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128, null=True, blank=True)
@@ -136,3 +133,18 @@ class Page(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+
+# 图片库分组
+class PhotoLibraryGroup(models.Model):
+    name = models.CharField(verbose_name="分组名称", max_length=256)
+    parent = models.ForeignKey('self', verbose_name="父级id", null=True)  # 为空表示顶级分组
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)  # 创建用户为空，表示为系统分组
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 图片库
+class PhotoLibrary(models.Model):
+    img_url = models.CharField(verbose_name="图片地址", max_length=256)
+    group = models.ForeignKey('PhotoLibraryGroup', verbose_name="所属分组")
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)  # 创建用户为空，表示为系统分组
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

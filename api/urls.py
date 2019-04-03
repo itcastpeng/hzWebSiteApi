@@ -1,6 +1,6 @@
 
 from django.conf.urls import url
-from api.views_dir import upload_img, login, user, template, page_group, page, wechat
+from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group, photo_library
 from api.views_dir.xcx import template as xcx_template
 
 
@@ -28,6 +28,14 @@ urlpatterns = [
     # 页面管理
     url(r'^page/(?P<oper_type>\w+)/(?P<o_id>\d+)', page.page_oper),
     # url(r'^page$', page.page),
+
+    # 图片库分组管理
+    url(r'^photo_library_group/(?P<oper_type>\w+)/(?P<o_id>\d+)', photo_library_group.photo_library_group_oper),
+    url(r'^photo_library_group$', photo_library_group.photo_library_group),
+
+    # 图片库管理
+    url(r'^photo_library/(?P<oper_type>\w+)/(?P<o_id>\d+)', photo_library.photo_library_oper),
+    url(r'^photo_library$', photo_library.photo_library),
 
     # # ---------------- 公众号操作 ----------------
     url(r'^wechat/(?P<oper_type>\w+)$', wechat.wechat_oper),
