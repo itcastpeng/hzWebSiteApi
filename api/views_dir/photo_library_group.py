@@ -18,7 +18,7 @@ def photo_library_group(request):
         if forms_obj.is_valid():
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            create_user_id = forms_obj.cleaned_data['create_user_id']
+            group_type = forms_obj.cleaned_data['group_type']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = 'create_datetime'
             # field_dict = {
@@ -28,7 +28,13 @@ def photo_library_group(request):
             # }
             # q = conditionCom(request, field_dict)
             # print('q -->', q)
-            objs = models.PhotoLibraryGroup.objects.filter(create_user_id=create_user_id).order_by(order)
+
+            if group_type == "system":  # 获取系统分组
+                objs = models.PhotoLibraryGroup.objects.filter(create_user_id__isnull=True)
+            elif group_type == "is_me":
+                objs = models.PhotoLibraryGroup.objects.filter(create_user_id=user_id)
+
+            objs = objs.order_by(order)
             count = objs.count()
 
             if length != 0:

@@ -62,10 +62,11 @@ class SelectForm(forms.Form):
         }
     )
 
-    create_user_id = forms.IntegerField(
-        required=False,
+    group_type = forms.CharField(
+        required=True,
         error_messages={
-            'invalid': "用户id类型错误"
+            'required': "数据类型不能为空",
+            'invalid': "分组类型错误"
         }
     )
 
@@ -82,3 +83,10 @@ class SelectForm(forms.Form):
         else:
             length = int(self.data['length'])
         return length
+
+    def clean_group_type(self):
+        group_type = self.data.get('group_type')
+        if group_type not in ["system", "is_me"]:
+            self.add_error('name', '分组类型异常')
+        else:
+            return group_type
