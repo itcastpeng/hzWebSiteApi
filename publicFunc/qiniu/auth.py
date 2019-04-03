@@ -9,8 +9,8 @@ from hashlib import sha1
 
 from requests.auth import AuthBase
 
-from compat import urlparse, json, b
-from utils import urlsafe_base64_encode
+from publicFunc.qiniu.compat import urlparse, json, b
+from publicFunc.qiniu.utils import urlsafe_base64_encode
 
 # 上传策略，参数规格详见
 # https://developer.qiniu.com/kodo/manual/1206/put-policy
@@ -287,11 +287,4 @@ class QiniuMacRequestsAuth(AuthBase):
         return r
 
 
-if __name__ == '__main__':
-    access_key = "301hJQsD5JEg_jv1jasPSiD3qr-RvGNshnBNg3-x"
-    secret_key = "HVz2Z3FmODB6Ajom9e43z4wlMDp3fp7GwTo88xH5"
-
-    obj = Auth(access_key, secret_key)
-    ret = obj.upload_token("xcx_wgw_zhangcong")
-    print(ret)
 

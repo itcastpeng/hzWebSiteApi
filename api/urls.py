@@ -1,6 +1,7 @@
 
 from django.conf.urls import url
-from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group, photo_library
+from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
+    photo_library, qiniu
 from api.views_dir.xcx import template as xcx_template
 
 
@@ -10,6 +11,8 @@ urlpatterns = [
     url(r'^upload_img$', upload_img.upload_img),   # 上传图片
     url(r'^login$', login.login),                  # 账号密码登录
     url(r'^wechat_login$', login.wechat_login),    # 微信扫码登录
+    url(r'^qiniu/get_upload_token$', qiniu.get_upload_token),    # 获取七牛云上传token
+
 
     # ------------------ 后台管理 ------------------
     # 用户管理

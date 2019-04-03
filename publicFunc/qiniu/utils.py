@@ -6,7 +6,7 @@
 from hashlib import sha1
 from base64 import urlsafe_b64encode, urlsafe_b64decode
 from datetime import datetime
-from compat import b, s
+from publicFunc.qiniu.compat import b, s
 
 try:
     import zlib
