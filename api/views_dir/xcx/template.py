@@ -65,7 +65,5 @@ def template(request, oper_type):
             else:
                 response.code = 402
                 response.msg = "请求异常"
-
-
     return JsonResponse(response.__dict__)
 
