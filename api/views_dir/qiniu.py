@@ -25,11 +25,13 @@ def get_upload_token(request):
                 access_key = data.get('access_key')
                 secret_key = data.get('secret_key')
                 obj = Auth(access_key, secret_key)
-                ret = obj.upload_token("xcx_wgw_zhangcong")
-                print('ret -->', ret)
+                upload_token = obj.upload_token("xcx_wgw_zhangcong")
 
         response.code = 200
         response.msg = "获取成功"
+        response.data = {
+            'upload_token': upload_token
+        }
 
     return JsonResponse(response.__dict__)
 
