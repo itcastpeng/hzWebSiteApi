@@ -37,7 +37,7 @@ def photo_library(request):
             elif get_type == "is_me":
                 q.add(Q(**{'create_user_id': user_id}), Q.AND)
 
-            objs = models.PhotoLibrary.objects.filter(q).order_by(order)
+            objs = models.PhotoLibrary.objects.select_related('group').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -52,6 +52,7 @@ def photo_library(request):
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
+                    'group_id': obj.group_id,
                     'img_url': obj.img_url,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
@@ -64,6 +65,7 @@ def photo_library(request):
             }
             response.note = {
                 'id': "图片id",
+                'group_id': "分组id",
                 'img_url': '图片地址',
                 'create_datetime': '创建时间',
             }
