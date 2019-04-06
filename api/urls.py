@@ -1,7 +1,7 @@
 
 from django.conf.urls import url
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
-    photo_library, qiniu
+    photo_library, qiniu, compoment_library, compoment_library_class
 from api.views_dir.xcx import template as xcx_template
 
 
@@ -39,6 +39,14 @@ urlpatterns = [
     # 图片库管理
     url(r'^photo_library/(?P<oper_type>\w+)/(?P<o_id>\d+)', photo_library.photo_library_oper),
     url(r'^photo_library$', photo_library.photo_library),
+
+    # 组件库分类
+    url(r'^compoment_library_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', compoment_library_class.compoment_library_class_oper),
+    url(r'^compoment_library_class', compoment_library_class.compoment_library_class),
+
+    # 组件库
+    url(r'^compoment_library/(?P<oper_type>\w+)/(?P<o_id>\d+)', compoment_library.compoment_library_oper),
+    url(r'^compoment_library$', compoment_library.compoment_library),
 
     # # ---------------- 公众号操作 ----------------
     url(r'^wechat/(?P<oper_type>\w+)$', wechat.wechat_oper),

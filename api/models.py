@@ -148,3 +148,20 @@ class PhotoLibrary(models.Model):
     group = models.ForeignKey('PhotoLibraryGroup', verbose_name="所属分组")
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)  # 创建用户为空，表示为系统分组
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 组件库分类
+class CompomentLibraryClass(models.Model):
+    name = models.CharField(verbose_name="组件分类名称", max_length=256, null=True)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 组件库
+class CompomentLibrary(models.Model):
+    name = models.CharField(verbose_name="组件名称", max_length=256, null=True)
+    compoment_library_class = models.ForeignKey('CompomentLibraryClass', verbose_name="组件分类")
+    data = models.TextField(verbose_name="组件对应渲染到页面的数据")
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
