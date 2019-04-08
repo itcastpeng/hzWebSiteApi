@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from publicFunc.condition_com import conditionCom
-from api.forms.photo_library import AddForm, UpdateForm, SelectForm
+from api.forms.compoment_library import AddForm, UpdateForm, SelectForm
 import json
 
 
@@ -19,25 +19,19 @@ def compoment_library(request):
         if forms_obj.is_valid():
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            get_type = forms_obj.cleaned_data['get_type']
+            # get_type = forms_obj.cleaned_data['get_type']
             # create_user_id = forms_obj.cleaned_data['create_user_id']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = 'create_datetime'
             field_dict = {
-                'group_id': '',
+                'compoment_library_class_id': '',
                 'name': '__contains',
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
 
-            if get_type == "system":  # 获取系统分组
-                q.add(Q(**{'create_user_id__isnull': True}), Q.AND)
-                # objs = models.PhotoLibrary.objects.filter(create_user_id__isnull=True)
-            elif get_type == "is_me":
-                q.add(Q(**{'create_user_id': user_id}), Q.AND)
-
-            objs = models.PhotoLibrary.objects.select_related('group').filter(q).order_by(order)
+            objs = models.CompomentLibrary.objects.select_related('compoment_library_class').filter(is_delete=False).filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -52,8 +46,10 @@ def compoment_library(request):
                 #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
-                    'group_id': obj.group_id,
-                    'img_url': obj.img_url,
+                    'name': obj.name,
+                    'data': obj.data,
+                    'compoment_library_class_id': obj.compoment_library_class_id,
+                    'compoment_library_class_name': obj.compoment_library_class.name,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -64,9 +60,11 @@ def compoment_library(request):
                 'data_count': count
             }
             response.note = {
-                'id': "图片id",
-                'group_id': "分组id",
-                'img_url': '图片地址',
+                'id': "组件id",
+                'name': "组件名称",
+                'data': "组件数据",
+                'compoment_library_class_id': "组件分类id",
+                'compoment_library_class_name': "组件分类名称",
                 'create_datetime': '创建时间',
             }
         else:
@@ -82,18 +80,20 @@ def compoment_library_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     if request.method == "POST":
 
-        # 添加页面分组
+        # 添加
         if oper_type == "add":
             form_data = {
                 'create_user_id': user_id,
-                'group_id': request.POST.get('group_id'),
-                'img_url': request.POST.get('img_url'),
+                'name': request.POST.get('name'),
+                'compoment_library_class_id': request.POST.get('compoment_library_class_id'),
+                'data': request.POST.get('data'),
             }
+            print('form_data -->', form_data)
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-                obj = models.PhotoLibrary.objects.create(**forms_obj.cleaned_data)
+                obj = models.CompomentLibrary.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = "添加成功"
                 response.data = {'testCase': obj.id}
@@ -104,16 +104,14 @@ def compoment_library_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.PhotoLibrary.objects.filter(id=o_id, create_user_id=user_id)
+            objs = models.CompomentLibrary.objects.filter(id=o_id)
             if objs:
-                objs.delete()
-                # 待优化，删除的同时删除七牛云资源
+                objs.update(is_delete=True)
                 response.code = 200
                 response.msg = "删除成功"
             else:
                 response.code = 302
                 response.msg = '删除ID不存在'
-
     else:
         response.code = 402
         response.msg = "请求异常"

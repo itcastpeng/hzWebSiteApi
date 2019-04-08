@@ -164,4 +164,5 @@ class CompomentLibrary(models.Model):
     data = models.TextField(verbose_name="组件对应渲染到页面的数据")
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
