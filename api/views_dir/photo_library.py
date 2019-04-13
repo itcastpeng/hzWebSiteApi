@@ -106,21 +106,16 @@ def photo_library_oper(request, oper_type, o_id):
         elif oper_type == "delete":
             # 删除 ID
             form_data = {
-                'delete_id_list': request.POST.get('id_list')
+                'delete_id_list': request.POST.get('delete_id_list')
             }
-            forms_obj = AddForm(form_data)
+            print(request.POST)
+            forms_obj = DeleteForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过 -->", forms_obj.cleaned_data)
-                delete_id_list = request.POST.get('id_list')
-                # objs = models.PhotoLibrary.objects.filter(id=o_id, create_user_id=user_id)
-                # if objs:
-                #     objs.delete()
-                #     # 待优化，删除的同时删除七牛云资源
-                #     response.code = 200
-                #     response.msg = "删除成功"
-                # else:
-                #     response.code = 302
-                #     response.msg = '删除ID不存在'
+                delete_id_list = forms_obj.cleaned_data.get('delete_id_list')
+                models.PhotoLibrary.objects.filter(id__in=delete_id_list, create_user_id=user_id).delete()
+                response.code = 200
+                response.msg = "删除成功"
             else:
                 print("验证不通过")
                 response.code = 301

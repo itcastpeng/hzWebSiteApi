@@ -112,4 +112,7 @@ class DeleteForm(forms.Form):
     def clean_delete_id_list(self):
         delete_id_list = self.data.get('delete_id_list')
         delete_id_list = json.loads(delete_id_list)
-        return delete_id_list
+        if isinstance(delete_id_list, list):
+            return list(delete_id_list)
+        else:
+            self.add_error('delete_id_list', "删除id类型错误")
