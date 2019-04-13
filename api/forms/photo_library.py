@@ -50,7 +50,7 @@ class UpdateForm(forms.Form):
     def clean_group_id(self):
         group_id = self.data.get('group_id')
         create_user_id = self.data.get('create_user_id')
-        objs = models.PhotoLibraryGroup.objects.filter(create_user_id=create_user_id, group_id=group_id)
+        objs = models.PhotoLibraryGroup.objects.filter(create_user_id=create_user_id, id=group_id)
         if objs:
             return group_id
         else:

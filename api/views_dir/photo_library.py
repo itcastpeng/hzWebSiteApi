@@ -114,6 +114,7 @@ def photo_library_oper(request, oper_type, o_id):
                 print("验证通过 -->", forms_obj.cleaned_data)
                 update_id_list = forms_obj.cleaned_data.get('update_id_list')
                 group_id = forms_obj.cleaned_data.get('group_id')
+                print('group_id -->', group_id)
                 models.PhotoLibrary.objects.filter(
                     id__in=update_id_list,
                     create_user_id=user_id
