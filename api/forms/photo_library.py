@@ -32,7 +32,14 @@ class AddForm(forms.Form):
 
 # 更新
 class UpdateForm(forms.Form):
-    o_id = forms.IntegerField(
+    update_id_list = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "删除id不能为空"
+        }
+    )
+
+    group_id = forms.IntegerField(
         required=True,
         error_messages={
             'required': '分组id不能为空',
@@ -40,12 +47,22 @@ class UpdateForm(forms.Form):
         }
     )
 
-    name = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "分组名称不能为空"
-        }
-    )
+    def clean_group_id(self):
+        group_id = self.data.get('group_id')
+        create_user_id = self.data.get('create_user_id')
+        objs = models.PhotoLibraryGroup.objects.filter(create_user_id=create_user_id, group_id=group_id)
+        if objs:
+            return group_id
+        else:
+            self.add_error('update_id_list', "分组id不存在")
+
+    def clean_update_id_list(self):
+        update_id_list = self.data.get('update_id_list')
+        update_id_list = json.loads(update_id_list)
+        if isinstance(update_id_list, list):
+            return list(update_id_list)
+        else:
+            self.add_error('update_id_list', "修改id类型错误")
 
 
 # 判断是否是数字

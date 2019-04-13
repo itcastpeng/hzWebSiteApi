@@ -102,6 +102,28 @@ def photo_library_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+        elif oper_type == "update":
+            form_data = {
+                'create_user_id': user_id,
+                'update_id_list': request.POST.get('update_id_list'),
+                'group_id': request.POST.get('group_id')
+            }
+            print(request.POST)
+            forms_obj = UpdateForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过 -->", forms_obj.cleaned_data)
+                update_id_list = forms_obj.cleaned_data.get('update_id_list')
+                group_id = forms_obj.cleaned_data.get('group_id')
+                models.PhotoLibrary.objects.filter(
+                    id__in=update_id_list,
+                    create_user_id=user_id
+                ).update(group_id=group_id)
+                response.code = 200
+                response.msg = "修改成功"
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         elif oper_type == "delete":
             # 删除 ID
