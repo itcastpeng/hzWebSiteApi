@@ -1,6 +1,7 @@
 from django import forms
 
 from api import models
+import json
 
 
 # 添加
@@ -98,3 +99,17 @@ class SelectForm(forms.Form):
             self.add_error('name', '分组类型异常')
         else:
             return get_type
+
+
+class DeleteForm(forms.Form):
+    delete_id_list = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "删除id不能为空"
+        }
+    )
+
+    def clean_delete_id_list(self):
+        delete_id_list = self.data.get('delete_id_list')
+        delete_id_list = json.loads(delete_id_list)
+        return delete_id_list

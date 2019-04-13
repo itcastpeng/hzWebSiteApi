@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 
 from publicFunc.condition_com import conditionCom
-from api.forms.photo_library import AddForm, UpdateForm, SelectForm
+from api.forms.photo_library import AddForm, UpdateForm, SelectForm, DeleteForm
 import json
 
 
@@ -83,7 +83,7 @@ def photo_library_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     if request.method == "POST":
 
-        # 添加页面分组
+        # 添加
         if oper_type == "add":
             form_data = {
                 'create_user_id': user_id,
@@ -105,15 +105,26 @@ def photo_library_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            objs = models.PhotoLibrary.objects.filter(id=o_id, create_user_id=user_id)
-            if objs:
-                objs.delete()
-                # 待优化，删除的同时删除七牛云资源
-                response.code = 200
-                response.msg = "删除成功"
+            form_data = {
+                'delete_id_list': request.POST.get('id_list')
+            }
+            forms_obj = AddForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过 -->", forms_obj.cleaned_data)
+                delete_id_list = request.POST.get('id_list')
+                # objs = models.PhotoLibrary.objects.filter(id=o_id, create_user_id=user_id)
+                # if objs:
+                #     objs.delete()
+                #     # 待优化，删除的同时删除七牛云资源
+                #     response.code = 200
+                #     response.msg = "删除成功"
+                # else:
+                #     response.code = 302
+                #     response.msg = '删除ID不存在'
             else:
-                response.code = 302
-                response.msg = '删除ID不存在'
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
     else:
         response.code = 402
