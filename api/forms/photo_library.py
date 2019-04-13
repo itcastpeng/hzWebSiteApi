@@ -35,7 +35,7 @@ class UpdateForm(forms.Form):
     update_id_list = forms.CharField(
         required=True,
         error_messages={
-            'required': "删除id不能为空"
+            'required': "修改id不能为空"
         }
     )
 
