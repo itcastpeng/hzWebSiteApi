@@ -22,7 +22,8 @@ def photo_library(request):
             get_type = forms_obj.cleaned_data['get_type']
             # create_user_id = forms_obj.cleaned_data['create_user_id']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
-            order = 'create_datetime'
+            # order = 'create_datetime'
+            order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'group_id': '',
                 'name': '__contains',
