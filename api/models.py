@@ -145,7 +145,7 @@ class PhotoLibraryGroup(models.Model):
 # 图片库
 class PhotoLibrary(models.Model):
     img_url = models.CharField(verbose_name="图片地址", max_length=256)
-    group = models.ForeignKey('PhotoLibraryGroup', verbose_name="所属分组")
+    group = models.ForeignKey('PhotoLibraryGroup', verbose_name="所属分组", null=True)
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)  # 创建用户为空，表示为系统分组
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

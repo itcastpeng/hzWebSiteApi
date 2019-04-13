@@ -20,6 +20,7 @@ def photo_library(request):
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             get_type = forms_obj.cleaned_data['get_type']
+            no_group = request.GET.get('no_group')
             # create_user_id = forms_obj.cleaned_data['create_user_id']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             # order = 'create_datetime'
@@ -37,6 +38,9 @@ def photo_library(request):
                 # objs = models.PhotoLibrary.objects.filter(create_user_id__isnull=True)
             elif get_type == "is_me":
                 q.add(Q(**{'create_user_id': user_id}), Q.AND)
+
+            if no_group:
+                q.add(Q(**{'group_id__isnull': True}), Q.AND)
 
             objs = models.PhotoLibrary.objects.select_related('group').filter(q).order_by(order)
             count = objs.count()

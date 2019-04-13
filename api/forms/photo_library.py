@@ -40,7 +40,7 @@ class UpdateForm(forms.Form):
     )
 
     group_id = forms.IntegerField(
-        required=True,
+        required=False,
         error_messages={
             'required': '分组id不能为空',
             'invalid': "参数数据类型错误"
