@@ -153,6 +153,7 @@ def wechat(request):
                 if event == "subscribe":
                     event_key = event_key.split("qrscene_")[-1]
                 event_key = json.loads(event_key)
+                print('event_key -->', event_key)
                 timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
                 update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
