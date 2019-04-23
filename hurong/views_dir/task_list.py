@@ -285,7 +285,9 @@ def task_list_oper(request, oper_type, o_id):
                 db=13,
                 password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
             )
-            response.data = redis_obj1.rpop("xiaohongshu_xiala_keywords_list")
+            keywords = redis_obj1.rpop("xiaohongshu_xiala_keywords_list")
+            if keywords:
+                response.data = keywords.decode('utf8')
         else:
             response.code = 402
             response.msg = "请求异常"
