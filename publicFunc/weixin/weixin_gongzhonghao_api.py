@@ -57,12 +57,11 @@ class WeChatApi(WeixinApiPublic):
         self.access_token = json.loads(ret.text)["access_token"]
         print(self.access_token)
 
-        data = {
-            "APPID": self.APPID,
-            "APPSECRET": self.APPSECRET,
-            "access_token": self.access_token,
-            "create_datetime": int(time.time())
-        }
+        with open(self.wechat_data_path, "r", encoding="utf8") as f:
+            data = json.loads(f.read())
+            data['access_token'] = self.access_token
+            data['create_datetime'] = self.create_datetime
+
         print(data)
         with open(self.wechat_data_path, "w", encoding="utf8") as f:
             f.write(json.dumps(data))
