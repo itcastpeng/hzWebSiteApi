@@ -104,7 +104,8 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
 
                 query = []
                 for keywords in keywords_list:
-                    if not models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords):
+                    keywords = keywords.strip()
+                    if keywords and not models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords):
                         query.append(
                             models.XiaohongshuXiaLaKeywords(create_user_id=create_user_id, keywords=keywords)
                         )
