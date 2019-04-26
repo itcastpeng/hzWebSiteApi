@@ -34,7 +34,7 @@ def xiaohongshu_xiala_update_data():
         password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
     )
     redis_key = "xiaohongshu_xiala_data"
-    for _ in redis_obj.llen(redis_key):
+    for _ in range(redis_obj.llen(redis_key)):
         item = redis_obj.rpop(redis_key).decode('utf8')
         keywords = item['keywords']
         objs = models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords)
