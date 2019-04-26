@@ -144,8 +144,55 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
     else:
         # 下拉词详情
         if oper_type == "detail":
-            objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(parent_id=o_id).values_list('keywords')
-            print('objs -->', objs)
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                user_id = request.GET.get('user_id')
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'id': '',
+                    'keywords': '__contains',
+                    'create_datetime': '',
+                }
+
+                q = conditionCom(request, field_dict)
+
+                print('q -->', q)
+                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(q).order_by(order)
+                count = objs.count()
+
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+                    #  将查询出来的数据 加入列表
+                    ret_data.append({
+                        'id': obj.id,
+                        'keywords': obj.keywords,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+                #  查询成功 返回200 状态码
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'data_count': count,
+                }
+                response.note = {
+                    'id': "下拉词id",
+                    'keywords': "搜索词",
+                    'create_datetime': "创建时间",
+                }
+            else:
+                print("forms_obj.errors -->", forms_obj.errors)
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
