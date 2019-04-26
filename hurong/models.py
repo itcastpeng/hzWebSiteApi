@@ -92,6 +92,7 @@ class XiaohongshuXiaLaKeywords(models.Model):
     xialaci_num = models.CharField(verbose_name="下拉词数", max_length=128, null=True, blank=True)
     create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    update_datetime = models.DateTimeField(verbose_name="更新时间", auto_now_add=True)
 
 
 # 小红书下拉词数据管理
