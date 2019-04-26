@@ -104,12 +104,13 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
 
                 query = []
                 for keywords in keywords_list:
-                    query.append(
-                        models.XiaohongshuXiaLaKeywords(create_user_id=create_user_id, keywords=keywords)
-                    )
-                    if len(query) > 500:
-                        models.XiaohongshuXiaLaKeywords.objects.bulk_create(query)
-                        query = []
+                    if not models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords):
+                        query.append(
+                            models.XiaohongshuXiaLaKeywords(create_user_id=create_user_id, keywords=keywords)
+                        )
+                        if len(query) > 500:
+                            models.XiaohongshuXiaLaKeywords.objects.bulk_create(query)
+                            query = []
                 if len(query) > 0:
                     models.XiaohongshuXiaLaKeywords.objects.bulk_create(query)
 
