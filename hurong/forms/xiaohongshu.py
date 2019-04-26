@@ -66,7 +66,7 @@ class AddForm(forms.Form):
 
     def clean_keywords_list(self):
         keywords_list = self.data['keywords_list']
-        keywords_list = json.loads(keywords_list.split())
+        keywords_list = keywords_list.split()
         print('keywords_list -->', keywords_list)
         if isinstance(keywords_list, list):
             return list(keywords_list)
