@@ -22,6 +22,7 @@ django.setup()
 from hurong import models
 from publicFunc.send_email import SendEmail
 import redis
+import json
 
 # 更新小红书下拉数据
 @app.task
@@ -35,7 +36,7 @@ def xiaohongshu_xiala_update_data():
     )
     redis_key = "xiaohongshu_xiala_data"
     for _ in range(redis_obj.llen(redis_key)):
-        item = redis_obj.rpop(redis_key).decode('utf8')
+        item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
         keywords = item['keywords']
         objs = models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords)
         if objs:
