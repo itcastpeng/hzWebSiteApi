@@ -16,13 +16,41 @@ project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
 import django
-
 django.setup()
 
 
 from hurong import models
 from publicFunc.send_email import SendEmail
+import redis
 
+# 更新小红书下拉数据
+@app.task
+def xiaohongshu_xiala_update_data():
+    # 将redis中存储的下拉数据存储到数据库中
+    redis_obj = redis.StrictRedis(
+        host='spider_redis',
+        port=1111,
+        db=13,
+        password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
+    )
+    redis_key = "xiaohongshu_xiala_data"
+    for _ in redis_obj.llen(redis_key):
+        item = redis_obj.rpop(redis_key).decode('utf8')
+        keywords = item['keywords']
+        objs = models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords)
+        if objs:
+            xialaci_num = 0
+            for index, i in enumerate(item['data']):
+                xialaci_num += 1
+                xialaci = i['text'] + " " + i['desc']
+                if not models.XiaohongshuXiaLaKeywordsChildren.objects.filter(keywords=xialaci):
+                    models.XiaohongshuXiaLaKeywordsChildren.objects.create(keywords=keywords, parent=objs[0])
+            objs.update(
+                status=2,
+                biji_num=item['data'][0]['desc'],
+                xialaci_num=xialaci_num,
+                update_datetime=datetime.datetime.now()
+            )
 
 # 发送邮件，每间隔5分钟一次
 @app.task
