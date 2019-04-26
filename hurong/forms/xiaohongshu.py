@@ -3,6 +3,7 @@ from django import forms
 from hurong import models
 from publicFunc import account
 import re
+import json
 
 
 # 判断是否是数字
@@ -36,7 +37,7 @@ class SelectForm(forms.Form):
         return length
 
 
-# 添加
+# 禁词检测
 class CheckForbiddenTextForm(forms.Form):
     context = forms.CharField(
         required=True,
@@ -44,6 +45,33 @@ class CheckForbiddenTextForm(forms.Form):
             'required': "检测文本不能为空",
         }
     )
+
+
+# 添加
+class AddForm(forms.Form):
+    create_user_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "创建人不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+
+    keywords_list = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "下拉词列表不能为空"
+        }
+    )
+
+    def clean_keywords_list(self):
+        keywords_list = self.data['keywords_list']
+
+        keywords_list = json.loads(keywords_list)
+        if isinstance(keywords_list, list):
+            return list(keywords_list)
+        else:
+            self.add_error('keywords_list', "下拉词类型错误")
 
 
 # 修改用户

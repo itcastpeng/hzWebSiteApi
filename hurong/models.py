@@ -80,4 +80,23 @@ class TaskInfo(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 小红书下拉词管理
+class XiaohongshuXiaLaKeywords(models.Model):
+    keywords = models.CharField(verbose_name="搜索词", max_length=128)
+    status_choices = (
+        (1, "未查询"),
+        (2, "已查询"),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
+    biji_num = models.CharField(verbose_name="笔记数", max_length=128, null=True, blank=True)
+    xialaci_num = models.CharField(verbose_name="下拉词数", max_length=128, null=True, blank=True)
+    create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 小红书下拉词数据管理
+class XiaohongshuXiaLaKeywordsChildren(models.Model):
+    parent = models.ForeignKey("XiaohongshuXiaLaKeywords", verbose_name="搜索词")
+    keywords = models.CharField(verbose_name="搜索词", max_length=128)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
