@@ -27,7 +27,7 @@ import json
 # 更新小红书下拉数据
 @app.task
 def xiaohongshu_xiala_update_data():
-    # 将redis中存储的下拉数据存储到数据库中
+    # 1、将redis中存储的下拉数据存储到数据库中
     redis_obj = redis.StrictRedis(
         host='spider_redis',
         port=1111,
@@ -52,6 +52,13 @@ def xiaohongshu_xiala_update_data():
                 xialaci_num=xialaci_num,
                 update_datetime=datetime.datetime.now()
             )
+
+    # 2、加入redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
+    redis_key = "xiaohongshu_xiala_keywords_list"
+    if redis_obj.llen(redis_key) == 0:
+        objs = models.XiaohongshuXiaLaKeywords.objects.filter(status=1)
+        for obj in objs:
+            redis_obj.lpush(redis_key, obj.keywords)
 
 # 发送邮件，每间隔5分钟一次
 @app.task
