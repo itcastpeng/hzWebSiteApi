@@ -52,6 +52,7 @@ def xiaohongshuxila(request):
                     'xialaci_num': obj.xialaci_num,
                     'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    'update_datetime': obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -70,6 +71,7 @@ def xiaohongshuxila(request):
                 'send_email_content': "发送邮件内容",
                 'create_user__username': "创建人",
                 'create_datetime': "创建时间",
+                'update_datetime': "更新时间",
 
             }
         else:
