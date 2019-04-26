@@ -84,7 +84,7 @@ class TaskInfo(models.Model):
 class XiaohongshuXiaLaKeywords(models.Model):
     keywords = models.CharField(verbose_name="搜索词", max_length=128)
     status_choices = (
-        (1, "未查询"),
+        (1, "查询中"),
         (2, "已查询"),
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
