@@ -45,7 +45,7 @@ def xiaohongshu_xiala_update_data():
                 xialaci_num += 1
                 xialaci = i['text'] + " " + i['desc']
                 if not models.XiaohongshuXiaLaKeywordsChildren.objects.filter(keywords=xialaci):
-                    models.XiaohongshuXiaLaKeywordsChildren.objects.create(keywords=keywords, parent=objs[0])
+                    models.XiaohongshuXiaLaKeywordsChildren.objects.create(keywords=xialaci, parent=objs[0])
             objs.update(
                 status=2,
                 biji_num=item['data'][0]['desc'],

@@ -142,6 +142,11 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                     response.msg = "该任务在操作中或者已完成，不能删除"
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+        # 下拉词详情
+        if oper_type == "detail":
+            pass
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
     return JsonResponse(response.__dict__)
