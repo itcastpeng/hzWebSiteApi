@@ -160,7 +160,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                 q = conditionCom(request, field_dict)
 
                 print('q -->', q)
-                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(q).order_by(order)
+                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(parent_id=o_id).filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:
