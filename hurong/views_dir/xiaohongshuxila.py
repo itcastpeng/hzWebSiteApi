@@ -144,7 +144,8 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
     else:
         # 下拉词详情
         if oper_type == "detail":
-            pass
+            objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(parent_id=o_id).values_list('keywords')
+            print('objs -->', objs)
 
         else:
             response.code = 402
