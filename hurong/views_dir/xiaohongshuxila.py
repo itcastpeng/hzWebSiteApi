@@ -25,6 +25,7 @@ def xiaohongshuxila(request):
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
+                'status': '',
                 'keywords': '__contains',
                 'create_datetime': '',
             }
