@@ -43,6 +43,9 @@ def xiaohongshuxila(request):
             ret_data = []
             for obj in objs:
                 #  将查询出来的数据 加入列表
+                update_datetime = ""
+                if obj.update_datetime:
+                    update_datetime = obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S')
                 ret_data.append({
                     'id': obj.id,
                     'keywords': obj.keywords,
@@ -52,7 +55,7 @@ def xiaohongshuxila(request):
                     'xialaci_num': obj.xialaci_num,
                     'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'update_datetime': obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    'update_datetime': update_datetime,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
