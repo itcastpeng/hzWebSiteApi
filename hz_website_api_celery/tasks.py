@@ -53,7 +53,7 @@ def xiaohongshu_xiala_update_data():
                 update_datetime=datetime.datetime.now()
             )
 
-    # 2、加入redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
+    # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_xiala_keywords_list"
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuXiaLaKeywords.objects.filter(status=1)
