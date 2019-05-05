@@ -111,7 +111,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     print(keywords, url)
                     if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url):
                         query.append(
-                            models.XiaohongshuXiaLaKeywords(
+                            models.XiaohongshuFugai(
                                 create_user_id=create_user_id,
                                 keywords=keywords,
                                 url=url
