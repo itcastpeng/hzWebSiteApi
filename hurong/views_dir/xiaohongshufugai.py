@@ -108,6 +108,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 for item in keywords_list:
                     print('item -->', item)
                     keywords, url = item.strip().split()
+                    print(keywords, url)
                     if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url):
                         query.append(
                             models.XiaohongshuXiaLaKeywords(
