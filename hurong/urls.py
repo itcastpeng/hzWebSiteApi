@@ -1,6 +1,6 @@
 
 from django.conf.urls import url
-from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila
+from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, xiaohongshufugai
 
 
 urlpatterns = [
@@ -30,5 +30,9 @@ urlpatterns = [
     # 小红书下拉
     url(r'^xiaohongshuxiala/(?P<oper_type>\w+)/(?P<o_id>\d+)', xiaohongshuxila.xiaohongshuxila_oper),
     url(r'^xiaohongshuxiala', xiaohongshuxila.xiaohongshuxila),
+
+    # 小红书覆盖查询
+    url(r'^xiaohongshufugai/(?P<oper_type>\w+)/(?P<o_id>\d+)', xiaohongshufugai.xiaohongshufugai_oper),
+    url(r'^xiaohongshufugai', xiaohongshufugai.xiaohongshufugai),
 
 ]

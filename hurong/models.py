@@ -101,3 +101,24 @@ class XiaohongshuXiaLaKeywordsChildren(models.Model):
     keywords = models.CharField(verbose_name="搜索词", max_length=128)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+
+# 小红书查覆盖
+class XiaohongshuFugai(models.Model):
+    keywords = models.CharField(verbose_name="搜索词", max_length=256)
+    url = models.CharField(verbose_name="匹配链接", max_length=256)
+    status_choices = (
+        (1, "查询中"),
+        (2, "已查询"),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
+    create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
+
+
+# 小红书查覆盖详细
+class XiaohongshuFugaiDetail(models.Model):
+    keywords = models.ForeignKey('XiaohongshuFugai', verbose_name="任务词")
+    is_shoulu = models.BooleanField(verbose_name="是否收录")
+    biji_num = models.CharField(verbose_name="笔记数", max_length=128, null=True, blank=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
