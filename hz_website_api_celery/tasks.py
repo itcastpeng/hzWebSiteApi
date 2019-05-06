@@ -60,6 +60,40 @@ def xiaohongshu_xiala_update_data():
         for obj in objs:
             redis_obj.lpush(redis_key, obj.keywords)
 
+
+# 更新小红书查覆盖数据
+@app.task
+def xiaohongshu_fugai_update_data():
+    # 1、将redis中存储的覆盖数据存储到数据库中
+    redis_obj = redis.StrictRedis(
+        host='spider_redis',
+        port=1111,
+        db=13,
+        password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
+    )
+    redis_key = "xiaohongshu_fugai_data"
+
+    for _ in range(redis_obj.llen(redis_key)):
+        item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
+        keywords = item['keywords']
+
+        objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
+        for obj in objs:
+            page_id_list = item['page_id_list']
+            for item in page_id_list:
+                if item['id'] in obj.url:
+                    obj.rank = item['rank']
+                    obj.status = 2
+                    obj.is_shoulu = True
+                    obj.save()
+
+    # # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
+    # redis_key = "xiaohongshu_fugai_keywords_list"
+    # if redis_obj.llen(redis_key) == 0:
+    #     objs = models.XiaohongshuFugai.objects.all()
+    #     for obj in objs:
+    #         redis_obj.lpush(redis_key, obj.keywords)
+
 # 发送邮件，每间隔5分钟一次
 @app.task
 def hurong_send_email():
