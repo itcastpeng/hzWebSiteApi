@@ -96,12 +96,16 @@ def xiaohongshu_fugai_update_data():
             #     obj.rank = 0
             obj.save()
 
-    # # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
-    # redis_key = "xiaohongshu_fugai_keywords_list"
-    # if redis_obj.llen(redis_key) == 0:
-    #     objs = models.XiaohongshuFugai.objects.all()
-    #     for obj in objs:
-    #         redis_obj.lpush(redis_key, obj.keywords)
+    # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
+    redis_key = "xiaohongshu_fugai_keywords_list"
+    if redis_obj.llen(redis_key) == 0:
+        objs = models.XiaohongshuFugai.objects.all()
+        for obj in objs:
+            item = {
+                "keywords": obj.keywords,
+                "url": obj.url,
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
 
 # 发送邮件，每间隔5分钟一次
 @app.task
