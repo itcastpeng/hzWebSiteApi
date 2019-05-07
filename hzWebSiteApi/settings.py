@@ -184,5 +184,6 @@ NoValidationTokenRoute = [
     "/api_hurong/task_list/save_task",
     "/api_hurong/task_list/get_task",
     "/api_hurong/task_list/get_xiala_keywords",
+    "/api_hurong/xiaohongshufugai/get_task",
     "/api/wechat/login_qrcode"
 ]
