@@ -80,9 +80,13 @@ def xiaohongshu_fugai_update_data():
         total_count = item['total_count']
 
         objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
-        # objs.update(biji_num=total_count)
         for obj in objs:
             flag = False
+            item_data = {
+                'rank': 0,
+                'biji_num': total_count,
+                'update_datetime': datetime.datetime.now(),
+            }
             for item in page_id_list:
                 obj.biji_num = total_count
                 if item['id'] in obj.url:
@@ -91,25 +95,21 @@ def xiaohongshu_fugai_update_data():
                     obj.status = 2
                     obj.is_shoulu = True
                     obj.update_datetime = datetime.datetime.now()
+                    item_data['rank'] = item['rank']
 
-                    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-                    objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
-                    if objs:    # 已经存在
-                        objs.update(
-                            rank=item['rank'],
-                            biji_num=total_count,
-                            update_datetime=datetime.datetime.now()
-                        )
-                    else:       # 不存在
-                        models.XiaohongshuFugaiDetail.objects.create(
-                            keywords=obj,
-                            rank=item['rank'],
-                            biji_num=total_count,
-                            update_datetime=datetime.datetime.now()
-                        )
-            # if int(item['rank']) == 1000 and not flag:
-            #     obj.rank = 0
-            obj.save()
+                obj.save()
+            if flag:
+                pass
+            else:
+                pass
+
+            now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
+            if objs:  # 已经存在
+                objs.update(**item_data)
+            else:  # 不存在
+                item_data['keywords'] = obj
+                models.XiaohongshuFugaiDetail.objects.create(**item_data)
 
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_fugai_keywords_list"
