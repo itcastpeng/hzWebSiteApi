@@ -92,6 +92,21 @@ def xiaohongshu_fugai_update_data():
                     obj.is_shoulu = True
                     obj.update_datetime = datetime.datetime.now()
 
+                    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
+                    if objs:    # 已经存在
+                        objs.update(
+                            rank=item['rank'],
+                            biji_num=total_count,
+                            update_datetime=datetime.datetime.now()
+                        )
+                    else:       # 不存在
+                        models.XiaohongshuFugaiDetail.objects.create(
+                            keywords=obj,
+                            rank=item['rank'],
+                            biji_num=total_count,
+                            update_datetime=datetime.datetime.now()
+                        )
             # if int(item['rank']) == 1000 and not flag:
             #     obj.rank = 0
             obj.save()

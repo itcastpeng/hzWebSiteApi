@@ -125,3 +125,4 @@ class XiaohongshuFugaiDetail(models.Model):
     rank = models.CharField(verbose_name="排名", max_length=128, null=True, blank=True)
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
