@@ -76,10 +76,12 @@ def xiaohongshu_fugai_update_data():
     for _ in range(redis_obj.llen(redis_key)):
         item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
         keywords = item['keywords']
+        page_id_list = item['page_id_list']
+        total_count = item['total_count']
 
         objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
+        objs.update(biji_num=total_count)
         for obj in objs:
-            page_id_list = item['page_id_list']
             for item in page_id_list:
                 if item['id'] in obj.url:
                     obj.rank = item['rank']
