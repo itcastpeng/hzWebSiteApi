@@ -112,7 +112,7 @@ class XiaohongshuFugai(models.Model):
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
     rank = models.CharField(verbose_name="排名", max_length=128, null=True, blank=True)
-    biji_num = models.CharField(verbose_name="笔记数", max_length=128, null=True, blank=True)
+    biji_num = models.SmallIntegerField(verbose_name="笔记数", default=0)
     is_shoulu = models.BooleanField(verbose_name="是否收录", default=False)
     create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
