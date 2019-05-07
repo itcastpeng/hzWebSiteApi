@@ -91,8 +91,8 @@ def xiaohongshu_fugai_update_data():
                     obj.status = 2
                     obj.is_shoulu = True
 
-            if int(item['rank']) == 1000 and not flag:
-                obj.rank = 0
+            # if int(item['rank']) == 1000 and not flag:
+            #     obj.rank = 0
             obj.save()
 
     # # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
