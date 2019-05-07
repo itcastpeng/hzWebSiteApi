@@ -217,7 +217,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             )
             item = redis_obj1.rpop("xiaohongshu_fugai_keywords_list")
             if item:
-                response.data = json.loads(item)
+                response.data = json.loads(item.decode('utf8'))
         else:
             response.code = 402
             response.msg = "请求异常"
