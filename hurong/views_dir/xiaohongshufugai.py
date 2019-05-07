@@ -184,6 +184,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                         'id': obj.id,
                         'keywords': obj.keywords.keywords,
                         'url': obj.keywords.url,
+                        'rank': obj.rank,
                         'biji_num': obj.biji_num,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
@@ -198,6 +199,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     'id': "下拉词id",
                     'keywords': "搜索词",
                     'url': "匹配链接",
+                    'rank': "排名",
                     'biji_num': "笔记数",
                     'create_datetime': "创建时间",
                 }
