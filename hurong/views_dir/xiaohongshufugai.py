@@ -171,10 +171,10 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     keywords__keywords=keywords,
                     keywords__url=url,
                     update_datetime__gt=five_minutes_ago_data
-                )
+                ).order_by('-create_datetime')
 
                 is_selected = False
-                if objs:  # 说明已经找到排名了
+                if objs and objs[0].rank > 0:  # 说明已经找到排名了
                     is_selected = True
 
                 response.code = 200
