@@ -90,6 +90,7 @@ def xiaohongshu_fugai_update_data():
             for item in page_id_list:
                 obj.biji_num = total_count
                 obj.update_datetime = datetime.datetime.now()
+                obj.rank = 0
                 obj.status = 2
                 if item['id'] in obj.url:
                     flag = True
