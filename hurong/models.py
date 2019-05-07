@@ -111,7 +111,7 @@ class XiaohongshuFugai(models.Model):
         (2, "已查询"),
     )
     status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
-    rank = models.CharField(verbose_name="排名", max_length=128, null=True, blank=True)
+    rank = models.IntegerField(verbose_name="排名", default=0)
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     is_shoulu = models.BooleanField(verbose_name="是否收录", default=False)
     create_user = models.ForeignKey("UserProfile", verbose_name="添加任务的人")
@@ -122,7 +122,7 @@ class XiaohongshuFugai(models.Model):
 # 小红书查覆盖详细
 class XiaohongshuFugaiDetail(models.Model):
     keywords = models.ForeignKey('XiaohongshuFugai', verbose_name="任务词")
-    rank = models.CharField(verbose_name="排名", max_length=128, null=True, blank=True)
+    rank = models.IntegerField(verbose_name="排名", default=0)
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
