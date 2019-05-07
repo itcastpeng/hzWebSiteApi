@@ -90,6 +90,7 @@ def xiaohongshu_fugai_update_data():
                     obj.rank = item['rank']
                     obj.status = 2
                     obj.is_shoulu = True
+                    obj.update_datetime = datetime.datetime.now()
 
             # if int(item['rank']) == 1000 and not flag:
             #     obj.rank = 0
