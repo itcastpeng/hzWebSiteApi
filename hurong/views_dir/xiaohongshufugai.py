@@ -187,6 +187,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                         'rank': obj.rank,
                         'biji_num': obj.biji_num,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                        'update_datetime': obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
                 #  查询成功 返回200 状态码
                 response.code = 200
@@ -202,6 +203,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     'rank': "排名",
                     'biji_num': "笔记数",
                     'create_datetime': "创建时间",
+                    'update_datetime': "更新时间",
                 }
             else:
                 print("forms_obj.errors -->", forms_obj.errors)
