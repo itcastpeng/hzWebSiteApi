@@ -140,3 +140,20 @@ class TestForm(forms.Form):
             if not re.match(r'\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}', send_email):
                 self.add_error('send_email_list', '存在异常邮箱：{}'.format(send_email))
         return list(set(send_email_list))
+
+
+# 手机端当前任务是否已经查询到排名
+class IsSelectedRankForm(forms.Form):
+    keywords = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "关键词不能为空",
+        }
+    )
+
+    url = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "文章链接不能为空",
+        }
+    )

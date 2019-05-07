@@ -5,11 +5,12 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshufugai import CheckForbiddenTextForm, SelectForm, AddForm
+from hurong.forms.xiaohongshufugai import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm
 from django.db.models import Q
 import redis
 import json
 import requests
+import datetime
 
 
 @account.is_token(models.UserProfile)
@@ -210,6 +211,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
         elif oper_type == "get_task":
             redis_obj1 = redis.StrictRedis(
                 host='spider_redis',
@@ -220,6 +222,43 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             item = redis_obj1.rpop("xiaohongshu_fugai_keywords_list")
             if item:
                 response.data = json.loads(item.decode('utf8'))
+
+        # 手机端当前任务是否已经查询到排名
+        elif oper_type == "is_selected_rank":
+            form_data = {
+                'keywords': request.GET.get('keywords'),
+                'url': request.POST.get('url')
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = IsSelectedRankForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过")
+
+                keywords = forms_obj.cleaned_data.get('keywords')
+                url = forms_obj.cleaned_data.get('url')
+
+                # 5分钟之前的时间
+                five_minutes_ago_data = datetime.datetime.now() - datetime.timedelta(minutes=5)
+                objs = models.XiaohongshuFugaiDetail.objects.select_related('keywords').filter(
+                    keywords__keywords=keywords,
+                    keywords__url=url,
+                    update_datetime__gt=five_minutes_ago_data
+                )
+
+                is_selected = False
+                if objs:    # 说明已经找到排名了
+                    is_selected = True
+
+                response.code = 200
+                response.data = {
+                    "is_selected": is_selected
+                }
+                response.msg = "查询成功"
+
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
         else:
             response.code = 402
             response.msg = "请求异常"
