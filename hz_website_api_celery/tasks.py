@@ -82,12 +82,17 @@ def xiaohongshu_fugai_update_data():
         objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
         objs.update(biji_num=total_count)
         for obj in objs:
+            flag = False
             for item in page_id_list:
                 if item['id'] in obj.url:
+                    flag = True
                     obj.rank = item['rank']
                     obj.status = 2
                     obj.is_shoulu = True
                     obj.save()
+            if int(item['rank']) == 1000 and not flag:
+                obj.rank = 0
+                obj.save()
 
     # # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
     # redis_key = "xiaohongshu_fugai_keywords_list"
