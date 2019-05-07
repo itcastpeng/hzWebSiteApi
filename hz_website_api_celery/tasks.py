@@ -83,9 +83,8 @@ def xiaohongshu_fugai_update_data():
         # objs.update(biji_num=total_count)
         for obj in objs:
             flag = False
-            if not obj.biji_num and total_count == 0:
-                obj.biji_num = total_count
             for item in page_id_list:
+                obj.biji_num = total_count
                 if item['id'] in obj.url:
                     flag = True
                     obj.rank = item['rank']
