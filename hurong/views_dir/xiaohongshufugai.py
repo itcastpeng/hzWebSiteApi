@@ -208,7 +208,16 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
-
+        elif oper_type == "get_task":
+            redis_obj1 = redis.StrictRedis(
+                host='spider_redis',
+                port=1111,
+                db=13,
+                password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
+            )
+            item = redis_obj1.rpop("xiaohongshu_fugai_keywords_list")
+            if item:
+                response.data = json.loads(item)
         else:
             response.code = 402
             response.msg = "请求异常"
