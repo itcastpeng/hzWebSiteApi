@@ -123,5 +123,5 @@ class XiaohongshuFugai(models.Model):
 class XiaohongshuFugaiDetail(models.Model):
     keywords = models.ForeignKey('XiaohongshuFugai', verbose_name="任务词")
     rank = models.CharField(verbose_name="排名", max_length=128, null=True, blank=True)
-    biji_num = models.CharField(verbose_name="笔记数", max_length=128, null=True, blank=True)
+    biji_num = models.SmallIntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
