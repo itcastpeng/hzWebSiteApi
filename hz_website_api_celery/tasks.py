@@ -54,11 +54,15 @@ def xiaohongshu_xiala_update_data():
             )
 
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
-    redis_key = "xiaohongshu_xiala_keywords_list"
+    redis_key = "xiaohongshu_task_list"
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuXiaLaKeywords.objects.filter(status=1)
         for obj in objs:
-            redis_obj.lpush(redis_key, obj.keywords)
+            item = {
+                "keywords": obj.keywords,
+                "task_type": "xiaohongshu_xiala"
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
 
 
 # 更新小红书查覆盖数据
@@ -113,7 +117,7 @@ def xiaohongshu_fugai_update_data():
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
 
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
-    redis_key = "xiaohongshu_fugai_keywords_list"
+    redis_key = "xiaohongshu_task_list"
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all()
         for obj in objs:
@@ -125,6 +129,7 @@ def xiaohongshu_fugai_update_data():
                     "keywords": obj.keywords,
                     "url": obj.url,
                     "select_type": obj.select_type,
+                    "task_type": "xiaohongshu_fugai"
                 }
                 redis_obj.lpush(redis_key, json.dumps(item))
 
