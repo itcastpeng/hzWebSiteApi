@@ -49,9 +49,14 @@ def xiaohongshufugai(request):
                 update_datetime = ""
                 if obj.update_datetime:
                     update_datetime = obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+                keywords = "({select_type}) {keywords}".format(
+                    keywords=obj.keywords,
+                    select_type=obj.get_select_type_display()
+                )
                 ret_data.append({
                     'id': obj.id,
-                    'keywords': obj.keywords,
+                    'keywords': keywords,
                     'url': obj.url,
                     'rank': obj.rank,
                     'biji_num': obj.biji_num,
