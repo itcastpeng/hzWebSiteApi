@@ -287,7 +287,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 db=13,
                 password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
             )
-            item = redis_obj1.rpop("xiaohongshu_fugai_keywords_list")
+            item = redis_obj1.rpop("xiaohongshu_task_list")
             if item:
                 response.data = json.loads(item.decode('utf8'))
 
