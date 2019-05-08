@@ -36,6 +36,7 @@ def xiaohongshufugai(request):
 
             print('q -->', q)
             objs = models.XiaohongshuFugai.objects.filter(q).order_by(order)
+            print(objs.query())
             count = objs.count()
 
             if length != 0:
