@@ -120,6 +120,7 @@ def xiaohongshu_fugai_update_data():
             item = {
                 "keywords": obj.keywords,
                 "url": obj.url,
+                "select_type": obj.select_type,
             }
             redis_obj.lpush(redis_key, json.dumps(item))
 
