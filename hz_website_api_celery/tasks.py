@@ -117,12 +117,16 @@ def xiaohongshu_fugai_update_data():
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all()
         for obj in objs:
-            item = {
-                "keywords": obj.keywords,
-                "url": obj.url,
-                "select_type": obj.select_type,
-            }
-            redis_obj.lpush(redis_key, json.dumps(item))
+            now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
+            # 将今天未查询的任务放入redis队列中
+            if not objs:
+                item = {
+                    "keywords": obj.keywords,
+                    "url": obj.url,
+                    "select_type": obj.select_type,
+                }
+                redis_obj.lpush(redis_key, json.dumps(item))
 
 # 发送邮件，每间隔5分钟一次
 @app.task
