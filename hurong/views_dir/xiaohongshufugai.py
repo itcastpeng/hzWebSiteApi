@@ -127,27 +127,32 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 select_type = forms_obj.cleaned_data.get('select_type')
 
                 query = []
-                for item in keywords_list:
-                    print('item -->', item)
-                    keywords, url = item.strip().split()
-                    print(keywords, url)
-                    if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url):
-                        query.append(
-                            models.XiaohongshuFugai(
-                                create_user_id=create_user_id,
-                                keywords=keywords,
-                                url=url,
-                                select_type=select_type
+                try:
+                    for item in keywords_list:
+                        print('item -->', item)
+                        keywords, url = item.strip().split()
+                        print(keywords, url)
+                        if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url):
+                            query.append(
+                                models.XiaohongshuFugai(
+                                    create_user_id=create_user_id,
+                                    keywords=keywords,
+                                    url=url,
+                                    select_type=select_type
+                                )
                             )
-                        )
-                        if len(query) > 500:
-                            models.XiaohongshuFugai.objects.bulk_create(query)
-                            query = []
-                if len(query) > 0:
-                    models.XiaohongshuFugai.objects.bulk_create(query)
+                            if len(query) > 500:
+                                models.XiaohongshuFugai.objects.bulk_create(query)
+                                query = []
+                    if len(query) > 0:
+                        models.XiaohongshuFugai.objects.bulk_create(query)
 
-                response.code = 200
-                response.msg = "添加成功"
+                    response.code = 200
+                    response.msg = "添加成功"
+                except ValueError:
+                    forms_obj.add_error('keywords_list', "添加数据存在异常")
+                    response.code = 301
+                    response.msg = json.loads(forms_obj.errors.as_json())
 
             else:
                 print("验证不通过")
