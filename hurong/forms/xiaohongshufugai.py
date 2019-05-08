@@ -178,7 +178,7 @@ class DeleteForm(forms.Form):
 
     def clean_delete_id_list(self):
         delete_id_list = self.data['delete_id_list']
-        delete_id_list = delete_id_list.strip().split("\n")
+        delete_id_list = delete_id_list.strip().split(",")
         print('delete_id_list -->', delete_id_list)
         if isinstance(delete_id_list, list):
             return list(delete_id_list)
