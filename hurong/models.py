@@ -117,7 +117,7 @@ class XiaohongshuFugai(models.Model):
         (2, "最热"),
         (3, "最新"),
     )
-    select_type = models.SmallIntegerField(verbose_name="搜索类型", default=1)
+    select_type = models.SmallIntegerField(verbose_name="搜索类型", default=1, choices=select_type_choices)
     rank = models.IntegerField(verbose_name="排名", default=0)
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     is_shoulu = models.BooleanField(verbose_name="是否收录", default=False)
