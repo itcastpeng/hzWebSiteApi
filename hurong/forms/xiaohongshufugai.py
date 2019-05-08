@@ -64,6 +64,14 @@ class AddForm(forms.Form):
         }
     )
 
+    select_type = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "搜索类型不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+
     def clean_keywords_list(self):
         keywords_list = self.data['keywords_list']
         keywords_list = keywords_list.strip().split("\n")

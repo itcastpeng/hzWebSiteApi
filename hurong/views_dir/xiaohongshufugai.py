@@ -27,6 +27,7 @@ def xiaohongshufugai(request):
             field_dict = {
                 'id': '',
                 'status': '',
+                'select_type': '',
                 'keywords': '__contains',
                 'create_datetime': '',
             }
@@ -56,6 +57,8 @@ def xiaohongshufugai(request):
                     'biji_num': obj.biji_num,
                     'status': obj.get_status_display(),
                     'status_id': obj.status,
+                    'select_type': obj.get_select_type_display(),
+                    'select_type_id': obj.select_type,
                     'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'update_datetime': update_datetime,
@@ -75,6 +78,8 @@ def xiaohongshufugai(request):
                 'biji_num': "笔记数",
                 'status': "状态",
                 'status_id': "状态id",
+                'select_type': "搜索类型",
+                'select_type_id': "搜索类型id",
                 'create_user__username': "创建人",
                 'create_datetime': "创建时间",
                 'update_datetime': "更新时间",
@@ -99,7 +104,8 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
         if oper_type == "add":
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
-                'keywords_list': request.POST.get('keywords_list')
+                'keywords_list': request.POST.get('keywords_list'),
+                'select_type': request.POST.get('select_type')
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -108,6 +114,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
                 keywords_list = forms_obj.cleaned_data.get('keywords_list')
                 create_user_id = forms_obj.cleaned_data.get('create_user_id')
+                select_type = forms_obj.cleaned_data.get('select_type')
 
                 query = []
                 for item in keywords_list:
@@ -119,7 +126,8 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                             models.XiaohongshuFugai(
                                 create_user_id=create_user_id,
                                 keywords=keywords,
-                                url=url
+                                url=url,
+                                select_type=select_type
                             )
                         )
                         if len(query) > 500:
