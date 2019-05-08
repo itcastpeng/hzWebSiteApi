@@ -155,7 +155,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             # 删除 ID
 
             form_data = {
-                'delete_id_list': request.GET.get('delete_id_list')
+                'delete_id_list': request.POST.get('delete_id_list')
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = DeleteForm(form_data)

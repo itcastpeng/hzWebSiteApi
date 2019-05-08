@@ -170,7 +170,7 @@ class IsSelectedRankForm(forms.Form):
 # 添加
 class DeleteForm(forms.Form):
     delete_id_list = forms.CharField(
-        required=False,
+        required=True,
         error_messages={
             'required': "删除列表不能为空"
         }
