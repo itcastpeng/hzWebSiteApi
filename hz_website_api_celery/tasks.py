@@ -147,18 +147,18 @@ def xiaohongshu_shengcheng_baobiao():
     ws.cell(row=1, column=1, value="编号")
     ws.cell(row=1, column=2, value="关键词名称")
     ws.cell(row=1, column=3, value="笔记数量")
-    ws.cell(row=1, column=3, value="下拉词数量")
-    ws.cell(row=1, column=4, value="下拉词")
+    ws.cell(row=1, column=4, value="下拉词数量")
+    ws.cell(row=1, column=5, value="下拉词")
     row = 2
 
     for obj in objs:
         ws.cell(row=row, column=1, value=row - 1)
         ws.cell(row=row, column=2, value=obj.keywords)
         ws.cell(row=row, column=3, value=obj.biji_num)
-        ws.cell(row=row, column=3, value=obj.xialaci_num)
+        ws.cell(row=row, column=4, value=obj.xialaci_num)
 
         xialaci_list = [i[0] for i in obj.xiaohongshuxialakeywordschildren_set.values_list('keywords')]
-        ws.cell(row=row, column=4, value="\n".join(xialaci_list))
+        ws.cell(row=row, column=5, value="\n".join(xialaci_list))
         row += 1
     excel_path = "statics/api_hurong/xiaohongshu_xiala.xlsx"
     wb.save(os.path.abspath(excel_path))
@@ -171,16 +171,16 @@ def xiaohongshu_shengcheng_baobiao():
     ws.cell(row=1, column=1, value="编号")
     ws.cell(row=1, column=2, value="关键词名称")
     ws.cell(row=1, column=3, value="笔记数量")
-    ws.cell(row=1, column=3, value="排名")
-    ws.cell(row=1, column=4, value="搜索类型")
+    ws.cell(row=1, column=4, value="排名")
+    ws.cell(row=1, column=5, value="搜索类型")
     row = 2
 
     for obj in objs:
         ws.cell(row=row, column=1, value=row - 1)
         ws.cell(row=row, column=2, value=obj.keywords)
         ws.cell(row=row, column=3, value=obj.biji_num)
-        ws.cell(row=row, column=3, value=obj.rank)
-        ws.cell(row=row, column=3, value=obj.get_select_type_display())
+        ws.cell(row=row, column=4, value=obj.rank)
+        ws.cell(row=row, column=5, value=obj.get_select_type_display())
 
         row += 1
     excel_path = "statics/api_hurong/xiaohongshu_fugai.xlsx"
