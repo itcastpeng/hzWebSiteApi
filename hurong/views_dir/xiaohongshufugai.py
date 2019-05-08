@@ -69,6 +69,8 @@ def xiaohongshufugai(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+                'status_choices': models.XiaohongshuFugai.status_choices,
+                'select_type_choices': models.XiaohongshuFugai.select_type_choices,
             }
             response.note = {
                 'id': "下拉词id",
