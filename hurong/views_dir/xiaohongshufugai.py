@@ -40,6 +40,8 @@ def xiaohongshufugai(request):
             count = objs.count()
 
             if length != 0:
+                if count < 10:
+                    current_page = 1
                 start_line = (current_page - 1) * length
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
