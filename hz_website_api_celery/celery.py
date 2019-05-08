@@ -45,6 +45,13 @@ app.conf.beat_schedule = {
         # 'schedule': crontab('*', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
 
+    # 每10分钟执行一次
+    'xiaohongshu_shengcheng_baobiao': {
+        'task': 'hz_website_api_celery.tasks.xiaohongshu_shengcheng_baobiao',
+        # 'schedule': 2                                   # 单独设置  秒
+        # 'schedule': crontab(hour=8, minute=30),
+        'schedule': crontab('*/10', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
+    },
     # 'automatic_test':{
     #     'task':'projectmanage_celery.tasks.automatic_test',
     #     'schedule': crontab(minute=1),
