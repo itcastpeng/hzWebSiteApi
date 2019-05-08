@@ -105,7 +105,7 @@ def xiaohongshu_fugai_update_data():
 
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
-            if objs:  # 已经存在
+            if objs and total_count > 0:  # 已经存在
                 objs.update(**item_data)
             else:  # 不存在
                 item_data['keywords'] = obj
