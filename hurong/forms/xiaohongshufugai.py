@@ -165,3 +165,22 @@ class IsSelectedRankForm(forms.Form):
             'required': "文章链接不能为空",
         }
     )
+
+
+# 添加
+class DeleteForm(forms.Form):
+    delete_id_list = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "删除列表不能为空"
+        }
+    )
+
+    def clean_delete_id_list(self):
+        delete_id_list = self.data['delete_id_list']
+        delete_id_list = delete_id_list.strip().split("\n")
+        print('delete_id_list -->', delete_id_list)
+        if isinstance(delete_id_list, list):
+            return list(delete_id_list)
+        else:
+            self.add_error('delete_id_list', "删除列表类型错误")

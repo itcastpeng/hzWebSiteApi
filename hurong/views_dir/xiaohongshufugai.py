@@ -5,7 +5,7 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshufugai import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm
+from hurong.forms.xiaohongshufugai import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
 from django.db.models import Q
 import redis
 import json
@@ -153,18 +153,26 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
         elif oper_type == "delete":
             # 删除 ID
-            task_list_objs = models.XiaohongshuFugai.objects.filter(id=o_id)
-            if task_list_objs:
-                task_list_objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
-                # if task_list_objs[0].status == 1:
-                #     task_list_objs.delete()
-                #     response.code = 200
-                #     response.msg = "删除成功"
-                # else:
-                #     response.code = 300
-                #     response.msg = "该任务在操作中或者已完成，不能删除"
+
+            form_data = {
+                'delete_id_list': request.GET.get('delete_id_list')
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = AddForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过")
+
+                delete_id_list = forms_obj.cleaned_data.get('delete_id_list')
+                task_list_objs = models.XiaohongshuFugai.objects.filter(id__in=delete_id_list)
+                if task_list_objs:
+                    task_list_objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
+
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         # 手机端当前任务是否已经查询到排名
         elif oper_type == "is_selected_rank":
