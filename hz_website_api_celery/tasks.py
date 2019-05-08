@@ -23,6 +23,8 @@ from hurong import models
 from publicFunc.send_email import SendEmail
 import redis
 import json
+from openpyxl import Workbook
+
 
 # 更新小红书下拉数据
 @app.task
@@ -132,6 +134,59 @@ def xiaohongshu_fugai_update_data():
                     "task_type": "xiaohongshu_fugai"
                 }
                 redis_obj.lpush(redis_key, json.dumps(item))
+
+
+# 保存下拉和覆盖的数据到报表中
+@app.task
+def xiaohongshu_shengcheng_baobiao():
+    # 保存下拉报表
+    objs = models.XiaohongshuXiaLaKeywords.objects.filter(status=2)
+    wb = Workbook()
+    ws = wb.active
+
+    ws.cell(row=1, column=1, value="编号")
+    ws.cell(row=1, column=2, value="关键词名称")
+    ws.cell(row=1, column=3, value="笔记数量")
+    ws.cell(row=1, column=3, value="下拉词数量")
+    ws.cell(row=1, column=4, value="下拉词")
+    row = 2
+
+    for obj in objs:
+        ws.cell(row=row, column=1, value=row - 1)
+        ws.cell(row=row, column=2, value=obj.keywords)
+        ws.cell(row=row, column=3, value=obj.biji_num)
+        ws.cell(row=row, column=3, value=obj.xialaci_num)
+
+        xialaci_list = [i[0] for i in obj.xiaohongshuxialakeywordschildren_set.values_list('keywords')]
+        ws.cell(row=row, column=4, value="\n".join(xialaci_list))
+        row += 1
+    excel_path = "statics/api_hurong/xiaohongshu_xiala.xlsx"
+    wb.save(os.path.abspath(excel_path))
+
+    # 保存覆盖数据
+    objs = models.XiaohongshuFugai.objects.filter(status=2)
+    wb = Workbook()
+    ws = wb.active
+
+    ws.cell(row=1, column=1, value="编号")
+    ws.cell(row=1, column=2, value="关键词名称")
+    ws.cell(row=1, column=3, value="笔记数量")
+    ws.cell(row=1, column=3, value="排名")
+    ws.cell(row=1, column=4, value="搜索类型")
+    row = 2
+
+    for obj in objs:
+        ws.cell(row=row, column=1, value=row - 1)
+        ws.cell(row=row, column=2, value=obj.keywords)
+        ws.cell(row=row, column=3, value=obj.biji_num)
+        ws.cell(row=row, column=3, value=obj.rank)
+        ws.cell(row=row, column=3, value=obj.get_select_type_display())
+
+        row += 1
+    excel_path = "statics/api_hurong/xiaohongshu_fugai.xlsx"
+    wb.save(os.path.abspath(excel_path))
+
+
 
 # 发送邮件，每间隔5分钟一次
 @app.task
