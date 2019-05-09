@@ -132,7 +132,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                         print('item -->', item)
                         keywords, url = item.strip().split()
                         print(keywords, url)
-                        if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url):
+                        if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url, select_type=select_type):
                             query.append(
                                 models.XiaohongshuFugai(
                                     create_user_id=create_user_id,
