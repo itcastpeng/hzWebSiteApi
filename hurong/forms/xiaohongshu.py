@@ -140,3 +140,22 @@ class TestForm(forms.Form):
             if not re.match(r'\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}', send_email):
                 self.add_error('send_email_list', '存在异常邮箱：{}'.format(send_email))
         return list(set(send_email_list))
+
+
+# 删除
+class DeleteForm(forms.Form):
+    delete_id_list = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "删除列表不能为空"
+        }
+    )
+
+    def clean_delete_id_list(self):
+        delete_id_list = self.data['delete_id_list']
+        delete_id_list = delete_id_list.strip().split(",")
+        print('delete_id_list -->', delete_id_list)
+        if isinstance(delete_id_list, list):
+            return list(delete_id_list)
+        else:
+            self.add_error('delete_id_list', "删除列表类型错误")
