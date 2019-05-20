@@ -243,3 +243,12 @@ def hurong_send_email():
     #             email_user_obj.save()
 
 
+
+@app.task
+def debug_test():
+    objs = models.XiaohongshuFugai.objects.all()
+    for obj in objs:
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
+        if not objs:
+            print('obj -->', obj.id, obj.keywords, obj.url, obj.select_type)
