@@ -159,12 +159,12 @@ class IsSelectedRankForm(forms.Form):
         }
     )
 
-    url = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "文章链接不能为空",
-        }
-    )
+    # url = forms.CharField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "文章链接不能为空",
+    #     }
+    # )
 
 
 # 删除

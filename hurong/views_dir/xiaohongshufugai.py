@@ -186,7 +186,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
         elif oper_type == "is_selected_rank":
             form_data = {
                 'keywords': request.POST.get('keywords'),
-                'url': request.POST.get('url')
+                # 'url': request.POST.get('url')
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = IsSelectedRankForm(form_data)
@@ -194,13 +194,13 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 print("验证通过")
 
                 keywords = forms_obj.cleaned_data.get('keywords')
-                url = forms_obj.cleaned_data.get('url')
+                # url = forms_obj.cleaned_data.get('url')
 
                 # 5分钟之前的时间
                 five_minutes_ago_data = datetime.datetime.now() - datetime.timedelta(minutes=5)
                 objs = models.XiaohongshuFugaiDetail.objects.select_related('keywords').filter(
                     keywords__keywords=keywords,
-                    keywords__url=url,
+                    # keywords__url=url,
                     update_datetime__gt=five_minutes_ago_data
                 ).order_by('-create_datetime')
 
