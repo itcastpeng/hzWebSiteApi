@@ -241,9 +241,11 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 if select_keywords:
                     q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
                     q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
+                else:
+                    q.add(Q(**{'keywords_id': o_id}), Q.AND)
 
                 print('q -->', q)
-                objs = models.XiaohongshuFugaiDetail.objects.select_related('keywords').filter(keywords_id=o_id).filter(q).order_by(order)
+                objs = models.XiaohongshuFugaiDetail.objects.select_related('keywords').filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:

@@ -184,9 +184,11 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                 select_keywords = request.GET.get('select_keywords')
                 if select_keywords:
                     q.add(Q(**{'keywords': select_keywords}), Q.AND)
+                else:
+                    q.add(Q(**{'parent_id': o_id}), Q.AND)
 
                 print('q -->', q)
-                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(parent_id=o_id).filter(q).order_by(order)
+                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:
