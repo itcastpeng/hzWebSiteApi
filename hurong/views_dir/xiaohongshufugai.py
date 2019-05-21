@@ -231,11 +231,16 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 order = request.GET.get('order', '-create_datetime')
                 field_dict = {
                     'id': '',
-                    'keywords': '__contains',
+                    # 'keywords': '__contains',
                     'create_datetime': '',
                 }
 
                 q = conditionCom(request, field_dict)
+
+                select_keywords = request.GET.get('select_keywords')
+                if select_keywords:
+                    q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
+                    q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
 
                 print('q -->', q)
                 objs = models.XiaohongshuFugaiDetail.objects.select_related('keywords').filter(keywords_id=o_id).filter(q).order_by(order)
