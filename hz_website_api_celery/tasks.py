@@ -121,6 +121,7 @@ def xiaohongshu_fugai_update_data():
         objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
         for obj in objs:
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+            print('obj -->', obj)
             detail_objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj['keywords'], create_datetime__gt=now_date)
             # 将今天未查询的任务放入redis队列中
             if not detail_objs:
