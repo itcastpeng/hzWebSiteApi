@@ -126,7 +126,7 @@ def xiaohongshu_fugai_update_data():
             # 将今天未查询的任务放入redis队列中
             if not detail_objs:
                 item = {
-                    "keywords": obj.keywords,
+                    "keywords": obj['keywords'],
                     # "url": obj.url,
                     "count": obj['id__count'],      # 当前关键词存在几个任务
                     # "select_type": obj.select_type,
