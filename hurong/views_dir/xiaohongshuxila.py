@@ -188,7 +188,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                     q.add(Q(**{'parent_id': o_id}), Q.AND)
 
                 print('q -->', q)
-                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.filter(q).order_by(order)
+                objs = models.XiaohongshuXiaLaKeywordsChildren.objects.select_related('parent').filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:
@@ -201,6 +201,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                     #  将查询出来的数据 加入列表
                     ret_data.append({
                         'id': obj.id,
+                        'biji_num': obj.parent.biji_num,
                         'keywords': obj.keywords,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
