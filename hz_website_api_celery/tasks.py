@@ -20,6 +20,7 @@ django.setup()
 
 
 from hurong import models
+from django.db.models.aggregates import Count
 from publicFunc.send_email import SendEmail
 import redis
 import json
@@ -114,22 +115,20 @@ def xiaohongshu_fugai_update_data():
                 item_data['keywords'] = obj
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
 
-
-
-
-    # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
+    # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
     if redis_obj.llen(redis_key) == 0:
-        objs = models.XiaohongshuFugai.objects.all()
+        objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
         for obj in objs:
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
+            objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj['keywords'], create_datetime__gt=now_date)
             # 将今天未查询的任务放入redis队列中
             if not objs:
                 item = {
                     "keywords": obj.keywords,
-                    "url": obj.url,
-                    "select_type": obj.select_type,
+                    # "url": obj.url,
+                    "count": obj['id__count'],      # 当前关键词存在几个任务
+                    # "select_type": obj.select_type,
                     "task_type": "xiaohongshu_fugai"
                 }
                 redis_obj.lpush(redis_key, json.dumps(item))
