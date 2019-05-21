@@ -239,12 +239,11 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
                 select_keywords = request.GET.get('select_keywords')
                 url = request.GET.get('url')
-                if select_keywords:
+                if select_keywords & url:
                     q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
+                    q.add(Q(**{'keywords__url': url}), Q.AND)
                     q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
 
-                    if url:
-                        q.add(Q(**{'keywords__url': url}), Q.AND)
                 else:
                     q.add(Q(**{'keywords_id': o_id}), Q.AND)
 
