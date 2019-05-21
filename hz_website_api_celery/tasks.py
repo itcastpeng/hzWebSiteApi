@@ -84,7 +84,7 @@ def xiaohongshu_fugai_update_data():
         keywords = item['keywords']
         page_id_list = item['page_id_list']
         total_count = item['total_count']
-
+        # {'keywords': '隆鼻', 'total_count': 0, 'page_id_list': []}
         objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
         for obj in objs:
             flag = False
@@ -104,19 +104,18 @@ def xiaohongshu_fugai_update_data():
                     item_data['rank'] = item['rank']
 
                 obj.save()
-            if flag:
-                pass
-            else:
-                pass
 
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
-            if objs:  # 已经存在
-                if total_count > 0:
+            if objs:  # 已经创建当日详情
+                if flag:    # 查找到覆盖
                     objs.update(**item_data)
             else:  # 不存在
                 item_data['keywords'] = obj
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
+
+
+
 
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
