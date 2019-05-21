@@ -183,7 +183,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
 
                 select_keywords = request.GET.get('select_keywords')
                 if select_keywords:
-                    q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
+                    q.add(Q(**{'parent__keywords': select_keywords}), Q.AND)
                 else:
                     q.add(Q(**{'parent_id': o_id}), Q.AND)
 
