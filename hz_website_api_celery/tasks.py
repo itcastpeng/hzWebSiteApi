@@ -25,6 +25,7 @@ from publicFunc.send_email import SendEmail
 import redis
 import json
 from openpyxl import Workbook
+from django.db.models import Q
 
 
 # 更新小红书下拉数据
@@ -41,14 +42,18 @@ def xiaohongshu_xiala_update_data():
     for _ in range(redis_obj.llen(redis_key)):
         item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
         keywords = item['keywords']
+        models.XiaohongshuXiaLaKeywordsChildren.objects.filter(parent__keywords=keywords).delete()
         objs = models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords)
         if objs:
             xialaci_num = 0
+            query = []
             for index, i in enumerate(item['data']):
                 xialaci_num += 1
                 xialaci = i['text'] + " " + i['desc']
-                if not models.XiaohongshuXiaLaKeywordsChildren.objects.filter(keywords=xialaci):
-                    models.XiaohongshuXiaLaKeywordsChildren.objects.create(keywords=xialaci, parent=objs[0])
+                query.append(models.XiaohongshuXiaLaKeywordsChildren(keywords=xialaci, parent=objs[0]))
+                # if not models.XiaohongshuXiaLaKeywordsChildren.objects.filter(keywords=xialaci):
+                #     models.XiaohongshuXiaLaKeywordsChildren.objects.create(keywords=xialaci, parent=objs[0])
+            models.XiaohongshuXiaLaKeywordsChildren.objects.bulk_create(query)
             objs.update(
                 status=2,
                 biji_num=item['data'][0]['desc'],
@@ -59,14 +64,15 @@ def xiaohongshu_xiala_update_data():
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
     if redis_obj.llen(redis_key) == 0:
-        objs = models.XiaohongshuXiaLaKeywords.objects.filter(status=1)
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+        objs = models.XiaohongshuXiaLaKeywords.objects.filter(q)
         for obj in objs:
             item = {
                 "keywords": obj.keywords,
                 "task_type": "xiaohongshu_xiala"
             }
             redis_obj.lpush(redis_key, json.dumps(item))
-
 
 # 更新小红书查覆盖数据
 @app.task
