@@ -133,3 +133,17 @@ class XiaohongshuFugaiDetail(models.Model):
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
+
+
+# 小红书手机记录表
+class XiaohongshuPhone(models.Model):
+    name = models.CharField(verbose_name="手机名称", max_length=256, null=True)
+    macaddr = models.CharField(verbose_name="mac地址", max_length=256)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 小红书手机日志记录
+class XiaohongshuPhoneLog(models.Model):
+    parent = models.ForeignKey('XiaohongshuPhone', verbose_name="对应手机")
+    log_msg = models.TextField(verbose_name="日志信息")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
