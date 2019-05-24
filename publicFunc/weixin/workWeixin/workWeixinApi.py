@@ -6,7 +6,7 @@ import os
 import json
 
 
-workWeixinDataPath = os.path.join(os.getcwd(), 'publicFunc', 'workWeixin', 'workweixin.json')        # 存放数据的json文件
+workWeixinDataPath = os.path.join(os.getcwd(), 'publicFunc', 'weixin', 'workWeixin', 'workweixin.json')        # 存放数据的json文件
 
 
 class WorkWeixinApi(object):
@@ -23,7 +23,6 @@ class WorkWeixinApi(object):
             'access_token': '',
             'time_stamp': ''
         }
-
 
     # 判断 token 是否过期
     def is_token_expires(self):
