@@ -26,6 +26,7 @@ import redis
 import json
 from openpyxl import Workbook
 from django.db.models import Q
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 
 
 # 更新小红书下拉数据
@@ -192,7 +193,6 @@ def xiaohongshu_shengcheng_baobiao():
     wb.save(os.path.abspath(excel_path))
 
 
-
 # 发送邮件，每间隔5分钟一次
 @app.task
 def hurong_send_email():
@@ -248,7 +248,6 @@ def hurong_send_email():
     #             email_user_obj.save()
 
 
-
 @app.task
 def debug_test():
     objs = models.XiaohongshuFugai.objects.all()
@@ -257,3 +256,24 @@ def debug_test():
         objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
         if not objs:
             print('obj -->', obj.id, obj.keywords, obj.url, obj.select_type)
+
+
+# 小红书手机监控
+@app.task
+def xiaohongshu_phone_monitor():
+    from hurong import models
+    objs = models.XiaohongshuPhone.objects.all()
+    err_phone = []
+    for obj in objs:
+        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+
+        # 如果5分钟之内没有提交日志，说明机器异常了
+        if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
+            err_phone.append(obj.name)
+
+    if len(err_phone) > 0:
+        obj = WorkWeixinApi()
+        content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
+        obj.message_send('ZhangCong', content)
+        obj.message_send('1534764500636', content)
+
