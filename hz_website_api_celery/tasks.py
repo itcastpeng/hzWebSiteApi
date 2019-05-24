@@ -261,19 +261,22 @@ def debug_test():
 # 小红书手机监控
 @app.task
 def xiaohongshu_phone_monitor():
-    from hurong import models
-    objs = models.XiaohongshuPhone.objects.all()
-    err_phone = []
-    for obj in objs:
-        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+    hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
+    if 8 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+        from hurong import models
+        objs = models.XiaohongshuPhone.objects.all()
+        err_phone = []
+        for obj in objs:
+            expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-        # 如果5分钟之内没有提交日志，说明机器异常了
-        if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
-            err_phone.append(obj.name)
+            # 如果5分钟之内没有提交日志，说明机器异常了
+            if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
+                err_phone.append(obj.name)
 
-    if len(err_phone) > 0:
-        obj = WorkWeixinApi()
-        content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
-        obj.message_send('ZhangCong', content)
-        obj.message_send('1534764500636', content)
+
+        if len(err_phone) > 0:
+            obj = WorkWeixinApi()
+            content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
+            obj.message_send('ZhangCong', content)          # 张聪
+            obj.message_send('1534764500636', content)      # 贺昂
 

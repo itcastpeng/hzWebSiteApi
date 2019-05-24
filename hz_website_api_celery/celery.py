@@ -52,10 +52,10 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(hour=8, minute=30),
         'schedule': crontab('*/10', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
-    # 'automatic_test':{
-    #     'task':'projectmanage_celery.tasks.automatic_test',
-    #     'schedule': crontab(minute=1),
-    # },
+    'xiaohongshu_phone_monitor':{
+        'task':'hz_website_api_celery.tasks.xiaohongshu_phone_monitor',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
     #
     # # 自动合并gitlab代码，每分钟一次
     # 'merge_project_code':{
