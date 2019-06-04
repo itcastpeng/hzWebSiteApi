@@ -13,5 +13,6 @@ wechat_data.json
 
 bak/
 backend/
+test/
 
 qiniu_data.json

@@ -141,6 +141,19 @@ def xiaohongshu_fugai_update_data():
                 }
                 redis_obj.lpush(redis_key, json.dumps(item))
 
+    # 相同关键词,不同链接,白天新添加的词单独跑
+    if redis_obj.llen(redis_key) == 0:
+        objs = models.XiaohongshuFugai.objects.filter(update_datetime__isnull=True)
+        for obj in objs:
+            item = {
+                "keywords": obj.keywords,
+                # "url": obj.url,
+                "count": 2,  # 当前关键词存在几个任务
+                # "select_type": obj.select_type,
+                "task_type": "xiaohongshu_fugai"
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
+
 
 # 保存下拉和覆盖的数据到报表中
 @app.task
