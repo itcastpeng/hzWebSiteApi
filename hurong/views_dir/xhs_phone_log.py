@@ -112,6 +112,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
             form_data = {
                 'log_msg': request.POST.get('log_msg'),
                 'macaddr': request.POST.get('macaddr'),
+                'ip_addr': request.POST.get('ip_addr'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -120,13 +121,14 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
+                ip_addr = forms_obj.cleaned_data.get('ip_addr')
 
                 objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
                 if objs:
                     obj = objs[0]
 
                 else:
-                    obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr)
+                    obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
                 models.XiaohongshuPhoneLog.objects.create(
                     log_msg=log_msg,
                     parent=obj

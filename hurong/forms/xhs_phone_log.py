@@ -64,6 +64,13 @@ class AddForm(forms.Form):
         }
     )
 
+    ip_addr = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "ip地址不能为空",
+        }
+    )
+
 
 # 修改用户
 class UpdateForm(forms.Form):

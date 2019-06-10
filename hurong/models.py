@@ -138,6 +138,7 @@ class XiaohongshuFugaiDetail(models.Model):
 # 小红书手机记录表
 class XiaohongshuPhone(models.Model):
     name = models.CharField(verbose_name="手机名称", max_length=256, null=True)
+    ip_addr = models.CharField(verbose_name="ip地址", max_length=256)
     macaddr = models.CharField(verbose_name="mac地址", max_length=256)
     phone_num = models.CharField(verbose_name="绑定手机号", max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
