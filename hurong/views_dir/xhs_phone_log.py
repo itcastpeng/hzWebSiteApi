@@ -126,6 +126,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
                 if objs:
                     obj = objs[0]
+                    obj.ip_addr = ip_addr
+                    obj.save()
 
                 else:
                     obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
