@@ -137,7 +137,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                         if url.startswith("http://t.cn"):
                             ret = requests.get("http://t.cn/AiC6gLcd", allow_redirects=False)
 
-                            url = re.findall('HREF="(.*?)"', ret.text)[0]
+                            url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
                         print(keywords, url)
                         if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url, select_type=select_type):
