@@ -135,7 +135,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
                         # 处理短链接
                         if url.startswith("http://t.cn"):
-                            ret = requests.get("http://t.cn/AiC6gLcd", allow_redirects=False)
+                            ret = requests.get(url, allow_redirects=False)
 
                             url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
