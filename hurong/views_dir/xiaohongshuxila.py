@@ -210,6 +210,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
+                    'biji_num': objs[0].parent.biji_num,
                     'data_count': count,
                 }
                 response.note = {

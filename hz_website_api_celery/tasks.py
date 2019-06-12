@@ -57,7 +57,7 @@ def xiaohongshu_xiala_update_data():
             models.XiaohongshuXiaLaKeywordsChildren.objects.bulk_create(query)
             objs.update(
                 status=2,
-                biji_num=item['data'][0]['desc'],
+                # biji_num=item['data'][0]['desc'],
                 xialaci_num=xialaci_num,
                 update_datetime=datetime.datetime.now()
             )
@@ -93,6 +93,8 @@ def xiaohongshu_fugai_update_data():
         page_id_list = item['page_id_list']
         total_count = item['total_count']
         # {'keywords': '隆鼻', 'total_count': 0, 'page_id_list': []}
+
+        # 更新覆盖数据
         objs = models.XiaohongshuFugai.objects.filter(keywords=keywords)
         for obj in objs:
             flag = False
@@ -121,6 +123,9 @@ def xiaohongshu_fugai_update_data():
             else:  # 不存在
                 item_data['keywords'] = obj
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
+
+        # 更新下拉笔记数据
+        models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(biji_num=total_count)
 
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
