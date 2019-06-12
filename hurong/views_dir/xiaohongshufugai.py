@@ -11,6 +11,7 @@ import redis
 import json
 import requests
 import datetime
+import re
 
 
 @account.is_token(models.UserProfile)
@@ -131,6 +132,13 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     for item in keywords_list:
                         print('item -->', item)
                         keywords, url = item.strip().split()
+
+                        # 处理短链接
+                        if url.startswith("http://t.cn"):
+                            ret = requests.get("http://t.cn/AiC6gLcd", allow_redirects=False)
+
+                            url = re.findall('HREF="(.*?)"', ret.text)[0]
+
                         print(keywords, url)
                         if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url, select_type=select_type):
                             query.append(
