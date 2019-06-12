@@ -289,6 +289,7 @@ def xiaohongshu_phone_monitor():
 
         if len(err_phone) > 0:
             obj = WorkWeixinApi()
+            print("err_phone -->", err_phone)
             content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
             obj.message_send('ZhangCong', content)          # 张聪
             obj.message_send('1534764500636', content)      # 贺昂
