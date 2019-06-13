@@ -67,7 +67,7 @@ def xiaohongshu_xiala_update_data():
     if redis_obj.llen(redis_key) == 0:
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
-        objs = models.XiaohongshuXiaLaKeywords.objects.filter(q)
+        objs = models.XiaohongshuXiaLaKeywords.objects.filter(q)[:10]
         for obj in objs:
             item = {
                 "keywords": obj.keywords,
@@ -137,7 +137,7 @@ def xiaohongshu_fugai_update_data():
         for obj in objs:
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             print('obj -->', obj)
-            detail_objs = models.XiaohongshuFugaiDetail.objects.filter(keywords__keywords=obj['keywords'], create_datetime__gt=now_date)
+            detail_objs = models.XiaohongshuFugaiDetail.objects.filter(keywords__keywords=obj['keywords'], create_datetime__gt=now_date)[:200]
             # 将今天未查询的任务放入redis队列中
             if not detail_objs:
                 item = {
