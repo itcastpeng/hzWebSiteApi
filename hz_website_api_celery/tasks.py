@@ -125,7 +125,10 @@ def xiaohongshu_fugai_update_data():
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
 
         # 更新下拉笔记数据
-        models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(biji_num=total_count)
+        models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(
+            biji_num=total_count,
+            update_datetime=datetime.datetime.now()
+        )
 
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
