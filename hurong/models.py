@@ -161,9 +161,9 @@ class XiaohongshuPhoneLog(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-
-# # 小红书发布账号管理
-# class XiaohongshuUserProfile(models.Model):
-#
-#
-#
+# 小红书发布账号管理
+class XiaohongshuUserProfile(models.Model):
+    phone_id = models.ForeignKey('XiaohongshuPhone', verbose_name="对应手机")
+    name = models.CharField(verbose_name="昵称", max_length=128)
+    xiaohongshu_id = models.CharField(verbose_name="小红书号", max_length=128)
+    home_url = models.CharField(verbose_name="主页地址", max_length=256)

@@ -189,4 +189,6 @@ NoValidationTokenRoute = [
     "/api_hurong/xiaohongshufugai/is_selected_rank",
     "/api/wechat/login_qrcode",
     "/api_hurong/xiaohongshu/check_forbidden_text"
+    "/api_hurong/xiaohongshu_userprofile/is_update_userinfo"
+    "/api_hurong/xiaohongshu_userprofile/update_userinfo"
 ]
