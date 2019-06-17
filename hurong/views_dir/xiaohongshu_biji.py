@@ -171,6 +171,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                     response.code = 200
                     response.data = {
+                        "id": obj.id,
                         "content": obj.content
                     }
                 else:
