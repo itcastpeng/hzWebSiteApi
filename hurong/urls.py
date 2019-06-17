@@ -1,7 +1,7 @@
 
 from django.conf.urls import url
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
-    xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile
+    xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji
 
 
 urlpatterns = [
@@ -42,6 +42,10 @@ urlpatterns = [
 
     # 小红书账号管理
     url(r'^xiaohongshu_userprofile/(?P<oper_type>\w+)/(?P<o_id>\d+)', xiaohongshu_userprofile.xiaohongshu_userprofile_oper),
-    url(r'^xiaohongshu_userprofile', xiaohongshu_userprofile.xiaohongshu_userprofile),
+    # url(r'^xiaohongshu_userprofile', xiaohongshu_userprofile.xiaohongshu_userprofile),
+
+    # 小红书笔记管理
+    url(r'^xiaohongshu_biji/(?P<oper_type>\w+)/(?P<o_id>\d+)', xiaohongshu_biji.xiaohongshu_biji_oper),
+    url(r'^xiaohongshu_biji', xiaohongshu_biji.xiaohongshu_biji),
 
 ]

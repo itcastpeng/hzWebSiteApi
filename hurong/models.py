@@ -167,3 +167,46 @@ class XiaohongshuUserProfile(models.Model):
     name = models.CharField(verbose_name="昵称", max_length=128)
     xiaohongshu_id = models.CharField(verbose_name="小红书号", max_length=128)
     home_url = models.CharField(verbose_name="主页地址", max_length=256)
+
+
+class XiaohongshuBiji(models.Model):
+    user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
+    # img_list = models.TextField(verbose_name="图片链接数组")
+    content = models.TextField(verbose_name="笔记内容")
+
+    """
+        {
+            "img_list": [
+                {
+                    "url": "图片地址",
+                    "tag": {
+                        "name": "标签名称",
+                        "location": 1,
+                    }
+                },
+                {
+                    "url": "图片地址",
+                    "tag": {
+                        "name": "标签名称",
+                        "location": 1,
+                    }
+                },
+            ],
+            "content": "笔记内容",
+            "@": "@好友名称",
+            "topic_name": "话题名称",
+            "location": "位置",
+        }
+
+        """
+
+    status_choices = (
+        (1, "未发布"),
+        (2, "已发布")
+    )
+
+    status = models.SmallIntegerField(choices=status_choices, verbose_name="笔记状态", default=1)
+    release_time = models.DateTimeField(verbose_name="发布时间")
+    biji_url = models.CharField(verbose_name="笔记回链", max_length=256, null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
