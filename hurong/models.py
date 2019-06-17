@@ -138,9 +138,19 @@ class XiaohongshuFugaiDetail(models.Model):
 # 小红书手机记录表
 class XiaohongshuPhone(models.Model):
     name = models.CharField(verbose_name="手机名称", max_length=256, default="", null=True)
-    ip_addr = models.CharField(verbose_name="ip地址", max_length=256)
-    macaddr = models.CharField(verbose_name="mac地址", max_length=256)
+    ip_addr = models.CharField(verbose_name="ip地址", max_length=256, null=True)
+    macaddr = models.CharField(verbose_name="mac地址", max_length=256, null=True)
     phone_num = models.CharField(verbose_name="绑定手机号", max_length=256, null=True)
+
+    iccid = models.CharField(verbose_name="SIM卡ID", max_length=128, null=True)
+    imsi = models.CharField(verbose_name="设备IMSI号", max_length=128, null=True)
+
+    phone_type_choices = (
+        (1, "查覆盖"),
+        (2, "任务发布")
+    )
+    phone_type = models.SmallIntegerField(verbose_name="手机任务类型", choices=phone_type_choices, default=1)
+
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
@@ -149,3 +159,11 @@ class XiaohongshuPhoneLog(models.Model):
     parent = models.ForeignKey('XiaohongshuPhone', verbose_name="对应手机")
     log_msg = models.TextField(verbose_name="日志信息")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+
+# # 小红书发布账号管理
+# class XiaohongshuUserProfile(models.Model):
+#
+#
+#

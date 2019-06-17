@@ -52,23 +52,35 @@ class AddForm(forms.Form):
 
     log_msg = forms.CharField(
         required=True,
-        error_messages={
-            'required': "日志信息不能为空"
-        }
+        # error_messages={
+        #     'required': "日志信息不能为空"
+        # }
     )
 
     macaddr = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "mac地址不能为空",
-        }
+        required=False,
+        # error_messages={
+        #     'required': "mac地址不能为空",
+        # }
     )
 
     ip_addr = forms.CharField(
         required=False,
-        error_messages={
-            'required': "ip地址不能为空",
-        }
+        # error_messages={
+        #     'required': "ip地址不能为空",
+        # }
+    )
+
+    iccid = forms.CharField(
+        required=False
+    )
+
+    imsi = forms.CharField(
+        required=False
+    )
+
+    phone_type = forms.IntegerField(
+        required=False
     )
 
 

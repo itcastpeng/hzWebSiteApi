@@ -113,6 +113,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 'log_msg': request.POST.get('log_msg'),
                 'macaddr': request.POST.get('macaddr'),
                 'ip_addr': request.POST.get('ip_addr'),
+                'iccid': request.POST.get('iccid'),
+                'imsi': request.POST.get('imsi'),
+                'phone_type': request.POST.get('phone_type', 1),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -122,19 +125,41 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 ip_addr = forms_obj.cleaned_data.get('ip_addr')
+                iccid = forms_obj.cleaned_data.get('iccid')
+                imsi = forms_obj.cleaned_data.get('imsi')
+                phone_type = forms_obj.cleaned_data.get('phone_type')
+                print("phone_type -->", phone_type)
+                # 查覆盖的机器
+                if phone_type == 1:
+                    print("记录查覆盖")
+                    objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
+                    if objs:
+                        obj = objs[0]
+                        obj.ip_addr = ip_addr
+                        obj.save()
 
-                objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
-                if objs:
-                    obj = objs[0]
-                    obj.ip_addr = ip_addr
-                    obj.save()
+                    else:
+                        obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
+                        print('obj -->', obj)
+                    models.XiaohongshuPhoneLog.objects.create(
+                        log_msg=log_msg,
+                        parent=obj
+                    )
+                elif phone_type == 2:
+                    print("记录发布")
+                    objs = models.XiaohongshuPhone.objects.filter(imsi=imsi, iccid=iccid)
+                    if objs:
+                        obj = objs[0]
+                        obj.ip_addr = ip_addr
+                        obj.save()
 
-                else:
-                    obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
-                models.XiaohongshuPhoneLog.objects.create(
-                    log_msg=log_msg,
-                    parent=obj
-                )
+                    else:
+                        obj = models.XiaohongshuPhone.objects.create(iccid=iccid, imsi=imsi, phone_type=2)
+                    models.XiaohongshuPhoneLog.objects.create(
+                        log_msg=log_msg,
+                        parent=obj
+                    )
+
                 response.code = 200
                 response.msg = "日志记录成功"
 
