@@ -116,3 +116,42 @@ class SaveScreenshotsForm(forms.Form):
             'required': "私信人昵称不能为空"
         }
     )
+
+
+class ReplyForm(forms.Form):
+    xiaohongshu_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "小红书ID不能为空"
+        }
+    )
+
+    name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "收消息博主昵称不能为空"
+        }
+    )
+
+    msg = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "回复内容不能为空"
+        }
+    )
+
+
+class GetReplyForm(forms.Form):
+    imsi = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "SIM卡ID不能为空"
+        }
+    )
+
+    iccid = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "设备IMSI号不能为空"
+        }
+    )

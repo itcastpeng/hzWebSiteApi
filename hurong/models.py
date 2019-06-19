@@ -185,6 +185,7 @@ class XiaohongshuUserProfileRegister(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 小红书笔记
 class XiaohongshuBiji(models.Model):
     user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
     # img_list = models.TextField(verbose_name="图片链接数组")
@@ -233,8 +234,23 @@ class XiaohongshuForbiddenText(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 小红书私信截图
 class XiaohongshuDirectMessages(models.Model):
     user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
     name = models.CharField(verbose_name="私信用户的名称", max_length=256)
     img_url = models.CharField(verbose_name="私信截图", max_length=256)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 小红书私信回复
+class XiaohongshuDirectMessagesReply(models.Model):
+    user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
+    name = models.CharField(verbose_name="私信用户的名称", max_length=256)
+    msg = models.CharField(verbose_name="回复的内容", max_length=256)
+    status_choices = (
+        (1, "等待回复"),
+        (2, "回复成功"),
+    )
+    status = models.SmallIntegerField(verbose_name="回复状态", choices=status_choices, default=1)
+    update_datetime = models.DateTimeField(verbose_name="回复时间", null=True, blank=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

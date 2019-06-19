@@ -5,7 +5,7 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshu_direct_essages import SelectForm, AddForm, GetReleaseTaskForm, SaveScreenshotsForm
+from hurong.forms.xiaohongshu_direct_essages import SelectForm, AddForm, GetReleaseTaskForm, SaveScreenshotsForm, ReplyForm, GetReplyForm
 from django.db.models import Q
 import redis
 import json
@@ -19,6 +19,7 @@ from urllib import parse
 from publicFunc.redisOper import get_redis_obj
 from publicFunc.qiniu.auth import Auth
 import os
+
 
 @account.is_token(models.UserProfile)
 def xiaohongshu_direct_essages(request):
@@ -189,36 +190,88 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 回复私信
+        elif oper_type == "reply":
+            form_data = {
+                'xiaohongshu_id': request.POST.get('xiaohongshu_id'),
+                'name': request.POST.get('name'),
+                'msg': request.POST.get('msg')
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = ReplyForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过")
+
+                xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
+                name = forms_obj.cleaned_data.get('name')
+                msg = forms_obj.cleaned_data.get('msg')
+
+                objs = models.XiaohongshuUserProfile.objects.filter(
+                    xiaohongshu_id=xiaohongshu_id
+                )
+                if objs:
+                    obj = objs[0]
+
+                    if models.XiaohongshuDirectMessages.objects.filter(user_id=obj, name=name):
+                        msg_reply_obj = models.XiaohongshuDirectMessagesReply.objects.create(
+                            user_id=obj,
+                            name=name,
+                            msg=msg
+                        )
+
+                        response.code = 200
+                        response.msg = "添加成功"
+                        response.data = {
+                            "id": msg_reply_obj.id
+                        }
+                    else:
+                        response.code = 0
+                        response.msg = "私信用户不存在"
+
+                else:
+                    response.code = 0
+                    response.msg = "博主账号不存在"
+
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+        elif oper_type == "reply_save":
+            task_id = request.POST.get('task_id')
+            models.XiaohongshuDirectMessagesReply.objects.filter(id=task_id).update(
+                status=2,
+                update_datetime=datetime.datetime.now()
+            )
         else:
             response.code = 402
             response.msg = "请求异常"
 
     else:
-        # 获取发布任务
-        if oper_type == "get_release_task":
+        # 获取回复私信任务
+        if oper_type == "get_reply":
             form_data = {
                 'imsi': request.GET.get('imsi'),
                 'iccid': request.GET.get('iccid'),
             }
-            forms_obj = GetReleaseTaskForm(form_data)
+            forms_obj = GetReplyForm(form_data)
             if forms_obj.is_valid():
                 iccid = forms_obj.cleaned_data['iccid']
                 imsi = forms_obj.cleaned_data['imsi']
 
-                objs = models.XiaohongshuBiji.objects.filter(
+                objs = models.XiaohongshuDirectMessagesReply.objects.filter(
                     user_id__phone_id__iccid=iccid,
                     user_id__phone_id__imsi=imsi,
-                    status=1,
-                    release_time__lt=datetime.datetime.now()
+                    status=1
                 )
 
                 if objs:
                     obj = objs[0]
-
                     response.code = 200
                     response.data = {
                         "id": obj.id,
-                        "content": obj.content
+                        "name": obj.name,
+                        "msg": obj.msg
                     }
                 else:
                     response.code = 0
