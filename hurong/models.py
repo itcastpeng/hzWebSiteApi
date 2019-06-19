@@ -230,3 +230,7 @@ class XiaohongshuBiji(models.Model):
 class XiaohongshuForbiddenText(models.Model):
     word = models.CharField(verbose_name="违禁词", max_length=256)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# class XiaohongshuDirectMessages(models.Model):
+#
