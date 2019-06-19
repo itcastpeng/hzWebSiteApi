@@ -5,14 +5,19 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm
+from hurong.forms.xiaohongshu_direct_essages import SelectForm, AddForm, GetReleaseTaskForm, SaveScreenshotsForm
 from django.db.models import Q
 import redis
 import json
 import requests
 import datetime
 import re
+import base64
+import time
 
+from publicFunc.redisOper import get_redis_obj
+from publicFunc.qiniu.auth import Auth
+import os
 
 @account.is_token(models.UserProfile)
 def xiaohongshu_direct_essages(request):
@@ -114,36 +119,65 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
         # 保存私信截图
         if oper_type == "save_screenshots":
             print("request.POST ---> ///////////////////", request.POST)
-            #
-            # form_data = {
-            #     'user_id': request.POST.get('user_id'),
-            #     'content': request.POST.get('content'),
-            #     'release_time': request.POST.get('release_time', datetime.datetime.now())
-            # }
-            # #  创建 form验证 实例（参数默认转成字典）
-            # forms_obj = AddForm(form_data)
-            # if forms_obj.is_valid():
-            #     print("验证通过")
-            #
-            #     user_id = forms_obj.cleaned_data.get('user_id')
-            #     content = forms_obj.cleaned_data.get('content')
-            #     release_time = forms_obj.cleaned_data.get('release_time')
-            #
-            #     obj = models.XiaohongshuBiji.objects.create(
-            #         user_id_id=user_id,
-            #         content=content,
-            #         release_time=release_time
-            #     )
-            #
-            #     response.code = 200
-            #     response.msg = "添加成功"
-            #     response.data = {
-            #         'biji_id': obj.id
-            #     }
-            # else:
-            #     print("验证不通过")
-            #     response.code = 301
-            #     response.msg = json.loads(forms_obj.errors.as_json())
+
+            form_data = {
+                'iccid': request.POST.get('iccid'),
+                'imsi': request.POST.get('imsi'),
+                'img_base64_data': request.POST.get('img_base64_data')
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = SaveScreenshotsForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过")
+
+                iccid = forms_obj.cleaned_data.get('iccid')
+                imsi = forms_obj.cleaned_data.get('imsi')
+                img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
+                imgdata = base64.b64decode(img_base64_data)
+
+                redis_obj = get_redis_obj()
+                upload_token = redis_obj.get('qiniu_upload_token')
+                if not upload_token:
+                    qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+                    with open(qiniu_data_path, "r", encoding="utf8") as f:
+                        data = json.loads(f.read())
+                        access_key = data.get('access_key')
+                        secret_key = data.get('secret_key')
+                        obj = Auth(access_key, secret_key)
+                        upload_token = obj.upload_token("xcx_wgw_zhangcong")
+
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+                }
+
+                url = 'https://up-z1.qiniup.com/'
+
+                files = {
+                    'file': imgdata
+                }
+                data = {
+                    'token': upload_token,
+                    'key': "xiaohongshu_fabu_" + str(int(time.time() * 1000))
+                }
+
+                ret = requests.post(url, data=data, files=files, headers=headers)
+                print("ret.text -->", ret.text)
+
+                # obj = models.XiaohongshuBiji.objects.create(
+                #     user_id_id=user_id,
+                #     content=content,
+                #     release_time=release_time
+                # )
+
+
+                response.code = 200
+                response.msg = "添加成功"
+                response.data = {
+                }
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
