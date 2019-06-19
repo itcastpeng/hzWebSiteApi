@@ -114,11 +114,11 @@ def xiaohongshu_direct_essages(request):
 def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     if request.method == "POST":
         # 保存私信截图
         if oper_type == "save_screenshots":
-            print("request.POST ---> ///////////////////", request.POST)
+            # print("request.POST ---> ///////////////////", request.POST)
 
             form_data = {
                 'iccid': request.POST.get('iccid'),
@@ -134,6 +134,9 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 imsi = forms_obj.cleaned_data.get('imsi')
                 img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
                 imgdata = base64.b64decode(img_base64_data)
+
+                with open('t.png', 'wb') as f:
+                    f.write(imgdata)
 
                 redis_obj = get_redis_obj()
                 upload_token = redis_obj.get('qiniu_upload_token')
