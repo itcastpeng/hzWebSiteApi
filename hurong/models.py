@@ -169,6 +169,21 @@ class XiaohongshuUserProfile(models.Model):
     home_url = models.CharField(verbose_name="主页地址", max_length=256)
 
 
+class XiaohongshuUserProfileRegister(models.Model):
+    uid = models.IntegerField(verbose_name="小红书后台博主id")
+    name = models.CharField(verbose_name="昵称", max_length=128)
+    head_portrait = models.CharField(verbose_name="头像", max_length=128)
+
+    gender_choices = (
+        (1, "男"),
+        (2, "女"),
+    )
+    gender = models.SmallIntegerField(verbose_name="性别", choices=gender_choices)
+    birthday = models.DateField(verbose_name="生日")
+    is_register = models.BooleanField(verbose_name="是否已经注册", default=False)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
 class XiaohongshuBiji(models.Model):
     user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
     # img_list = models.TextField(verbose_name="图片链接数组")

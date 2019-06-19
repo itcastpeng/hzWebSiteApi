@@ -5,7 +5,7 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm
+from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm
 from django.db.models import Q
 import redis
 import json
@@ -162,6 +162,25 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        elif oper_type == "registre":
+            print("registre")
+            form_data = {
+                'uid': request.POST.get('uid'),
+                'name': request.POST.get('name'),
+                'head_portrait': request.POST.get('head_portrait'),
+                'gender': request.POST.get('gender'),
+                'birthday': request.POST.get('birthday')
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = RegistreForm(form_data)
+            if forms_obj.is_valid():
+                models.XiaohongshuUserProfileRegister.objects.create(**forms_obj.cleaned_data)
+                response.code = 200
+                response.msg = "添加成功"
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
     else:
         # 判断是否需要更新个人信息

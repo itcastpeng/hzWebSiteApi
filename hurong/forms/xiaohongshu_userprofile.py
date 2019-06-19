@@ -59,3 +59,46 @@ class UpdateUserinfoForm(forms.Form):
             'required': "主页地址不能为空"
         }
     )
+
+
+class RegistreForm(forms.Form):
+    uid = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "小红书博主表id不能为空",
+            'invalid': "类型错误"
+        }
+    )
+
+    name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "小红书博主昵称不能为空",
+        }
+    )
+
+    head_portrait = forms.URLField(
+        required=True,
+        error_messages={
+            'required': "小红书博主头像不能为空",
+            'invalid': "类型错误"
+        }
+    )
+
+    gender = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "小红书博主性别不能为空",
+            'invalid': "类型错误"
+        }
+    )
+
+    birthday = forms.DateField(
+        required=True,
+        error_messages={
+            'required': "小红书博主生日不能为空",
+            'invalid': "类型错误"
+        }
+    )
+
+
