@@ -120,6 +120,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
         # 保存私信截图
         if oper_type == "save_screenshots":
             form_data = {
+                'name': request.POST.get('name'),
                 'iccid': request.POST.get('iccid'),
                 'imsi': request.POST.get('imsi'),
                 'img_base64_data': request.POST.get('img_base64_data')
@@ -129,6 +130,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
 
+                name = forms_obj.cleaned_data.get('name')
                 iccid = forms_obj.cleaned_data.get('iccid')
                 imsi = forms_obj.cleaned_data.get('imsi')
                 img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
@@ -176,7 +178,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     obj = objs[0]
                     models.XiaohongshuDirectMessages.objects.create(
                         user_id=obj,
-                        img_url=img_url
+                        img_url=img_url,
+                        name=name
                     )
 
                 response.code = 200

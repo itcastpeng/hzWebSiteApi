@@ -109,3 +109,10 @@ class SaveScreenshotsForm(forms.Form):
             'required': "图片内容不能为空"
         }
     )
+
+    name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "私信人昵称不能为空"
+        }
+    )
