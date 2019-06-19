@@ -134,8 +134,10 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 iccid = forms_obj.cleaned_data.get('iccid')
                 imsi = forms_obj.cleaned_data.get('imsi')
                 img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
+                img_base64_data = img_base64_data.replace(' ', '+')
                 # img_base64_data = parse.unquote(img_base64_data)
                 print(type(img_base64_data), img_base64_data)
+
                 imgdata = base64.b64decode(img_base64_data)
 
                 with open('t.png', 'wb') as f:
