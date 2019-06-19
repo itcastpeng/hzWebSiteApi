@@ -113,7 +113,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
     if request.method == "POST":
         # 保存私信截图
         if oper_type == "save_screenshots":
-            print("request.POST --->", request.POST)
+            print("request.POST ---> ///////////////////", request.POST)
             #
             # form_data = {
             #     'user_id': request.POST.get('user_id'),
