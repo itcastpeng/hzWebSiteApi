@@ -119,8 +119,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
     if request.method == "POST":
         # 保存私信截图
         if oper_type == "save_screenshots":
-            # print("request.POST ---> ///////////////////", request.POST)
-
             form_data = {
                 'iccid': request.POST.get('iccid'),
                 'imsi': request.POST.get('imsi'),
@@ -135,53 +133,54 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 imsi = forms_obj.cleaned_data.get('imsi')
                 img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
                 img_base64_data = img_base64_data.replace(' ', '+')
-                # img_base64_data = parse.unquote(img_base64_data)
-                print(type(img_base64_data), img_base64_data)
 
-                imgdata = base64.b64decode(img_base64_data)
+                objs = models.XiaohongshuUserProfile.objects.filter(
+                    phone_id__iccid=iccid,
+                    phone_id__imsi=imsi
+                )
+                if objs:
+                    imgdata = base64.b64decode(img_base64_data)
 
-                with open('t.png', 'wb') as f:
-                    f.write(imgdata)
+                    with open('t.png', 'wb') as f:
+                        f.write(imgdata)
 
-                redis_obj = get_redis_obj()
-                upload_token = redis_obj.get('qiniu_upload_token')
-                if not upload_token:
-                    qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
-                    with open(qiniu_data_path, "r", encoding="utf8") as f:
-                        data = json.loads(f.read())
-                        access_key = data.get('access_key')
-                        secret_key = data.get('secret_key')
-                        obj = Auth(access_key, secret_key)
-                        upload_token = obj.upload_token("xcx_wgw_zhangcong")
+                    redis_obj = get_redis_obj()
+                    upload_token = redis_obj.get('qiniu_upload_token')
+                    if not upload_token:
+                        qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+                        with open(qiniu_data_path, "r", encoding="utf8") as f:
+                            data = json.loads(f.read())
+                            access_key = data.get('access_key')
+                            secret_key = data.get('secret_key')
+                            obj = Auth(access_key, secret_key)
+                            upload_token = obj.upload_token("xcx_wgw_zhangcong")
 
-                headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
-                }
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+                    }
 
-                url = 'https://up-z1.qiniup.com/'
+                    url = 'https://up-z1.qiniup.com/'
 
-                files = {
-                    'file': imgdata
-                }
-                data = {
-                    'token': upload_token,
-                    'key': "xiaohongshu_fabu_" + str(int(time.time() * 1000))
-                }
+                    files = {
+                        'file': imgdata
+                    }
+                    data = {
+                        'token': upload_token,
+                        'key': "xiaohongshu_fabu_" + str(int(time.time() * 1000))
+                    }
 
-                ret = requests.post(url, data=data, files=files, headers=headers)
-                print("ret.text -->", ret.text)
-
-                # obj = models.XiaohongshuBiji.objects.create(
-                #     user_id_id=user_id,
-                #     content=content,
-                #     release_time=release_time
-                # )
-
+                    ret = requests.post(url, data=data, files=files, headers=headers)
+                    # print("ret.text -->", ret.json)
+                    key = ret.json()["key"]
+                    img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
+                    obj = objs[0]
+                    models.XiaohongshuDirectMessages.objects.create(
+                        user_id=obj,
+                        img_url=img_url
+                    )
 
                 response.code = 200
-                response.msg = "添加成功"
-                response.data = {
-                }
+                response.msg = "保存成功"
             else:
                 print("验证不通过")
                 response.code = 301

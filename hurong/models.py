@@ -169,6 +169,7 @@ class XiaohongshuUserProfile(models.Model):
     home_url = models.CharField(verbose_name="主页地址", max_length=256)
 
 
+# 小红书账号注册
 class XiaohongshuUserProfileRegister(models.Model):
     uid = models.IntegerField(verbose_name="小红书后台博主id")
     name = models.CharField(verbose_name="昵称", max_length=128)
@@ -232,5 +233,7 @@ class XiaohongshuForbiddenText(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-# class XiaohongshuDirectMessages(models.Model):
-#
+class XiaohongshuDirectMessages(models.Model):
+    user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
+    img_url = models.CharField(verbose_name="私信截图", max_length=256)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
