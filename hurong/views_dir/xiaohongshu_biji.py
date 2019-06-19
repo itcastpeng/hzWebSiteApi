@@ -114,7 +114,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
         # 添加
         if oper_type == "add":
             form_data = {
-                'user_id': request.POST.get('user_id'),
+                'xiaohongshu_id': request.POST.get('xiaohongshu_id'),
                 'content': request.POST.get('content'),
                 'release_time': request.POST.get('release_time', datetime.datetime.now())
             }
@@ -123,21 +123,28 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
 
-                user_id = forms_obj.cleaned_data.get('user_id')
+                xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 content = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
+                print(xiaohongshu_id)
+                xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
+                if xiaohongshu_user_objs:
+                    xiaohongshu_user_obj = xiaohongshu_user_objs[0]
+                    obj = models.XiaohongshuBiji.objects.create(
+                        user_id=xiaohongshu_user_obj,
+                        content=content,
+                        release_time=release_time
+                    )
 
-                obj = models.XiaohongshuBiji.objects.create(
-                    user_id_id=user_id,
-                    content=content,
-                    release_time=release_time
-                )
+                    response.code = 200
+                    response.msg = "添加成功"
+                    response.data = {
+                        'biji_id': obj.id
+                    }
+                else:
+                    response.code = 0
+                    response.msg = "添加失败, 小红书id不存在"
 
-                response.code = 200
-                response.msg = "添加成功"
-                response.data = {
-                    'biji_id': obj.id
-                }
             else:
                 print("验证不通过")
                 response.code = 301

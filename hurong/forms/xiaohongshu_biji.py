@@ -39,10 +39,10 @@ class SelectForm(forms.Form):
 
 # 添加
 class AddForm(forms.Form):
-    user_id = forms.IntegerField(
+    xiaohongshu_id = forms.IntegerField(
         required=True,
         error_messages={
-            'required': "小红书账户id不能为空",
+            'required': "小红书id不能为空",
             'invalid': "数据类型错误"
         }
     )
