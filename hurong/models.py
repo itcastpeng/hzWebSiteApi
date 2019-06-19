@@ -225,3 +225,8 @@ class XiaohongshuBiji(models.Model):
     biji_url = models.CharField(verbose_name="笔记回链", max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+
+# 小红书违禁词管理
+class XiaohongshuForbiddenText(models.Model):
+    word = models.CharField(verbose_name="违禁词", max_length=256)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

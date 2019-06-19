@@ -164,6 +164,12 @@ def check_forbidden_text(request):
         forms_obj = CheckForbiddenTextForm(request.POST)
         if forms_obj.is_valid():
             result = request_post(forms_obj.cleaned_data.get("context"))
+            for item in result["data"]:
+                if item["enable"] == False:
+                    word = item["word"]
+                    objs = models.XiaohongshuForbiddenText.objects.filter(word=word)
+                    if not objs:
+                        models.XiaohongshuForbiddenText.objects.create(word=word)
             if result['code'] == 0:
                 response.data = result['data']
                 response.code = 200
