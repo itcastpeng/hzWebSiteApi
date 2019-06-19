@@ -237,6 +237,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 手机操作回复完成后,修改状态和更新时间
         elif oper_type == "reply_save":
             task_id = request.POST.get('task_id')
             models.XiaohongshuDirectMessagesReply.objects.filter(id=task_id).update(
