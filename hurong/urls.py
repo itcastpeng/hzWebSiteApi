@@ -51,4 +51,5 @@ urlpatterns = [
 
     # 小红书私信管理
     url(r'^xiaohongshu_direct_essages/(?P<oper_type>\w+)/(?P<o_id>\d+)', xiaohongshu_direct_essages.xiaohongshu_direct_essages_oper),
+    url(r'^xiaohongshu_direct_essages', xiaohongshu_direct_essages.xiaohongshu_direct_essages),
 ]
