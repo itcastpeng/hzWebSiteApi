@@ -27,23 +27,24 @@ def xiaohongshu_direct_essages(request):
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
         if forms_obj.is_valid():
-            user_id = request.GET.get('user_id')
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
-                'status': '',
-                'select_type': '',
-                'keywords': '__contains',
+                'name': '',
                 'create_datetime': '',
             }
 
             q = conditionCom(request, field_dict)
 
+            xiaohongshu_id = request.GET.get('xiaohongshu_id')
+            if xiaohongshu_id:
+                q.add(Q(**{'user_id__xiaohongshu_id': xiaohongshu_id}), Q.AND)
+
             print('q -->', q)
-            objs = models.XiaohongshuFugai.objects.filter(q).order_by(order)
+            objs = models.XiaohongshuDirectMessages.objects.select_related('user_id').filter(q).order_by(order)
             print(objs)
             count = objs.count()
 
@@ -57,27 +58,12 @@ def xiaohongshu_direct_essages(request):
             ret_data = []
             for obj in objs:
                 #  将查询出来的数据 加入列表
-                update_datetime = ""
-                if obj.update_datetime:
-                    update_datetime = obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S')
-
-                keywords = "({select_type}) {keywords}".format(
-                    keywords=obj.keywords,
-                    select_type=obj.get_select_type_display()
-                )
                 ret_data.append({
                     'id': obj.id,
-                    'keywords': keywords,
-                    'url': obj.url,
-                    'rank': obj.rank,
-                    'biji_num': obj.biji_num,
-                    'status': obj.get_status_display(),
-                    'status_id': obj.status,
-                    'select_type': obj.get_select_type_display(),
-                    'select_type_id': obj.select_type,
-                    'create_user__username': obj.create_user.username,
+                    'xiaohongshu_id': obj.user_id.xiaohongshu_id,
+                    'name': obj.name,
+                    'img_url': obj.img_url,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'update_datetime': update_datetime,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -85,22 +71,13 @@ def xiaohongshu_direct_essages(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
-                'status_choices': models.XiaohongshuFugai.status_choices,
-                'select_type_choices': models.XiaohongshuFugai.select_type_choices,
             }
             response.note = {
-                'id': "下拉词id",
-                'keywords': "搜索词",
-                'url': "匹配url",
-                'rank': "排名",
-                'biji_num': "笔记数",
-                'status': "状态",
-                'status_id': "状态id",
-                'select_type': "搜索类型",
-                'select_type_id': "搜索类型id",
-                'create_user__username': "创建人",
+                'id': "小红书私信截图id",
+                'xiaohongshu_id': "博主小红书id",
+                'name': "私信博主名称",
+                'img_url': "私信截图url",
                 'create_datetime': "创建时间",
-                'update_datetime': "更新时间",
             }
         else:
             print("forms_obj.errors -->", forms_obj.errors)

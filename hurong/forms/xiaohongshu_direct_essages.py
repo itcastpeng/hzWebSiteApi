@@ -8,6 +8,14 @@ import json
 
 # 判断是否是数字
 class SelectForm(forms.Form):
+    # xiaohongshu_id = forms.IntegerField(
+    #     required=False,
+    #     error_messages={
+    #         'required': "小红书id不能为空",
+    #         'invalid': "类型错误"
+    #     }
+    # )
+
     current_page = forms.IntegerField(
         required=False,
         error_messages={

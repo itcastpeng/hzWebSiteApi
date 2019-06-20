@@ -199,4 +199,5 @@ NoValidationTokenRoute = [
     "/api_hurong/xiaohongshu_direct_essages/reply",
     "/api_hurong/xiaohongshu_direct_essages/reply_save",
     "/api_hurong/xiaohongshu_direct_essages/get_reply",
+    "/api_hurong/xiaohongshu_direct_essages",
 ]
