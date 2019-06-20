@@ -154,11 +154,28 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     key = ret.json()["key"]
                     img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
                     obj = objs[0]
-                    models.XiaohongshuDirectMessages.objects.create(
+                    direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
                         user_id=obj,
                         img_url=img_url,
                         name=name
                     )
+
+                    # 把私信截图发送给小红书后台
+                    for i in range(3):
+                        try:
+                            data = {
+                                "id": direct_message_obj.id,
+                                "name": name,
+                                "img_url": img_url,
+                                "xiaohongshu_id": obj.xiaohongshu_id,
+                                "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                            }
+                            ret = requests.post("https://www.ppxhs.com/api/v1/sync/sync-chat", data=data)
+                            print("ret.json", ret.json())
+
+                            break
+                        except:
+                            pass
 
                 response.code = 200
                 response.msg = "保存成功"
