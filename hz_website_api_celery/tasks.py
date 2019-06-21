@@ -328,9 +328,6 @@ def sync_phone_number():
 
     while True:
         ret = requests_obj.get(phone_list_url, headers=headers)
-        # print(ret.text)
-        # print(ret.text)
-
         soup = BeautifulSoup(ret.text, 'lxml')
         tbody_html = soup.find('tbody')
 
@@ -339,6 +336,11 @@ def sync_phone_number():
             expire_date = tr_html.find_all('td')[2].text
             remark = tr_html.find_all('td')[3].text
             print(phone_num, expire_date, remark)
+            models.PhoneNumber.objects.create(
+                phone_num=phone_num,
+                expire_date=expire_date,
+                remark=remark,
+            )
 
         next_page_html = soup.find('a', text="下一页")
         headers["Referer"] = phone_list_url
