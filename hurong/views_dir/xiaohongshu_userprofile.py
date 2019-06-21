@@ -114,6 +114,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
         # 更新小红书用户信息
         if oper_type == "update_userinfo":
             form_data = {
+                'phone_num': request.POST.get('phone_num'),
                 'imsi': request.POST.get('imsi'),
                 'iccid': request.POST.get('iccid'),
                 'name': request.POST.get('name'),
@@ -125,6 +126,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
 
+                phone_num = forms_obj.cleaned_data.get('phone_num')
                 imsi = forms_obj.cleaned_data.get('imsi')
                 iccid = forms_obj.cleaned_data.get('iccid')
                 name = forms_obj.cleaned_data.get('name')
@@ -139,22 +141,49 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                     imsi=imsi,
                     # iccid=iccid
                 )
+                objs.update(phone_num=phone_num)
                 print("objs --->", objs)
                 if objs:
                     obj = objs[0]
                     print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
                     if not obj.xiaohongshuuserprofile_set.all():
-                        obj.xiaohongshuuserprofile_set.create(
+                        xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
                             name=name,
                             xiaohongshu_id=xiaohongshu_id,
                             home_url=home_url
                         )
                     else:
-                        obj.xiaohongshuuserprofile_set.all().update(
-                            name=name,
-                            xiaohongshu_id=xiaohongshu_id,
-                            home_url=home_url
+                        xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
+                            phone_id=obj
                         )
+                        xiaohongshu_userprofile_obj.name = name
+                        xiaohongshu_userprofile_obj.xiaohongshu_id = xiaohongshu_id
+                        xiaohongshu_userprofile_obj.home_url = home_url
+                        xiaohongshu_userprofile_obj.save()
+
+                    # 如果小红书博主注册表中有未注册的,则将信息提交给小红书后台
+                    xhs_userprofile_register_objs = models.XiaohongshuUserProfileRegister.objects.filter(
+                        name=name,
+                        is_register=False,
+                    )
+                    if xhs_userprofile_register_objs:
+                        xhs_userprofile_register_objs.update(
+                            is_register=True,
+                            register_datetime=datetime.datetime.now()
+                        )
+
+                        # 将注册成功的小红书账号推送到小红书后台
+                        api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
+                        data = {
+                            "id": xiaohongshu_userprofile_obj.id,
+                            "xhs_id": xiaohongshu_id,
+                            "link": home_url,
+                            "mobile": phone_num,
+                        }
+                        ret = requests.post(api_url, data=data)
+                        print(ret.json())
+
+
                 response.code = 200
                 response.msg = "更新成功"
             else:

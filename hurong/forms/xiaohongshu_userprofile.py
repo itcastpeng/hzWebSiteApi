@@ -25,6 +25,12 @@ class IsUpdateUserinfoForm(forms.Form):
 
 # 判断是否需要更新个人信息
 class UpdateUserinfoForm(forms.Form):
+    phone_num = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "手机号不能为空"
+        }
+    )
     imsi = forms.IntegerField(
         required=True,
         error_messages={

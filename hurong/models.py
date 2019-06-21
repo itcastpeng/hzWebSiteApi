@@ -183,6 +183,7 @@ class XiaohongshuUserProfileRegister(models.Model):
     gender = models.SmallIntegerField(verbose_name="性别", choices=gender_choices)
     birthday = models.DateField(verbose_name="生日")
     is_register = models.BooleanField(verbose_name="是否已经注册", default=False)
+    register_datetime = models.DateTimeField(verbose_name="注册时间", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
