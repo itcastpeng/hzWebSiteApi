@@ -254,3 +254,17 @@ class XiaohongshuDirectMessagesReply(models.Model):
     status = models.SmallIntegerField(verbose_name="回复状态", choices=status_choices, default=1)
     update_datetime = models.DateTimeField(verbose_name="回复时间", null=True, blank=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+class PhoneNumber(models.Model):
+    phone_num = models.CharField(verbose_name="手机号", max_length=256)
+    expire_date = models.DateField(verbose_name="过期时间")
+    remark = models.CharField(verbose_name="备注信息", max_length=256)
+
+    status_choices = (
+        (1, "未使用"),
+        (2, "已使用"),
+    )
+    status = models.SmallIntegerField(verbose_name="状态", default=1)
+
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

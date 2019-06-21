@@ -6,6 +6,7 @@
 from __future__ import absolute_import, unicode_literals
 from .celery import app
 import requests
+from bs4 import BeautifulSoup
 import datetime
 import os
 import sys
@@ -301,4 +302,50 @@ def xiaohongshu_phone_monitor():
             content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
             obj.message_send('ZhangCong', content)          # 张聪
             obj.message_send('1534764500636', content)      # 贺昂
+
+
+# 手机号同步
+@app.task
+def sync_phone_number():
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36"
+    }
+
+    # 登录
+    login_url = "http://47.110.86.5:9999/index.php?g=cust&m=login&a=dologin"
+    data = {
+        "username": "张聪296",
+        "password": "zhang_cong.123",
+    }
+
+    requests_obj = requests.Session()
+    requests_obj.post(url=login_url, headers=headers, data=data)
+    # print(ret.text)
+
+    # 获取卡号列表
+    headers["Referer"] = login_url
+    phone_list_url = "http://47.110.86.5:9999/index.php?g=cust&m=cardno_cust&a=sub"
+
+    while True:
+        ret = requests_obj.get(phone_list_url, headers=headers)
+        # print(ret.text)
+        # print(ret.text)
+
+        soup = BeautifulSoup(ret.text, 'lxml')
+        tbody_html = soup.find('tbody')
+
+        for tr_html in tbody_html.find_all('tr'):
+            phone_num = tr_html.find_all('td')[1].text
+            expire_date = tr_html.find_all('td')[2].text
+            remark = tr_html.find_all('td')[3].text
+            print(phone_num, expire_date, remark)
+
+        next_page_html = soup.find('a', text="下一页")
+        headers["Referer"] = phone_list_url
+        if next_page_html:
+            phone_list_url = "http://47.110.86.5:9999" + next_page_html.attrs["href"]
+            print(phone_list_url)
+        else:
+            break
+
 
