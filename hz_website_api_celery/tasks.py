@@ -336,11 +336,12 @@ def sync_phone_number():
             expire_date = tr_html.find_all('td')[2].text
             remark = tr_html.find_all('td')[3].text
             print(phone_num, expire_date, remark)
-            models.PhoneNumber.objects.create(
-                phone_num=phone_num,
-                expire_date=expire_date,
-                remark=remark,
-            )
+            if not models.PhoneNumber.objects.filter(phone_num=phone_num):
+                models.PhoneNumber.objects.create(
+                    phone_num=phone_num,
+                    expire_date=expire_date,
+                    remark=remark,
+                )
 
         next_page_html = soup.find('a', text="下一页")
         headers["Referer"] = phone_list_url
