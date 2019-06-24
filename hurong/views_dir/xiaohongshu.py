@@ -10,6 +10,7 @@ from django.db.models import Q
 import redis
 import json
 import requests
+from publicFunc.redisOper import get_redis_obj
 
 
 @account.is_token(models.UserProfile)
@@ -162,6 +163,15 @@ def check_forbidden_text(request):
     response = Response.ResponseObj()
     if request.method == "POST":
         forms_obj = CheckForbiddenTextForm(request.POST)
+        platform = request.POST.get('platform')
+
+        # 如果有平台,则自增1
+        if platform:
+            key = "platform_" + platform
+            redis_obj = get_redis_obj()
+            num = redis_obj.get(key) + 1
+            redis_obj.set(key, num)
+
         if forms_obj.is_valid():
             result = request_post(forms_obj.cleaned_data.get("context"))
             for item in result["data"]:
