@@ -163,9 +163,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
 
-                obj = models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url)
-                response.code = 200
-                response.msg = "提交成功"
+                models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url, status=2)
 
                 api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
                 data = {
@@ -173,7 +171,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     "link": url,
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
-                requests.post(url=api_url, data=data)
+                ret = requests.post(url=api_url, data=data)
+                print("ret.text -->", ret.text)
+
+                response.code = 200
+                response.msg = "提交成功"
 
             else:
                 print("验证不通过")
