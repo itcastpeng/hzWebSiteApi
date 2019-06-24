@@ -284,9 +284,9 @@ def debug_test():
 @app.task
 def xiaohongshu_phone_monitor():
     hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
-    if 8 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
         from hurong import models
-        objs = models.XiaohongshuPhone.objects.all()
+        objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
         err_phone = []
         for obj in objs:
             expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")

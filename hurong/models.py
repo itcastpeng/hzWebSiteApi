@@ -153,7 +153,6 @@ class XiaohongshuPhone(models.Model):
 
     is_debug = models.BooleanField(verbose_name="是否调试", default=True)
 
-
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
