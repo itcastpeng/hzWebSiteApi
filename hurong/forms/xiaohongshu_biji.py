@@ -72,6 +72,7 @@ class AddForm(forms.Form):
             self.add_error('user_id', "小红书账户不存在")
 
 
+# 获取发布任务
 class GetReleaseTaskForm(forms.Form):
     imsi = forms.IntegerField(
         required=True,
@@ -84,5 +85,24 @@ class GetReleaseTaskForm(forms.Form):
         required=True,
         error_messages={
             'required': "设备IMSI号不能为空"
+        }
+    )
+
+
+# 提交反链
+class UploadUrlForm(forms.Form):
+    task_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "任务id不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+
+    url = forms.URLField(
+        required=True,
+        error_messages={
+            'required': "反链不能为空",
+            'invalid': "数据类型错误"
         }
     )

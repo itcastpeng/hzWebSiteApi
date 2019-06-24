@@ -5,7 +5,7 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm
+from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm
 from django.db.models import Q
 import redis
 import json
@@ -150,6 +150,35 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 提交反链
+        if oper_type == "upload_url":
+            form_data = {
+                'task_id': request.POST.get('task_id'),
+                'url': request.POST.get('url'),
+            }
+            forms_obj = UploadUrlForm(form_data)
+            if forms_obj.is_valid():
+                print("验证通过")
+
+                task_id = forms_obj.cleaned_data.get('task_id')
+                url = forms_obj.cleaned_data.get('url')
+
+                obj = models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url)
+                response.code = 200
+                response.msg = "提交成功"
+
+                api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
+                data = {
+                    "id": obj.id,
+                    "link": url,
+                    "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
+                }
+                requests.post(url=api_url, data=data)
+
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
         else:
             response.code = 402
             response.msg = "请求异常"

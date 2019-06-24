@@ -194,6 +194,7 @@ NoValidationTokenRoute = [
     "/api_hurong/xiaohongshu_userprofile/registre",
     "/api_hurong/xiaohongshu_biji/add",
     "/api_hurong/xiaohongshu_biji/get_release_task",
+    "/api_hurong/xiaohongshu_biji/upload_url",
     "/api_hurong/xiaohongshu_direct_essages/save_screenshots",
 
     "/api_hurong/xiaohongshu_direct_essages/reply",
