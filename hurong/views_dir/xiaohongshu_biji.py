@@ -169,7 +169,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
                 data = {
-                    "id": obj.id,
+                    "id": task_id,
                     "link": url,
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
