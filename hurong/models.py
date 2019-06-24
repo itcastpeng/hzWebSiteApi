@@ -151,6 +151,9 @@ class XiaohongshuPhone(models.Model):
     )
     phone_type = models.SmallIntegerField(verbose_name="手机任务类型", choices=phone_type_choices, default=1)
 
+    is_debug = models.BooleanField(verbose_name="是否调试", default=True)
+
+
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
