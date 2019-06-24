@@ -173,7 +173,7 @@ def check_forbidden_text(request):
             if num:
                 num = int(num) + 1
             else:
-                num = 0
+                num = 1
             redis_obj.set(key, num)
 
         if forms_obj.is_valid():
