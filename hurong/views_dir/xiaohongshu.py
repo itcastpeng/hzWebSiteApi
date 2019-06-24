@@ -171,7 +171,7 @@ def check_forbidden_text(request):
             redis_obj = get_redis_obj()
             num = redis_obj.get(key)
             if num:
-                num += 1
+                num = int(num) + 1
             else:
                 num = 0
             redis_obj.set(key, num)
