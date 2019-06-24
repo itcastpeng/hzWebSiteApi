@@ -169,7 +169,11 @@ def check_forbidden_text(request):
         if platform:
             key = "platform_" + platform
             redis_obj = get_redis_obj()
-            num = redis_obj.get(key) + 1
+            num = redis_obj.get(key)
+            if num:
+                num += 1
+            else:
+                num = 0
             redis_obj.set(key, num)
 
         if forms_obj.is_valid():
