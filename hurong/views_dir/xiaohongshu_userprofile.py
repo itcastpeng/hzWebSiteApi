@@ -175,7 +175,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         # 将注册成功的小红书账号推送到小红书后台
                         api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
                         data = {
-                            "id": xhs_userprofile_register_objs.uid,
+                            "id": xhs_userprofile_register_objs[0].uid,
                             "xhs_id": xiaohongshu_id,
                             "link": home_url,
                             "mobile": phone_num,
