@@ -386,4 +386,7 @@ def xiaohongshu_biji_monitor():
 def xhs_bpw_rsync():
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
-    print("keys -->", keys)
+    # print("keys -->", keys)
+    for key in keys:
+        data = redis_obj.get(key)
+        print(json.loads(data))
