@@ -372,7 +372,8 @@ def xiaohongshu_biji_monitor():
     hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
     if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
         from hurong import models
-        objs = models.XiaohongshuBiji.objects.filter(status=1)
+        # user_id_id = 5 是测试账号
+        objs = models.XiaohongshuBiji.objects.filter(status=1).exclude(user_id_id=5)
         if objs:
             obj = WorkWeixinApi()
             content = """小红书有新的笔记需要发布，请及时处理"""
