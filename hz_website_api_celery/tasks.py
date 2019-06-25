@@ -379,3 +379,11 @@ def xiaohongshu_biji_monitor():
             content = """小红书有新的笔记需要发布，请及时处理"""
             obj.message_send('ZhangCong', content)          # 张聪
             obj.message_send('1534764500636', content)      # 贺昂
+
+
+# 同步小红书霸屏王关键词和链接
+@app.task
+def xhs_bpw_rsync():
+    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    keys = redis_obj.keys("XHS_SCREEN*")
+    print("keys -->", keys)

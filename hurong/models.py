@@ -260,6 +260,7 @@ class XiaohongshuDirectMessagesReply(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 手机号管理
 class PhoneNumber(models.Model):
     phone_num = models.CharField(verbose_name="手机号", max_length=256)
     expire_date = models.DateField(verbose_name="过期时间")
@@ -271,4 +272,29 @@ class PhoneNumber(models.Model):
     )
     status = models.SmallIntegerField(verbose_name="状态", default=1)
 
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 小红书霸屏王关键词管理
+class xhs_bpw_keywords(models.Model):
+    keywords = models.CharField(verbose_name="搜索词", max_length=256)
+    uid = models.IntegerField(verbose_name="小红书后台用户id")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
+
+
+# 小红书霸屏王笔记链接管理
+class xhs_bpw_biji_url(models.Model):
+    biji_url = models.CharField(verbose_name="笔记链接", max_length=256)
+    uid = models.IntegerField(verbose_name="小红书后台用户id")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
+
+
+# 小红书霸屏王关键词覆盖表
+class xhs_bpw_fugai(models.Model):
+    keywords = models.ForeignKey("xhs_bpw_keywords", verbose_name="关键词")
+    biji_url = models.ForeignKey("xhs_bpw_biji_url", verbose_name="笔记链接")
+    rank = models.IntegerField(verbose_name="排名", default=0)
+    biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
