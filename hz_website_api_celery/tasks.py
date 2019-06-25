@@ -388,5 +388,6 @@ def xhs_bpw_rsync():
     keys = redis_obj.keys("XHS_SCREEN*")
     # print("keys -->", keys)
     for key in keys:
+        uid = key.replace('XHS_SCREEN_', "")
         data = redis_obj.get(key)
         print(json.loads(data))

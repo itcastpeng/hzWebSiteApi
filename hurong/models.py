@@ -176,7 +176,7 @@ class XiaohongshuUserProfile(models.Model):
 class XiaohongshuUserProfileRegister(models.Model):
     uid = models.IntegerField(verbose_name="小红书后台博主id")
     name = models.CharField(verbose_name="昵称", max_length=128)
-    head_portrait = models.CharField(verbose_name="头像", max_length=128)
+    head_portrait = models.CharField(verbose_name="头像", max_length=256)
 
     gender_choices = (
         (1, "男"),
