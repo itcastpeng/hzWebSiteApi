@@ -167,21 +167,23 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         is_register=False,
                     )
                     if xhs_userprofile_register_objs:
-                        xhs_userprofile_register_objs.update(
-                            is_register=True,
-                            register_datetime=datetime.datetime.now()
-                        )
-
+                        xhs_userprofile_register_obj = xhs_userprofile_register_objs[0]
+                        print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
                         # 将注册成功的小红书账号推送到小红书后台
                         api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
                         data = {
-                            "id": xhs_userprofile_register_objs[0].uid,
+                            "id": xhs_userprofile_register_obj.uid,
                             "xhs_id": xiaohongshu_id,
                             "link": home_url,
                             "mobile": phone_num,
                         }
                         ret = requests.post(api_url, data=data)
-                        print(ret.json())
+                        print("ret.json() -->", ret.json())
+
+                        xhs_userprofile_register_objs.update(
+                            is_register=True,
+                            register_datetime=datetime.datetime.now()
+                        )
 
 
                 response.code = 200
