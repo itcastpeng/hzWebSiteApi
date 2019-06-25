@@ -56,6 +56,14 @@ app.conf.beat_schedule = {
         'task':'hz_website_api_celery.tasks.xiaohongshu_phone_monitor',
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
+    'xiaohongshu_userprofile_register_monitor': {
+        'task': 'hz_website_api_celery.tasks.xiaohongshu_userprofile_register_monitor',
+        'schedule': crontab('*/5', '*', '*', '*', '*'),
+    },
+    'xiaohongshu_biji_monitor': {
+        'task': 'hz_website_api_celery.tasks.xiaohongshu_biji_monitor',
+        'schedule': crontab('*/5', '*', '*', '*', '*'),
+    },
     #
     # # 自动合并gitlab代码，每分钟一次
     # 'merge_project_code':{

@@ -352,3 +352,29 @@ def sync_phone_number():
             break
 
 
+# 小红书账号注册监控,监控是否有未注册的账号
+@app.task
+def xiaohongshu_userprofile_register_monitor():
+    hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
+    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+        from hurong import models
+        objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
+        if objs:
+            obj = WorkWeixinApi()
+            content = """小红书有新的账号需要注册，请及时处理"""
+            obj.message_send('ZhangCong', content)          # 张聪
+            obj.message_send('1534764500636', content)      # 贺昂
+
+
+# 小红书未发布笔记监控,监控有新的笔记需要发布
+@app.task
+def xiaohongshu_biji_monitor():
+    hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
+    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+        from hurong import models
+        objs = models.XiaohongshuBiji.objects.filter(status=1)
+        if objs:
+            obj = WorkWeixinApi()
+            content = """小红书有新的笔记需要发布，请及时处理"""
+            obj.message_send('ZhangCong', content)          # 张聪
+            obj.message_send('1534764500636', content)      # 贺昂

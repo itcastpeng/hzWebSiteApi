@@ -168,7 +168,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                     )
                     if xhs_userprofile_register_objs:
                         xhs_userprofile_register_obj = xhs_userprofile_register_objs[0]
-                        print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
+                        # print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
                         # 将注册成功的小红书账号推送到小红书后台
                         api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
                         data = {
