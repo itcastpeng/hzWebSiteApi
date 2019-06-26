@@ -93,7 +93,7 @@ def xiaohongshu_fugai_update_data():
         item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
         keywords = item['keywords']
         page_id_list = item['page_id_list']
-        total_count = item['total_count']
+        total_count = item['total_count']       # 笔记次数
         # {'keywords': '隆鼻', 'total_count': 0, 'page_id_list': []}
 
         # 更新覆盖数据
@@ -126,13 +126,27 @@ def xiaohongshu_fugai_update_data():
                 item_data['keywords'] = obj
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
 
-        # # 更新霸屏王查覆盖数据
-        # objs = models.xhs_bpw_keywords.objects.filter(keywords=keywords)
-        # for obj in objs:
-        #     for item in page_id_list:
-        #         item['id']
-        #     models.xhs_bpw_biji_url.objects.filter()
+        # 更新霸屏王查覆盖数据
+        objs = models.xhs_bpw_keywords.objects.filter(keywords=keywords)
+        for obj in objs:
+            obj.update_datetime = datetime.datetime.now()
+            obj.save()
+            for item in page_id_list:
+                biji_url_id = item['id']        # 抓取到的数据只有笔记的id
+                rank = item['rank']             # 当前在第几名
+                xhs_bpw_biji_url_objs = models.xhs_bpw_biji_url.objects.filter(
+                    biji_url__contains=biji_url_id,
+                    uid=obj.uid
+                )
 
+                if xhs_bpw_biji_url_objs:   # 如果存在,则表示有排名
+                    xhs_bpw_biji_url_obj = xhs_bpw_biji_url_objs[0]
+                    models.xhs_bpw_fugai.objects.create(
+                        keywords=obj,
+                        biji_url=xhs_bpw_biji_url_obj,
+                        rank=rank,
+                        biji_num=total_count
+                    )
 
         # 更新下拉笔记数据
         models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(
