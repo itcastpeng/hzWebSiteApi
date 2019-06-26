@@ -390,9 +390,10 @@ def xhs_bpw_rsync():
     for key in keys:
         uid = key.replace('XHS_SCREEN_', "")
         data = redis_obj.get(key)
-        print()
+
         data = json.loads(data)
         links = data["links"]
+        print("links -->", type(links), links)
         if len(links) > 0:
             keywords = data["keywords"]
             query_list = []
