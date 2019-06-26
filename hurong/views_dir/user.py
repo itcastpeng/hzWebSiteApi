@@ -98,6 +98,7 @@ def user_oper(request, oper_type, o_id):
                     'create_user_id': forms_obj.cleaned_data.get('create_user_id'),
                     'username': forms_obj.cleaned_data.get('username'),
                     'password': forms_obj.cleaned_data.get('password'),
+                    'token': forms_obj.cleaned_data.get('token'),
                     'role_id_id': forms_obj.cleaned_data.get('role_id'),
                 }
                 print('create_data -->', create_data)
