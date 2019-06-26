@@ -151,7 +151,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         # 提交反链
-        if oper_type == "upload_url":
+        elif oper_type == "upload_url":
             form_data = {
                 'task_id': request.POST.get('task_id'),
                 'url': request.POST.get('url'),
