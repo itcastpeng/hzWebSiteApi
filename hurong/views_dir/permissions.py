@@ -202,9 +202,9 @@ def permissions_oper(request, oper_type, o_id):
 
         # 获取该用户所有权限
         elif oper_type == 'get_permissions':
-            user_obj = models.Permissions.objects.filter(id=user_id)
+            user_obj = models.UserProfile.objects.filter(id=user_id)
             if user_obj:
-                role_obj = models.Role.objects.filter(id=user_obj[0].role_id)
+                role_obj = models.Role.objects.filter(id=user_obj[0].role_id_id)
                 data_list = []
                 for i in role_obj[0].permissions.all():
                     data_list.append({
