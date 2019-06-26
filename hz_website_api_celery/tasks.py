@@ -395,21 +395,18 @@ def xhs_bpw_rsync():
         links = data["links"]
 
         if len(links) > 0:
-            print("links -->", type(links), links)
             keywords = data["keywords"]
             query_list = []
             for keyword in keywords:
-                print(models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword))
                 if not models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword):
-                    models.xhs_bpw_keywords(uid=uid, keywords=keyword)
+                    query_list.append(models.xhs_bpw_keywords(uid=uid, keywords=keyword))
 
-            print("query_list -->", query_list)
             models.xhs_bpw_keywords.objects.bulk_create(query_list)
 
             query_list = []
             for link in links:
                 if not models.xhs_bpw_biji_url.objects.filter(uid=uid, biji_url=link):
-                    models.xhs_bpw_biji_url(uid=uid, biji_url=link)
+                    query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
 
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
