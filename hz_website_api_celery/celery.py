@@ -69,6 +69,11 @@ app.conf.beat_schedule = {
         'task': 'hz_website_api_celery.tasks.xhs_bpw_keywords_rsync',
         'schedule': crontab('*/30', '*', '*', '*', '*'),
     },
+
+    'xhs_bpw_keywords_fugai_rsync': {
+        'task': 'hz_website_api_celery.tasks.xhs_bpw_keywords_fugai_rsync',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
     #
     # # 自动合并gitlab代码，每分钟一次
     # 'merge_project_code':{
