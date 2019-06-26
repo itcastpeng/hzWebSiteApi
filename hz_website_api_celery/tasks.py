@@ -156,6 +156,20 @@ def xiaohongshu_fugai_update_data():
 
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
+
+    # 霸屏王查排名
+    if redis_obj.llen(redis_key) == 0:
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+        objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
+        for obj in objs:
+            item = {
+                "keywords": obj.keywords,
+                "count": 1,  # 当前关键词存在几个任务
+                "task_type": "xiaohongshu_fugai_bpw"
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
+
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
         for obj in objs:
@@ -185,6 +199,7 @@ def xiaohongshu_fugai_update_data():
                 "task_type": "xiaohongshu_fugai"
             }
             redis_obj.lpush(redis_key, json.dumps(item))
+
 
 
 # 保存下拉和覆盖的数据到报表中
@@ -357,13 +372,13 @@ def sync_phone_number():
         for tr_html in tbody_html.find_all('tr'):
             phone_num = tr_html.find_all('td')[1].text
             expire_date = tr_html.find_all('td')[2].text
-            remark = tr_html.find_all('td')[3].text
-            print(phone_num, expire_date, remark)
+            # remark = tr_html.find_all('td')[3].text
+            # print(phone_num, expire_date, remark)
             if not models.PhoneNumber.objects.filter(phone_num=phone_num):
                 models.PhoneNumber.objects.create(
                     phone_num=phone_num,
                     expire_date=expire_date,
-                    remark=remark,
+                    # remark=remark,
                 )
 
         next_page_html = soup.find('a', text="下一页")
@@ -406,7 +421,7 @@ def xiaohongshu_biji_monitor():
 
 # 同步小红书霸屏王关键词和链接
 @app.task
-def xhs_bpw_rsync():
+def xhs_bpw_keywords_rsync():
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
     # print("keys -->", keys)
@@ -439,4 +454,37 @@ def xhs_bpw_rsync():
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
 
+# 同步小红书霸屏王关键词覆盖数据到redis中
+@app.task
+def xhs_bpw_keywords_fugai_rsync():
+    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+
+    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    objs = models.xhs_bpw_fugai.objects.select_related('keywords', 'biji_url').filter(create_datetime__gt=now_date)
+
+    data = {}
+    for obj in objs:
+        uid = obj.keywords.uid
+        keywords = obj.keywords.keywords
+        biji_url = obj.biji_url.biji_url
+        rank = obj.rank
+        biji_num = obj.biji_num
+
+        keywords_data = {
+            "keywords": keywords,
+            "biji_url": biji_url,
+            "rank": rank,
+            "biji_num": biji_num,
+        }
+        if data.get(uid):   # 表示已经存在
+            data[uid].append(keywords_data)
+        else:
+            data[uid] = [keywords_data]
+    for uid, keywords_data in data.items():
+        key = "XHS_FUGAI_{now_date}_{uid}".format(now_date=now_date, uid=uid)
+        ex_seconds = 60 * 15    # key 失效的时间是15分钟
+        redis_obj.set(key, json.dumps(keywords_data), ex_seconds)
+        # print("key -->", key)
+        # print("json.dumps(keywords_data) -->", json.dumps(keywords_data))
 
