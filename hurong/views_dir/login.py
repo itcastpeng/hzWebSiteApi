@@ -32,7 +32,7 @@ def login(request):
                         'token': obj.token,
                         'id': obj.id,
                         'username': obj.username,
-                        'access': json.loads(obj.role_id.access_name),
+                        # 'access': json.loads(obj.role_id.access_name),
                         'head_portrait': obj.head_portrait,
                         'is_update_pwd': obj.is_update_pwd,
                     }
