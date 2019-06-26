@@ -399,6 +399,7 @@ def xhs_bpw_rsync():
             keywords = data["keywords"]
             query_list = []
             for keyword in keywords:
+                print(models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword))
                 if not models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword):
                     models.xhs_bpw_keywords(uid=uid, keywords=keyword)
 
