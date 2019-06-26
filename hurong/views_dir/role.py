@@ -170,20 +170,23 @@ def role_oper(request, oper_type, o_id):
             objs = models.Role.objects.filter(id=o_id)
             if objs:
                 obj = objs[0]
-                userObj = models.UserProfile.objects.get(id=user_id)
+                userObj = models.UserProfile.objects.get(
+                    id=user_id,
+                )
                 if userObj.role_id == obj.id:
                     response.code = 301
                     response.msg = '不能删除自己角色'
 
                 else:
-                    # if obj.permissions.all().count() > 0:
-                    #     response.code = 304
-                    #     response.msg = '含有子级数据,请先删除或转移子级数据'
-                    #
-                    # else:
-                    objs.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
+                    if not models.UserProfile.objects.filter(
+                        role_id__in=[o_id]
+                    ):
+                        objs.delete()
+                        response.code = 200
+                        response.msg = "删除成功"
+                    else:
+                        response.code = 301
+                        response.msg = '该角色下存在用户'
 
             else:
                 response.code = 302
