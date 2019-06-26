@@ -28,6 +28,7 @@ import json
 from openpyxl import Workbook
 from django.db.models import Q
 from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
+import re
 
 
 # 更新小红书下拉数据
@@ -124,6 +125,14 @@ def xiaohongshu_fugai_update_data():
             else:  # 不存在
                 item_data['keywords'] = obj
                 models.XiaohongshuFugaiDetail.objects.create(**item_data)
+
+        # # 更新霸屏王查覆盖数据
+        # objs = models.xhs_bpw_keywords.objects.filter(keywords=keywords)
+        # for obj in objs:
+        #     for item in page_id_list:
+        #         item['id']
+        #     models.xhs_bpw_biji_url.objects.filter()
+
 
         # 更新下拉笔记数据
         models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(
@@ -405,6 +414,11 @@ def xhs_bpw_rsync():
 
             query_list = []
             for link in links:
+                # 处理短链接
+                if link.startswith("http://t.cn"):
+                    ret = requests.get(link, allow_redirects=False)
+                    link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+
                 if not models.xhs_bpw_biji_url.objects.filter(uid=uid, biji_url=link):
                     query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
 
