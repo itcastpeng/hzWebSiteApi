@@ -372,13 +372,13 @@ def sync_phone_number():
         for tr_html in tbody_html.find_all('tr'):
             phone_num = tr_html.find_all('td')[1].text
             expire_date = tr_html.find_all('td')[2].text
-            remark = tr_html.find_all('td')[3].text
-            print(phone_num, expire_date, remark)
+            # remark = tr_html.find_all('td')[3].text
+            # print(phone_num, expire_date, remark)
             if not models.PhoneNumber.objects.filter(phone_num=phone_num):
                 models.PhoneNumber.objects.create(
                     phone_num=phone_num,
                     expire_date=expire_date,
-                    remark=remark,
+                    # remark=remark,
                 )
 
         next_page_html = soup.find('a', text="下一页")
