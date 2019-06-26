@@ -54,19 +54,15 @@ class phone_management():
         soup = BeautifulSoup(ret.text, 'lxml')
         content = soup.find('div', class_='tab-content')
         form_obj = content.find('form', class_='js-ajax-form').find_all('tr')
+        verification_code = 0
         if len(form_obj) >= 2:
             yzm_obj = form_obj[1] # 获取最后一个验证码
             if_yzm_text = yzm_obj.find_all('td')[1].get_text()
             if '验证码' in if_yzm_text:
                 if_yzm_text = if_yzm_text.split('[From')[0]
                 yzm = re.search('\d{6}', if_yzm_text)
+                verification_code = yzm
 
-            else:
-                print('---')
-
-            verification_code = 1
-        else:
-            verification_code = 0
         return verification_code
 
 if __name__ == '__main__':

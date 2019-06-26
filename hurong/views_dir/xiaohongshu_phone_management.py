@@ -104,7 +104,12 @@ def xiaohongshu_phone_management(request, oper_type):
                 phone_management_objs = phone_management()
                 phone_management_objs.login()
                 verification_code = phone_management_objs.query_verification_code(phone_number)
-                print('------------verification_code> ', verification_code)
+                if verification_code:
+                    response.code = 200
+                    response.msg = '查询成功'
+                    response.data = {
+                        'verification_code': verification_code
+                    }
             else:
                 response.code= 301
                 response.msg = json.loads(form_obj.errors.as_json())
