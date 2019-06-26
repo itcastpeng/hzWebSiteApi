@@ -421,7 +421,7 @@ def xiaohongshu_biji_monitor():
 
 # 同步小红书霸屏王关键词和链接
 @app.task
-def xhs_bpw_rsync():
+def xhs_bpw_keywords_rsync():
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
     # print("keys -->", keys)
@@ -454,4 +454,37 @@ def xhs_bpw_rsync():
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
 
+# 同步小红书霸屏王关键词覆盖数据到redis中
+@app.task
+def xhs_bpw_keywords_fugai_rsync():
+    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+
+    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+
+    objs = models.xhs_bpw_fugai.objects.select_related('keywords', 'biji_url').filter(create_datetime__gt=now_date)
+
+    data = {}
+    for obj in objs:
+        uid = obj.keywords.uid
+        keywords = obj.keywords.keywords
+        biji_url = obj.biji_url.biji_url
+        rank = obj.rank
+        biji_num = obj.biji_num
+
+        keywords_data = {
+            "keywords": keywords,
+            "biji_url": biji_url,
+            "rank": rank,
+            "biji_num": biji_num,
+        }
+        if data.get(uid):   # 表示已经存在
+            data[uid].append(keywords_data)
+        else:
+            data[uid] = [keywords_data]
+    for uid, keywords_data in data.items():
+        key = "XHS_FUGAI_{now_date}_{uid}".format(now_date=now_date, uid=uid)
+        ex_seconds = 60 * 10    # key 失效的时间是10分钟
+        # redis_obj.set(key, json.dumps(keywords_data), ex_seconds)
+        print("key -->", key)
+        print("json.dumps(keywords_data) -->", json.dumps(keywords_data))
 

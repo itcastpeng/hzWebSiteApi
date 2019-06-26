@@ -65,8 +65,8 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/5', '*', '*', '*', '*'),
     },
 
-    'xhs_bpw_rsync': {
-        'task': 'hz_website_api_celery.tasks.xhs_bpw_rsync',
+    'xhs_bpw_keywords_rsync': {
+        'task': 'hz_website_api_celery.tasks.xhs_bpw_keywords_rsync',
         'schedule': crontab('*/30', '*', '*', '*', '*'),
     },
     #
