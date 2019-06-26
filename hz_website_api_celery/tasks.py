@@ -390,4 +390,24 @@ def xhs_bpw_rsync():
     for key in keys:
         uid = key.replace('XHS_SCREEN_', "")
         data = redis_obj.get(key)
-        print(json.loads(data))
+        print()
+        data = json.loads(data)
+        links = data["links"]
+        if len(links) > 0:
+            keywords = data["keywords"]
+            query_list = []
+            for keyword in keywords:
+                if not models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword):
+                    models.xhs_bpw_keywords(uid=uid, keywords=keyword)
+
+            models.xhs_bpw_keywords.objects.bulk_create(query_list)
+
+            query_list = []
+            for link in links:
+                if not models.xhs_bpw_biji_url.objects.filter(uid=uid, biji_url=link):
+                    models.xhs_bpw_biji_url(uid=uid, biji_url=link)
+
+            models.xhs_bpw_biji_url.objects.bulk_create(query_list)
+
+
+
