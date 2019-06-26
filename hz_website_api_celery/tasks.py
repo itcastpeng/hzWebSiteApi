@@ -156,6 +156,20 @@ def xiaohongshu_fugai_update_data():
 
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
+
+    # 霸屏王查排名
+    if redis_obj.llen(redis_key) == 0:
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+        objs = models.xhs_bpw_keywords.objects.filter(q)
+        for obj in objs:
+            item = {
+                "keywords": obj.keywords,
+                "count": 1,  # 当前关键词存在几个任务
+                "task_type": "xiaohongshu_fugai_bpw"
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
+
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
         for obj in objs:
@@ -185,6 +199,7 @@ def xiaohongshu_fugai_update_data():
                 "task_type": "xiaohongshu_fugai"
             }
             redis_obj.lpush(redis_key, json.dumps(item))
+
 
 
 # 保存下拉和覆盖的数据到报表中
