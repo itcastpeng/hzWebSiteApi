@@ -1,7 +1,7 @@
 
 from django.conf.urls import url
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
-    xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages
+    xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, permissions
 
 
 urlpatterns = [
@@ -10,8 +10,12 @@ urlpatterns = [
     url(r'^login$', login.login),                  # base64 上传分片
 
     # 角色管理
-    # url(r'^role/(?P<oper_type>\w+)/(?P<o_id>\d+)', role.role_oper),
+    url(r'^role/(?P<oper_type>\w+)/(?P<o_id>\d+)', role.role_oper),
     url(r'^role', role.role),
+
+    # 权限管理
+    url(r'^permissions/(?P<oper_type>\w+)/(?P<o_id>\d+)$', permissions.permissions_oper),
+    url(r'^permissions$', permissions.permissions),
 
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),

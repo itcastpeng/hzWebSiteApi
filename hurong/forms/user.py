@@ -1,8 +1,7 @@
 from django import forms
-
 from hurong import models
 from publicFunc import account
-
+import time
 
 # 判断是否是数字
 class SelectForm(forms.Form):
@@ -66,7 +65,12 @@ class AddForm(forms.Form):
             'invalid': "数据类型错误"
         }
     )
-
+    token = forms.IntegerField(
+        required=False
+    )
+    def clean_token(self):
+        password = self.data['password']
+        return account.get_token(password + str(int(time.time()) * 1000))
     def clean_username(self):
         username = self.data['username']
         objs = models.UserProfile.objects.filter(username=username)
