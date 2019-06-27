@@ -312,3 +312,11 @@ class xhs_bpw_fugai(models.Model):
     rank = models.IntegerField(verbose_name="排名", default=0)
     biji_num = models.IntegerField(verbose_name="笔记数", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 手机号接收的短信
+class text_messages_received_cell_phone_number(models.Model):
+    phone = models.ForeignKey('PhoneNumber', verbose_name='哪个手机号')
+    message_content = models.CharField(verbose_name='短信内容', max_length=256)
+    receiving_time = models.DateTimeField(verbose_name='接收短信时间', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    serial_number = models.CharField(verbose_name="流水号", max_length=128, null=True)

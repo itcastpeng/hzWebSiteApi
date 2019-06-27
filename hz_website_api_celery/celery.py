@@ -89,6 +89,14 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '0', '*', '*', '*'),
     },
 
+    # 获取 手机号短信
+    'celery_get_phone_content': {
+        'task': 'hz_website_api_celery.tasks.celery_get_phone_content',
+        'schedule': crontab('*/10', '*', '*', '*', '*'),
+    },
+
+
+
 }
 app.conf.update(
     result_expires=3600,

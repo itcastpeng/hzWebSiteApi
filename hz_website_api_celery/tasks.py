@@ -502,6 +502,11 @@ def delete_phone_log():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/delete_phone_log'
     requests.get(url)
 
+# 获取 手机号短信
+@app.task
+def celery_get_phone_content():
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/celery_get_phone_content'
+    requests.get(url)
 
 
 

@@ -21,7 +21,7 @@ pcRequestHeader = [
 ]
 
 from bs4 import BeautifulSoup
-import requests, random, datetime, re
+import requests, random, datetime, re, json
 
 
 # 登录手机管理中心 操作
@@ -31,6 +31,7 @@ class phone_management():
     def __init__(self):
         self.headers = {'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)]}
         self.requests_obj = requests.Session()
+        self.now = datetime.date.today()
 
     # 登录
     def login(self):
@@ -55,11 +56,10 @@ class phone_management():
         for data in zh_data:
             login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
             self.requests_obj.post(url=login_url, headers=self.headers, data=data)
-            now = datetime.date.today()
             yzm_url = data.get('login_url') + '/index.php?g=cust&m=smscust&a=receive'
             data = {
-                'startDate': now,
-                'endDate': now,
+                'startDate': self.now,
+                'endDate': self.now,
                 'mobile': phone_number,
             }
             ret = self.requests_obj.post(yzm_url, headers=self.headers, data=data)
@@ -79,10 +79,48 @@ class phone_management():
 
         return verification_code
 
+    # 获取当天所有短信
+    def get_all_information_day(self):
+        zh_data = self.login()
+        data_list = []
+        # for data in zh_data:
+        data = {
+                "login_url":"http://47.110.86.5:9999",
+                "username": "张聪296",
+                "password": "zhang_cong.123",
+            }
+
+        login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
+        self.requests_obj.post(url=login_url, headers=self.headers, data=data)
+        yzm_url = data.get('login_url') + '/index.php?g=cust&m=smscust&a=receive'
+        data = {
+            'startDate': self.now,
+            'endDate': self.now,
+        }
+        ret = self.requests_obj.post(yzm_url, headers=self.headers, data=data)
+        soup = BeautifulSoup(ret.text, 'lxml')
+        content = soup.find('div', class_='tab-content')
+        form_objs = content.find('form', class_='js-ajax-form').find_all('tr')
+        for form_obj in form_objs:
+            tr_tags = form_obj.find_all('td')
+            if len(tr_tags) >= 1:
+                result_data = []
+                for tr_tag in tr_tags:
+                    text = tr_tag.get_text()
+                    if text:
+                        result_data.append(text)
+                data_list.append({
+                    'phone_number': result_data[0],
+                    'content': result_data[1],
+                    'date_time': result_data[2],
+                    'serial_number': result_data[3],
+                })
+        return data_list
+
 if __name__ == '__main__':
     obj = phone_management()
     obj.login()
-    obj.query_verification_code(1)
+    obj.get_all_information_day()
 
 
 
