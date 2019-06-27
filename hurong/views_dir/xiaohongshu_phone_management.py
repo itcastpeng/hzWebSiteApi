@@ -72,18 +72,28 @@ def xiaohongshu_phone_management(request, oper_type):
                     imsi=imsi
                 )
                 if phone_objs:
-                    number_objs = models.PhoneNumber.objects.filter(status=1, phone__isnull=True)
-                    if number_objs:
-                        number_obj = number_objs[0]
-                        number_obj.phone_id = phone_objs[0].id # 将手机号和设备进行关联
-                        number_obj.save()
+                    phone_obj = phone_objs[0]
+                    number_objs = models.PhoneNumber.objects.filter(phone=phone_obj)
+                    if not number_objs:
 
-                        response.code = 200
-                        response.data = {'phone_number': number_obj.phone_num}
+                        number_objs = models.PhoneNumber.objects.filter(status=1, phone__isnull=True)
+                        if number_objs:
+                            number_obj = number_objs[0]
+                            number_obj.phone_id = phone_objs[0].id # 将手机号和设备进行关联
+                            number_obj.save()
+                            phone_num = number_obj.phone_num
+
+                        else:
+                            response.code = 301
+                            response.msg = '暂无可用手机号'
+                            phone_num = ''
 
                     else:
-                        response.code = 301
-                        response.msg = '暂无可用手机号'
+                        phone_num = number_objs[0].phone_num
+
+                    response.code = 200
+                    response.data = {'phone_number': phone_num}
+
                 else:
                     response.code = 301
                     response.msg = '该设备不存在'

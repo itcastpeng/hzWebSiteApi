@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from hurong.forms.xhs_account_management import SelectForm
 from publicFunc.condition_com import conditionCom
-
+import json
 
 
 @csrf_exempt
@@ -26,14 +26,14 @@ def xhs_account_management(request, oper_type):
                     'gender': '',
                     'name': '__contains',
                     'uid': '__contains',
+                    'is_register': '',
                 }
-
                 q = conditionCom(request, field_dict)
                 objs = models.XiaohongshuUserProfileRegister.objects.filter(
                     q,
 
                 ).order_by(order)
-
+                count = objs.count()
                 if length != 0:
                     start_line = (current_page - 1) * length
                     stop_line = start_line + length
@@ -41,11 +41,31 @@ def xhs_account_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
-                    ret_data.append({
+                    register_datetime = obj.register_datetime
+                    if register_datetime:
+                        register_datetime = register_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
+                    ret_data.append({
+                        'id':obj.id,
+                        'uid':obj.uid,
+                        'name':obj.name,
+                        'head_portrait':obj.head_portrait,
+                        'gender':obj.gender,
+                        'birthday':obj.birthday,
+                        'is_register':obj.is_register,
+                        'register_datetime':register_datetime,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
+
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count':count,
+                }
             else:
-                pass
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
 
     else:
