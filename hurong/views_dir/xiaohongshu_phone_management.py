@@ -36,7 +36,7 @@ def xiaohongshu_phone_management(request, oper_type):
                 if objs:
                     obj = objs[0]
                     now = datetime.datetime.today()
-                    deletionTime = (now - datetime.timedelta(minutes=5))  # 当前时间减去两小时
+                    deletionTime = (now - datetime.timedelta(minutes=5))  # 当前时间减去5分钟
                     phone_log_objs = models.XiaohongshuPhoneLog.objects.filter(
                         parent=obj.id,
                         create_datetime__gte=deletionTime
@@ -100,7 +100,6 @@ def xiaohongshu_phone_management(request, oper_type):
             form_obj = get_verification_code(form_data)
             if form_obj.is_valid():
                 phone_number = form_obj.cleaned_data.get('phone_number')
-
                 phone_management_objs = phone_management()
                 phone_management_objs.login()
                 verification_code = phone_management_objs.query_verification_code(phone_number)

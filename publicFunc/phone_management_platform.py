@@ -46,9 +46,9 @@ class phone_management():
         yzm_url = 'http://47.110.86.5:9999/index.php?g=cust&m=smscust&a=receive'
         now = datetime.date.today()
         data = {
-            'startDate': '2019-06-20',
-            'endDate': '2019-06-26',
-            'mobile': '15545914711',
+            'startDate': now,
+            'endDate': now,
+            'mobile': phone_number,
         }
         ret = self.requests_obj.post(yzm_url, headers=self.headers, data=data)
         soup = BeautifulSoup(ret.text, 'lxml')
@@ -61,7 +61,7 @@ class phone_management():
             if '验证码' in if_yzm_text:
                 if_yzm_text = if_yzm_text.split('[From')[0]
                 yzm = re.search('\d{6}', if_yzm_text)
-                verification_code = yzm
+                verification_code = yzm.group()
 
         return verification_code
 
