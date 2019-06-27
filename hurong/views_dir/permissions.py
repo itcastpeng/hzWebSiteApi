@@ -202,15 +202,32 @@ def permissions_oper(request, oper_type, o_id):
 
         # 获取该用户所有权限
         elif oper_type == 'get_permissions':
-            user_obj = models.UserProfile.objects.filter(id=user_id)
-            if user_obj:
-                role_obj = models.Role.objects.filter(id=user_obj[0].role_id_id)
+            user_objs = models.UserProfile.objects.filter(id=user_id)
+            if user_objs:
+                user_obj = user_objs[0]
+                role_obj = models.Role.objects.filter(id=user_obj.role_id_id)
                 data_list = []
                 for i in role_obj[0].permissions.all():
                     data_list.append(i.name)
+
+                user_info = {
+                    'id': user_obj.id,
+                    'username': user_obj.username,
+                    'role_id': user_obj.role_id_id,
+                    'role_name': user_obj.role_id.name,
+                    'create_datetime': user_obj.create_datetime.strptime('%Y-%m-%d %H:%M:%S'),
+                    'head_portrait': user_obj.head_portrait,
+                    'status_id': user_obj.status,
+                    'status': user_obj.get_status_display(),
+                    'create_user_id': user_obj.create_user_id,
+                    'create_user': user_obj.create_user.username
+                }
                 response.code = 200
                 response.msg = '查询成功'
-                response.data = data_list
+                response.data = {
+                    'data_list': data_list,
+                    'user_info': user_info,
+                }
             else:
                 response.code = 301
                 response.msg = '非法用户'
