@@ -1,11 +1,14 @@
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
     xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, \
     permissions, xiaohongshu_phone_management
 
 
 urlpatterns = [
+
+    # celery
+    url(r'^celery/', include('hurong.celery_url')),                  # base64 上传分片
 
     url(r'^upload_img$', upload_img.upload_img),                  # base64 上传分片
     url(r'^login$', login.login),                  # base64 上传分片
