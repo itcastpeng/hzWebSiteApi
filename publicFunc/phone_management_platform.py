@@ -34,34 +34,48 @@ class phone_management():
 
     # 登录
     def login(self):
-        login_url = "http://47.110.86.5:9999/index.php?g=cust&m=login&a=dologin"
-        data = {
-            "username": "张聪296",
-            "password": "zhang_cong.123",
-        }
-        self.requests_obj.post(url=login_url, headers=self.headers, data=data)
+        data = [
+            {
+                "login_url":"http://47.110.86.5:9999",
+                "username": "张聪296",
+                "password": "zhang_cong.123",
+            },{
+                "login_url":"http://120.55.80.27:9999",
+                "username": "张聪0627",
+                "password": "zhang_cong.123",
+            }
+        ]
+        return data
+
 
     # 查询验证码
     def query_verification_code(self, phone_number):
-        yzm_url = 'http://47.110.86.5:9999/index.php?g=cust&m=smscust&a=receive'
-        now = datetime.date.today()
-        data = {
-            'startDate': now,
-            'endDate': now,
-            'mobile': phone_number,
-        }
-        ret = self.requests_obj.post(yzm_url, headers=self.headers, data=data)
-        soup = BeautifulSoup(ret.text, 'lxml')
-        content = soup.find('div', class_='tab-content')
-        form_obj = content.find('form', class_='js-ajax-form').find_all('tr')
+        zh_data = self.login()
         verification_code = 0
-        if len(form_obj) >= 2:
-            yzm_obj = form_obj[1] # 获取最后一个验证码
-            if_yzm_text = yzm_obj.find_all('td')[1].get_text()
-            if '验证码' in if_yzm_text:
-                if_yzm_text = if_yzm_text.split('[From')[0]
-                yzm = re.search('\d{6}', if_yzm_text)
-                verification_code = yzm.group()
+        for data in zh_data:
+            login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
+            self.requests_obj.post(url=login_url, headers=self.headers, data=data)
+            now = datetime.date.today()
+            yzm_url = data.get('login_url') + '/index.php?g=cust&m=smscust&a=receive'
+            data = {
+                'startDate': now,
+                'endDate': now,
+                'mobile': phone_number,
+            }
+            ret = self.requests_obj.post(yzm_url, headers=self.headers, data=data)
+            soup = BeautifulSoup(ret.text, 'lxml')
+            content = soup.find('div', class_='tab-content')
+            form_obj = content.find('form', class_='js-ajax-form').find_all('tr')
+            if len(form_obj) >= 2:
+                yzm_obj = form_obj[1] # 获取最后一个验证码
+                if_yzm_text = yzm_obj.find_all('td')[1].get_text()
+                if '验证码' in if_yzm_text:
+                    if_yzm_text = if_yzm_text.split('[From')[0]
+                    yzm = re.search('\d{6}', if_yzm_text)
+                    verification_code = yzm.group()
+
+            if not verification_code:
+                continue
 
         return verification_code
 

@@ -350,24 +350,28 @@ def sync_phone_number():
     }
 
     # 登录
-    login_url = "http://47.110.86.5:9999/index.php?g=cust&m=login&a=dologin"
+
     data_list = [
         {
+            "login_url" : "http://47.110.86.5:9999",
             "username": "张聪296",
             "password": "zhang_cong.123",
         },{
+            "login_url" : "http://120.55.80.27:9999",
             "username": "张聪0627",
             "password": "zhang_cong.123",
         }
     ]
     for data in data_list:
+        login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
+
         requests_obj = requests.Session()
         requests_obj.post(url=login_url, headers=headers, data=data)
         # print(ret.text)
 
         # 获取卡号列表
         headers["Referer"] = login_url
-        phone_list_url = "http://47.110.86.5:9999/index.php?g=cust&m=cardno_cust&a=sub"
+        phone_list_url = data.get('login_url') + "/index.php?g=cust&m=cardno_cust&a=sub"
 
         while True:
             ret = requests_obj.get(phone_list_url, headers=headers)
