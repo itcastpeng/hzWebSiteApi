@@ -9,12 +9,12 @@ import json, datetime
 @account.is_token(models.UserProfile)
 def xhs_king_barings_screen(request, oper_type):
     response = Response.ResponseObj()
-    if request.method == "GET":
+    if request.method == "POST":
         user_id = request.GET.get('user_id')
 
         # 小红书 霸屏王 重查覆盖
         if oper_type == 'get_xhs_account':
-            id = request.GET.get('id')
+            id = request.POST.get('id')
             now = datetime.datetime.today()
             code = 200
             if not id:
