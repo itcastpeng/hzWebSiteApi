@@ -215,7 +215,7 @@ def permissions_oper(request, oper_type, o_id):
                     'username': user_obj.username,
                     'role_id': user_obj.role_id_id,
                     'role_name': user_obj.role_id.name,
-                    'create_datetime': user_obj.create_datetime.strptime('%Y-%m-%d %H:%M:%S'),
+                    'create_datetime': user_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'head_portrait': user_obj.head_portrait,
                     'status_id': user_obj.status,
                     'status': user_obj.get_status_display(),

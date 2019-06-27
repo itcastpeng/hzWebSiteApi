@@ -83,6 +83,12 @@ app.conf.beat_schedule = {
     #     'schedule': crontab('*/1', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     # },
 
+    # 定时删除设备日志 保留近三天 (每天0点执行一次)
+    'delete_phone_log': {
+        'task': 'hz_website_api_celery.tasks.delete_phone_log',
+        'schedule': crontab('0', '0', '*', '*', '*'),
+    },
+
 }
 app.conf.update(
     result_expires=3600,

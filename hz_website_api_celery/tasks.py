@@ -351,43 +351,48 @@ def sync_phone_number():
 
     # 登录
     login_url = "http://47.110.86.5:9999/index.php?g=cust&m=login&a=dologin"
-    data = {
-        "username": "张聪296",
-        "password": "zhang_cong.123",
-    }
+    data_list = [
+        {
+            "username": "张聪296",
+            "password": "zhang_cong.123",
+        },{
+            "username": "张聪0627",
+            "password": "zhang_cong.123",
+        }
+    ]
+    for data in data_list:
+        requests_obj = requests.Session()
+        requests_obj.post(url=login_url, headers=headers, data=data)
+        # print(ret.text)
 
-    requests_obj = requests.Session()
-    requests_obj.post(url=login_url, headers=headers, data=data)
-    # print(ret.text)
+        # 获取卡号列表
+        headers["Referer"] = login_url
+        phone_list_url = "http://47.110.86.5:9999/index.php?g=cust&m=cardno_cust&a=sub"
 
-    # 获取卡号列表
-    headers["Referer"] = login_url
-    phone_list_url = "http://47.110.86.5:9999/index.php?g=cust&m=cardno_cust&a=sub"
+        while True:
+            ret = requests_obj.get(phone_list_url, headers=headers)
+            soup = BeautifulSoup(ret.text, 'lxml')
+            tbody_html = soup.find('tbody')
 
-    while True:
-        ret = requests_obj.get(phone_list_url, headers=headers)
-        soup = BeautifulSoup(ret.text, 'lxml')
-        tbody_html = soup.find('tbody')
+            for tr_html in tbody_html.find_all('tr'):
+                phone_num = tr_html.find_all('td')[1].text
+                expire_date = tr_html.find_all('td')[2].text
+                # remark = tr_html.find_all('td')[3].text
+                # print(phone_num, expire_date, remark)
+                if not models.PhoneNumber.objects.filter(phone_num=phone_num):
+                    models.PhoneNumber.objects.create(
+                        phone_num=phone_num,
+                        expire_date=expire_date,
+                        # remark=remark,
+                    )
 
-        for tr_html in tbody_html.find_all('tr'):
-            phone_num = tr_html.find_all('td')[1].text
-            expire_date = tr_html.find_all('td')[2].text
-            # remark = tr_html.find_all('td')[3].text
-            # print(phone_num, expire_date, remark)
-            if not models.PhoneNumber.objects.filter(phone_num=phone_num):
-                models.PhoneNumber.objects.create(
-                    phone_num=phone_num,
-                    expire_date=expire_date,
-                    # remark=remark,
-                )
-
-        next_page_html = soup.find('a', text="下一页")
-        headers["Referer"] = phone_list_url
-        if next_page_html:
-            phone_list_url = "http://47.110.86.5:9999" + next_page_html.attrs["href"]
-            print(phone_list_url)
-        else:
-            break
+            next_page_html = soup.find('a', text="下一页")
+            headers["Referer"] = phone_list_url
+            if next_page_html:
+                phone_list_url = "http://47.110.86.5:9999" + next_page_html.attrs["href"]
+                print(phone_list_url)
+            else:
+                break
 
 
 # 小红书账号注册监控,监控是否有未注册的账号
@@ -487,4 +492,17 @@ def xhs_bpw_keywords_fugai_rsync():
         redis_obj.set(key, json.dumps(keywords_data), ex_seconds)
         # print("key -->", key)
         # print("json.dumps(keywords_data) -->", json.dumps(keywords_data))
+
+# 定时删除 设备日志(保留近三天)
+@app.task
+def delete_phone_log():
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/delete_phone_log'
+    requests.get(url)
+
+
+
+
+
+
+
 
