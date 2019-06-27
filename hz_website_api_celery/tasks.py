@@ -393,8 +393,7 @@ def sync_phone_number():
             next_page_html = soup.find('a', text="下一页")
             headers["Referer"] = phone_list_url
             if next_page_html:
-                phone_list_url = "http://47.110.86.5:9999" + next_page_html.attrs["href"]
-                print(phone_list_url)
+                phone_list_url = data.get('login_url') + next_page_html.attrs["href"]
             else:
                 break
 
