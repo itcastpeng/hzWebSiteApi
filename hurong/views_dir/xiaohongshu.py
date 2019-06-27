@@ -8,7 +8,7 @@ from publicFunc.condition_com import conditionCom
 from hurong.forms.xiaohongshu import CheckForbiddenTextForm, SelectForm, AddForm
 from django.db.models import Q, F
 from publicFunc.redisOper import get_redis_obj
-import json, redis, requests
+import json, redis, requests, datetime
 
 
 @account.is_token(models.UserProfile)
@@ -162,11 +162,12 @@ def check_forbidden_text(request):
     if request.method == "POST":
         forms_obj = CheckForbiddenTextForm(request.POST)
         platform = request.POST.get('platform')
-
+        now = datetime.date.today()
         # 如果有平台,则自增1
         if platform:
             platform_objs = models.XiaohongshuBannedWordsPlatform.objects.filter(
-                platform_name=platform
+                platform_name=platform,
+                create_date=now
             )
             if platform_objs:
                 platform_obj = platform_objs[0]
