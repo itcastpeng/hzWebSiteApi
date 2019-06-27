@@ -246,6 +246,11 @@ class XiaohongshuForbiddenText(models.Model):
     word = models.CharField(verbose_name="违禁词", max_length=256)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 小红书 提交违禁词 平台统计
+class XiaohongshuBannedWordsPlatform(models.Model):
+    platform_name = models.CharField(verbose_name='平台名称', max_length=256)
+    submit_num = models.IntegerField(verbose_name='提交次数', default=1)
+    create_date = models.DateField(verbose_name='统计时间', auto_now_add=True)
 
 # 小红书私信截图
 class XiaohongshuDirectMessages(models.Model):

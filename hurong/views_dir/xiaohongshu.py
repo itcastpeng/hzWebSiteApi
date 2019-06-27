@@ -6,11 +6,9 @@ from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xiaohongshu import CheckForbiddenTextForm, SelectForm, AddForm
-from django.db.models import Q
-import redis
-import json
-import requests
+from django.db.models import Q, F
 from publicFunc.redisOper import get_redis_obj
+import json, redis, requests
 
 
 @account.is_token(models.UserProfile)
@@ -167,14 +165,26 @@ def check_forbidden_text(request):
 
         # 如果有平台,则自增1
         if platform:
-            key = "platform_" + platform
-            redis_obj = get_redis_obj()
-            num = redis_obj.get(key)
-            if num:
-                num = int(num) + 1
+            platform_objs = models.XiaohongshuBannedWordsPlatform.objects.filter(
+                platform_name=platform
+            )
+            if platform_objs:
+                platform_obj = platform_objs[0]
+                platform_obj.submit_num = F('submit_num') + 1
+                platform_obj.save()
             else:
-                num = 1
-            redis_obj.set(key, num)
+                models.XiaohongshuBannedWordsPlatform.objects.create(
+                    platform_name=platform
+                )
+
+            # key = "platform_" + platform
+            # redis_obj = get_redis_obj()
+            # num = redis_obj.get(key)
+            # if num:
+            #     num = int(num) + 1
+            # else:
+            #     num = 1
+            # redis_obj.set(key, num)
 
         if forms_obj.is_valid():
             result = request_post(forms_obj.cleaned_data.get("context"))

@@ -207,11 +207,7 @@ def permissions_oper(request, oper_type, o_id):
                 role_obj = models.Role.objects.filter(id=user_obj[0].role_id_id)
                 data_list = []
                 for i in role_obj[0].permissions.all():
-                    data_list.append({
-                        'id': i.id,
-                        'name': i.name,
-                        'title': i.title,
-                    })
+                    data_list.append(i.name)
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = data_list
