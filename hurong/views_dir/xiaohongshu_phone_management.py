@@ -110,6 +110,10 @@ def xiaohongshu_phone_management(request, oper_type):
                     response.data = {
                         'verification_code': verification_code
                     }
+                else:
+                    response.code = 301
+                    response.msg = '暂无验证码'
+
             else:
                 response.code= 301
                 response.msg = json.loads(form_obj.errors.as_json())
@@ -117,7 +121,7 @@ def xiaohongshu_phone_management(request, oper_type):
         # 获取小红书未注册的账号信息
         elif oper_type == 'get_xhs_unregistered_information':
             form_data = {
-                'get_info_number': request.GET.get('get_info_number') # 获取几个信息
+                'get_info_number': request.GET.get('get_info_number', 1) # 获取几个信息
             }
             response.code = 301
 
