@@ -2,16 +2,11 @@ from django.shortcuts import render
 from hurong import models
 from publicFunc import Response
 from publicFunc import account
-from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
+from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm
-from django.db.models import Q
-import redis
-import json
-import requests
-import datetime
-import re
+import requests, datetime, json
 
 
 @account.is_token(models.UserProfile)
@@ -221,6 +216,58 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
+        # 查询 小红书笔记
+        elif oper_type == 'get_xhs_notes':
+            forms_obj = select_form(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'id': '',
+                    'uid': '__contains',
+                }
+                q = conditionCom(request, field_dict)
+
+                objs = models.XiaohongshuBiji.objects.filter(
+                    q,
+                ).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+                ret_data = []
+                select_id = request.GET.get('id')
+                for obj in objs:
+                    release_time = obj.release_time
+                    if release_time:
+                        release_time = obj.release_time.strftime('%Y-%m-%d %H:%M:%S')
+                    result_data = {
+                        'id': obj.id,
+                        'user_id': obj.user_id_id,
+                        'user_name': obj.user_id.name,
+                        'status': obj.get_status_display(),
+                        'release_time': release_time,
+                        'biji_url': obj.biji_url,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    }
+                    if select_id:
+                        result_data['content'] = json.loads(obj.content)
+
+                    ret_data.append(result_data)
+
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count
+                }
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
 
         else:
             response.code = 402

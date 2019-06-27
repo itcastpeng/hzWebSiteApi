@@ -4,9 +4,9 @@ from django.http import JsonResponse
 from hurong.forms.xiaohongshu_phone_management import get_phone_work_status, get_phone_number, \
     get_xhs_unregistered_information, get_verification_code
 from publicFunc.phone_management_platform import phone_management
-
+from hurong.forms.public_form import SelectForm
+from publicFunc.condition_com import conditionCom
 import os, json, datetime, requests
-
 
 
 
@@ -167,6 +167,101 @@ def xiaohongshu_phone_management(request, oper_type):
                 msg = json.loads(form_obj.errors.as_json())
 
             response.msg = msg
+
+        # 查询小红书所有设备信息
+        elif oper_type == 'get_phone_number_info':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'id': '',
+                    'phone_type': '',
+                    'is_debug': '',
+                    'name': '__contains',
+                    'phone_num': '__contains',
+                }
+                q = conditionCom(request, field_dict)
+
+                select_id = request.GET.get('id')
+                objs = models.XiaohongshuPhone.objects.filter(
+                    q,
+                ).order_by(order)
+                count = objs.count()
+
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+                    result_data = {
+                        'id': obj.id,
+                        'name': obj.name,
+                        'ip_addr': obj.ip_addr,
+                        'phone_num': obj.phone_num,
+                        'imsi': obj.imsi,
+                        'iccid': obj.iccid,
+                        'phone_type_id': obj.phone_type,
+                        'phone_type': obj.get_phone_type_display(),
+                        'is_debug': obj.is_debug,
+                        'macaddr': obj.macaddr,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    }
+                    if select_id:
+                        phone_log_objs = models.XiaohongshuPhoneLog.objects.filter(
+                            parent_id=obj.id
+                        ).order_by('-create_datetime')
+                        if phone_log_objs.count() > 5:
+                            phone_log_objs = phone_log_objs[:5]
+
+                        phone_log_data_list = []
+                        for phone_log_obj in phone_log_objs:
+                            phone_log_data_list.append(
+                                phone_log_obj.log_msg
+                            )
+                        result_data['phone_log_data_list'] = phone_log_data_list
+                    ret_data.append(result_data)
+
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count,
+                }
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 查询小红书 单设备 日志信息
+        elif oper_type == 'get_equipment_log':
+            equipment_id = request.GET.get('equipment_id')
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                objs = models.XiaohongshuPhoneLog.objects.filter(parent_id=equipment_id).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+                ret_data = []
+                for obj in objs:
+                    ret_data.append({
+                        'id': obj.id,
+                        'msg': obj.log_msg,
+                        'create_date': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                    })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count
+                }
 
         else:
             response.code = 402

@@ -20,6 +20,7 @@ urlpatterns = [
     # 权限管理
     url(r'^permissions/(?P<oper_type>\w+)/(?P<o_id>\d+)$', permissions.permissions_oper),
     url(r'^permissions$', permissions.permissions),
+    url(r'^get_permissions$', permissions.get_permissions),
 
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),
@@ -66,4 +67,5 @@ urlpatterns = [
 
     # 小红书注册的账号管理
     url(r'^xhs_account_management/(?P<oper_type>\w+)', xhs_account_management.xhs_account_management),
+
 ]
