@@ -200,40 +200,46 @@ def permissions_oper(request, oper_type, o_id):
                 'ret_data': init_data()
             }
 
-        # 获取该用户所有权限
-        elif oper_type == 'get_permissions':
-            user_objs = models.UserProfile.objects.filter(id=user_id)
-            if user_objs:
-                user_obj = user_objs[0]
-                role_obj = models.Role.objects.filter(id=user_obj.role_id_id)
-                data_list = []
-                for i in role_obj[0].permissions.all():
-                    data_list.append(i.name)
-
-                user_info = {
-                    'id': user_obj.id,
-                    'username': user_obj.username,
-                    'role_id': user_obj.role_id_id,
-                    'role_name': user_obj.role_id.name,
-                    'create_datetime': user_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'head_portrait': user_obj.head_portrait,
-                    'status_id': user_obj.status,
-                    'status': user_obj.get_status_display(),
-                    'create_user_id': user_obj.create_user_id,
-                    'create_user': user_obj.create_user.username
-                }
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = {
-                    'data_list': data_list,
-                    'user_info': user_info,
-                }
-            else:
-                response.code = 301
-                response.msg = '非法用户'
-
         else:
             response.code = 402
             response.msg = "请求异常"
+
+    return JsonResponse(response.__dict__)
+
+ # 获取该用户所有权限
+@csrf_exempt
+def get_permissions(request):
+    response = Response.ResponseObj()
+    token = request.GET.get('token')
+
+    user_objs = models.UserProfile.objects.filter(token=token)
+    if user_objs:
+        user_obj = user_objs[0]
+        role_obj = models.Role.objects.filter(id=user_obj.role_id_id)
+        data_list = []
+        for i in role_obj[0].permissions.all():
+            data_list.append(i.name)
+
+        user_info = {
+            'id': user_obj.id,
+            'username': user_obj.username,
+            'role_id': user_obj.role_id_id,
+            'role_name': user_obj.role_id.name,
+            'create_datetime': user_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+            'head_portrait': user_obj.head_portrait,
+            'status_id': user_obj.status,
+            'status': user_obj.get_status_display(),
+            'create_user_id': user_obj.create_user_id,
+            'create_user': user_obj.create_user.username
+        }
+        response.code = 200
+        response.msg = '查询成功'
+        response.data = {
+            'data_list': data_list,
+            'user_info': user_info,
+        }
+    else:
+        response.code = 301
+        response.msg = '非法用户'
 
     return JsonResponse(response.__dict__)

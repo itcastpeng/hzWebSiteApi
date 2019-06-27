@@ -2,7 +2,7 @@ from hurong import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from hurong.forms.xhs_account_management import SelectForm
+from hurong.forms.public_form import SelectForm
 from publicFunc.condition_com import conditionCom
 import json
 
