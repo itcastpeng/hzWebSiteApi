@@ -38,6 +38,12 @@ def xhs_account_management(request, oper_type):
                     start_line = (current_page - 1) * length
                     stop_line = start_line + length
                     objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+                    ret_data.append({
+
+                    })
             else:
                 pass
 
