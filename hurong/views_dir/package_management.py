@@ -131,7 +131,12 @@ def package_management_oper(request, oper_type, o_id):
 
         # 获取安装包 最高的版本
         if oper_type == 'get_highest_version':
-            objs = models.InstallationPackage.objects.filter(is_delete=0).order_by('-id')
+            package_type = request.POST.get('package_type', 1)
+
+            objs = models.InstallationPackage.objects.filter(
+                is_delete=0,
+                package_type=package_type
+            ).order_by('-id')
             if objs:
                 obj = objs[0]
                 response.code = 200
