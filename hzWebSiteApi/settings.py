@@ -202,4 +202,5 @@ NoValidationTokenRoute = [
     "/api_hurong/xiaohongshu_direct_essages/get_reply",
     "/api_hurong/xiaohongshu_direct_essages",
     "/api_hurong/xhs_king_barings_screen/get_xhs_account",
+    "/api_hurong/package_management/get_highest_version",
 ]
