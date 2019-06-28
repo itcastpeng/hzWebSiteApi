@@ -129,24 +129,22 @@ def package_management_oper(request, oper_type, o_id):
 
     else:
 
-        # 获取小红书账号 最高的版本
+        # 获取安装包 最高的版本
         if oper_type == 'get_highest_version':
-            objs = models.XiaohongshuUserProfile.objects.filter(
-                xhs_version_update_time__isnull=False,
-                xhs_version__isnull=False
-            ).order_by('-xhs_version_update_time')
+            objs = models.InstallationPackage.objects.filter(is_delete=0).order_by('-id')
             if objs:
                 obj = objs[0]
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
-                    'xhs_version': obj.xhs_version,
-                    'update_time': obj.xhs_version_update_time.strftime('%Y-%m-%d %H:%M:%S')
+                    'id': obj.id,
+                    'package_type':obj.package_type,
+                    'package_name':obj.package_name,
+                    'package_path':obj.package_path,
                 }
-
             else:
                 response.code = 301
-                response.msg = '暂无版本'
+                response.msg = '暂无安装包'
 
         else:
             response.code = 402

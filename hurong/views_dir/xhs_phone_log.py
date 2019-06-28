@@ -171,7 +171,6 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         phone_id_id=phone_id
                     ).update(
                         xhs_version=xhs_version,
-                        xhs_version_update_time=datetime.datetime.today()
                     ) # 更新版本号
 
                 response.code = 200
