@@ -2,7 +2,7 @@ from hurong import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-import json, datetime
+import json, datetime, redis
 
 
 @csrf_exempt
@@ -17,10 +17,15 @@ def xhs_king_barings_screen(request, oper_type):
             user_id_list = request.POST.get('user_id_list')
             now = datetime.datetime.today()
             code = 200
+            redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
 
             user_id_list = json.loads(user_id_list)
             if len(user_id_list) >= 1:
                 for user_id in user_id_list:
+                    now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+                    key = "XHS_FUGAI_{now_date}_{uid}".format(now_date=now_date, uid=user_id)
+                    redis_obj.delete(key)
+
                     keywords_objs = models.xhs_bpw_keywords.objects.filter(uid=user_id)
                     keywords_objs.update(
                         update_datetime=None
