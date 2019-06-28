@@ -38,7 +38,7 @@ class AddForm(forms.Form):
 
     def clean_package_name(self):
         package_name = self.data.get('package_name')
-        objs = models.InstallationPackage.objects.filter(package_name=package_name)
+        objs = models.InstallationPackage.objects.filter(package_name=package_name).exclude(is_delete=1)
         if objs:
             self.add_error('package_name', '该安装包名称重复')
         else:
