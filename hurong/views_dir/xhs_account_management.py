@@ -23,15 +23,14 @@ def xhs_account_management(request, oper_type):
                 order = request.GET.get('order', '-create_datetime')
                 field_dict = {
                     'id': '',
-                    'gender': '',
+                    'phone_id': '__contains',
                     'name': '__contains',
-                    'uid': '__contains',
-                    'is_register': '',
+                    'xiaohongshu_id': '__contains',
+                    'home_url': '__contains',
                 }
                 q = conditionCom(request, field_dict)
-                objs = models.XiaohongshuUserProfileRegister.objects.filter(
+                objs = models.XiaohongshuUserProfile.objects.filter(
                     q,
-
                 ).order_by(order)
                 count = objs.count()
                 if length != 0:
@@ -41,19 +40,13 @@ def xhs_account_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
-                    register_datetime = obj.register_datetime
-                    if register_datetime:
-                        register_datetime = register_datetime.strftime('%Y-%m-%d %H:%M:%S')
-
                     ret_data.append({
                         'id':obj.id,
-                        'uid':obj.uid,
                         'name':obj.name,
-                        'head_portrait':obj.head_portrait,
-                        'gender':obj.gender,
-                        'birthday':obj.birthday,
-                        'is_register':obj.is_register,
-                        'register_datetime':register_datetime,
+                        'phone_id':obj.phone_id_id,
+                        'phone_number':obj.phone_id.phone_num,
+                        'xiaohongshu_id':obj.xiaohongshu_id,
+                        'home_url':obj.home_url,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
 
