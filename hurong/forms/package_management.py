@@ -105,7 +105,7 @@ class UpdateForm(forms.Form):
     )
     def clean_o_id(self):
         o_id = self.data.get('o_id')
-        objs = models.InstallationPackage.objects.filter(id=o_id)
+        objs = models.InstallationPackage.objects.filter(id=o_id).exclude(is_delete=1)
         if objs:
             return o_id
         else:
