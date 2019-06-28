@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
     xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, \
     permissions, xiaohongshu_phone_management, xhs_account_management, xhs_king_barings_screen, \
-    xhs_mobile_phone_number_management
+    xhs_mobile_phone_number_management, package_management
 
 
 urlpatterns = [
@@ -74,4 +74,13 @@ urlpatterns = [
 
     # 手机号管理 手机号相关信息(手机短信等)
     url(r'^xhs_mobile_phone_number_management/(?P<oper_type>\w+)', xhs_mobile_phone_number_management.xhs_mobile_phone_number_management),
+
+    # 安装包管理
+    url(r'^package_management/(?P<oper_type>\w+)/(?P<o_id>\d+)', package_management.package_management_oper),
+    url(r'^package_management$', package_management.package_management),
+
+
+
+
+
 ]

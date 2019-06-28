@@ -117,6 +117,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 'imsi': request.POST.get('imsi'),
                 'phone_type': request.POST.get('phone_type', 1),
             }
+            xhs_version = request.POST.get('xhs_version')
+
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
@@ -128,7 +130,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 iccid = forms_obj.cleaned_data.get('iccid')
                 imsi = forms_obj.cleaned_data.get('imsi')
                 phone_type = forms_obj.cleaned_data.get('phone_type')
-                print("phone_type -->", phone_type)
+
+                phone_id = ''
+
                 # 查覆盖的机器
                 if phone_type == 1:
                     print("记录查覆盖")
@@ -137,9 +141,10 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         obj = objs[0]
                         obj.ip_addr = ip_addr
                         obj.save()
-
+                        phone_id = obj.id
                     else:
                         obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
+                        phone_id = obj.id
                         print('obj -->', obj)
                     models.XiaohongshuPhoneLog.objects.create(
                         log_msg=log_msg,
@@ -152,13 +157,22 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         obj = objs[0]
                         obj.ip_addr = ip_addr
                         obj.save()
-
+                        phone_id = obj.id
                     else:
                         obj = models.XiaohongshuPhone.objects.create(iccid=iccid, imsi=imsi, phone_type=2)
+                        phone_id = obj.id
                     models.XiaohongshuPhoneLog.objects.create(
                         log_msg=log_msg,
                         parent=obj
                     )
+
+                if xhs_version and phone_id:
+                    models.XiaohongshuUserProfile.objects.filter(
+                        phone_id_id=phone_id
+                    ).update(
+                        xhs_version=xhs_version,
+                        xhs_version_update_time=datetime.datetime.today()
+                    ) # 更新版本号
 
                 response.code = 200
                 response.msg = "日志记录成功"

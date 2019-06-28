@@ -166,4 +166,5 @@ class CompomentLibrary(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
-# 下载地址  类型 小红书发布 小红书覆盖
+
+

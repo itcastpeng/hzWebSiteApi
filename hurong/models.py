@@ -179,6 +179,8 @@ class XiaohongshuUserProfile(models.Model):
     xiaohongshu_id = models.CharField(verbose_name="小红书号", max_length=128)
     home_url = models.CharField(verbose_name="主页地址", max_length=256)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    xhs_version = models.CharField(max_length=64, verbose_name='小红书版本号', null=True)
+    xhs_version_update_time = models.DateTimeField(verbose_name="小红书版本号更新时间", null=True)
 
 
 # 小红书账号注册
@@ -320,3 +322,16 @@ class text_messages_received_cell_phone_number(models.Model):
     receiving_time = models.DateTimeField(verbose_name='接收短信时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     serial_number = models.CharField(verbose_name="流水号", max_length=128, null=True)
+
+# 安装包表 (聪哥用)
+class InstallationPackage(models.Model):
+    package_type_choices = (
+        (1, '小红书发布'),
+        (2, '小红书覆盖')
+    )
+    package_type = models.SmallIntegerField(verbose_name='安装包类型', choices=package_type_choices, default=1)
+    package_name = models.CharField(verbose_name='安装包名称', max_length=32)
+    package_path = models.CharField(verbose_name='安装包地址', max_length=1024)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    oper_user = models.ForeignKey('UserProfile', verbose_name="操作人")
+    is_delete = models.BooleanField(verbose_name="是否删除", default=0)

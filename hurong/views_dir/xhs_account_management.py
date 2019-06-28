@@ -40,17 +40,18 @@ def xhs_account_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
-                    ret_data.append({
-                        'id':obj.id,
-                        'name':obj.name,
-                        'phone_id':obj.phone_id_id,
-                        'phone_number':obj.phone_id.phone_num,
-                        'xiaohongshu_id':obj.xiaohongshu_id,
-                        'home_url':obj.home_url,
-                        'phone_name':obj.phone_id.name,
-                        'phone_type':obj.phone_id.get_phone_type_display(),
-                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    })
+                    if obj.phone_id and obj.phone_id.name:
+                        ret_data.append({
+                            'id':obj.id,
+                            'name':obj.name,
+                            'phone_id':obj.phone_id_id,
+                            'phone_number':obj.phone_id.phone_num,
+                            'xiaohongshu_id':obj.xiaohongshu_id,
+                            'home_url':obj.home_url,
+                            'phone_name':obj.phone_id.name,
+                            'phone_type':obj.phone_id.get_phone_type_display(),
+                            'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                        })
 
                 response.code = 200
                 response.msg = '查询成功'
