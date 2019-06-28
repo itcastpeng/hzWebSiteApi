@@ -197,11 +197,17 @@ def xiaohongshu_phone_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
+                    phone_num = obj.phone_num
+                    phone_objs = obj.phonenumber_set.all()
+                    if phone_objs:
+                        phone_obj = phone_objs[0]
+                        phone_num = phone_obj.phone_num
+
                     result_data = {
                         'id': obj.id,
                         'name': obj.name,
                         'ip_addr': obj.ip_addr,
-                        'phone_num': obj.phone_num,
+                        'phone_num': phone_num,
                         'imsi': obj.imsi,
                         'iccid': obj.iccid,
                         'phone_type_id': obj.phone_type,

@@ -176,6 +176,22 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 发布笔记
+        elif oper_type == 'published_articles':
+            response.code = 301
+            objs = models.XiaohongshuBiji.objects.filter(id=o_id)
+            if objs:
+                obj = objs[0]
+                if obj.status == 2:
+                    msg = '已经发布, 请勿重复操作'
+                else:
+                    response.code = 200
+                    msg = '发布成功'
+            else:
+                msg = '该笔记不存在'
+            response.msg = msg
+
         else:
             response.code = 402
             response.msg = "请求异常"
