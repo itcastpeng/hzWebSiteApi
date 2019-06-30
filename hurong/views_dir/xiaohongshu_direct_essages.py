@@ -278,6 +278,36 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
 
+        elif oper_type == "get_screenshot_time":
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid'),
+            }
+            forms_obj = GetReplyForm(form_data)
+            if forms_obj.is_valid():
+                iccid = forms_obj.cleaned_data['iccid']
+                imsi = forms_obj.cleaned_data['imsi']
+
+                objs = models.XiaohongshuUserProfile.objects.filter(
+                    phone_id__imsi=imsi,
+                    phone_id__iccid=iccid
+                )
+
+                if objs:
+                    obj = objs[0]
+                    response.code = 200
+                    response.data = {
+                        "screenshot_time": obj.screenshot_time,
+                    }
+                else:
+                    response.code = 0
+                    response.msg = "请求异常"
+
+            else:
+                print("forms_obj.errors -->", forms_obj.errors)
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
         else:
             response.code = 402
             response.msg = "请求异常"

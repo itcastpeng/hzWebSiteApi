@@ -180,6 +180,7 @@ class XiaohongshuUserProfile(models.Model):
     home_url = models.CharField(verbose_name="主页地址", max_length=256)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     xhs_version = models.CharField(max_length=64, verbose_name='小红书版本号', null=True)
+    screenshot_time = models.SmallIntegerField(verbose_name="私信截图时间(单位:分钟)", default=60)
 
 
 # 小红书账号注册
