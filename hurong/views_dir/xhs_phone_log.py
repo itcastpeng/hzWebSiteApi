@@ -123,14 +123,6 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 imsi = forms_obj.cleaned_data.get('imsi')
                 phone_type = int(forms_obj.cleaned_data.get('phone_type'))
 
-                if log_msg.startswith('没有找到回复私信用户'): # 报错
-                    obj = WorkWeixinApi()
-                    if phone_type == 1:
-                        text = '类型:查覆盖, MAC:{}'.format(macaddr)
-                    else:
-                        text = '类型:任务发布, iccid:{}, imsi:{}'.format(iccid, imsi)
-                    content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
-                    obj.message_send('WorkWeixinApi', content)  # 张聪
 
 
                 phone_id = ''
@@ -167,6 +159,15 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         log_msg=log_msg,
                         parent=obj
                     )
+
+                if log_msg.startswith('没有找到回复私信用户'): # 报错
+                    obj = WorkWeixinApi()
+                    if phone_type == 1:
+                        text = '类型:查覆盖, MAC:{}, 日志:{}'.format(macaddr, log_msg)
+                    else:
+                        text = '类型:任务发布, iccid:{}, imsi:{}, 日志:{}'.format(iccid, imsi, log_msg)
+                    content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
+                    obj.message_send('WorkWeixinApi', content)  # 张聪
 
                 if xhs_version and phone_id:
                     models.XiaohongshuUserProfile.objects.filter(
