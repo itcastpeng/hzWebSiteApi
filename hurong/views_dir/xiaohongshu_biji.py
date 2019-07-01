@@ -243,6 +243,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 field_dict = {
                     'id': '',
                     'uid': '__contains',
+                    'status': '',
                 }
                 q = conditionCom(request, field_dict)
 
@@ -263,6 +264,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     result_data = {
                         'id': obj.id,
                         'user_id': obj.user_id_id,
+                        'phone_name': obj.user_id.phone_id.name,
                         'user_name': obj.user_id.name,
                         'status': obj.get_status_display(),
                         'release_time': release_time,
@@ -278,7 +280,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
-                    'count': count
+                    'count': count,
+                    'status_choices': [{'id':i[0], 'name':i[1]} for i in models.XiaohongshuBiji.status_choices]
                 }
             else:
                 response.code = 301
