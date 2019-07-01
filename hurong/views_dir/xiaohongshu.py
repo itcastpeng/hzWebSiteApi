@@ -6,7 +6,7 @@ from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xiaohongshu import CheckForbiddenTextForm, SelectForm, AddForm
-from django.db.models import Q, F
+from django.db.models import Q, F, Sum, Count
 from publicFunc.redisOper import get_redis_obj
 import json, redis, requests, datetime
 
@@ -203,6 +203,31 @@ def check_forbidden_text(request):
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
+
+    else:# 提交的词数 和 禁词数量
+        submit_count_num = models.XiaohongshuBannedWordsPlatform.objects.all().aggregate(submit_num=Sum('submit_num')).get('submit_num')
+        forbidden_objs_count = models.XiaohongshuForbiddenText.objects.all().count()
+
+        now = datetime.date.today()
+
+        now_date_time = datetime.datetime.today()
+        submit_now_num = models.XiaohongshuBannedWordsPlatform.objects.filter(create_date=now).aggregate(submit_num=Sum('submit_num')).get('submit_num')
+        forbidden_objs_now = models.XiaohongshuForbiddenText.objects.filter(
+            create_datetime__gte=now_date_time.strftime('%Y-%m-%d 00:00:00'),
+            create_datetime__lte=now_date_time.strftime('%Y-%m-%d 23:59:59')
+        ).count()
+
+
+
+        response.code = 200
+        response.msg = '查询成功'
+        response.data = {
+            '提交的词数_总数':submit_count_num,
+            '禁词数量_总数': forbidden_objs_count,
+            '提交的词数_今天总数': submit_now_num,
+            '禁词数量_今天总数': forbidden_objs_now,
+        }
+
     return JsonResponse(response.__dict__)
 
 

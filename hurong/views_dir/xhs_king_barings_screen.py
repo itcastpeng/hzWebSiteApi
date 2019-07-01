@@ -43,9 +43,37 @@ def xhs_king_barings_screen(request, oper_type):
             response.code = code
             response.msg = msg
 
+
     else:
-        response.code = 402
-        response.msg = "请求异常"
+
+        # 查询 该人覆盖量 和 已完成覆盖
+        if oper_type == 'get_coverage_quantity':
+            user_id_list = request.GET.get('user_id_list')
+            user_id_list = json.loads(user_id_list)
+
+            now_date_time = datetime.datetime.today().strftime('%Y-%m-%d 00:00:00')
+            if len(user_id_list) >= 1:
+                data_list = []
+                for user_id in user_id_list:
+                    count = models.xhs_bpw_keywords.objects.filter(uid=user_id).count()
+                    success = models.xhs_bpw_keywords.objects.filter(uid=user_id, update_datetime__gte=now_date_time).count()
+
+                    data_list.append({
+                        'user_id': user_id,
+                        'count': count,
+                        'success': success,
+                    })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = data_list
+
+            else:
+                response.code = 301
+                response.msg = '重查失败,原因:用户ID不存在'
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
 
