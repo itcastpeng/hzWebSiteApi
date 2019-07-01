@@ -249,7 +249,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 objs = models.XiaohongshuBiji.objects.filter(
                     q,
-                ).order_by(order)
+                ).exclude(user_id_id=5).order_by(order)
                 count = objs.count()
                 if length != 0:
                     start_line = (current_page - 1) * length
@@ -266,6 +266,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'user_id': obj.user_id_id,
                         'phone_name': obj.user_id.phone_id.name,
                         'user_name': obj.user_id.name,
+                        'status_id': obj.status,
                         'status': obj.get_status_display(),
                         'release_time': release_time,
                         'biji_url': obj.biji_url,
