@@ -167,7 +167,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     else:
                         text = '类型:任务发布, iccid:{}, imsi:{}, 日志:{}'.format(iccid, imsi, log_msg)
                     content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
-                    obj.message_send('WorkWeixinApi', content)  # 张聪
+                    obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
                 if xhs_version and phone_id:
                     models.XiaohongshuUserProfile.objects.filter(
