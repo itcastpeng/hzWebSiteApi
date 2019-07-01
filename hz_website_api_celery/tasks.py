@@ -338,7 +338,8 @@ def xiaohongshu_phone_monitor():
             obj = WorkWeixinApi()
             print("err_phone -->", err_phone)
             content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
-            obj.message_send('WorkWeixinApi', content)          # 张聪
+            # obj.message_send('WorkWeixinApi', content)          # 张聪
+            obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
             # obj.message_send('1534764500636', content)      # 贺昂
 
 
@@ -408,9 +409,9 @@ def xiaohongshu_userprofile_register_monitor():
         if objs:
             obj = WorkWeixinApi()
             content = """小红书有新的账号需要注册，请及时处理"""
-            obj.message_send('ZhangCong', content)          # 张聪
-            obj.message_send('1534764500636', content)      # 贺昂
-            obj.message_send('WorkWeixinApi', content)      # 贺昂
+            # obj.message_send('ZhangCong', content)          # 张聪
+            # obj.message_send('1534764500636', content)      # 贺昂
+            obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
 
 
 # 小红书未发布笔记监控,监控有新的笔记需要发布
@@ -424,9 +425,9 @@ def xiaohongshu_biji_monitor():
         if objs:
             obj = WorkWeixinApi()
             content = """小红书有新的笔记需要发布，请及时处理"""
-            obj.message_send('ZhangCong', content)          # 张聪
-            obj.message_send('1534764500636', content)      # 贺昂
-            obj.message_send('WorkWeixinApi', content)      # 贺昂
+            # obj.message_send('ZhangCong', content)          # 张聪
+            # obj.message_send('1534764500636', content)      # 贺昂
+            obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
 
 
 # 同步小红书霸屏王关键词和链接
