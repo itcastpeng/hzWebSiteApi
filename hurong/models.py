@@ -233,7 +233,7 @@ class XiaohongshuBiji(models.Model):
         """
 
     status_choices = (
-        (1, "未发布"),
+        (1, "发布中"),
         (2, "已发布"),
         (3, "待审核"),
     )
