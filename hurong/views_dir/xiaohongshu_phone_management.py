@@ -20,19 +20,33 @@ def xiaohongshu_phone_management(request, oper_type):
         if oper_type == "get_phone_work_status":
 
             form_data = {
+                'iccid':request.GET.get('iccid'),
+                'imsi':request.GET.get('imsi'),
                 'macaddr':request.GET.get('macaddr'),
                 'phone_type':request.GET.get('phone_type'),
             }
             flag = True
             form_obj = get_phone_work_status(form_data)
             if form_obj.is_valid():
+                iccid = form_obj.cleaned_data.get('iccid')
+                imsi = form_obj.cleaned_data.get('imsi')
                 macaddr = form_obj.cleaned_data.get('macaddr')
-                phone_type = form_obj.cleaned_data.get('phone_type')
+                phone_type = int(form_obj.cleaned_data.get('phone_type'))
 
-                objs = models.XiaohongshuPhone.objects.filter(
-                    phone_type=phone_type,
-                    macaddr=macaddr
-                )
+                if phone_type == 1: # 查覆盖
+
+                    objs = models.XiaohongshuPhone.objects.filter(
+                        phone_type=phone_type,
+                        macaddr=macaddr
+                    )
+
+                else:
+                    objs = models.XiaohongshuPhone.objects.filter(
+                        phone_type=phone_type,
+                        iccid=iccid,
+                        imsi=imsi,
+                    )
+
                 if objs:
                     obj = objs[0]
                     now = datetime.datetime.today()

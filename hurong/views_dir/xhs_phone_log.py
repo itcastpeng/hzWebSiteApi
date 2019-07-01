@@ -1,17 +1,11 @@
-from django.shortcuts import render
 from hurong import models
 from publicFunc import Response
 from publicFunc import account
-from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xhs_phone_log import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
-from django.db.models import Q
-import redis
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 import json
-import requests
-import datetime
-
 
 @account.is_token(models.UserProfile)
 def xhs_phone_log(request):
@@ -122,14 +116,22 @@ def xhs_phone_log_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过")
-
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 ip_addr = forms_obj.cleaned_data.get('ip_addr')
                 iccid = forms_obj.cleaned_data.get('iccid')
                 imsi = forms_obj.cleaned_data.get('imsi')
-                phone_type = forms_obj.cleaned_data.get('phone_type')
+                phone_type = int(forms_obj.cleaned_data.get('phone_type'))
+
+                if log_msg.startswith('没有找到回复私信用户'): # 报错
+                    obj = WorkWeixinApi()
+                    if phone_type == 1:
+                        text = '类型:查覆盖, MAC:{}'.format(macaddr)
+                    else:
+                        text = '类型:任务发布, iccid:{}, imsi:{}'.format(iccid, imsi)
+                    content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
+                    obj.message_send('WorkWeixinApi', content)  # 张聪
+
 
                 phone_id = ''
 
