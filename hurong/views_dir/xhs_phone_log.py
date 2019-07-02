@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xhs_phone_log import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
 from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
-import json
+import json, datetime
 
 @account.is_token(models.UserProfile)
 def xhs_phone_log(request):
@@ -123,42 +123,47 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 imsi = forms_obj.cleaned_data.get('imsi')
                 phone_type = int(forms_obj.cleaned_data.get('phone_type'))
 
-
-
-                phone_id = ''
-
                 # 查覆盖的机器
                 if phone_type == 1:
-                    print("记录查覆盖")
+                    # print("记录查覆盖")
                     objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
                         obj.save()
-                        phone_id = obj.id
+
                     else:
                         obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
-                        phone_id = obj.id
+
                         print('obj -->', obj)
                     models.XiaohongshuPhoneLog.objects.create(
                         log_msg=log_msg,
                         parent=obj
                     )
-                elif phone_type == 2:
-                    print("记录发布")
+
+                else: #  phone_type == 2
+                    # print("记录发布")
                     objs = models.XiaohongshuPhone.objects.filter(imsi=imsi, iccid=iccid)
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
                         obj.save()
-                        phone_id = obj.id
                     else:
                         obj = models.XiaohongshuPhone.objects.create(iccid=iccid, imsi=imsi, phone_type=2)
-                        phone_id = obj.id
                     models.XiaohongshuPhoneLog.objects.create(
                         log_msg=log_msg,
                         parent=obj
                     )
+
+                phone_id = obj.id
+                phone_name = obj.name
+
+                if xhs_version and phone_id:
+                    models.XiaohongshuUserProfile.objects.filter(
+                        phone_id_id=phone_id
+                    ).update(
+                        xhs_version=xhs_version,
+                    ) # 更新版本号
 
                 if log_msg.startswith('没有找到回复私信用户'): # 报错
                     obj = WorkWeixinApi()
@@ -169,12 +174,38 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
                     obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
-                if xhs_version and phone_id:
-                    models.XiaohongshuUserProfile.objects.filter(
-                        phone_id_id=phone_id
-                    ).update(
-                        xhs_version=xhs_version,
-                    ) # 更新版本号
+
+                now_date_time = datetime.datetime.today()
+                if log_msg.startswith('自动更新日志'): # 判断时间 与当前时间相差五分钟 and 版本号是否为最新
+
+                    send_msg_flag = False # 是否发送错误提示
+                    content = ''
+
+                    json_data = json.loads(log_msg.split((log_msg.split(':')[0]) + ':')[1])
+                    deletionTime = (now_date_time - datetime.timedelta(minutes=5))
+                    runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
+
+                    package_type = json_data.get('package_type')
+                    current_version = json_data.get('current_version')
+                    if runtime > deletionTime:
+                        package_objs = models.InstallationPackage.objects.filter(
+                            package_type=package_type
+                        ).order_by('-id')
+                        if package_objs:
+                            package_obj = package_objs[0]
+                            if int(package_obj.id) != int(current_version):
+                                send_msg_flag = True
+                                content = '{} 移动设备 发布程序不是最新版,请及时更新, time:{}'.format(phone_name, now_date_time)
+                        else:
+                            send_msg_flag = True
+                            content = '{} 移动设备 发布程序没有版本,请及时查看, time:{}'.format(phone_name, now_date_time)
+
+                    else:
+                        send_msg_flag = True
+                        content = '{} 移动设备 自动更新程序异常,请及时处理, time:{}'.format(phone_name, now_date_time)
+
+                    if send_msg_flag:
+                        obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
                 response.code = 200
                 response.msg = "日志记录成功"
