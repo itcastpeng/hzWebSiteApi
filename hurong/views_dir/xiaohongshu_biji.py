@@ -187,6 +187,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     msg = '已经发布, 请勿重复操作'
                 else:
                     response.code = 200
+                    obj.status = 1
+                    obj.save()
                     msg = '发布成功'
             else:
                 msg = '该笔记不存在'
