@@ -327,7 +327,7 @@ def xiaohongshu_phone_monitor():
     objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
     err_phone = []
     for obj in objs:
-        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S")
 
         # 如果5分钟之内没有提交日志，说明机器异常了
         if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):

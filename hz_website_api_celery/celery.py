@@ -54,7 +54,7 @@ app.conf.beat_schedule = {
     },
     'xiaohongshu_phone_monitor':{
         'task':'hz_website_api_celery.tasks.xiaohongshu_phone_monitor',
-        'schedule': crontab('*/10', '*', '*', '*', '*'),
+        'schedule': crontab('*/2', '*', '*', '*', '*'),
     },
     'xiaohongshu_userprofile_register_monitor': {
         'task': 'hz_website_api_celery.tasks.xiaohongshu_userprofile_register_monitor',
