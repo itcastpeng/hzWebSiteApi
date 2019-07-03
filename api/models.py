@@ -169,6 +169,7 @@ class CompomentLibrary(models.Model):
 
 # 微信三方平台
 class TripartitePlatform(models.Model):
+    appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
     component_verify_ticket = models.TextField(verbose_name='component_verify_ticket协议')
 
     component_access_token = models.TextField(verbose_name='component_access_token')
