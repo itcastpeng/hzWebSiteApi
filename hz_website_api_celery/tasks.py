@@ -322,19 +322,19 @@ def debug_test():
 @app.task
 def xiaohongshu_phone_monitor():
     hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
-    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
-        from hurong import models
-        objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
-        err_phone = []
-        for obj in objs:
-            expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+    # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+    from hurong import models
+    objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
+    err_phone = []
+    for obj in objs:
+        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-            # 如果5分钟之内没有提交日志，说明机器异常了
-            if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
-                err_phone.append(obj.name)
+        # 如果5分钟之内没有提交日志，说明机器异常了
+        if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
+            err_phone.append(obj.name)
 
 
-        if len(err_phone) > 0:
+    if len(err_phone) > 0:
             obj = WorkWeixinApi()
             print("err_phone -->", err_phone)
             content = """小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone))
@@ -403,31 +403,31 @@ def sync_phone_number():
 @app.task
 def xiaohongshu_userprofile_register_monitor():
     hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
-    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
-        from hurong import models
-        objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
-        if objs:
-            obj = WorkWeixinApi()
-            content = """小红书有新的账号需要注册，请及时处理"""
-            # obj.message_send('ZhangCong', content)          # 张聪
-            # obj.message_send('1534764500636', content)      # 贺昂
-            obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
+    # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+    from hurong import models
+    objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
+    if objs:
+        obj = WorkWeixinApi()
+        content = """小红书有新的账号需要注册，请及时处理"""
+        # obj.message_send('ZhangCong', content)          # 张聪
+        # obj.message_send('1534764500636', content)      # 贺昂
+        obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
 
 
 # 小红书未发布笔记监控,监控有新的笔记需要发布
 @app.task
 def xiaohongshu_biji_monitor():
     hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
-    if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
-        from hurong import models
-        # user_id_id = 5 是测试账号
-        objs = models.XiaohongshuBiji.objects.exclude(status=2).exclude(user_id_id=5)
-        if objs:
-            obj = WorkWeixinApi()
-            content = """小红书有新的笔记需要发布，请及时处理"""
-            # obj.message_send('ZhangCong', content)          # 张聪
-            # obj.message_send('1534764500636', content)      # 贺昂
-            obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
+    # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
+    from hurong import models
+    # user_id_id = 5 是测试账号
+    objs = models.XiaohongshuBiji.objects.exclude(status=2).exclude(user_id_id=5)
+    if objs:
+        obj = WorkWeixinApi()
+        content = """小红书有新的笔记需要发布，请及时处理"""
+        # obj.message_send('ZhangCong', content)          # 张聪
+        # obj.message_send('1534764500636', content)      # 贺昂
+        obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
 
 
 # 同步小红书霸屏王关键词和链接

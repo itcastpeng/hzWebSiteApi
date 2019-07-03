@@ -234,10 +234,18 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
         # 手机操作回复完成后,修改状态和更新时间
         elif oper_type == "reply_save":
             task_id = request.POST.get('task_id')
-            models.XiaohongshuDirectMessagesReply.objects.filter(id=task_id).update(
+            objs = models.XiaohongshuDirectMessagesReply.objects.filter(id=task_id)
+            objs.update(
                 status=2,
                 update_datetime=datetime.datetime.now()
             )
+
+            post_data = {
+                "id": objs[0].id
+            }
+            ret = requests.post("https://www.ppxhs.com/api/v1/sync/sync-chat-log", data=post_data)
+            print(ret.text)
+
         else:
             response.code = 402
             response.msg = "请求异常"
@@ -278,6 +286,36 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
 
+        elif oper_type == "get_screenshot_time":
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid'),
+            }
+            forms_obj = GetReplyForm(form_data)
+            if forms_obj.is_valid():
+                iccid = forms_obj.cleaned_data['iccid']
+                imsi = forms_obj.cleaned_data['imsi']
+
+                objs = models.XiaohongshuUserProfile.objects.filter(
+                    phone_id__imsi=imsi,
+                    phone_id__iccid=iccid
+                )
+
+                if objs:
+                    obj = objs[0]
+                    response.code = 200
+                    response.data = {
+                        "screenshot_time": obj.screenshot_time,
+                    }
+                else:
+                    response.code = 0
+                    response.msg = "请求异常"
+
+            else:
+                print("forms_obj.errors -->", forms_obj.errors)
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
         else:
             response.code = 402
             response.msg = "请求异常"
