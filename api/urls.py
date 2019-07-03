@@ -13,8 +13,6 @@ urlpatterns = [
     url(r'^wechat_login$', login.wechat_login),    # 微信扫码登录
     url(r'^qiniu/get_upload_token$', qiniu.get_upload_token),    # 获取七牛云上传token
 
-    # url(r'^qiniu/get_upload_token$', qiniu.get_upload_token),    # 三方平台回调
-
     # ------------------ 后台管理 ------------------
     # 用户管理
     url(r'^user/(?P<oper_type>\w+)/(?P<o_id>\d+)', user.user_oper),
