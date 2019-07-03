@@ -120,11 +120,11 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 'name': request.POST.get('name'),
                 'xiaohongshu_id': request.POST.get('xiaohongshu_id'),
                 'home_url': request.POST.get('home_url'),
+                'macaddr': request.POST.get('macaddr'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = UpdateUserinfoForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过")
 
                 phone_num = forms_obj.cleaned_data.get('phone_num')
                 imsi = forms_obj.cleaned_data.get('imsi')
@@ -132,15 +132,13 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 name = forms_obj.cleaned_data.get('name')
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 home_url = forms_obj.cleaned_data.get('home_url')
+                macaddr = forms_obj.cleaned_data.get('macaddr')
 
-                print("imsi -->", imsi)
-                print("iccid -->", iccid)
-                for obj in models.XiaohongshuPhone.objects.all():
-                    print('obj -->', obj)
-                objs = models.XiaohongshuPhone.objects.filter(
-                    imsi=imsi,
-                    # iccid=iccid
-                )
+                if macaddr:
+                    data = {'macaddr': macaddr}
+                else:
+                    data = {'imsi':imsi}
+                objs = models.XiaohongshuPhone.objects.filter(**data)
                 objs.update(phone_num=phone_num)
                 print("objs --->", objs)
                 if objs:

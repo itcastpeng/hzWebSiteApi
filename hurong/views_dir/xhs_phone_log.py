@@ -126,7 +126,10 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 # 查覆盖的机器
                 if phone_type == 1:
                     # print("记录查覆盖")
-                    objs = models.XiaohongshuPhone.objects.filter(macaddr=macaddr)
+                    objs = models.XiaohongshuPhone.objects.filter(
+                        phone_type=phone_type,
+                        macaddr=macaddr
+                    )
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
@@ -143,13 +146,24 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                 else: #  phone_type == 2
                     # print("记录发布")
-                    objs = models.XiaohongshuPhone.objects.filter(imsi=imsi, iccid=iccid)
+                    data = {
+                        "phone_type": phone_type
+                    }
+                    if macaddr:
+                        data["macaddr"] = macaddr
+
+                    else:
+                        data["imsi"] = imsi
+                        data["iccid"] = iccid
+
+                    objs = models.XiaohongshuPhone.objects.filter(**data)
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
                         obj.save()
                     else:
-                        obj = models.XiaohongshuPhone.objects.create(iccid=iccid, imsi=imsi, phone_type=2)
+                        obj = models.XiaohongshuPhone.objects.create(**data)
+
                     models.XiaohongshuPhoneLog.objects.create(
                         log_msg=log_msg,
                         parent=obj

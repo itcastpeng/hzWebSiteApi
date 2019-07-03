@@ -336,3 +336,28 @@ class InstallationPackage(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     oper_user = models.ForeignKey('UserProfile', verbose_name="操作人")
     is_delete = models.BooleanField(verbose_name="是否删除", default=0)
+
+# 手机流量信息表
+class MobileTrafficInformation(models.Model):
+    select_number = models.TextField(verbose_name='查询号码') # 可以是手机号 也可以是 ismi号
+    cardnumber = models.IntegerField(verbose_name='卡号', null=True) # 手机号
+    cardbaldata = models.CharField(validators='剩余流量', max_length=16, null=True)
+    cardimsi = models.IntegerField(verbose_name='ISMI号', null=True)
+    cardno = models.IntegerField(verbose_name='卡编号', null=True)
+    cardstatus = models.CharField(verbose_name='用户状态', max_length=64, null=True)
+    cardtype = models.CharField(verbose_name='套餐类型', max_length=32, null=True)
+    cardusedata = models.CharField(verbose_name='已用流量', max_length=16, null=True)
+    cardstartdate = models.DateTimeField(verbose_name='卡开户时间', null=True)
+    cardenddate = models.DateTimeField(verbose_name='卡到期时间', null=True)
+    errmsg = models.CharField(verbose_name='错误日志', max_length=256, null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 移动设备充值记录
+class MobilePhoneRechargeInformation(models.Model):
+    equipment_package = models.CharField(verbose_name='设备套餐', max_length=128)
+    prepaid_phone_time = models.DateTimeField(verbose_name='充值时间')
+    equipment = models.ForeignKey('MobilePhoneRechargeInformation', verbose_name='设备')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+

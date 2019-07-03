@@ -54,7 +54,7 @@ app.conf.beat_schedule = {
     },
     'xiaohongshu_phone_monitor':{
         'task':'hz_website_api_celery.tasks.xiaohongshu_phone_monitor',
-        'schedule': crontab('*/10', '*', '*', '*', '*'),
+        'schedule': crontab('*/2', '*', '*', '*', '*'),
     },
     'xiaohongshu_userprofile_register_monitor': {
         'task': 'hz_website_api_celery.tasks.xiaohongshu_userprofile_register_monitor',
@@ -95,6 +95,11 @@ app.conf.beat_schedule = {
         'schedule': crontab('*/10', '*', '*', '*', '*'),
     },
 
+    # 获取 设备流量信息
+    'get_traffic_information':{
+        'task': 'hz_website_api_celery.tasks.celery_get_phone_content',
+        'schedule': crontab('0', '0', '*', '*', '*'),
+    },
 
 
 }

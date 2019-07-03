@@ -1,8 +1,11 @@
 from django.http import HttpResponse
 from publicFunc.phone_management_platform import phone_management
-
 from hurong import models
-import datetime
+from publicFunc.public import get_traffic_information as get_phone_info
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
+import datetime, time, random, requests
+
+
 
 # 定期删除 设备日志
 def delete_phone_log(request):
@@ -45,9 +48,37 @@ def celery_get_phone_content(request):
     return HttpResponse('')
 
 
+# 查询 流量信息
+def get_traffic_information(request):
+    objs = models.MobileTrafficInformation.objects.filter(
+        select_number__isnull=False
+    )
+    for obj in objs:
+        ret_json = get_phone_info(obj.select_number)
 
+        if ret_json.get('code') != 0:
+            obj.errmsg = ret_json.get('msg')
 
+        else:
+            cardbaldata = ret_json.get('cardbaldata')
+            cardimsi = ret_json.get('cardimsi')
+            obj.cardbaldata = cardbaldata                   # 剩余流量
+            obj.cardenddate = ret_json.get('cardenddate')   # 卡到期时间
+            obj.cardimsi = cardimsi                         # ismi号
+            obj.cardno = ret_json.get('cardno')             # 卡编号
+            obj.cardnumber = ret_json.get('cardnumber')     # 卡号
+            obj.cardstatus = ret_json.get('cardstatus')     # 用户状态
+            obj.cardstartdate = ret_json.get('cardstartdate')  # 卡开户时间
+            obj.cardtype = ret_json.get('cardtype')         # 套餐类型
+            obj.cardusedata = ret_json.get('cardusedata')   # 已用流量
+            if int(cardbaldata) <= 500:
+                work_obj = WorkWeixinApi()
+                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
+                work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
+        obj.save()
+
+    return HttpResponse('')
 
 
 

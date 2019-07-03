@@ -1,7 +1,7 @@
 
 from django.conf.urls import url
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
-    photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform
+    photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events
 from api.views_dir.xcx import template as xcx_template
 
 
@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^login$', login.login),                  # 账号密码登录
     url(r'^wechat_login$', login.wechat_login),    # 微信扫码登录
     url(r'^qiniu/get_upload_token$', qiniu.get_upload_token),    # 获取七牛云上传token
+    url(r'^messages_events/(?P<oper_type>\w+)/(?P<appid>\d+)$', messages_events.messages_events_oper),      # 三方平台操作 消息接收
 
     # ------------------ 后台管理 ------------------
     # 用户管理

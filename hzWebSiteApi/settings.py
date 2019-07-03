@@ -182,6 +182,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'statics')]
 # 不验证token的请求
 NoValidationTokenRoute = [
     "/api/tripartite_platform/authorization",
+    "/api/tripartite_platform/get_ticket",
     "/api_hurong/task_list/save_task",
     "/api_hurong/xhs_phone_log/add",
     "/api_hurong/task_list/get_task",

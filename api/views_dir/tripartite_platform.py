@@ -1,7 +1,7 @@
 from api import models
 from publicFunc import Response
 from publicFunc import account
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 import time, json, datetime
 
@@ -40,10 +40,13 @@ def tripartite_platform_oper(request, oper_type):
 
         # component_verify_ticket回调
         elif oper_type == 'component_verify_ticket_callback':
-            pass
+            body_data = request.body.decode(encoding='UTF-8')
+            print('body_data-----> ', body_data)
+            return HttpResponse('success')
 
         else:
             response.code = 402
             response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
+
