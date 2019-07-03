@@ -35,7 +35,7 @@ def tripartite_platform_oper(request, oper_type):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         # 用户确认 同意授权 回调
-        elif oper_type == '':
+        elif oper_type == 'get_ticket':
             pass
 
         # component_verify_ticket回调
