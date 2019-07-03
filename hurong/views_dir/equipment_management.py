@@ -4,7 +4,7 @@ from publicFunc import account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.equipment_management import AddForm, SelectForm, UpdateForm
-from publicFunc.public import get_traffic_information
+from hz_website_api_celery.tasks import get_traffic_information
 import requests, datetime, json
 
 
@@ -20,54 +20,51 @@ def equipment_management(request):
             user_id = request.GET.get('user_id')
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
-                'status': '',
-                'select_type': '',
-                'keywords': '__contains',
+                'cardbaldata': '__contains',
+                'select_number': '__contains',
+                'cardnumber': '__contains',
                 'create_datetime': '',
             }
 
             q = conditionCom(request, field_dict)
 
             print('q -->', q)
-            objs = models.XiaohongshuFugai.objects.filter(q).order_by(order)
+            objs = models.MobileTrafficInformation.objects.filter(q).order_by(order)
             print(objs)
             count = objs.count()
 
             if length != 0:
-                if count < 10:
-                    current_page = 1
                 start_line = (current_page - 1) * length
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
 
             ret_data = []
             for obj in objs:
-                #  将查询出来的数据 加入列表
-                update_datetime = ""
-                if obj.update_datetime:
-                    update_datetime = obj.update_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                cardstartdate = obj.cardstartdate
+                if obj.cardstartdate:
+                    cardstartdate = obj.cardstartdate.strftime('%Y-%m-%d %H:%M:%S')
 
-                keywords = "({select_type}) {keywords}".format(
-                    keywords=obj.keywords,
-                    select_type=obj.get_select_type_display()
-                )
+                cardenddate = obj.cardenddate
+                if obj.cardenddate:
+                    cardenddate = obj.cardenddate.strftime('%Y-%m-%d %H:%M:%S')
+
                 ret_data.append({
                     'id': obj.id,
-                    'keywords': keywords,
-                    'url': obj.url,
-                    'rank': obj.rank,
-                    'biji_num': obj.biji_num,
-                    'status': obj.get_status_display(),
-                    'status_id': obj.status,
-                    'select_type': obj.get_select_type_display(),
-                    'select_type_id': obj.select_type,
-                    'create_user__username': obj.create_user.username,
+                    'cardimsi': obj.cardimsi,
+                    'cardstatus': obj.cardstatus,
+                    'cardtype': obj.cardtype,
+                    'cardusedata': obj.cardusedata,
+                    'cardno': obj.cardno,
+                    'cardbaldata': obj.cardbaldata,
+                    'select_number': obj.select_number,
+                    'cardnumber': obj.cardnumber,
+                    'cardstartdate': cardstartdate,
+                    'cardenddate': cardenddate,
+                    'errmsg': obj.errmsg,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    'update_datetime': update_datetime,
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -75,28 +72,27 @@ def equipment_management(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
-                'status_choices': models.XiaohongshuFugai.status_choices,
-                'select_type_choices': models.XiaohongshuFugai.select_type_choices,
             }
             response.note = {
-                'id': "下拉词id",
-                'keywords': "搜索词",
-                'url': "匹配url",
-                'rank': "排名",
-                'biji_num': "笔记数",
-                'status': "状态",
-                'status_id': "状态id",
-                'select_type': "搜索类型",
-                'select_type_id': "搜索类型id",
-                'create_user__username': "创建人",
-                'create_datetime': "创建时间",
-                'update_datetime': "更新时间",
+                'id': 'ID',
+                'cardimsi': 'ISMI号',
+                'cardstatus': '用户状态',
+                'cardtype': '套餐类型',
+                'cardusedata': '已用流量',
+                'cardno': '卡编号',
+                'cardbaldata': '剩余流量',
+                'select_number': '查询号码',
+                'cardnumber': '卡号',
+                'cardstartdate': '卡开户时间',
+                'cardenddate': '卡到期时间',
+                'errmsg': '错误日志',
+                'create_datetime': '创建时间',
             }
         else:
-            print("forms_obj.errors -->", forms_obj.errors)
-            response.code = 402
+            response.code = 301
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
+
     return JsonResponse(response.__dict__)
 
 
@@ -117,26 +113,11 @@ def equipment_management_oper(request, oper_type, o_id):
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 select_number = forms_obj.cleaned_data.get('select_number')
-                ret_json = get_traffic_information(select_number)
-                if ret_json.get('code') != 0:
+                for i in select_number:
                     models.MobileTrafficInformation.objects.create(
-                        select_number=select_number,
-                        errmsg=ret_json.get('msg')
+                        select_number=i
                     )
-                else:
-                    models.MobileTrafficInformation.objects.create(**{
-                        'select_number': select_number,
-                        'cardbaldata': ret_json.get('cardbaldata'),  # 剩余流量
-                        'cardenddate': ret_json.get('cardenddate'),  # 卡到期时间
-                        'cardimsi': ret_json.get('cardimsi'),  # ismi号
-                        'cardno': ret_json.get('cardno'),  # 卡编号
-                        'cardnumber': ret_json.get('cardnumber'),  # 卡号
-                        'cardstatus': ret_json.get('cardstatus'),  # 用户状态
-                        'cardstartdate': ret_json.get('cardstartdate'),  # 卡开户时间
-                        'cardtype': ret_json.get('cardtype'),  # 套餐类型
-                        'cardusedata': ret_json.get('cardusedata'),  # 已用流量
-                    })
-
+                get_traffic_information.delay()
                 response.code = 200
                 response.msg = '创建成功'
 
@@ -172,7 +153,7 @@ def equipment_management_oper(request, oper_type, o_id):
 
         # 删除
         elif oper_type == 'delete':
-            models.MobilePhoneRechargeInformation.objects.filter(equipment_package_id=o_id).delete()
+            models.MobilePhoneRechargeInformation.objects.filter(equipment_id=o_id).delete()
             models.MobileTrafficInformation.objects.filter(id=o_id).delete()
             response.code = 200
             response.msg = '删除成功'
@@ -184,7 +165,59 @@ def equipment_management_oper(request, oper_type, o_id):
 
     else:
 
-        response.code = 402
-        response.msg = "请求异常"
+        # 查询设备充值信息
+        if oper_type == 'get_recharge_information':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                user_id = request.GET.get('user_id')
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'id': '',
+                    'equipment_id': '',
+                    'equipment_package': '',
+                    'create_datetime': '__contains',
+                }
+
+                q = conditionCom(request, field_dict)
+
+                objs = models.MobilePhoneRechargeInformation.objects.filter(q).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+
+                    ret_data.append({
+                        'equipment_id': obj.equipment_id,
+                        'prepaid_phone_time': obj.equipment_package,
+                        'equipment_package': obj.prepaid_phone_time.strftime('%Y-%m-%d %H:%M:%S'),
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count
+                }
+                response.note = {
+                    'equipment_id': '设备ID',
+                    'prepaid_phone_time': '充值时间',
+                    'equipment_package': '设备套餐',
+                    'create_datetime': '创建时间',
+                }
+
+            else:
+                response.code = 301
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
+        else:
+
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)

@@ -42,7 +42,6 @@ def get_traffic_information(number):
     }
     ret = requests.post(url, headers=headers, data=post_data)
     ret_json = ret.json()
-
     if ret_json.get('errcode') != 0:
         data = {
             'code': 1,

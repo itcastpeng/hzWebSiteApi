@@ -39,7 +39,7 @@ class SelectForm(forms.Form):
 
 # 添加
 class AddForm(forms.Form):
-    select_number = forms.IntegerField(
+    select_number = forms.CharField(
         required=True,
         error_messages={
             'required': "查询号码不能为空",
@@ -49,11 +49,16 @@ class AddForm(forms.Form):
 
     def clean_select_number(self):
         select_number = self.data.get('select_number')
-        objs = models.MobileTrafficInformation.objects.filter(select_number=select_number)
-        if objs:
-            self.add_error('select_number', '该号码已存在')
-        else:
-            return select_number
+        data_list = []
+        for i in select_number.split('\n'):
+            if i:
+                objs = models.MobileTrafficInformation.objects.filter(select_number=i)
+                if objs:
+                    self.add_error('select_number', '{}号码已存在'.format(i))
+
+                data_list.append(i.strip())
+
+        return data_list
 
 class UpdateForm(forms.Form):
     select_number = forms.IntegerField(
