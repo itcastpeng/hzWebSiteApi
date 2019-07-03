@@ -511,7 +511,11 @@ def celery_get_phone_content():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/celery_get_phone_content'
     requests.get(url)
 
-
+# 查询设备流量信息
+@app.task
+def get_traffic_information():
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/get_traffic_information'
+    requests.get(url)
 
 
 

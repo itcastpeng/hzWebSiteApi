@@ -65,6 +65,12 @@ class UpdateUserinfoForm(forms.Form):
             'required': "主页地址不能为空"
         }
     )
+    macaddr = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "mac地址类型错误"
+        }
+    )
 
 
 class RegistreForm(forms.Form):

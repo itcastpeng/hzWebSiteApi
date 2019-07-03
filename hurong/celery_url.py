@@ -10,5 +10,8 @@ urlpatterns = [
     # 更新手机号短信
     url(r'^celery_get_phone_content', celery_management.celery_get_phone_content),
 
+    # 查询 流量信息
+    url(r'^get_traffic_information', celery_management.get_traffic_information),
+
 
 ]
