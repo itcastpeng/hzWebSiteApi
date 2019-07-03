@@ -514,10 +514,7 @@ def celery_get_phone_content():
 # 查询设备流量信息
 @app.task
 def get_traffic_information():
-    url = 'https://xcx.bjhzkq.com/api_hurong/celery/get_traffic_information'
+    url = 'http://127.0.0.1:8009/api_hurong/celery/get_traffic_information'
+    # url = 'https://xcx.bjhzkq.com/api_hurong/celery/get_traffic_information'
     requests.get(url)
-
-
-
-
 

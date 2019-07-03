@@ -3,7 +3,7 @@ from publicFunc.phone_management_platform import phone_management
 from hurong import models
 from publicFunc.public import get_traffic_information as get_phone_info, query_device_recharge_information
 from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
-import datetime, time, random, requests
+import datetime, time, random, requests, json
 
 
 
@@ -55,7 +55,6 @@ def get_traffic_information(request):
     )
     for obj in objs:
         ret_json = get_phone_info(obj.select_number)
-
         if ret_json.get('code') != 0:
             obj.errmsg = ret_json.get('msg')
 
@@ -95,14 +94,6 @@ def get_traffic_information(request):
 
 
     return HttpResponse('')
-
-
-
-
-
-
-
-
 
 
 

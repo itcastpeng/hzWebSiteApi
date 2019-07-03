@@ -9,8 +9,9 @@ urlpatterns = [
     # 更新手机号短信
     url(r'^celery_get_phone_content$', celery_management.celery_get_phone_content),
 
-    # 查询 流量信息
+    # 查询 设备 流量信息 和 设备充值记录
     url(r'^get_traffic_information$', celery_management.get_traffic_information),
+
 
 
 ]
