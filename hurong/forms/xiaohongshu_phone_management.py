@@ -55,17 +55,37 @@ class get_phone_work_status(forms.Form):
 # 获取未使用的手机号
 class get_phone_number(forms.Form):
     iccid= forms.CharField(
-        required=True,
+        required=False,
         error_messages={
             'required': "SIM卡ID 不能为空"
         }
     )
     imsi= forms.CharField(
-        required=True,
+        required=False,
         error_messages={
             'required': "设备IMSI号 不能为空"
         }
     )
+    macaddr = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "SIM卡ID 不能为空"
+        }
+    )
+
+    def clean_macaddr(self):
+        macaddr = self.data.get('macaddr')
+        imsi = self.data.get('imsi')
+        iccid = self.data.get('iccid')
+
+        if macaddr:
+            return macaddr
+        else:
+            if not iccid or not imsi:
+                self.add_error('imsi', '设备IMSI号或SIM卡ID不能为空')
+            else:
+                return macaddr
+
 
 # 获取验证码
 class get_verification_code(forms.Form):
