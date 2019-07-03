@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from publicFunc.phone_management_platform import phone_management
 from hurong import models
-from publicFunc.public import get_traffic_information as get_phone_info
+from publicFunc.public import get_traffic_information as get_phone_info, query_device_recharge_information
 from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 import datetime, time, random, requests
 
@@ -71,12 +71,28 @@ def get_traffic_information(request):
             obj.cardstartdate = ret_json.get('cardstartdate')  # 卡开户时间
             obj.cardtype = ret_json.get('cardtype')         # 套餐类型
             obj.cardusedata = ret_json.get('cardusedata')   # 已用流量
-            if int(cardbaldata) <= 500:
+            obj.errmsg = ''
+            if float(cardbaldata) <= 500:
                 work_obj = WorkWeixinApi()
                 content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
                 work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+            info_json = query_device_recharge_information(obj.select_number)
+            for i in info_json.get('data_list'):
+                info_objs = models.MobilePhoneRechargeInformation.objects.filter(
+                    equipment_package=i.get('pkName'),
+                    prepaid_phone_time=i.get('payTime'),
+                    equipment_id=obj.id,
+                )
+                if not info_objs:
+                    models.MobilePhoneRechargeInformation.objects.create(
+                        equipment_package=i.get('pkName'),
+                        prepaid_phone_time=i.get('payTime'),
+                        equipment_id=obj.id,
+                    )
 
         obj.save()
+
+
 
     return HttpResponse('')
 

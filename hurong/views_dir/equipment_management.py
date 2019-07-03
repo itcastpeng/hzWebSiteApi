@@ -148,8 +148,21 @@ def equipment_management_oper(request, oper_type, o_id):
             form_obj = UpdateForm(form_data)
             if form_obj.is_valid():
                 select_number = form_obj.cleaned_data.get('select_number')
+                models.MobilePhoneRechargeInformation.objects.filter(equipment_id=o_id).delete()
                 objs = models.MobileTrafficInformation.objects.filter(id=o_id)
-                objs.update(select_number=select_number)
+                objs.update(**{
+                    'select_number':select_number,
+                    'cardbaldata': '',
+                    'cardenddate': None,
+                    'cardimsi': '',
+                    'cardno':'',
+                    'cardnumber':'',
+                    'cardstatus':'',
+                    'cardstartdate':None,
+                    'cardtype':'',
+                    'cardusedata':'',
+                })
+
                 response.code = 200
                 response.msg = '修改成功'
 
