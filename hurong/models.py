@@ -340,10 +340,10 @@ class InstallationPackage(models.Model):
 # 手机流量信息表
 class MobileTrafficInformation(models.Model):
     select_number = models.TextField(verbose_name='查询号码') # 可以是手机号 也可以是 ismi号
-    cardnumber = models.IntegerField(verbose_name='卡号', null=True) # 手机号
+    cardnumber = models.CharField(verbose_name='卡号', max_length=64, null=True) # 手机号
     cardbaldata = models.CharField(validators='剩余流量', max_length=16, null=True)
-    cardimsi = models.IntegerField(verbose_name='ISMI号', null=True)
-    cardno = models.IntegerField(verbose_name='卡编号', null=True)
+    cardimsi = models.CharField(verbose_name='ISMI号', max_length=64, null=True)
+    cardno = models.CharField(verbose_name='卡编号', max_length=64, null=True)
     cardstatus = models.CharField(verbose_name='用户状态', max_length=64, null=True)
     cardtype = models.CharField(verbose_name='套餐类型', max_length=32, null=True)
     cardusedata = models.CharField(verbose_name='已用流量', max_length=16, null=True)
@@ -356,7 +356,7 @@ class MobileTrafficInformation(models.Model):
 class MobilePhoneRechargeInformation(models.Model):
     equipment_package = models.CharField(verbose_name='设备套餐', max_length=128)
     prepaid_phone_time = models.DateTimeField(verbose_name='充值时间')
-    equipment = models.ForeignKey('MobilePhoneRechargeInformation', verbose_name='设备')
+    equipment = models.ForeignKey('MobileTrafficInformation', verbose_name='设备')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

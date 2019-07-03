@@ -73,10 +73,12 @@ def query_device_recharge_information(number):
     }
     ret = requests.post(url, headers=headers, data=post_data)
     ret_json = ret.json()
+    data = {
+        'code': 0,
+        'data_list': ret_json.get('list')
+    }
 
-
-
-
+    return data
 
 if __name__ == '__main__':
     num = '14651661767'
