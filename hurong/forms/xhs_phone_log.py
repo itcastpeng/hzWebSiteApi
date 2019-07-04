@@ -83,21 +83,18 @@ class AddForm(forms.Form):
         required=False
     )
 
-    def clean_phone_type(self):
-        phone_type = self.data.get('phone_type')
-        iccid = self.data.get('iccid')
-        imsi = self.data.get('imsi')
-        macaddr = self.data.get('macaddr')
-        if int(phone_type) == 2 and macaddr:
-            return phone_type
-        else:
-            if int(phone_type) == 2:
-                if iccid and imsi:
-                    return phone_type
-                else:
-                    self.add_error('phone_type', '参数异常')
-            else:
-                return phone_type
+    # def clean_phone_type(self):
+    #     phone_type = self.data.get('phone_type')
+    #     iccid = self.data.get('iccid')
+    #     imsi = self.data.get('imsi')
+    #     macaddr = self.data.get('macaddr')
+    #     if int(phone_type) == 2 and macaddr:
+    #         return phone_type
+    #     else:
+    #         if iccid and imsi:
+    #             return phone_type
+    #         else:
+    #             self.add_error('phone_type', '参数异常')
 
 
 
