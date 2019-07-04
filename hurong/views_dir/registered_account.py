@@ -42,7 +42,7 @@ def registered_account(request, oper_type):
                 for obj in objs:
                     register_datetime = obj.register_datetime
                     if obj.register_datetime:
-                        register_datetime =obj.register_datetime.strptime('%Y-%m-%d %H:%M:%S')
+                        register_datetime =obj.register_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
                     ret_data.append({
                         'id':obj.id,
