@@ -76,15 +76,24 @@ def xiaohongshu_phone_management(request, oper_type):
             form_data = {
                 'iccid': request.GET.get('iccid'),
                 'imsi': request.GET.get('imsi'),
+                'macaddr': request.GET.get('macaddr'),
             }
             form_obj = get_phone_number(form_data)
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
                 imsi = form_obj.cleaned_data.get('imsi')
-                phone_objs = models.XiaohongshuPhone.objects.filter(
-                    iccid=iccid,
-                    imsi=imsi
-                )
+                macaddr = form_obj.cleaned_data.get('macaddr')
+
+                if macaddr:
+                    data = {
+                        "iccid": iccid,
+                        "imsi": imsi
+                    }
+                else:
+                    data = {
+                        "macaddr": macaddr
+                    }
+                phone_objs = models.XiaohongshuPhone.objects.filter(**data)
                 if phone_objs:
                     phone_obj = phone_objs[0]
                     number_objs = models.PhoneNumber.objects.filter(phone=phone_obj)
