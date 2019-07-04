@@ -158,7 +158,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
 
-                models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url, status=2)
+                models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url, status=2, completion_time=datetime.datetime.today())
 
                 api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
                 data = {
@@ -263,6 +263,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     release_time = obj.release_time
                     if release_time:
                         release_time = obj.release_time.strftime('%Y-%m-%d %H:%M:%S')
+
+                    completion_time = obj.completion_time
+                    if completion_time:
+                        completion_time = obj.completion_time.strftime('%Y-%m-%d %H:%M:%S')
+
                     result_data = {
                         'id': obj.id,
                         'user_id': obj.user_id_id,
@@ -271,6 +276,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'status_id': obj.status,
                         'status': obj.get_status_display(),
                         'release_time': release_time,
+                        'completion_time': completion_time,
                         'biji_url': obj.biji_url,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
