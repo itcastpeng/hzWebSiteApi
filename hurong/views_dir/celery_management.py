@@ -50,13 +50,13 @@ def celery_get_phone_content(request):
 
 # 查询 流量信息
 def get_traffic_information(request):
-    print('-=-------------------------------------')
+    # print('-=-------------------------------------')
     objs = models.MobileTrafficInformation.objects.filter(
-        # select_number__isnull=False
-        id__gte=66
+        select_number__isnull=False
+        # id__gte=66
     )
     for obj in objs:
-        print('obj.id------------------> ', obj.id)
+        # print('obj.id------------------> ', obj.id)
         ret_json = get_phone_info(obj.select_number)
         if ret_json.get('code') != 0:
             obj.errmsg = ret_json.get('msg')
@@ -81,7 +81,7 @@ def get_traffic_information(request):
             try:
                 if cardbaldata and float(cardbaldata) <= 500:
                     content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
-                    # work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+                    work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
                 info_json = query_device_recharge_information(obj.select_number)
                 if info_json.get('data_list'):
