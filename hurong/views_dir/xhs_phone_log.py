@@ -147,14 +147,15 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 else: #  phone_type == 2
                     # print("记录发布")
                     data = {
-                        "phone_type": phone_type
+                        "phone_type": phone_type,
+                        "imsi": imsi,
+                        "iccid": iccid
                     }
-                    if macaddr:
-                        data["macaddr"] = macaddr
+                    # if macaddr:
+                    #     data["macaddr"] = macaddr
+                    #
+                    # else:
 
-                    else:
-                        data["imsi"] = imsi
-                        data["iccid"] = iccid
 
                     objs = models.XiaohongshuPhone.objects.filter(**data)
                     if objs:
