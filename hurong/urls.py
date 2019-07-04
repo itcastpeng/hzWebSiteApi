@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
     xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, \
     permissions, xiaohongshu_phone_management, xhs_account_management, xhs_king_barings_screen, \
-    xhs_mobile_phone_number_management, package_management, qiniu, equipment_management
+    xhs_mobile_phone_number_management, package_management, qiniu, equipment_management, registered_account
 
 
 urlpatterns = [
@@ -66,8 +66,11 @@ urlpatterns = [
     # 小红书手机 管理
     url(r'^xhs_phone_management/(?P<oper_type>\w+)', xiaohongshu_phone_management.xiaohongshu_phone_management),
 
-    # 小红书注册的账号管理
+    # 小红书发布的账号管理
     url(r'^xhs_account_management/(?P<oper_type>\w+)', xhs_account_management.xhs_account_management),
+
+    # 小红书注册账号管理
+    url(r'^registered_account/(?P<oper_type>\w+)', registered_account.registered_account),
 
     # 小红书 霸屏王 覆盖管理
     url(r'^xhs_king_barings_screen/(?P<oper_type>\w+)', xhs_king_barings_screen.xhs_king_barings_screen),
