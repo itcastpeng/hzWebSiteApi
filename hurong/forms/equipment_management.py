@@ -50,14 +50,24 @@ class AddForm(forms.Form):
     def clean_select_number(self):
         select_number = self.data.get('select_number')
         data_list = []
+        print('select_number------->', select_number)
         for i in select_number.split('\n'):
             if i:
                 objs = models.MobileTrafficInformation.objects.filter(select_number=i)
                 if objs:
                     self.add_error('select_number', '{} 号码已存在'.format(i))
-                if not i.isdigit():
+                if not i.strip().isdigit():
                     self.add_error('select_number', '{} 参数异常'.format(i))
-                data_list.append(i.strip())
+                if i.strip() not in data_list:
+                    data_list.append(i.strip())
+        # for i in select_number.split('\r'):
+        #     if i.strip() not in data_list:
+        #         objs = models.MobileTrafficInformation.objects.filter(select_number=i)
+        #         if objs:
+        #             self.add_error('select_number', '{} 号码已存在'.format(i))
+        #         if not i.strip().isdigit():
+        #             self.add_error('select_number', '{} 参数异常'.format(i))
+        #         data_list.append(i.strip())
 
         return data_list
 
