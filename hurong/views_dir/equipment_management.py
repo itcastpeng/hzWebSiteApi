@@ -119,7 +119,7 @@ def equipment_management_oper(request, oper_type, o_id):
                     )
                 get_traffic_information.delay()
                 response.code = 200
-                response.msg = '创建成功'
+                response.msg = '创建成功, 共创建{}条数据'.format(len(select_number))
 
             else:
                 response.code = 301
