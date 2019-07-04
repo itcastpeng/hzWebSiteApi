@@ -9,13 +9,13 @@ import json
 
 @csrf_exempt
 @account.is_token(models.UserProfile)
-def xhs_account_management(request, oper_type):
+def registered_account(request, oper_type):
     response = Response.ResponseObj()
     if request.method == "GET":
         user_id = request.GET.get('user_id')
 
         # 查询小红书所有账号
-        if oper_type == 'get_xhs_account':
+        if oper_type == 'get_xhs_unregistered_account':
             forms_obj = SelectForm(request.GET)
             if forms_obj.is_valid():
                 current_page = forms_obj.cleaned_data['current_page']
@@ -23,13 +23,13 @@ def xhs_account_management(request, oper_type):
                 order = request.GET.get('order', '-create_datetime')
                 field_dict = {
                     'id': '',
-                    'phone_id': '__contains',
+                    'uid': '__contains',
                     'name': '__contains',
-                    'xiaohongshu_id': '__contains',
-                    'home_url': '__contains',
+                    'gender': '',
+                    'is_register': '',
                 }
                 q = conditionCom(request, field_dict)
-                objs = models.XiaohongshuUserProfile.objects.filter(
+                objs = models.XiaohongshuUserProfileRegister.objects.filter(
                     q,
                 ).order_by(order)
                 count = objs.count()
@@ -40,25 +40,38 @@ def xhs_account_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
-                    if obj.phone_id and obj.phone_id.name:
-                        ret_data.append({
-                            'id':obj.id,
-                            'name':obj.name,
-                            'phone_id':obj.phone_id_id,
-                            'phone_number':obj.phone_id.phone_num,
-                            'xiaohongshu_id':obj.xiaohongshu_id,
-                            'xhs_version':obj.xhs_version,
-                            'home_url':obj.home_url,
-                            'phone_name':obj.phone_id.name,
-                            'phone_type':obj.phone_id.get_phone_type_display(),
-                            'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                        })
+                    register_datetime = obj.register_datetime
+                    if obj.register_datetime:
+                        register_datetime =obj.register_datetime.strptime('%Y-%m-%d %H:%M:%S')
+
+                    ret_data.append({
+                        'id':obj.id,
+                        'name':obj.name,
+                        'uid':obj.uid,
+                        'gender_id':obj.gender,
+                        'gender':obj.get_gender_display(),
+                        'birthday':obj.birthday,
+                        'is_register':obj.is_register,
+                        'register_datetime':register_datetime,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
 
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
+                    'gender_choices': [{'id': i[0], 'name': i[1]} for i in models.XiaohongshuUserProfileRegister.gender_choices],
                     'count':count,
+                }
+                response.note = {
+                    'name': '账号昵称',
+                    'uid': '小红书后台博主ID',
+                    'gender_id': '性别ID',
+                    'gender': '性别名称',
+                    'birthday': '生日',
+                    'is_register': '是否已经被注册',
+                    'register_datetime': '注册时间',
+                    'create_datetime': '创建时间',
                 }
             else:
                 response.code = 301
