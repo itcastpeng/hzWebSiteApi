@@ -240,6 +240,7 @@ class XiaohongshuBiji(models.Model):
 
     status = models.SmallIntegerField(choices=status_choices, verbose_name="笔记状态", default=3)
     release_time = models.DateTimeField(verbose_name="发布时间")
+    completion_time = models.DateTimeField(verbose_name="完成时间", null=True)
     biji_url = models.CharField(verbose_name="笔记回链", max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
