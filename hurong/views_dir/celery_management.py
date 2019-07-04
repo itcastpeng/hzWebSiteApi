@@ -57,6 +57,7 @@ def get_traffic_information(request):
         ret_json = get_phone_info(obj.select_number)
         if ret_json.get('code') != 0:
             obj.errmsg = ret_json.get('msg')
+            obj.save()
 
         else:
             cardbaldata = ret_json.get('cardbaldata')
@@ -71,27 +72,31 @@ def get_traffic_information(request):
             obj.cardtype = ret_json.get('cardtype')         # 套餐类型
             obj.cardusedata = ret_json.get('cardusedata')   # 已用流量
             obj.errmsg = ''
-            if float(cardbaldata) <= 500:
-                work_obj = WorkWeixinApi()
-                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
-                work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
-            info_json = query_device_recharge_information(obj.select_number)
-            for i in info_json.get('data_list'):
-                info_objs = models.MobilePhoneRechargeInformation.objects.filter(
-                    equipment_package=i.get('pkName'),
-                    prepaid_phone_time=i.get('payTime'),
-                    equipment_id=obj.id,
-                )
-                if not info_objs:
-                    models.MobilePhoneRechargeInformation.objects.create(
+            obj.save()
+
+            work_obj = WorkWeixinApi()
+            try:
+                if cardbaldata and float(cardbaldata) <= 500:
+                    content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
+                    work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+
+                info_json = query_device_recharge_information(obj.select_number)
+
+                for i in info_json.get('data_list'):
+                    info_objs = models.MobilePhoneRechargeInformation.objects.filter(
                         equipment_package=i.get('pkName'),
                         prepaid_phone_time=i.get('payTime'),
                         equipment_id=obj.id,
                     )
-
-        obj.save()
-
-
+                    if not info_objs:
+                        models.MobilePhoneRechargeInformation.objects.create(
+                            equipment_package=i.get('pkName'),
+                            prepaid_phone_time=i.get('payTime'),
+                            equipment_id=obj.id,
+                        )
+            except Exception as e:
+                content = '鹏---获取流量 报错---> {}'.format(e)
+                work_obj.message_send('HeZhongGaoJingJianCe', content)
 
     return HttpResponse('')
 

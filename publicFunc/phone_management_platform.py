@@ -67,15 +67,24 @@ class phone_management():
             content = soup.find('div', class_='tab-content')
             form_obj = content.find('form', class_='js-ajax-form').find_all('tr')
             if len(form_obj) >= 2:
-                yzm_obj = form_obj[1] # 获取最后一个验证码
-                if_yzm_text = yzm_obj.find_all('td')[1].get_text()
-                if '验证码' in if_yzm_text:
-                    if_yzm_text = if_yzm_text.split('[From')[0]
-                    yzm = re.search('\d{6}', if_yzm_text)
-                    verification_code = yzm.group()
+                # yzm_obj = form_obj[1] # 获取最后一个验证码
+                for yzm_obj in form_obj[1: -1]:
+                    if '验证码' in yzm_obj.get_text():
+                        now = datetime.datetime.today()
+                        deletionTime = (now - datetime.timedelta(minutes=5))
+                        yzm_time = yzm_obj.find_all('td')[2].get_text()
+                        yzm_time = datetime.datetime.strptime(yzm_time, '%Y-%m-%d %H:%M:%S')
+                        if yzm_time >= deletionTime:
+                            if_yzm_text = yzm_obj.find_all('td')[1].get_text()
+                            if '验证码' in if_yzm_text:
+                                if_yzm_text = if_yzm_text.split('[From')[0]
+                                yzm = re.search('\d{6}', if_yzm_text)
+                                verification_code = yzm.group()
 
             if not verification_code:
                 continue
+            else:
+                break
 
         return verification_code
 
@@ -120,7 +129,8 @@ class phone_management():
 if __name__ == '__main__':
     obj = phone_management()
     obj.login()
-    obj.get_all_information_day()
+    phone_number = '13089927032'
+    print(obj.query_verification_code(phone_number))
 
 
 
