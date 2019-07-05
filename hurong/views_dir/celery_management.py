@@ -85,7 +85,7 @@ def get_traffic_information(request):
 
             work_obj = WorkWeixinApi()
             if flag and cardbaldata and float(cardbaldata) <= 500:
-                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
+                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}, time:{}'.format(obj.select_number, cardbaldata, cardimsi, datetime.datetime.today())
                 work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
             if flag:

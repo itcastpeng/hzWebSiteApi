@@ -183,9 +183,12 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 if log_msg.startswith('没有找到回复私信用户'): # 报错
                     obj = WorkWeixinApi()
                     if phone_type == 1:
-                        text = '类型:查覆盖, MAC:{}, 日志:{}'.format(macaddr, log_msg)
+                        text_type = '查覆盖'
                     else:
-                        text = '类型:任务发布, iccid:{}, imsi:{}, 日志:{}'.format(iccid, imsi, log_msg)
+                        text_type = '任务发布'
+
+                    text = '类型:{}, 设备名称:{}, 日志:{}'.format(text_type, phone_name, log_msg)
+
                     content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
                     obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
