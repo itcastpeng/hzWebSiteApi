@@ -65,24 +65,30 @@ def get_traffic_information(request):
         else:
             cardbaldata = ret_json.get('cardbaldata')
             cardimsi = ret_json.get('cardimsi')
+            cardstatus = ret_json.get('cardstatus')
+
             obj.cardbaldata = cardbaldata                   # 剩余流量
             obj.cardenddate = ret_json.get('cardenddate')   # 卡到期时间
             obj.cardimsi = cardimsi                         # ismi号
             obj.cardno = ret_json.get('cardno')             # 卡编号
             obj.cardnumber = ret_json.get('cardnumber')     # 卡号
-            obj.cardstatus = ret_json.get('cardstatus')     # 用户状态
+            obj.cardstatus = cardstatus                     # 用户状态
             obj.cardstartdate = ret_json.get('cardstartdate')  # 卡开户时间
             obj.cardtype = ret_json.get('cardtype')         # 套餐类型
             obj.cardusedata = ret_json.get('cardusedata')   # 已用流量
             obj.errmsg = ''
             obj.save()
 
-            work_obj = WorkWeixinApi()
-            try:
-                if cardbaldata and float(cardbaldata) <= 500:
-                    content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
-                    work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+            flag = False
+            if cardstatus != '已停用':
+                flag = True
 
+            work_obj = WorkWeixinApi()
+            if flag and cardbaldata and float(cardbaldata) <= 500:
+                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(obj.select_number, cardbaldata, cardimsi)
+                work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+
+            if flag:
                 info_json = query_device_recharge_information(obj.select_number)
                 if info_json.get('data_list'):
                     for i in info_json.get('data_list'):
@@ -97,9 +103,6 @@ def get_traffic_information(request):
                                 prepaid_phone_time=i.get('payTime'),
                                 equipment_id=obj.id,
                             )
-            except Exception as e:
-                content = '鹏---获取流量 报错---> {}'.format(e)
-                work_obj.message_send('HeZhongGaoJingJianCe', content)
 
     return HttpResponse('')
 
