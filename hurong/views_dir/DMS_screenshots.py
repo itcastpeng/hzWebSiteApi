@@ -44,7 +44,7 @@ def DMS_screenshots(request, oper_type):
         response.code = 200
         response.msg = "提交成功"
         response.data = {
-            'key': ret.json()["key"]
+            'key': "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
         }
 
     else:
