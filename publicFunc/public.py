@@ -1,5 +1,5 @@
 
-
+from hurong import models
 import re, random, requests
 
 pcRequestHeader = [
@@ -79,9 +79,16 @@ def query_device_recharge_information(number):
 
     return data
 
-if __name__ == '__main__':
-    num = '14651661767'
-    print(query_device_recharge_information(num))
+
+
+# 创建请求日志 requests 请求外界
+def requests_log(url, request_parameters, response_content):
+    models.externalRequestRecord.objects.create(**{
+        'request_parameters': request_parameters,  # 请求参数
+        'request_url': url,
+        'response_content': response_content # 响应数据
+    })
+
 
 
 

@@ -1,7 +1,6 @@
-from django.shortcuts import render
 from hurong import models
-from publicFunc import Response
-from publicFunc import account
+from publicFunc import Response, account
+from publicFunc.public import requests_log
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
@@ -168,7 +167,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 }
                 ret = requests.post(url=api_url, data=data)
                 print("ret.text -->", ret.text)
-
+                requests_log(api_url, data, ret.json()) # 记录请求日志
                 response.code = 200
                 response.msg = "提交成功"
 
