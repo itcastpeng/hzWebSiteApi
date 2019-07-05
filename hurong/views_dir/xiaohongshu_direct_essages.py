@@ -286,6 +286,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
 
+        # 获取休息时间
         elif oper_type == "get_screenshot_time":
             form_data = {
                 'imsi': request.GET.get('imsi'),
@@ -301,11 +302,21 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     phone_id__iccid=iccid
                 )
 
+                now_date = datetime.datetime.today()
+                now_hours = int(now_date.strftime('%H'))
+
+
+
                 if objs:
                     obj = objs[0]
+                    if now_hours > 8 and now_hours < 22:
+                        screenshot_time = obj.screenshot_time
+                    else:
+                        screenshot_time = obj.late_screenshot_time
+
                     response.code = 200
                     response.data = {
-                        "screenshot_time": obj.screenshot_time,
+                        "screenshot_time": screenshot_time,
                     }
                 else:
                     response.code = 0
@@ -316,6 +327,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
         else:
             response.code = 402
             response.msg = "请求异常"

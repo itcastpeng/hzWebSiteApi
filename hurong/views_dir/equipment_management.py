@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.equipment_management import AddForm, SelectForm, UpdateForm
 from hz_website_api_celery.tasks import get_traffic_information
+from django.db.models import Q
 import requests, datetime, json
 
 
@@ -30,6 +31,12 @@ def equipment_management(request):
             }
 
             q = conditionCom(request, field_dict)
+            status = request.GET.get('status')
+            if status:
+                if status in [1, '1']:
+                    q.add(Q(cardstatus='已激活'), Q.AND)
+                else:
+                    q.add(Q(cardstatus='已停用'), Q.AND)
 
             print('q -->', q)
             objs = models.MobileTrafficInformation.objects.filter(q).order_by(order)
@@ -72,6 +79,7 @@ def equipment_management(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+                'status_choices':[{'id':1, 'name':'已激活'}, {'id':2, 'name':'已停用'}],
             }
             response.note = {
                 'id': 'ID',
