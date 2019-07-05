@@ -3,7 +3,8 @@ from publicFunc.redisOper import get_redis_obj
 from publicFunc.qiniu.auth import Auth
 from publicFunc import Response
 from django.http import JsonResponse
-import json, requests, base64, time, os, qiniu
+import json, requests, base64, time, os
+
 
 
 def DMS_screenshots(request, oper_type):
