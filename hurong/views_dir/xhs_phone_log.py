@@ -185,7 +185,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     if phone_type == 1:
                         text = '类型:查覆盖, MAC:{}, 日志:{}'.format(macaddr, log_msg)
                     else:
-                        text = '类型:任务发布, iccid:{}, imsi:{}, 日志:{}'.format(iccid, imsi, log_msg)
+                        text = '类型:任务发布, iccid:{}, imsi:{}, 日志:{}, 时间:{}'.format(iccid, imsi, log_msg, datetime.datetime.today())
                     content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
                     obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
