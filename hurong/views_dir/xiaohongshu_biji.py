@@ -280,8 +280,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'biji_url': obj.biji_url,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
-                    if select_id:
-                        result_data['content'] = json.loads(obj.content)
+                    # if select_id:
+                    result_data['content'] = json.loads(obj.content)
 
                     ret_data.append(result_data)
 
