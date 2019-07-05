@@ -208,24 +208,37 @@ def check_forbidden_text(request):
         submit_count_num = models.XiaohongshuBannedWordsPlatform.objects.all().aggregate(submit_num=Sum('submit_num')).get('submit_num')
         forbidden_objs_count = models.XiaohongshuForbiddenText.objects.all().count()
 
-        now = datetime.date.today()
+        data_list = []
+        now_date = datetime.date.today()
+        now_weekday = now_date.weekday() # 当前周几
 
-        now_date_time = datetime.datetime.today()
-        submit_now_num = models.XiaohongshuBannedWordsPlatform.objects.filter(create_date=now).aggregate(submit_num=Sum('submit_num')).get('submit_num')
-        forbidden_objs_now = models.XiaohongshuForbiddenText.objects.filter(
-            create_datetime__gte=now_date_time.strftime('%Y-%m-%d 00:00:00'),
-            create_datetime__lte=now_date_time.strftime('%Y-%m-%d 23:59:59')
-        ).count()
+        nowTime = (now_date - datetime.timedelta(days=now_weekday))
+        for i in range(7):
+            deletion_date = (nowTime + datetime.timedelta(days=i))
 
+            submit_now_num = models.XiaohongshuBannedWordsPlatform.objects.filter(
+                create_date=deletion_date).aggregate(submit_num=Sum('submit_num')).get('submit_num')
 
+            forbidden_objs_now = models.XiaohongshuForbiddenText.objects.filter(
+                create_datetime__gte=deletion_date.strftime('%Y-%m-%d 00:00:00'),
+                create_datetime__lte=deletion_date.strftime('%Y-%m-%d 23:59:59')
+            ).count()
+
+            date_now = deletion_date
+            if now_date == deletion_date:
+                date_now = '今天'
+            data_list.append({
+                '时间': date_now,
+                '提交禁词': submit_now_num,
+                '入库禁词': forbidden_objs_now
+            })
 
         response.code = 200
         response.msg = '查询成功'
         response.data = {
             '提交的词数_总数':submit_count_num,
             '禁词数量_总数': forbidden_objs_count,
-            '提交的词数_今天总数': submit_now_num,
-            '禁词数量_今天总数': forbidden_objs_now,
+            '本周禁词统计': data_list
         }
 
     return JsonResponse(response.__dict__)
