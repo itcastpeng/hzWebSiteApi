@@ -3,7 +3,8 @@ from django.conf.urls import url, include
 from hurong.views_dir import upload_img, login, user, task_list, task_info, role, xiaohongshu, xiaohongshuxila, \
     xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, \
     permissions, xiaohongshu_phone_management, xhs_account_management, xhs_king_barings_screen, \
-    xhs_mobile_phone_number_management, package_management, qiniu, equipment_management, registered_account, DMS_screenshots
+    xhs_mobile_phone_number_management, package_management, qiniu, equipment_management, registered_account, \
+    DMS_screenshots, comment_management
 
 
 urlpatterns = [
@@ -91,5 +92,8 @@ urlpatterns = [
 
     # 小红书截图
     url(r'^DMS_screenshots/(?P<oper_type>\w+)', DMS_screenshots.DMS_screenshots),
+
+    # 评论管理
+    url(r'^comment_management/(?P<oper_type>\w+)', comment_management.comment_management),
 
 ]

@@ -362,5 +362,31 @@ class MobilePhoneRechargeInformation(models.Model):
     equipment = models.ForeignKey('MobileTrafficInformation', verbose_name='设备')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 对外requests请求 参数 结果 记录
+class externalRequestRecord(models.Model):
+    request_parameters = models.TextField(verbose_name='请求参数')
+    request_url = models.CharField(verbose_name='请求链接', max_length=512)
+    response_content = models.TextField(verbose_name='响应数据')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 评论表
+class littleRedBookReviewForm(models.Model):
+    xhs_user = models.ForeignKey('XiaohongshuUserProfile', verbose_name='小红书账号')
+    head_portrait = models.CharField(verbose_name='头像', max_length=256)
+    nick_name = models.CharField(verbose_name='昵称', max_length=128)
+    comments_choices = (
+        (1, '默认评论'),
+        (2, '回复评论')
+    )
+    comments_status = models.SmallIntegerField(verbose_name='评论类型', choices=comments_choices, default=1)
+    comments_content = models.TextField(verbose_name='评论内容')
+    article_picture_address = models.CharField(verbose_name='文章图片地址', max_length=512)
+    article_notes = models.ForeignKey('XiaohongshuBiji', verbose_name='文章笔记', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 评论回复表
+class commentResponseForm(models.Model):
+    comment = models.ForeignKey('littleRedBookReviewForm', verbose_name='回复哪个评论')
+    comment_response = models.TextField(verbose_name='回复评论内容')
+    comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

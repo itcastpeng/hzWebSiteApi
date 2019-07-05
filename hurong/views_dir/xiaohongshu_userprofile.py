@@ -1,13 +1,8 @@
-from django.shortcuts import render
 from hurong import models
-from publicFunc import Response
-from publicFunc import account
-from publicFunc.send_email import SendEmail
+from publicFunc import Response, account
+from publicFunc.public import requests_log
 from django.http import JsonResponse
-from publicFunc.condition_com import conditionCom
 from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm
-from django.db.models import Q
-import redis
 import json
 import requests
 import datetime
@@ -177,7 +172,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         }
                         ret = requests.post(api_url, data=data)
                         print("ret.json() -->", ret.json())
-
+                        requests_log(api_url, data, ret.json()) # 记录请求日志
                         xhs_userprofile_register_objs.update(
                             is_register=True,
                             register_datetime=datetime.datetime.now()
