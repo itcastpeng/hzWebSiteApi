@@ -16,7 +16,7 @@ def get_upload_token(request):
     if request.method == "GET":
 
         redis_obj = get_redis_obj()
-        upload_token = redis_obj.get('qiniu_upload_token')
+        upload_token = redis_obj.get('xhs_qiniu_upload_token')
         if not upload_token:
             qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
             with open(qiniu_data_path, "r", encoding="utf8") as f:
@@ -25,7 +25,7 @@ def get_upload_token(request):
                 secret_key = data.get('secret_key')
                 obj = Auth(access_key, secret_key)
                 upload_token = obj.upload_token("xcx_wgw_zhangcong")
-                redis_obj.set("qiniu_upload_token", upload_token, ex=60 * 30)  # 使用redis缓存50分钟
+                redis_obj.set("xhs_qiniu_upload_token", upload_token, ex=60 * 50)  # 使用redis缓存50分钟
 
         response.code = 200
         response.msg = "获取成功"

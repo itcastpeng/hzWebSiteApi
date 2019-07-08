@@ -3,8 +3,8 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
-from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, SelectForm
-import json, requests, base64, time, os
+from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, SelectForm, ReplyCommentIsSuccess
+import json, requests, base64, time, os, datetime
 
 
 # 评论管理
@@ -33,6 +33,7 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
 
                 # 异步传递给小红书后台
+                form_data['transfer_type'] = 1 # 传递到小红书后台
                 asynchronous_transfer_data.delay(form_data)
             else:
                 response.code = 301
@@ -53,17 +54,43 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
 
                 # 异步传递给手机
+                form_data['transfer_type'] = 2  # 传递到手机
                 asynchronous_transfer_data.delay(form_data)
 
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 手机端 通知回复消息是否成功
+        elif oper_type == 'reply_comment_is_success':
+            form_data = {
+                'comment_id': request.POST.get('comment_id'),  # 回复的消息ID
+                # 'is_success': request.POST.get('is_success'),  # 回复的消息是否成功 (0 失败, 1 成功)
+            }
+
+            form_objs = ReplyCommentIsSuccess(form_data)
+            if form_objs.is_valid():
+                comment_id = form_objs.cleaned_data.get('comment_id')
+
+                objs = models.commentResponseForm.objects.filter(id=comment_id)
+                objs.update(
+                    comment_completion_time=datetime.datetime.today()
+                )
+                response.code = 200
+                response.msg = '成功'
+
+                # 异步传递给小红书后台
+                form_data['transfer_type'] = 3  # 传递到手机
+                asynchronous_transfer_data.delay(form_data)
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_objs.errors.as_json())
 
     else:
 
         #
-        if oper_type == '':
+        if oper_type == 'xxx':
             pass
 
         else:

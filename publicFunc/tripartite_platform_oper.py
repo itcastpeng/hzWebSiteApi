@@ -20,6 +20,7 @@ class tripartite_platform_oper():
         self.component_verify_ticket = obj.component_verify_ticket
         self.token = obj.component_access_token
         self.tripartite_platform_appid = obj.appid
+        self.tripartite_platform_appsecret = obj.appsecret
 
         if obj.access_token_time - int(time.time()) <= 600: # token还有10分钟过期
             self.get_component_access_token(obj)
@@ -30,12 +31,12 @@ class tripartite_platform_oper():
             'component_access_token': self.token
         }
 
-    # 获取三方平台 component_access_token
+    # 获取第三方平台component_access_token
     def get_component_access_token(self, obj):
         url = 'https://api.weixin.qq.com/cgi-bin/component/api_component_token'
         post_data = {
-            "component_appid": self.appid,
-            "component_appsecret": self.appsecret,
+            "component_appid": self.tripartite_platform_appid,
+            "component_appsecret": self.tripartite_platform_appsecret,
             "component_verify_ticket": self.component_verify_ticket
         }
         ret = requests.post(url, data=post_data)
@@ -57,7 +58,7 @@ class tripartite_platform_oper():
         url = 'https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode'
 
         post_data = {
-            "component_appid": self.appid
+            "component_appid": self.tripartite_platform_appid
         }
         ret = requests.post(url, params=self.params, data=post_data)
 
@@ -67,7 +68,7 @@ class tripartite_platform_oper():
     def exchange_calling_credentials(self):
         url = 'https://api.weixin.qq.com/cgi-bin/component/api_query_auth'
         post_data = {
-            "component_appid": self.appid,
+            "component_appid": self.tripartite_platform_appid,
             "authorization_code": ''  # 授权code
         }
         ret = requests.post(url, params=self.params, data=post_data)
@@ -78,9 +79,9 @@ class tripartite_platform_oper():
     def refresh_exchange_calling_credentials(self):
         url = 'https:// api.weixin.qq.com /cgi-bin/component/api_authorizer_token'
         post_data = {
-            "component_appid":"appid_value",
-            "authorizer_appid":"auth_appid_value",
-            "authorizer_refresh_token":"refresh_token_value",
+            "component_appid": self.tripartite_platform_appid,
+            "authorizer_appid":self.appid,
+            "authorizer_refresh_token":self.token,
         }
 
         ret = requests.post(url, params=self.params, data=post_data)

@@ -131,3 +131,23 @@ class SelectForm(forms.Form):
         return length
 
 
+# 回复评论是否成功
+class ReplyCommentIsSuccess(forms.Form):
+    comment_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "回复评论ID不能为空"
+        }
+    )
+    def clean_comment_id(self):
+        comment_id = self.data.get('comment_id')
+        objs = models.commentResponseForm.objects.filter(id=comment_id)
+        if objs:
+            return comment_id
+        else:
+            self.add_error('comment_id', '回复评论ID不存在')
+
+
+
+
+
