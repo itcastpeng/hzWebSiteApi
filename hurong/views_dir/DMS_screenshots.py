@@ -47,16 +47,17 @@ def DMS_screenshots(request, oper_type):
         response.data = {
             'key': key
         }
-
         num = 0
         while True:
             num += 1
             xhs_screenshots = redis_obj.llen('xhs_screenshots') # 保存截图
-            if int(xhs_screenshots) <= 10:  # 只保存十个 追加
+            print('xhs_screenshots-----> ', xhs_screenshots)
+            if int(xhs_screenshots) < 10:  # 只保存十个 追加
                 redis_obj.rpush('xhs_screenshots', key)
                 break
             else:
                 redis_obj.lpop('xhs_screenshots')
+
             if num >= 10:
                 break
 
