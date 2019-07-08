@@ -390,3 +390,17 @@ class commentResponseForm(models.Model):
     comment_response = models.TextField(verbose_name='回复评论内容')
     comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+# 笔记 文章截图 关联表
+class noteAssociationScreenshot(models.Model):
+    screenshots = models.CharField(verbose_name='截图', max_length=256)
+    notes = models.ForeignKey('XiaohongshuBiji', verbose_name='截图')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+
+# 查询是否关联
+# 关联  biji_url 文章截图 返回 笔记ID
+
+# 创建评论 传递 笔记ID

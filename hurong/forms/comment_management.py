@@ -67,6 +67,22 @@ class mobilePhoneReviews(forms.Form):
             else:
                 self.add_error('article_notes_id', '笔记不存在')
 
+    def clean_comments_content(self):
+        comments_content = self.data.get('comments_content')
+        xhs_user_id = self.data.get('xhs_user_id')
+        nick_name = self.data.get('nick_name')
+
+        objs = models.littleRedBookReviewForm.objects.filter(
+            xhs_user_id=xhs_user_id,
+            nick_name=nick_name,
+            comments_content=comments_content
+        )
+        if not objs:
+            return comments_content
+        else:
+            self.add_error('comments_content', '该评论已存在')
+
+
 
 
 # 创建回复评论 小红书后台添加接口   (博主回复内容)
