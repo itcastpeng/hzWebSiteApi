@@ -191,6 +191,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                     content = """{} \n小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(datetime.datetime.today(), text)
                     obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+                    obj.message_send('JiShuBuCeShi', content)
 
 
                 now_date_time = datetime.datetime.today()
