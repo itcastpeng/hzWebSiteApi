@@ -2,6 +2,7 @@ from hurong import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
+from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, SelectForm
 import json, requests, base64, time, os
 
@@ -30,6 +31,9 @@ def comment_management(request, oper_type):
                 models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = '创建成功'
+
+                # 异步传递给小红书后台
+                asynchronous_transfer_data.delay(form_data)
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
@@ -45,10 +49,11 @@ def comment_management(request, oper_type):
             forms_obj = ReplyCommentForm(form_data)
             if forms_obj.is_valid():
                 models.commentResponseForm.objects.create(**forms_obj.cleaned_data)
-
-
                 response.code = 200
                 response.msg = '创建成功'
+
+                # 异步传递给手机
+                asynchronous_transfer_data.delay(form_data)
 
             else:
                 response.code = 301
@@ -57,39 +62,8 @@ def comment_management(request, oper_type):
 
     else:
 
-        # 查询 评论
-        if oper_type == 'query_the_comments':
-
-            forms_obj = SelectForm(request.GET)
-            if forms_obj.is_valid():
-                user_id = request.GET.get('user_id')
-                current_page = forms_obj.cleaned_data['current_page']
-                length = forms_obj.cleaned_data['length']
-                order = request.GET.get('order', '-create_datetime')
-                field_dict = {
-                    'id': '',
-                    'cardbaldata': '__contains',
-                    'select_number': '__contains',
-                    'cardnumber': '__contains',
-                    'create_datetime': '',
-                }
-
-                q = conditionCom(request, field_dict)
-
-                objs = models.littleRedBookReviewForm.objects.filter()
-
-                if length != 0:
-                    start_line = (current_page - 1) * length
-                    stop_line = start_line + length
-                    objs = objs[start_line: stop_line]
-
-
-            else:
-                response.code = 301
-                response.msg = json.loads(forms_obj.errors.as_json())
-
-        # 查询回复评论
-        elif oper_type == '':
+        #
+        if oper_type == '':
             pass
 
         else:

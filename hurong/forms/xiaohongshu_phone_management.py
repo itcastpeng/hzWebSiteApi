@@ -3,7 +3,7 @@ from hurong import models
 from publicFunc.public import verify_phone_number
 
 # 获取手机工作状态
-class get_phone_work_status(forms.Form):
+class GetPhoneWorkStatus(forms.Form):
     iccid = forms.CharField(
         required=False,
         error_messages={
@@ -53,7 +53,7 @@ class get_phone_work_status(forms.Form):
 
 
 # 获取未使用的手机号
-class get_phone_number(forms.Form):
+class GetPhoneNumber(forms.Form):
     iccid= forms.CharField(
         required=True,
         error_messages={
@@ -88,7 +88,7 @@ class get_phone_number(forms.Form):
 
 
 # 获取验证码
-class get_verification_code(forms.Form):
+class GetVerificationCode(forms.Form):
     phone_number = forms.IntegerField(
         required=True,
         error_messages={
@@ -104,10 +104,41 @@ class get_verification_code(forms.Form):
 
 
 # 获取小红书未注册的账号信息
-class get_xhs_unregistered_information(forms.Form):
+class GetXhsUnregisteredInformation(forms.Form):
     get_info_number = forms.IntegerField(
         required=True,
         error_messages={
             'required': "非法用户"
         }
     )
+
+
+# 修改 移动设备
+class UpdateMobileDevices(forms.Form):
+
+    phone_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "请选择修改的设备"
+        }
+    )
+    device_name = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "设备名称类型错误"
+        }
+    )
+    is_debug = forms.BooleanField(
+        required=True,
+        error_messages={
+            'required': "是否调试请选择"
+        }
+    )
+    def clean_phone_id(self):
+        phone_id = self.data.get('phone_id')
+        objs = models.XiaohongshuPhone.objects.filter(id=phone_id)
+        if objs:
+            return phone_id
+        else:
+            self.add_error('phone_id', '修改设备不存在')
+

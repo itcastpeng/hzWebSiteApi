@@ -85,7 +85,7 @@ def get_traffic_information(request):
 
             work_obj = WorkWeixinApi()
             if flag and cardbaldata and float(cardbaldata) <= 500:
-                content = '流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}, time:{}'.format(obj.select_number, cardbaldata, cardimsi, datetime.datetime.today())
+                content = '{} \n 流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(datetime.datetime.today(), obj.select_number, cardbaldata, cardimsi)
                 work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
             if flag:
@@ -105,6 +105,11 @@ def get_traffic_information(request):
                             )
 
     return HttpResponse('')
+
+
+# 异步传送小红书后台 手机抓取的评论
+def asynchronous_transfer_data(request):
+    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递到手机)
 
 
 

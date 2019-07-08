@@ -1,8 +1,8 @@
 from hurong import models
 from publicFunc import Response
 from django.http import JsonResponse
-from hurong.forms.xiaohongshu_phone_management import get_phone_work_status, get_phone_number, \
-    get_xhs_unregistered_information, get_verification_code
+from hurong.forms.xiaohongshu_phone_management import GetPhoneWorkStatus, GetPhoneNumber, \
+    GetXhsUnregisteredInformation, GetVerificationCode, UpdateMobileDevices
 from publicFunc.phone_management_platform import phone_management
 from hurong.forms.public_form import SelectForm
 from publicFunc.condition_com import conditionCom
@@ -26,7 +26,7 @@ def xiaohongshu_phone_management(request, oper_type):
                 'phone_type':request.GET.get('phone_type'),
             }
             flag = True
-            form_obj = get_phone_work_status(form_data)
+            form_obj = GetPhoneWorkStatus(form_data)
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
                 imsi = form_obj.cleaned_data.get('imsi')
@@ -78,7 +78,7 @@ def xiaohongshu_phone_management(request, oper_type):
                 'imsi': request.GET.get('imsi'),
                 # 'macaddr': request.GET.get('macaddr'),
             }
-            form_obj = get_phone_number(form_data)
+            form_obj = GetPhoneNumber(form_data)
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
                 imsi = form_obj.cleaned_data.get('imsi')
@@ -130,7 +130,7 @@ def xiaohongshu_phone_management(request, oper_type):
             form_data = {
                 'phone_number': request.GET.get('phone_number')
             }
-            form_obj = get_verification_code(form_data)
+            form_obj = GetVerificationCode(form_data)
             if form_obj.is_valid():
                 phone_number = form_obj.cleaned_data.get('phone_number')
                 phone_management_objs = phone_management()
@@ -157,7 +157,7 @@ def xiaohongshu_phone_management(request, oper_type):
             }
             response.code = 301
 
-            form_obj = get_xhs_unregistered_information(form_data)
+            form_obj = GetXhsUnregisteredInformation(form_data)
             if form_obj.is_valid():
                 get_info_number = int(form_obj.cleaned_data.get('get_info_number'))
 
@@ -297,7 +297,36 @@ def xiaohongshu_phone_management(request, oper_type):
             response.msg = "请求异常"
 
     else:
-        response.code = 402
-        response.msg = "请求异常"
+
+        # 修改 移动设备 (设备名称 是否调试)
+        if oper_type == 'update_mobile_devices':
+            form_data = {
+                'phone_id': request.POST.get('phone_id'),          # 要修改的设备ID
+                'device_name': request.POST.get('device_name'),    # 设备名称
+                'is_debug': request.POST.get('is_debug'),          # 是否调试
+            }
+            forms_obj = UpdateMobileDevices(form_data)
+            if forms_obj.is_valid():
+                form_data_obj = forms_obj.cleaned_data
+                phone_id = form_data_obj.get('phone_id')
+                device_name = form_data_obj.get('device_name')
+                is_debug = form_data_obj.get('is_debug')
+
+                models.XiaohongshuPhone.objects.filter(
+                    id=phone_id
+                ).update(
+                    is_debug=is_debug,
+                    name=device_name
+                )
+                response.msg = '修改成功'
+                response.code = 200
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+        else:
+            response.code = 402
+            response.msg = "请求异常"
 
     return JsonResponse(response.__dict__)
