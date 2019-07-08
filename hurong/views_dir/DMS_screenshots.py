@@ -14,6 +14,7 @@ def DMS_screenshots(request, oper_type):
     # 截图
     if oper_type == "save_screenshots":
         img_base64_data = request.POST.get('img_base64_data')
+        img_base64_data = img_base64_data.replace(' ', '+')
         imgdata = base64.b64decode(img_base64_data)
         upload_token = redis_obj.get('qiniu_upload_token')
         if not upload_token:
