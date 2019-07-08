@@ -121,15 +121,22 @@ def comment_management(request, oper_type):
                 if biji_objs:
                     biji_obj = biji_objs[0]
 
-                    models.noteAssociationScreenshot.objects.create(
+                    objs = models.noteAssociationScreenshot.objects.filter(
                         screenshots=screenshots,
                         notes_id=biji_obj.id
                     )
+                    if not objs:
 
-                    code = 200
-                    msg = '关联成功'
-                    response.data = biji_obj.id
+                        models.noteAssociationScreenshot.objects.create(
+                            screenshots=screenshots,
+                            notes_id=biji_obj.id
+                        )
 
+                        code = 200
+                        msg = '关联成功'
+                        response.data = biji_obj.id
+                    else:
+                        msg = '重复关联'
                 else:
                     msg = '笔记不存在'
 
