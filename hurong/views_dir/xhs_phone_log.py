@@ -189,7 +189,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                     text = '类型:{}, 设备名称:{}, 日志:{}'.format(text_type, phone_name, log_msg)
 
-                    content = """小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(text)
+                    content = """{} \n小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(datetime.datetime.today(), text)
                     obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
 
@@ -213,14 +213,14 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                             package_obj = package_objs[0]
                             if int(package_obj.id) != int(current_version):
                                 send_msg_flag = True
-                                content = '{} 移动设备 发布程序不是最新版,请及时更新, time:{}'.format(phone_name, now_date_time)
+                                content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
                         else:
                             send_msg_flag = True
-                            content = '{} 移动设备 发布程序没有版本,请及时查看, time:{}'.format(phone_name, now_date_time)
+                            content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
 
                     else:
                         send_msg_flag = True
-                        content = '{} 移动设备 自动更新程序异常,请及时处理, time:{}'.format(phone_name, now_date_time)
+                        content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
                     if send_msg_flag:
                         obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪

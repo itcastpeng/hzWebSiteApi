@@ -44,6 +44,10 @@ def tripartite_platform_oper(request, oper_type):
             print('body_data-----> ', body_data)
             return HttpResponse('success')
 
+        # 授权事件接收
+        elif oper_type == 'tongzhi':
+            pass
+
         else:
             response.code = 402
             response.msg = "请求异常"

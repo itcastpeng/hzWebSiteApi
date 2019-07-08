@@ -12,6 +12,8 @@ urlpatterns = [
     # 查询 设备 流量信息 和 设备充值记录
     url(r'^get_traffic_information$', celery_management.get_traffic_information),
 
+    # 手机抓取的评论 异步传送小红书后台  后台--异步-->手机
+    url(r'^asynchronous_transfer_data$', celery_management.asynchronous_transfer_data),
 
 
 ]

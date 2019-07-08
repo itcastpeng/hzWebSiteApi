@@ -16,20 +16,13 @@ import sys
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
-import django
+import django, re, json, redis
 django.setup()
-
-
+from openpyxl import Workbook
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 from hurong import models
 from django.db.models.aggregates import Count
-from publicFunc.send_email import SendEmail
-import redis
-import json
-from openpyxl import Workbook
 from django.db.models import Q
-from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
-import re
-
 
 # 更新小红书下拉数据
 @app.task
@@ -337,7 +330,7 @@ def xiaohongshu_phone_monitor():
     if len(err_phone) > 0:
             obj = WorkWeixinApi()
             print("err_phone -->", err_phone)
-            content = """小红书机器异常，请及时处理:  \n{phone_names}, time:{time}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
+            content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
             # obj.message_send('WorkWeixinApi', content)          # 张聪
             obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
             # obj.message_send('1534764500636', content)      # 贺昂
@@ -408,7 +401,7 @@ def xiaohongshu_userprofile_register_monitor():
     objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
     if objs:
         obj = WorkWeixinApi()
-        content = """小红书有新的账号需要注册，请及时处理, time:{}""".format(datetime.datetime.today())
+        content = """{} \n小红书有新的账号需要注册，请及时处理""".format(datetime.datetime.today())
         # obj.message_send('ZhangCong', content)          # 张聪
         # obj.message_send('1534764500636', content)      # 贺昂
         obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
@@ -424,7 +417,7 @@ def xiaohongshu_biji_monitor():
     objs = models.XiaohongshuBiji.objects.exclude(status=2).exclude(user_id_id=5)
     if objs:
         obj = WorkWeixinApi()
-        content = """小红书有新的笔记需要发布，请及时处理, time:{}""".format(datetime.datetime.today())
+        content = """{} \n 小红书有新的笔记需要发布，请及时处理""".format(datetime.datetime.today())
         # obj.message_send('ZhangCong', content)          # 张聪
         # obj.message_send('1534764500636', content)      # 贺昂
         obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
@@ -518,3 +511,7 @@ def get_traffic_information():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/get_traffic_information'
     requests.get(url)
 
+@app.task
+def asynchronous_transfer_data(data):
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/asynchronous_transfer_data'
+    requests.post(url, data=data)
