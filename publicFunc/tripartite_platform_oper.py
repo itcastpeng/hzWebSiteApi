@@ -22,7 +22,7 @@ class tripartite_platform_oper():
         self.tripartite_platform_appid = obj.appid
         self.tripartite_platform_appsecret = obj.appsecret
 
-        if obj.access_token_time - int(time.time()) <= 600: # token还有10分钟过期
+        if int(obj.access_token_time) - int(time.time()) <= 600: # token还有10分钟过期
             self.get_component_access_token(obj)
             obj = models.TripartitePlatform.objects.get(id=1)
             self.token = obj.component_access_token
