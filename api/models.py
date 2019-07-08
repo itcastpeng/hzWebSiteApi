@@ -167,13 +167,19 @@ class CompomentLibrary(models.Model):
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
 
-# 微信三方平台
+# 微信三方平台管理
 class TripartitePlatform(models.Model):
     appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
+    appsecret = models.CharField(verbose_name='三方平台appsecret', max_length=128)
     component_verify_ticket = models.TextField(verbose_name='component_verify_ticket协议')
 
     component_access_token = models.TextField(verbose_name='component_access_token')
     access_token_time = models.CharField(verbose_name='access_token 过期时间', max_length=32)
+# 客户公众号授权 信息
+
+
+# 客户小程序授权 信息
+
 
 
 

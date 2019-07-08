@@ -128,7 +128,7 @@ class UpdateMobileDevices(forms.Form):
             'required': "设备名称类型错误"
         }
     )
-    is_debug = forms.BooleanField(
+    is_debug = forms.IntegerField(
         required=True,
         error_messages={
             'required': "是否调试请选择"

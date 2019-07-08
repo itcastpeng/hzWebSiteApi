@@ -11,4 +11,9 @@ class AuthorizationForm(forms.Form):
             'required': '非法用户',
         }
     )
-
+    appid = forms.CharField(
+        required=True,
+        error_messages={
+            'required': 'APPID不能为空',
+        }
+    )
