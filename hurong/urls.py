@@ -9,11 +9,10 @@ from hurong.views_dir import upload_img, login, user, task_list, task_info, role
 
 urlpatterns = [
 
-    # celery
-    url(r'^celery/', include('hurong.celery_url')),                  # base64 上传分片
-
-    url(r'^upload_img$', upload_img.upload_img),                  # base64 上传分片
-    url(r'^login$', login.login),                  # base64 上传分片
+    url(r'^celery/', include('hurong.celery_url')),     # celery
+    url(r'^get_qiniu_token', qiniu.get_upload_token),   # 获取七牛云token
+    url(r'^upload_img$', upload_img.upload_img),        # base64 上传分片
+    url(r'^login$', login.login),                       # 登录
 
     # 角色管理
     url(r'^role/(?P<oper_type>\w+)/(?P<o_id>\d+)', role.role_oper),
@@ -86,9 +85,6 @@ urlpatterns = [
     # 设备管理 (手机充值信息 和 流量查询)
     url(r'^equipment_management/(?P<oper_type>\w+)/(?P<o_id>\d+)', equipment_management.equipment_management_oper),
     url(r'^equipment_management$', equipment_management.equipment_management),
-
-    # 获取七牛云token
-    url(r'^get_qiniu_token', qiniu.get_upload_token),
 
     # 小红书截图
     url(r'^DMS_screenshots/(?P<oper_type>\w+)', DMS_screenshots.DMS_screenshots),

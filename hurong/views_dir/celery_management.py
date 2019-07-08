@@ -109,7 +109,16 @@ def get_traffic_information(request):
 
 # 异步传送小红书后台 手机抓取的评论
 def asynchronous_transfer_data(request):
-    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递到手机)
+    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递到手机 3传递小红书评论成功)
+    if transfer_type in [1, '1']:
+        url = ''
+        # requests.get(url, )
+
+    elif transfer_type in [2, '2']:
+        url = ''
+
+    else:
+        url = ''
 
 
 
