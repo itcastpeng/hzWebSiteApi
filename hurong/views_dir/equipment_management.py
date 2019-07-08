@@ -50,6 +50,13 @@ def equipment_management(request):
 
             ret_data = []
             for obj in objs:
+
+                name = ''
+                phone_objs = models.XiaohongshuPhone.objects.filter(phone_num=obj.cardnumber)
+                if phone_objs:
+                    phone_obj = phone_objs[0]
+                    name = phone_obj.name
+
                 cardstartdate = obj.cardstartdate
                 if obj.cardstartdate:
                     cardstartdate = obj.cardstartdate.strftime('%Y-%m-%d %H:%M:%S')
@@ -60,6 +67,7 @@ def equipment_management(request):
 
                 ret_data.append({
                     'id': obj.id,
+                    'name': name,
                     'cardimsi': obj.cardimsi,
                     'cardstatus': obj.cardstatus,
                     'cardtype': obj.cardtype,
@@ -83,6 +91,7 @@ def equipment_management(request):
             }
             response.note = {
                 'id': 'ID',
+                'name': '设备名称',
                 'cardimsi': 'ISMI号',
                 'cardstatus': '用户状态',
                 'cardtype': '套餐类型',

@@ -17,7 +17,7 @@ def get_upload_token(request):
     if request.method == "GET":
 
         redis_obj = get_redis_obj()
-        upload_token = redis_obj.get('qiniu_upload_token')
+        upload_token = redis_obj.get('xhs_qiniu_upload_token')
         if not upload_token:
             qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
             with open(qiniu_data_path, "r", encoding="utf8") as f:
