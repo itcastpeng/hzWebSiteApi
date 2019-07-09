@@ -54,7 +54,7 @@ def permissions(request):
                 'pid_id': '__isnull'
             }
             q = conditionCom(request, field_dict)
-            print('q -->', q)
+            # print('q -->', q)
 
             objs = models.Permissions.objects.select_related('pid').filter(q).order_by(order)
             count = objs.count()

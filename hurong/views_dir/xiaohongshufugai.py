@@ -35,9 +35,9 @@ def xiaohongshufugai(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.XiaohongshuFugai.objects.filter(q).order_by(order)
-            print(objs)
+            # print(objs)
             count = objs.count()
 
             if length != 0:

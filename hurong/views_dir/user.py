@@ -31,7 +31,7 @@ def user(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             # q.add(Q(**{k + '__contains': value}), Q.AND)
             objs = models.UserProfile.objects.select_related('role_id').exclude(Q(status=3)).filter(q).order_by(order)
             count = objs.count()

@@ -26,7 +26,7 @@ def template(request):
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 

@@ -32,7 +32,7 @@ def role(request):
                 'oper_user__username': '__contains',
             }
             q = conditionCom(request, field_dict)
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.Role.objects.filter(q).order_by(order)
             count = objs.count()
             if length != 0:

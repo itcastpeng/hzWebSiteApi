@@ -30,7 +30,7 @@ def task_info(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             # q.add(Q(**{k + '__contains': value}), Q.AND)
             objs = models.TaskInfo.objects.filter(q).order_by(order)
             count = objs.count()

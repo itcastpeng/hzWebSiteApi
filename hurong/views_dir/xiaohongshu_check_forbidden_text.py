@@ -30,7 +30,7 @@ def xiaohongshu_check_forbidden_text(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             # q.add(Q(**{k + '__contains': value}), Q.AND)
             role_id = models.UserProfile.objects.get(id=user_id).role_id_id
             if role_id != 1:    # 非管理员角色只能看自己的

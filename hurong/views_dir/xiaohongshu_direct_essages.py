@@ -31,9 +31,9 @@ def xiaohongshu_direct_essages(request):
             if xiaohongshu_id:
                 q.add(Q(**{'user_id__xiaohongshu_id': xiaohongshu_id}), Q.AND)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.XiaohongshuDirectMessages.objects.select_related('user_id').filter(q).order_by(order)
-            print(objs)
+            # print(objs)
             count = objs.count()
 
             if length != 0:

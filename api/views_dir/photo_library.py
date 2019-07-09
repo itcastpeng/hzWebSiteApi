@@ -31,7 +31,7 @@ def photo_library(request):
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
-            print('q -->', q)
+            # print('q -->', q)
 
             if get_type == "system":  # 获取系统分组
                 q.add(Q(**{'create_user_id__isnull': True}), Q.AND)
