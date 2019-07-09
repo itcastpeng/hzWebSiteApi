@@ -59,10 +59,18 @@ def is_token(table_obj):
             # if ip == "127.0.0.1":
             #     return func(request, *args, **kwargs)
 
+
+            # 手机设备不做token验证
+            t = request.GET.get('t')
+
+            if t == "phone":
+                return func(request, *args, **kwargs)
+
             # 不需要验证token的路由直接跳过
             for route in NoValidationTokenRoute:
                 if request.get_full_path().startswith(route):
                     return func(request, *args, **kwargs)
+
 
             rand_str = request.GET.get('rand_str')
             timestamp = request.GET.get('timestamp', '')
