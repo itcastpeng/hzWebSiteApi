@@ -48,9 +48,18 @@ def comment_management(request, oper_type):
                     }
                     forms_obj = mobilePhoneReviews(form_data)
                     if forms_obj.is_valid():
-                        models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
+                        nick_name = forms_obj.cleaned_data.get('nick_name')
+                        comments_content = forms_obj.cleaned_data.get('comments_content')
+                        objs = models.littleRedBookReviewForm.objects.filter(
+                                    xhs_user_id=xhs_user_id,
+                                    nick_name=nick_name,
+                                    comments_content=comments_content
+                                )
+                        if not objs:
+
+                            models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
+                            response.msg = '创建成功'
                         response.code = 200
-                        response.msg = '创建成功'
 
                         # 异步传递给小红书后台
                         # form_data['transfer_type'] = 1 # 传递到小红书后台

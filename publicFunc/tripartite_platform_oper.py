@@ -21,7 +21,6 @@ class tripartite_platform_oper():
         self.token = obj.component_access_token
         self.tripartite_platform_appid = obj.appid
         self.tripartite_platform_appsecret = obj.appsecret
-
         if int(obj.access_token_time) - int(time.time()) <= 600: # token还有10分钟过期
             self.get_component_access_token(obj)
             obj = models.TripartitePlatform.objects.get(id=1)
@@ -34,24 +33,25 @@ class tripartite_platform_oper():
     # 获取第三方平台component_access_token
     def get_component_access_token(self, obj):
         url = 'https://api.weixin.qq.com/cgi-bin/component/api_component_token'
+        print('self.component_verify_ticket----> ', self.component_verify_ticket)
         post_data = {
             "component_appid": self.tripartite_platform_appid,
             "component_appsecret": self.tripartite_platform_appsecret,
             "component_verify_ticket": self.component_verify_ticket
         }
-        ret = requests.post(url, data=post_data)
+        ret = requests.post(url, data=json.dumps(post_data))
+        print('ret.json()---------> ', ret.json())
         """
             {
                 "component_access_token":"61W3mEpU66027wgNZ_MhGHNQDHnFATkDa9-2llqrMBjUwxRSNPbVsMmyD-yq8wZETSoE5NQgecigDrSHkPtIYA", 
                 "expires_in":7200
             }
         """
-        component_access_token = ret.json().get('component_access_token')
-        print('ret.json()---------> ', ret.json())
-        expires_in = int(time.time()) + ret.json().get('expires_in')
-        obj.access_token_time = expires_in
-        obj.component_access_token = component_access_token
-        obj.save()
+        # component_access_token = ret.json().get('component_access_token')
+        # expires_in = int(time.time()) + ret.json().get('expires_in')
+        # obj.access_token_time = expires_in
+        # obj.component_access_token = component_access_token
+        # obj.save()
 
 
     # 获取预授权码 pre_auth_code
