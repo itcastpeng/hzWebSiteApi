@@ -16,11 +16,6 @@ def tripartite_platform_oper(request, oper_type):
 
         # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
-            objs = models.TripartitePlatform.objects.filter(
-                appid__isnull=False
-            )
-            objs.update(component_access_token=1111)
-
             signature = request.GET.get('signature')
             timestamp = request.GET.get('timestamp')
             nonce = request.GET.get('nonce')
@@ -30,21 +25,18 @@ def tripartite_platform_oper(request, oper_type):
 
             xml_tree = ET.fromstring(postdata)
             Encrypt = xml_tree.find('Encrypt').text
-            objs.update(component_access_token=2222)
+
             wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123', 'wx1f63785f9acaab9c')
-            try:
-                ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-                objs.update(component_access_token=333)
-                decryp_xml_tree = ET.fromstring(decryp_xml)
-                ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-                models.TripartitePlatform.objects.filter(
-                    appid=xml_tree.find('AppId').text
-                ).update(
-                    component_verify_ticket=ComponentVerifyTicket,
-                    linshi=decryp_xml
-                )
-            except Exception as e:
-                objs.update(component_access_token=4444, linshi=e)
+            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+
+            decryp_xml_tree = ET.fromstring(decryp_xml)
+            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+            models.TripartitePlatform.objects.filter(
+                appid=xml_tree.find('AppId').text
+            ).update(
+                component_verify_ticket=ComponentVerifyTicket,
+                linshi=decryp_xml
+            )
 
 
             return HttpResponse('success')
