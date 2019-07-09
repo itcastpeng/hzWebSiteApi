@@ -3,6 +3,7 @@ from publicFunc.redisOper import get_redis_obj
 from publicFunc.qiniu.auth import Auth
 from publicFunc import Response
 from django.http import JsonResponse
+from hurong.forms.DMS_screenshots import Screenshots
 import json, requests, base64, time, os, random
 
 
@@ -13,53 +14,83 @@ def DMS_screenshots(request, oper_type):
 
     # 截图
     if oper_type == "save_screenshots":
-        img_base64_data = request.POST.get('img_base64_data')
-        img_base64_data = img_base64_data.replace(' ', '+')
-        imgdata = base64.b64decode(img_base64_data)
-        upload_token = redis_obj.get('qiniu_upload_token')
-        if not upload_token:
-            qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
-            with open(qiniu_data_path, "r", encoding="utf8") as f:
-                data = json.loads(f.read())
-                access_key = data.get('access_key')
-                secret_key = data.get('secret_key')
-                obj = Auth(access_key, secret_key)
-                upload_token = obj.upload_token("xcx_wgw_zhangcong")
-
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+        form_data = {
+            'img_base64_data': request.POST.get('img_base64_data'),
+            'iccid': request.POST.get('iccid'),
+            'imsi': request.POST.get('imsi')
         }
+        form_obj = Screenshots(form_data)
+        if form_obj.is_valid():
+            forms_data = form_obj.cleaned_data
+            imgdata = forms_data.get('img_base64_data')
 
-        url = 'https://up-z1.qiniup.com/'
+            judge_key = forms_data.get('iccid') + forms_data.get('imsi')
+            judge_key_objs = redis_obj.get(judge_key)
+            img_flag = False
+            key = ''
+            if judge_key_objs:
+                for i in eval(judge_key_objs):
+                    if imgdata == i['imgdata']:
+                        img_flag = True
+                        key = i['key']
+                        break
 
-        files = {
-            'file': imgdata
-        }
+            if not img_flag:
+                upload_token = redis_obj.get('qiniu_upload_token')
+                if not upload_token:
+                    qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+                    with open(qiniu_data_path, "r", encoding="utf8") as f:
+                        data = json.loads(f.read())
+                        access_key = data.get('access_key')
+                        secret_key = data.get('secret_key')
+                        obj = Auth(access_key, secret_key)
+                        upload_token = obj.upload_token("xcx_wgw_zhangcong")
 
-        data = {
-            'token': upload_token,
-        }
-        ret = requests.post(url, data=data, files=files, headers=headers)
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+                }
 
-        response.code = 200
-        response.msg = "提交成功"
-        key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
-        response.data = {
-            'key': key
-        }
-        num = 0
-        while True:
-            num += 1
-            xhs_screenshots = redis_obj.llen('xhs_screenshots') # 保存截图
-            print('xhs_screenshots-----> ', xhs_screenshots)
-            if int(xhs_screenshots) < 10:  # 只保存十个 追加
-                redis_obj.rpush('xhs_screenshots', key)
-                break
-            else:
-                redis_obj.lpop('xhs_screenshots')
+                url = 'https://up-z1.qiniup.com/'
 
-            if num >= 10:
-                break
+                files = {
+                    'file': imgdata
+                }
+
+                data = {
+                    'token': upload_token,
+                }
+                ret = requests.post(url, data=data, files=files, headers=headers)
+
+                key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
+                if judge_key_objs:
+                    data_list = eval(judge_key_objs)
+                    data_list.append({'key': key, 'imgdata': imgdata})
+                    redis_obj.delete(judge_key)
+                    redis_obj.set(judge_key, data_list)
+                else:
+                    redis_obj.set(judge_key, [{'imgdata': imgdata, 'key': key}])
+
+            # ===================保存最后 十张截图=====================
+            num = 0
+            while True:
+                num += 1
+                xhs_screenshots = redis_obj.llen('xhs_screenshots') # 保存截图
+                if int(xhs_screenshots) < 10:  # 只保存十个 追加
+                    redis_obj.rpush('xhs_screenshots', key)
+                    break
+                else:
+                    redis_obj.lpop('xhs_screenshots')
+                if num >= 10:
+                    break
+
+            response.code = 200
+            response.msg = "提交成功"
+            response.data = {
+                'key': key
+            }
+        else:
+            response.code = 301
+            response.msg = json.loads(form_obj.errors.as_json())
 
     else:
 
