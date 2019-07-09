@@ -45,6 +45,7 @@ def comment_management(request, oper_type):
                         'comments_content': request.POST.get('comments_content'), # 评论内容
                         'article_picture_address': request.POST.get('article_picture_address'), # 文章图片地址
                         'article_notes_id': request.POST.get('article_notes_id'), # 文章笔记
+                        'screenshots_address': request.POST.get('screenshots_address'), # 截图地址
                     }
                     forms_obj = mobilePhoneReviews(form_data)
                     if forms_obj.is_valid():

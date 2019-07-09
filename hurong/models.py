@@ -382,6 +382,7 @@ class littleRedBookReviewForm(models.Model):
     comments_status = models.SmallIntegerField(verbose_name='评论类型', choices=comments_choices, default=1)
     comments_content = models.TextField(verbose_name='评论内容')
     article_picture_address = models.CharField(verbose_name='文章图片地址', max_length=512)
+    screenshots_address = models.CharField(verbose_name='截图地址', max_length=512, null=True)
     article_notes = models.ForeignKey('XiaohongshuBiji', verbose_name='文章笔记', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

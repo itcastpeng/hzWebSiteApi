@@ -4,7 +4,7 @@ from publicFunc import account
 from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
-# from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
+from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 import time, json, datetime, xml.etree.cElementTree as ET
 
 
@@ -16,16 +16,26 @@ def tripartite_platform_oper(request, oper_type):
 
         # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
+            signature = request.GET.get('signature')
+            timestamp = request.GET.get('timestamp')
+            nonce = request.GET.get('nonce')
+            msg_signature = request.GET.get('msg_signature')
+            user_id = request.GET.get('user_id')
             postdata = request.body.decode(encoding='UTF-8')
 
             xml_tree = ET.fromstring(postdata)
+            Encrypt = xml_tree.find('Encrypt').text
 
-            # wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'dd9f731252b32353844feffed5172f2c', 'wx1f63785f9acaab9c')
-            # wx_obj.DecryptMsg
+            wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'dd9f731252b32353844feffed5172f2c', 'wx1f63785f9acaab9c')
+            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+            decryp_xml_tree = ET.fromstring(decryp_xml)
+            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+
             models.TripartitePlatform.objects.filter(
                 appid=xml_tree.find('AppId').text
             ).update(
-                component_verify_ticket=xml_tree.find('Encrypt').text
+                component_verify_ticket=ComponentVerifyTicket,
+                linshi=decryp_xml
             )
 
             return HttpResponse('success')
