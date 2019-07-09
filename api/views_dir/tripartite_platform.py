@@ -4,7 +4,7 @@ from publicFunc import account
 from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
-from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
+# from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 import time, json, datetime, xml.etree.cElementTree as ET
 
 
@@ -20,8 +20,8 @@ def tripartite_platform_oper(request, oper_type):
 
             xml_tree = ET.fromstring(postdata)
 
-            wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'dd9f731252b32353844feffed5172f2c', 'wx1f63785f9acaab9c')
-            wx_obj.DecryptMsg
+            # wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'dd9f731252b32353844feffed5172f2c', 'wx1f63785f9acaab9c')
+            # wx_obj.DecryptMsg
             models.TripartitePlatform.objects.filter(
                 appid=xml_tree.find('AppId').text
             ).update(
