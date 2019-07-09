@@ -14,9 +14,9 @@ def upload_img(request):
     if request.method == "POST":
 
         img = request.FILES.get('file')  # 所有提交的文件
-        print("request.FILES -->", request.FILES)
-        print("request.POST -->", request.POST)
-        print("request.GET -->", request.GET)
+        # print("request.FILES -->", request.FILES)
+        # print("request.POST -->", request.POST)
+        # print("request.GET -->", request.GET)
 
         print('img -->', img)
 

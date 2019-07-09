@@ -157,7 +157,7 @@ def page_oper(request, oper_type, o_id):
 
         elif oper_type == "update":
             # 获取需要修改的信息
-            print('request.POST -->', request.POST)
+            # print('request.POST -->', request.POST)
             form_data = {
                 'o_id': o_id,
                 'name': request.POST.get('name'),

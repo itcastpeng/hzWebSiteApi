@@ -11,7 +11,7 @@ from hurong.forms.login import LoginForm
 def login(request):
     response = Response.ResponseObj()
     if request.method == "POST":
-        print('request.POST -->', request.POST)
+        # print('request.POST -->', request.POST)
         forms_obj = LoginForm(request.POST)
         if forms_obj.is_valid():
 
