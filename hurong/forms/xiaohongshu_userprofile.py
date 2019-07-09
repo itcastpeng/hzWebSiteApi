@@ -89,7 +89,8 @@ class RegistreForm(forms.Form):
         }
     )
 
-    head_portrait = forms.URLField(
+    # head_portrait = forms.URLField( #
+    head_portrait = forms.CharField(
         required=True,
         error_messages={
             'required': "小红书博主头像不能为空",
