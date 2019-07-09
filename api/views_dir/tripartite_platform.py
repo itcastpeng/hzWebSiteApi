@@ -16,6 +16,10 @@ def tripartite_platform_oper(request, oper_type):
 
         # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
+            models.TripartitePlatform.objects.filter(
+                appid__isnull=False
+            ).update(component_access_token=55555555)
+
             signature = request.GET.get('signature')
             timestamp = request.GET.get('timestamp')
             nonce = request.GET.get('nonce')
