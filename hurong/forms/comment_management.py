@@ -1,7 +1,7 @@
 from django import forms
 from hurong import models
 from publicFunc import account
-import re, json
+import re, json, requests
 
 
 # 手机端添加接口
@@ -163,7 +163,29 @@ class ReplyCommentIsSuccess(forms.Form):
         else:
             self.add_error('comment_id', '回复评论ID不存在')
 
+# 关联 截图 日记
+class AssociatedScreenshots(forms.Form):
+    screenshots = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "截图不能为空"
+        }
+    )
+    notes_url = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "笔记回链不能为空"
+        }
+    )
+    def clean_notes_url(self):
+        notes_url = self.data.get('notes_url')
+        ret = requests.get(notes_url, allow_redirects=False)
+        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-
-
+        biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
+        if biji_objs:
+            biji_obj = biji_objs[0]
+            return notes_url, biji_obj.id
+        else:
+            self.add_error('notes_url', '笔记不存在')
 
