@@ -49,7 +49,7 @@ class mobilePhoneReviews(forms.Form):
         }
     )
     screenshots_address = forms.CharField(
-        required=True,
+        required=False,
         error_messages={
             'required': "截图地址不能为空"
         }
@@ -79,21 +79,11 @@ class mobilePhoneReviews(forms.Form):
             comments_content = comments_content.replace('评论了你的笔记', '')
         elif '回复了你的评论' in comments_content:
             comments_content = comments_content.replace('回复了你的评论', '')
+        elif '我的评论:' in comments_content:
+            comments_content = comments_content.split('我的评论:')[0]
         else:
             comments_content = comments_content
         return comments_content
-    #     xhs_user_id = self.data.get('xhs_user_id')
-    #     nick_name = self.data.get('nick_name')
-    #
-    #     objs = models.littleRedBookReviewForm.objects.filter(
-    #         xhs_user_id=xhs_user_id,
-    #         nick_name=nick_name,
-    #         comments_content=comments_content
-    #     )
-    #     if not objs:
-    #         return comments_content
-    #     else:
-    #         self.add_error('comments_content', '该评论已存在')
 
 
 
