@@ -20,10 +20,10 @@ def tripartite_platform_oper(request, oper_type):
             xml_tree = ET.fromstring(postdata)
 
 
-            objs = models.TripartitePlatform.objects.filter(
+            models.TripartitePlatform.objects.filter(
                 appid=xml_tree.find('AppId').text
             ).update(
-                linshi=xml_tree.find('Encrypt').text
+                component_verify_ticket=xml_tree.find('Encrypt').text
             )
 
             return HttpResponse('success')
