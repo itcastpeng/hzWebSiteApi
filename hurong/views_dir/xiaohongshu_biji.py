@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm
-import requests, datetime, json
+import requests, datetime, json, re
 
 
 @account.is_token(models.UserProfile)
@@ -156,8 +156,15 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
+                ret = requests.get(url, allow_redirects=False)
+                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-                models.XiaohongshuBiji.objects.filter(id=task_id).update(biji_url=url, status=2, completion_time=datetime.datetime.today())
+                models.XiaohongshuBiji.objects.filter(id=task_id).update(
+                    biji_existing_url=link,
+                    biji_url=url,
+                    status=2,
+                    completion_time=datetime.datetime.today()
+                )
 
                 api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
                 data = {
@@ -245,6 +252,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'id': '',
                     'uid': '__contains',
                     'status': '',
+                    'user_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
 
