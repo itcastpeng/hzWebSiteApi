@@ -25,7 +25,7 @@ def xhs_phone_log(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.XiaohongshuFugai.objects.filter(q).order_by(order)
             print(objs)
             count = objs.count()

@@ -32,7 +32,7 @@ def xiaohongshuxila(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.XiaohongshuXiaLaKeywords.objects.filter(q).order_by(order)
             count = objs.count()
 
@@ -187,7 +187,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                 else:
                     q.add(Q(**{'parent_id': o_id}), Q.AND)
 
-                print('q -->', q)
+                # print('q -->', q)
                 objs = models.XiaohongshuXiaLaKeywordsChildren.objects.select_related('parent').filter(q).order_by(order)
                 count = objs.count()
 

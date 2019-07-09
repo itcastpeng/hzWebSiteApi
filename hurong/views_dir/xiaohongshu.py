@@ -30,7 +30,7 @@ def xiaohongshu(request):
 
             q = conditionCom(request, field_dict)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.XiaohongshuXiaLaKeywords.objects.filter(q).order_by(order)
             count = objs.count()
 

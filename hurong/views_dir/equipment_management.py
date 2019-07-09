@@ -38,9 +38,9 @@ def equipment_management(request):
                 else:
                     q.add(Q(cardstatus='已停用'), Q.AND)
 
-            print('q -->', q)
+            # print('q -->', q)
             objs = models.MobileTrafficInformation.objects.filter(q).order_by(order)
-            print(objs)
+            # print(objs)
             count = objs.count()
 
             if length != 0:

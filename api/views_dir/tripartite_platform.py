@@ -16,11 +16,14 @@ def tripartite_platform_oper(request, oper_type):
         # 授权事件接收
         if oper_type == 'tongzhi':
             postdata = request.body.decode(encoding='UTF-8')
+
             xml_tree = ET.fromstring(postdata)
+
+
             objs = models.TripartitePlatform.objects.filter(
                 appid__isnull=False
             ).update(
-                linshi=xml_tree
+                linshi=postdata
             )
 
             return HttpResponse('success')
