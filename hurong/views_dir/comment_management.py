@@ -151,12 +151,11 @@ def comment_management(request, oper_type):
 
             flag = False
             screenshots = request.GET.get('screenshots') # 文章截图
-            notes_url = request.GET.get('notes_url') # 笔记回链
+            # notes_url = request.GET.get('notes_url') # 笔记回链
 
-            if screenshots and notes_url:
+            if screenshots:
                 objs = models.noteAssociationScreenshot.objects.filter(
                     screenshots=screenshots,
-                    notes__biji_url=notes_url
                 )
                 if objs:
                     flag = True
