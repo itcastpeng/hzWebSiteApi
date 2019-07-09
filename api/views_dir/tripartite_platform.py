@@ -23,6 +23,7 @@ def tripartite_platform_oper(request, oper_type):
                 linshi=xml_tree
             )
 
+            return HttpResponse('success')
     else:
 
         objs = models.TripartitePlatform.objects.filter(appid__isnull=False)
