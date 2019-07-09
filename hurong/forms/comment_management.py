@@ -48,7 +48,12 @@ class mobilePhoneReviews(forms.Form):
             'required': "文章笔记不能为空"
         }
     )
-
+    screenshots_address = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "截图地址不能为空"
+        }
+    )
 
     def clean_xhs_user_id(self):
         xhs_user_id = self.data.get('xhs_user_id')
