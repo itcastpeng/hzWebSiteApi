@@ -4,7 +4,7 @@ from publicFunc import account
 from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
-import time, json, datetime
+import time, json, datetime, xml.etree.cElementTree as ET
 
 
 @account.is_token(models.UserProfile)
@@ -12,9 +12,16 @@ def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "POST":
-        response.code = 402
-        response.msg = "请求异常"
 
+        # 授权事件接收
+        if oper_type == 'tongzhi':
+            postdata = request.body.decode(encoding='UTF-8')
+            xml_tree = ET.fromstring(postdata)
+            objs = models.TripartitePlatform.objects.filter(
+                appid__isnull=False
+            ).update(
+                linshi=xml_tree
+            )
 
     else:
 
@@ -64,10 +71,6 @@ def tripartite_platform_oper(request, oper_type):
                 body_data = request.body.decode(encoding='UTF-8')
                 print('body_data-----> ', body_data)
                 return HttpResponse('success')
-
-            # 授权事件接收
-            elif oper_type == 'tongzhi':
-                pass
 
             else:
                 response.code = 402
