@@ -158,17 +158,22 @@ def comment_management(request, oper_type):
             flag = False
             screenshots = request.GET.get('screenshots') # 文章截图
             # notes_url = request.GET.get('notes_url') # 笔记回链
-
+            biji_id = ''
             if screenshots:
                 objs = models.noteAssociationScreenshot.objects.filter(
                     screenshots=screenshots,
                 )
                 if objs:
+                    obj = objs[0]
+                    biji_id = obj.notes_id
                     flag = True
 
                 response.code = 200
                 response.msg = '查询完成'
-                response.data = flag
+                response.data = {
+                    'flag': flag,
+                    'biji_id': biji_id
+                }
 
             else:
                 response.code = 301
