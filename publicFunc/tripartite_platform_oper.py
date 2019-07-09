@@ -47,6 +47,7 @@ class tripartite_platform_oper():
             }
         """
         component_access_token = ret.json().get('component_access_token')
+        print('ret.json()---------> ', ret.json())
         expires_in = int(time.time()) + ret.json().get('expires_in')
         obj.access_token_time = expires_in
         obj.component_access_token = component_access_token

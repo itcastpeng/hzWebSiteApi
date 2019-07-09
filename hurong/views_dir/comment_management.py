@@ -139,6 +139,7 @@ def comment_management(request, oper_type):
                     response.data = biji_id
                 else:
                     msg = '重复关联'
+                    response.data = biji_id
 
             else:
                 msg = json.loads(form_obj.errors.as_json())
