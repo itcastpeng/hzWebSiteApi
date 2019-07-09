@@ -13,7 +13,7 @@ def tripartite_platform_oper(request, oper_type):
     user_id = request.GET.get('user_id')
     if request.method == "POST":
 
-        # 授权事件接收
+        # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
             postdata = request.body.decode(encoding='UTF-8')
 
@@ -21,9 +21,9 @@ def tripartite_platform_oper(request, oper_type):
 
 
             objs = models.TripartitePlatform.objects.filter(
-                appid__isnull=False
+                appid=xml_tree.find('AppId').text
             ).update(
-                linshi=postdata
+                linshi=xml_tree.find('Encrypt').text
             )
 
             return HttpResponse('success')
