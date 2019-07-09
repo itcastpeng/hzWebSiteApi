@@ -99,7 +99,7 @@ def user(request):
 def user_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     if request.method == "POST":
         # 设置推荐分类
         if oper_type == "update_recommend_classify":

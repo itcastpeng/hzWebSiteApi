@@ -13,7 +13,7 @@ import os
 def get_upload_token(request):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     if request.method == "GET":
 
         redis_obj = get_redis_obj()

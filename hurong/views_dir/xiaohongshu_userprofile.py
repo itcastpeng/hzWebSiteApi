@@ -104,7 +104,7 @@ import re
 def xiaohongshu_userprofile_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     if request.method == "POST":
         # 更新小红书用户信息
         if oper_type == "update_userinfo":

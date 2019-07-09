@@ -208,4 +208,5 @@ NoValidationTokenRoute = [
     "/api_hurong/package_management/get_highest_version",
     "/api_hurong/xhs_king_barings_screen/get_coverage_quantity",
     "/api_hurong/comment_management/mobile_phone_reviews",
+    "/api/tripartite_platform/tongzhi",
 ]

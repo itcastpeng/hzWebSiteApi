@@ -109,7 +109,7 @@ def xiaohongshufugai(request):
 def xiaohongshufugai_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    print('request.POST -->', request.POST)
+    # print('request.POST -->', request.POST)
     if request.method == "POST":
         # 添加用户
         if oper_type == "add":
