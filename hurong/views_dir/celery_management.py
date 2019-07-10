@@ -118,7 +118,7 @@ def asynchronous_transfer_data(request):
     transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递小红书评论成功)
     try:
         if transfer_type in [1, '1']:
-            url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
+            url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
             requests.post(url, data=request.POST)
 
         else:
