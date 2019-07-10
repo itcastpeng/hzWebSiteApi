@@ -123,6 +123,7 @@ def asynchronous_transfer_data(request):
 
         else:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
+            requests.post(url, data=request.POST)
 
 
     except Exception as e:

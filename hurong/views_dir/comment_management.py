@@ -92,9 +92,10 @@ def comment_management(request, oper_type):
 
         # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
+            now = datetime.datetime.today()
             form_data = {
                 'id': request.POST.get('comment_id'),  # 回复的消息ID
-                'comment_completion_time': request.POST.get('comment_completion_time'),  # 完成时间
+                'comment_completion_time': request.POST.get('comment_completion_time', now),  # 完成时间
             }
 
             form_objs = ReplyCommentIsSuccess(form_data)
