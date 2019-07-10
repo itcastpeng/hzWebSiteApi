@@ -89,6 +89,19 @@ class mobilePhoneReviews(forms.Form):
 
         return nick_name
 
+    def clean_screenshots_address(self):
+        screenshots_address = self.data.get('screenshots_address')
+        if screenshots_address.endswith('400'):
+            screenshots_address = screenshots_address[:-3] + '100'
+        return screenshots_address
+
+    def clean_article_picture_address(self):
+        article_picture_address = self.data.get('article_picture_address')
+        if article_picture_address.endswith('400'):
+            article_picture_address = article_picture_address[:-3] + '100'
+        return article_picture_address
+
+
 # 创建回复评论 小红书后台添加接口   (博主回复内容)
 class ReplyCommentForm(forms.Form):
 
