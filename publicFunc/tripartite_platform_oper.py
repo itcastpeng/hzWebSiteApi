@@ -40,18 +40,18 @@ class tripartite_platform_oper():
             "component_verify_ticket": self.component_verify_ticket
         }
         ret = requests.post(url, data=json.dumps(post_data))
-        print('ret.json()---------> ', ret.json())
         """
             {
                 "component_access_token":"61W3mEpU66027wgNZ_MhGHNQDHnFATkDa9-2llqrMBjUwxRSNPbVsMmyD-yq8wZETSoE5NQgecigDrSHkPtIYA", 
                 "expires_in":7200
             }
         """
-        # component_access_token = ret.json().get('component_access_token')
-        # expires_in = int(time.time()) + ret.json().get('expires_in')
-        # obj.access_token_time = expires_in
-        # obj.component_access_token = component_access_token
-        # obj.save()
+        print('ret.获取第三方平台component_access_token()---------> ', ret.json())
+        component_access_token = ret.json().get('component_access_token')
+        expires_in = int(time.time()) + ret.json().get('expires_in')
+        obj.access_token_time = expires_in
+        obj.component_access_token = component_access_token
+        obj.save()
 
 
     # 获取预授权码 pre_auth_code
@@ -61,9 +61,11 @@ class tripartite_platform_oper():
         post_data = {
             "component_appid": self.tripartite_platform_appid
         }
-        ret = requests.post(url, params=self.params, data=post_data)
+        ret = requests.post(url, params=self.params, data=json.dumps(post_data))
 
-        print('get_pre_auth_code--------> ', ret.text)
+        print('获取预授权码 pre_auth_code--------> ', ret.json())
+        pre_auth_code = ret.json().get('pre_auth_code')
+        return pre_auth_code
 
     # 使用授权码换取公众号或小程序的接口调用凭据和授权信息
     def exchange_calling_credentials(self):

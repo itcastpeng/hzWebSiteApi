@@ -5,7 +5,7 @@ from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
-import time, json, datetime, xml.etree.cElementTree as ET
+import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 
 @account.is_token(models.UserProfile)
@@ -16,11 +16,6 @@ def tripartite_platform_oper(request, oper_type):
 
         # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
-            objs = models.TripartitePlatform.objects.filter(
-                appid__isnull=False
-            )
-            objs.update(component_access_token=1111)
-
             signature = request.GET.get('signature')
             timestamp = request.GET.get('timestamp')
             nonce = request.GET.get('nonce')
@@ -30,21 +25,18 @@ def tripartite_platform_oper(request, oper_type):
 
             xml_tree = ET.fromstring(postdata)
             Encrypt = xml_tree.find('Encrypt').text
-            objs.update(component_access_token=2222)
+
             wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123', 'wx1f63785f9acaab9c')
-            try:
-                ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-                objs.update(component_access_token=333)
-                decryp_xml_tree = ET.fromstring(decryp_xml)
-                ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-                models.TripartitePlatform.objects.filter(
-                    appid=xml_tree.find('AppId').text
-                ).update(
-                    component_verify_ticket=ComponentVerifyTicket,
-                    linshi=decryp_xml
-                )
-            except Exception as e:
-                objs.update(component_access_token=4444, linshi=e)
+            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+
+            decryp_xml_tree = ET.fromstring(decryp_xml)
+            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+            models.TripartitePlatform.objects.filter(
+                appid=xml_tree.find('AppId').text
+            ).update(
+                component_verify_ticket=ComponentVerifyTicket,
+                linshi=decryp_xml
+            )
 
 
             return HttpResponse('success')
@@ -69,18 +61,21 @@ def tripartite_platform_oper(request, oper_type):
                 #  创建 form验证 实例（参数默认转成字典）
                 forms_obj = AuthorizationForm(form_data)
                 if forms_obj.is_valid():
-                    get_pre_auth_code_obj = tripartite_objs.get_pre_auth_code() # 获取预授权码
+                    get_pre_auth_code = tripartite_objs.get_pre_auth_code() # 获取预授权码
 
                     redirect_url = 'https://xcx.bjhzkq.com/api_hurong/xhs_phone_management/get_equipment_log'
                     wx_url = """
                     https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=3&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
                     """.format(
-                        component_appid=appid,      # 三方平台APPID
-                        pre_auth_code='',           # 预授权码
-                        redirect_uri='',            # 回调URL
-                        auth_type='',               # 授权账户类型
+                        component_appid=appid,              # 三方平台APPID
+                        pre_auth_code=get_pre_auth_code,    # 预授权码
+                        redirect_uri=redirect_url,          # 回调URL
+                        auth_type='',                       # 授权账户类型
                         biz_appid=''
                     )
+                    print('wx_url--> ', wx_url)
+                    # ret = requests.post(wx_url)
+                    # print('ret-------> ', ret.text)
 
 
                 else:
