@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
-    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots
+    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask
 import json, requests, base64, time, os, datetime
 
 
@@ -199,38 +199,53 @@ def comment_management(request, oper_type):
 
         # 查询回复任务（手机）⑤
         elif oper_type == 'query_reply_task':
-            objs = models.commentResponseForm.objects.filter(
-                comment_completion_time__isnull=True,
-                comment__isnull=False,
-                comment_response__isnull=False
-            )
-            if objs:
-                obj = objs[0]
-                ret_data = {
-                    'comments_content': obj.comment.comments_content,
-                    'nick_name': obj.comment.nick_name,
-                    'screenshots_address': obj.comment.screenshots_address,
-                    'id': obj.id,
-                    'comment_response': obj.comment_response,
-                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
 
-                }
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid'),
+            }
+            form_obj = QueryReplyTask(form_data)
+            if form_obj.is_valid():
 
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = ret_data
-                response.note = {
-                    'id': '回复评论ID',
-                    'comment_response': '回复评论内容',
-                    'create_datetime': '创建时间',
-                    'screenshots_address': '文章截图',
-                    'nick_name': '昵称',
-                    'comments_content': '评论内容',
-                }
+                iccid = form_obj.cleaned_data.get('iccid')
+
+                objs = models.commentResponseForm.objects.filter(
+                    comment__xhs_user__phone_id_id=iccid,
+                    comment_completion_time__isnull=True,
+                    comment__isnull=False,
+                    comment_response__isnull=False
+                )
+                if objs:
+                    obj = objs[0]
+                    ret_data = {
+                        'comments_content': obj.comment.comments_content,
+                        'nick_name': obj.comment.nick_name,
+                        'screenshots_address': obj.comment.screenshots_address,
+                        'id': obj.id,
+                        'comment_response': obj.comment_response,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+
+                    }
+
+                    response.code = 200
+                    response.msg = '查询成功'
+                    response.data = ret_data
+                    response.note = {
+                        'id': '回复评论ID',
+                        'comment_response': '回复评论内容',
+                        'create_datetime': '创建时间',
+                        'screenshots_address': '文章截图',
+                        'nick_name': '昵称',
+                        'comments_content': '评论内容',
+                    }
+
+                else:
+                    response.code = 0
+                    response.msg = '无任务'
 
             else:
-                response.code = 0
-                response.msg = '无任务'
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':
