@@ -49,9 +49,10 @@ def comment_management(request, oper_type):
                     }
                     forms_obj = mobilePhoneReviews(form_data)
                     if forms_obj.is_valid():
-                        nick_name = forms_obj.cleaned_data.get('nick_name')
-                        comments_content = forms_obj.cleaned_data.get('comments_content')
-                        article_notes_id = forms_obj.cleaned_data.get('article_notes_id')
+                        forms_data = forms_obj.cleaned_data
+
+                        nick_name = forms_data.get('nick_name')
+                        comments_content = forms_data.get('comments_content')
 
                         objs = models.littleRedBookReviewForm.objects.filter(
                                     xhs_user_id=xhs_user_id,
@@ -62,8 +63,12 @@ def comment_management(request, oper_type):
 
                             obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
                             # 异步传递给小红书后台
-                            form_data['comments_id'] = obj.id
-                            form_data['id'] = article_notes_id
+                            form_data['link'] = forms_data.get('screenshots_address')
+                            form_data['name'] = forms_data.get('nick_name')
+                            form_data['content'] = forms_data.get('comments_content')
+                            form_data['head_portrait'] = forms_data.get('head_portrait')
+                            form_data['comment_id'] = obj.id
+                            form_data['id'] = forms_data.get('article_notes_id')
                             form_data['transfer_type'] = 1 # 传递到小红书后台
                             asynchronous_transfer_data.delay(form_data)
                             response.msg = '创建成功'
