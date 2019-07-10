@@ -27,6 +27,7 @@ def equipment_management(request):
                 'cardbaldata': '__contains',
                 'select_number': '__contains',
                 'cardnumber': '__contains',
+                'phone__name': '__contains',
                 'create_datetime': '',
             }
 
