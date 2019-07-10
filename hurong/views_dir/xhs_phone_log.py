@@ -173,10 +173,11 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 phone_id = obj.id
                 phone_name = obj.name
 
+                phone_objs = models.XiaohongshuUserProfile.objects.filter(
+                    phone_id_id=phone_id
+                )
                 if xhs_version and phone_id:
-                    models.XiaohongshuUserProfile.objects.filter(
-                        phone_id_id=phone_id
-                    ).update(
+                    phone_objs.update(
                         xhs_version=xhs_version,
                     ) # 更新版本号
 
@@ -213,6 +214,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         if package_objs:
                             package_obj = package_objs[0]
                             if int(package_obj.id) != int(current_version):
+                                phone_objs.update(package_version=current_version)
+
                                 send_msg_flag = True
                                 content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
                         else:

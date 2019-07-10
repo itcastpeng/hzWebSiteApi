@@ -48,6 +48,7 @@ def xhs_account_management(request, oper_type):
                             'phone_number':obj.phone_id.phone_num,
                             'xiaohongshu_id':obj.xiaohongshu_id,
                             'xhs_version':obj.xhs_version,
+                            'package_version':obj.package_version,
                             'home_url':obj.home_url,
                             'phone_name':obj.phone_id.name,
                             'phone_type':obj.phone_id.get_phone_type_display(),
