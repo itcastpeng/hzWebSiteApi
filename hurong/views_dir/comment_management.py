@@ -227,7 +227,6 @@ def comment_management(request, oper_type):
 
                     }
 
-                    response.code = 200
                     response.msg = '查询成功'
                     response.data = ret_data
                     response.note = {
@@ -240,9 +239,9 @@ def comment_management(request, oper_type):
                     }
 
                 else:
-                    response.code = 0
                     response.msg = '无任务'
 
+                response.code = 200
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
