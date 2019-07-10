@@ -58,13 +58,15 @@ def comment_management(request, oper_type):
                                 )
                         if not objs:
 
-                            models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
+                            obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
+                            # 异步传递给小红书后台
+                            form_data['id'] = obj.id
+                            form_data['transfer_type'] = 1 # 传递到小红书后台
+                            # asynchronous_transfer_data.delay(form_data)
                             response.msg = '创建成功'
+
                         response.code = 200
 
-                        # 异步传递给小红书后台
-                        # form_data['transfer_type'] = 1 # 传递到小红书后台
-                        # asynchronous_transfer_data.delay(form_data)
                     else:
                         response.code = 301
                         response.msg = json.loads(forms_obj.errors.as_json())
@@ -75,44 +77,41 @@ def comment_management(request, oper_type):
             form_data = {
                 'comment_id': request.POST.get('comment_id'),               # 回复哪个评论ID
                 'comment_response': request.POST.get('comment_response'),   # 回复评论内容
-                'backend_id': request.POST.get('backend_id'),               # 小红书后台该回复评论ID
             }
 
             forms_obj = ReplyCommentForm(form_data)
             if forms_obj.is_valid():
-                models.commentResponseForm.objects.create(**forms_obj.cleaned_data)
+                obj = models.commentResponseForm.objects.create(**forms_obj.cleaned_data)
                 response.code = 200
                 response.msg = '创建成功'
-
-                # 异步传递给手机
-                # form_data['transfer_type'] = 2  # 传递到手机
-                # asynchronous_transfer_data.delay(form_data)
+                response.data = obj.id
 
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 手机端 通知回复消息是否成功⑤
+        # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
             form_data = {
-                'comment_id': request.POST.get('comment_id'),  # 回复的消息ID
-                # 'is_success': request.POST.get('is_success'),  # 回复的消息是否成功 (0 失败, 1 成功)
+                'id': request.POST.get('comment_id'),  # 回复的消息ID
+                'comment_completion_time': request.POST.get('comment_completion_time'),  # 完成时间
             }
 
             form_objs = ReplyCommentIsSuccess(form_data)
             if form_objs.is_valid():
-                comment_id = form_objs.cleaned_data.get('comment_id')
+                comment_id = form_objs.cleaned_data.get('id')
+                comment_completion_time = form_objs.cleaned_data.get('comment_completion_time')
 
                 objs = models.commentResponseForm.objects.filter(id=comment_id)
                 objs.update(
-                    comment_completion_time=datetime.datetime.today()
+                    comment_completion_time=comment_completion_time
                 )
                 response.code = 200
                 response.msg = '成功'
 
                 # 异步传递给小红书后台
-                form_data['transfer_type'] = 3  # 传递到手机
-                asynchronous_transfer_data.delay(form_data)
+                # form_data['transfer_type'] = 2
+                # asynchronous_transfer_data.delay(form_data)
 
             else:
                 response.code = 301
@@ -189,7 +188,42 @@ def comment_management(request, oper_type):
                 response.code = 301
                 response.msg = '参数异常'
 
-        # 查询评论
+        # 查询回复任务（手机）⑤
+        elif oper_type == 'query_reply_task':
+            objs = models.commentResponseForm.objects.filter(
+                comment_completion_time__isnull=True,
+                comment__isnull=False,
+                comment_response__isnull=False
+            )
+            if objs:
+                obj = objs[0]
+                ret_data = {
+                    'comments_content': obj.comment.comments_content,
+                    'nick_name': obj.comment.nick_name,
+                    'screenshots_address': obj.comment.screenshots_address,
+                    'id': obj.id,
+                    'comment_response': obj.comment_response,
+                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+
+                }
+
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = ret_data
+                response.note = {
+                    'id': '回复评论ID',
+                    'comment_response': '回复评论内容',
+                    'create_datetime': '创建时间',
+                    'screenshots_address': '文章截图',
+                    'nick_name': '昵称',
+                    'comments_content': '评论内容',
+                }
+
+            else:
+                response.code = 0
+                response.msg = '无任务'
+
+        # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':
             forms_obj = SelectForm(request.GET)
             if forms_obj.is_valid():
@@ -251,9 +285,7 @@ def comment_management(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-
-
-        # 查询回复评论
+        # 查询回复评论（胡蓉后台）
         elif oper_type == 'query_reply_comment':
             forms_obj = SelectForm(request.GET)
             if forms_obj.is_valid():

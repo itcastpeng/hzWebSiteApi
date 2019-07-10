@@ -343,6 +343,7 @@ class InstallationPackage(models.Model):
 
 # 手机流量信息表
 class MobileTrafficInformation(models.Model):
+    phone = models.ForeignKey('XiaohongshuPhone', verbose_name='查询号码', null=True) # 外键到手机表
     select_number = models.TextField(verbose_name='查询号码') # 可以是手机号 也可以是 ismi号
     cardnumber = models.CharField(verbose_name='卡号', max_length=64, null=True) # 手机号
     cardbaldata = models.CharField(validators='剩余流量', max_length=16, null=True)
@@ -390,7 +391,6 @@ class littleRedBookReviewForm(models.Model):
 class commentResponseForm(models.Model):
     comment = models.ForeignKey('littleRedBookReviewForm', verbose_name='回复哪个评论')
     comment_response = models.TextField(verbose_name='回复评论内容')
-    backend_id = models.IntegerField(verbose_name='', null=True)
     comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

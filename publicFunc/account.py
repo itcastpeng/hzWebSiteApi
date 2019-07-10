@@ -63,7 +63,8 @@ def is_token(table_obj):
             # 手机设备不做token验证
             t = request.GET.get('t')
 
-            if t == "phone":
+            if t == "phone" or t == 'ppxhs':
+
                 return func(request, *args, **kwargs)
 
             # 不需要验证token的路由直接跳过

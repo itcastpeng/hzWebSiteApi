@@ -50,13 +50,6 @@ def equipment_management(request):
 
             ret_data = []
             for obj in objs:
-
-                name = ''
-                phone_objs = models.XiaohongshuPhone.objects.filter(phone_num=obj.cardnumber)
-                if phone_objs:
-                    phone_obj = phone_objs[0]
-                    name = phone_obj.name
-
                 cardstartdate = obj.cardstartdate
                 if obj.cardstartdate:
                     cardstartdate = obj.cardstartdate.strftime('%Y-%m-%d %H:%M:%S')
@@ -67,7 +60,7 @@ def equipment_management(request):
 
                 ret_data.append({
                     'id': obj.id,
-                    'name': name,
+                    'name': obj.phone.name,
                     'cardimsi': obj.cardimsi,
                     'cardstatus': obj.cardstatus,
                     'cardtype': obj.cardtype,

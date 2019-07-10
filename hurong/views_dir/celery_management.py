@@ -67,6 +67,11 @@ def get_traffic_information(request):
             cardimsi = ret_json.get('cardimsi')
             cardstatus = ret_json.get('cardstatus')
 
+            phone_objs = models.XiaohongshuPhone.objects.filter(imsi=cardimsi)
+            if phone_objs:
+                phone_obj = phone_objs[0]
+                obj.phone_id = phone_obj.id  # 外键到手机
+
             obj.cardbaldata = cardbaldata                   # 剩余流量
             obj.cardenddate = ret_json.get('cardenddate')   # 卡到期时间
             obj.cardimsi = cardimsi                         # ismi号
@@ -83,12 +88,12 @@ def get_traffic_information(request):
             if cardstatus != '已停用':
                 flag = True
 
-            work_obj = WorkWeixinApi()
+            work_obj = WorkWeixinApi()  # 流量 低于五百兆提醒
             if flag and cardbaldata and float(cardbaldata) <= 500:
                 content = '{} \n 流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(datetime.datetime.today(), obj.select_number, cardbaldata, cardimsi)
                 work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
-            if flag:
+            if flag:  # 查询 充值情况
                 info_json = query_device_recharge_information(obj.select_number)
                 if info_json.get('data_list'):
                     for i in info_json.get('data_list'):
@@ -109,19 +114,22 @@ def get_traffic_information(request):
 
 # 异步传送小红书后台 手机抓取的评论
 def asynchronous_transfer_data(request):
-    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递到手机 3传递小红书评论成功)
-    if transfer_type in [1, '1']:
-        url = ''
-        # requests.get(url, )
+    work_obj = WorkWeixinApi()  # 流量 低于五百兆提醒
+    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递小红书评论成功)
+    try:
+        if transfer_type in [1, '1']:
+            url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
+            requests.post(url, data=request.POST)
 
-    elif transfer_type in [2, '2']:
-        url = ''
-
-    else:
-        url = ''
-
+        else:
+            url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
 
 
+    except Exception as e:
+        content = '{} \n 异步传输小红书评论数据报错{}\n错误:{}'.format(datetime.datetime.today(), transfer_type, e)
+        work_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+
+    return HttpResponse('')
 
 
 
