@@ -303,6 +303,7 @@ def comment_management(request, oper_type):
                 field_dict = {
                     'id': '',
                     'comment_id': '',
+                    'comment_completion_time': '__isnull',
                 }
 
                 q = conditionCom(request, field_dict)

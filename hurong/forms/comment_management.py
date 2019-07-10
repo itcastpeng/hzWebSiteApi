@@ -75,18 +75,19 @@ class mobilePhoneReviews(forms.Form):
     def clean_comments_content(self):
         comments_content = self.data.get('comments_content')
 
-        if '评论了你的笔记' in comments_content:
-            comments_content = comments_content.replace('评论了你的笔记', '')
-        elif '回复了你的评论' in comments_content:
-            comments_content = comments_content.replace('回复了你的评论', '')
-        elif '我的评论:' in comments_content:
+        if '我的评论:' in comments_content:
             comments_content = comments_content.split('我的评论:')[0]
-        else:
-            comments_content = comments_content
+
         return comments_content
 
+    def clean_nick_name(self):
+        nick_name = self.data.get('nick_name')
+        if '评论了你的笔记' in nick_name:
+            nick_name = nick_name.replace('评论了你的笔记', '')
+        elif '回复了你的评论' in nick_name:
+            nick_name = nick_name.replace('回复了你的评论', '')
 
-
+        return nick_name
 
 # 创建回复评论 小红书后台添加接口   (博主回复内容)
 class ReplyCommentForm(forms.Form):
