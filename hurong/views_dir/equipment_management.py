@@ -58,9 +58,13 @@ def equipment_management(request):
                 if obj.cardenddate:
                     cardenddate = obj.cardenddate.strftime('%Y-%m-%d %H:%M:%S')
 
+                name = ''
+                if obj.phone:
+                    name = obj.phone.name
+
                 ret_data.append({
                     'id': obj.id,
-                    'name': obj.phone.name,
+                    'name': name,
                     'cardimsi': obj.cardimsi,
                     'cardstatus': obj.cardstatus,
                     'cardtype': obj.cardtype,
