@@ -207,3 +207,33 @@ class AssociatedScreenshots(forms.Form):
         else:
             self.add_error('notes_url', '笔记不存在')
 
+# 手机获取回复评论任务
+class QueryReplyTask(forms.Form):
+    imsi = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "IMSI不能为空"
+        }
+    )
+    iccid = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "ICCID不能为空"
+        }
+    )
+
+    def clean_iccid(self):
+        iccid = self.data.get('iccid')
+        imsi = self.data.get('imsi')
+
+        objs = models.XiaohongshuPhone.objects.filter(iccid=iccid, imsi=imsi)
+        if objs:
+            obj = objs[0]
+            return obj.id
+        else:
+            self.add_error('iccid', '设备不存在')
+
+
+
+
+
