@@ -103,12 +103,7 @@ class ReplyCommentForm(forms.Form):
                 'required': "回复评论内容不能为空"
             }
         )
-    backend_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "小红书后台回复评论ID不能为空"
-        }
-    )
+
 
     def clean_comment_id(self):
         comment_id = self.data.get('comment_id')
@@ -152,10 +147,16 @@ class SelectForm(forms.Form):
 
 # 回复评论是否成功
 class ReplyCommentIsSuccess(forms.Form):
-    comment_id = forms.IntegerField(
+    id = forms.IntegerField(
         required=True,
         error_messages={
             'required': "回复评论ID不能为空"
+        }
+    )
+    comment_completion_time = forms.DateTimeField(
+        required=True,
+        error_messages={
+            'required': "评论完成时间不能为空"
         }
     )
     def clean_comment_id(self):
