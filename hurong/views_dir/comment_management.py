@@ -51,6 +51,8 @@ def comment_management(request, oper_type):
                     if forms_obj.is_valid():
                         nick_name = forms_obj.cleaned_data.get('nick_name')
                         comments_content = forms_obj.cleaned_data.get('comments_content')
+                        article_notes_id = forms_obj.cleaned_data.get('article_notes_id')
+
                         objs = models.littleRedBookReviewForm.objects.filter(
                                     xhs_user_id=xhs_user_id,
                                     nick_name=nick_name,
@@ -60,9 +62,10 @@ def comment_management(request, oper_type):
 
                             obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
                             # 异步传递给小红书后台
-                            form_data['id'] = obj.id
+                            form_data['comments_id'] = obj.id
+                            form_data['id'] = article_notes_id
                             form_data['transfer_type'] = 1 # 传递到小红书后台
-                            # asynchronous_transfer_data.delay(form_data)
+                            asynchronous_transfer_data.delay(form_data)
                             response.msg = '创建成功'
 
                         response.code = 200
