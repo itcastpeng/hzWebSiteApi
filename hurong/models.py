@@ -390,6 +390,7 @@ class littleRedBookReviewForm(models.Model):
 class commentResponseForm(models.Model):
     comment = models.ForeignKey('littleRedBookReviewForm', verbose_name='回复哪个评论')
     comment_response = models.TextField(verbose_name='回复评论内容')
+    backend_id = models.IntegerField(verbose_name='', null=True)
     comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

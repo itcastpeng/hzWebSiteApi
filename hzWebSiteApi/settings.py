@@ -183,6 +183,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'statics')]
 NoValidationTokenRoute = [
     "/api/tripartite_platform/authorization",
     "/api/tripartite_platform/get_ticket",
+    "/api/tripartite_platform/tongzhi",
+
     "/api_hurong/task_list/save_task",
     "/api_hurong/xhs_phone_log/add",
     "/api_hurong/task_list/get_task",
@@ -208,5 +210,5 @@ NoValidationTokenRoute = [
     "/api_hurong/package_management/get_highest_version",
     "/api_hurong/xhs_king_barings_screen/get_coverage_quantity",
     "/api_hurong/comment_management/mobile_phone_reviews",
-    "/api/tripartite_platform/tongzhi",
+    "/api_hurong/comment_management/reply_comment",
 ]

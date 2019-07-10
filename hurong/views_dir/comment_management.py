@@ -73,9 +73,9 @@ def comment_management(request, oper_type):
         # 创建回复评论 小红书后台添加接口   (博主回复内容)④
         elif oper_type == 'reply_comment':
             form_data = {
-                'comment_id': request.POST.get('comment_id'),           # 回复哪个评论ID
-                'comment_response': request.POST.get('comment_response'), # 回复评论内容
-                # 'comment_completion_time': request.POST.get('comment_completion_time'), # 回复评论完成时间
+                'comment_id': request.POST.get('comment_id'),               # 回复哪个评论ID
+                'comment_response': request.POST.get('comment_response'),   # 回复评论内容
+                'backend_id': request.POST.get('backend_id'),               # 小红书后台该回复评论ID
             }
 
             forms_obj = ReplyCommentForm(form_data)
@@ -85,8 +85,8 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
 
                 # 异步传递给手机
-                form_data['transfer_type'] = 2  # 传递到手机
-                asynchronous_transfer_data.delay(form_data)
+                # form_data['transfer_type'] = 2  # 传递到手机
+                # asynchronous_transfer_data.delay(form_data)
 
             else:
                 response.code = 301
