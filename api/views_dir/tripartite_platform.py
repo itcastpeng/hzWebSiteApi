@@ -97,7 +97,7 @@ def tripartite_platform_oper(request, oper_type):
 
                     else:  # 扫码接入
                         wx_url = """
-                            https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}&auth_type=1
+                            https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}&auth_type={}
                             """.format(
                             appid,
                             get_pre_auth_code,
