@@ -172,33 +172,44 @@ class TripartitePlatform(models.Model):
     appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
     appsecret = models.CharField(verbose_name='三方平台appsecret', max_length=128)
     component_verify_ticket = models.TextField(verbose_name='component_verify_ticket协议')
-
     component_access_token = models.TextField(verbose_name='component_access_token')
     access_token_time = models.IntegerField(verbose_name='access_token 过期时间')
-    linshi = models.TextField(verbose_name='临时')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
+
+    linshi = models.TextField(verbose_name='临时')
+
 
 # 客户公众号授权 信息
 class CustomerOfficialNumber(models.Model):
-    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
     is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
 
     auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
-    expires_in = models.IntegerField(verbose_name='过期时间', null=True)
+    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
 
-    linshi = models.TextField(verbose_name='临时数据', null=True)
+
+    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
+    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
+    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
+
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    linshi = models.TextField(verbose_name='临时数据', null=True)
+
 
 # 客户小程序授权 信息
 class ClientApplet(models.Model):
-    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
     is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    appid = models.CharField(verbose_name='小程序APPID', max_length=64)
 
     auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
-    expires_in = models.IntegerField(verbose_name='过期时间', null=True)
+    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
 
-    linshi = models.TextField(verbose_name='临时数据', null=True)
+    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
+    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
+    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
+
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    linshi = models.TextField(verbose_name='临时数据', null=True)
 
 
 

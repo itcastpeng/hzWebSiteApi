@@ -5,6 +5,8 @@ from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
+
+from urllib.parse import unquote, quote
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 
@@ -51,7 +53,7 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_appid = tripartite_obj.appid
             tripartite_appsecret = tripartite_obj.appsecret
             component_access_token = tripartite_obj.component_access_token
-            tripartite_platform_objs = tripartite_platform(tripartite_appid, tripartite_appsecret) # 实例化三方平台
+            tripartite_platform_objs = tripartite_platform() # 实例化三方平台
 
             authorization_way = request.GET.get('authorization_way') # 授权方式 (1扫码, 2链接)
             authorization_type = request.GET.get('authorization_type') # 授权类型 (1公众号, 2小程序)
@@ -81,6 +83,7 @@ def tripartite_platform_oper(request, oper_type):
                         authorization_type,
                         authorization_way
                     )
+                    redirect_url = quote(redirect_url)
 
                     if authorization_way in [2, '2']:  # 链接形式
                         wx_url = """
@@ -115,34 +118,27 @@ def tripartite_platform_oper(request, oper_type):
                     response.msg = json.loads(forms_obj.errors.as_json())
 
 
-            # 用户确认 同意授权 回调
+            # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
             elif oper_type == 'authorize_callback':
-                objs = models.CustomerOfficialNumber.objects.filter(appid__isnull=False).update(linshi=request.GET)
-
                 auth_code = request.GET.get('auth_code')
                 expires_in = request.GET.get('expires_in')
 
                 if authorization_type in [1, '1']:
                     objs = models.CustomerOfficialNumber.objects.filter(
                         appid=appid,
-                        auth_code=auth_code,
-                        expires_in=expires_in
                     )
 
                 else:
                     objs = models.ClientApplet.objects.filter(
                         appid=appid,
-                        auth_code=auth_code,
-                        expires_in=expires_in
                     )
+                tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code)
+                objs.update(
+                    auth_code=auth_code,
+                    auth_code_expires_in=int(time.time()) + int(expires_in)
+                )
 
-                objs.update(linshi=request.GET)
 
-            # component_verify_ticket回调
-            elif oper_type == 'component_verify_ticket_callback':
-                body_data = request.body.decode(encoding='UTF-8')
-                print('body_data-----> ', body_data)
-                return HttpResponse('success')
 
             else:
                 response.code = 402
@@ -151,5 +147,6 @@ def tripartite_platform_oper(request, oper_type):
         else:
             response.code = 301
             response.msg = '三方平台获取失败'
+
     return JsonResponse(response.__dict__)
 
