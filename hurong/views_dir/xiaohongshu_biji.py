@@ -185,20 +185,13 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         # 发布笔记
         elif oper_type == 'published_articles':
-            response.code = 301
-            objs = models.XiaohongshuBiji.objects.filter(id=o_id)
-            if objs:
-                obj = objs[0]
-                if obj.status == 2:
-                    msg = '已经发布, 请勿重复操作'
-                else:
-                    response.code = 200
-                    obj.status = 1
-                    obj.save()
-                    msg = '发布成功'
-            else:
-                msg = '该笔记不存在'
-            response.msg = msg
+            id_list = request.POST.get('id_list')
+            objs = models.XiaohongshuBiji.objects.filter(id__in=id_list)
+            for obj in objs:
+                obj.status = 1
+                obj.save()
+            response.code = 200
+            response.msg = '发布成功'
 
         else:
             response.code = 402

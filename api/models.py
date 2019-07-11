@@ -192,6 +192,12 @@ class CustomerOfficialNumber(models.Model):
     authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
     authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
 
+    # nick_name = models.CharField(verbose_name='授权方昵称', max_length=32, null=True)
+    # head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
+    # original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
+
+
+
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     linshi = models.TextField(verbose_name='临时数据', null=True)
 

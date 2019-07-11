@@ -42,7 +42,7 @@ class tripartite_platform_oper():
                 "expires_in":7200
             }
         """
-        print('ret.获取第三方平台component_access_token()---------> ', ret.json())
+        print('获取第三方平台component_access_token---------> ', ret.json())
         component_access_token = ret.json().get('component_access_token')
         expires_in = int(time.time()) + ret.json().get('expires_in')
         obj.access_token_time = expires_in
@@ -76,7 +76,7 @@ class tripartite_platform_oper():
             "authorization_code": auth_code,            # 授权code
         }
         ret = requests.post(url, params=self.params, data=json.dumps(post_data))
-        print('ret.text===exchange_calling_credentials=======> ', ret.text)
+        print('使用授权码换取公众号或小程序的接口调用凭据和授权信息exchange_calling_credentials=======> ', ret.text)
         authorization_info = ret.json().get('authorization_info')
         if authorization_info:
             authorizer_appid = authorization_info.get('authorizer_appid')
@@ -96,31 +96,51 @@ class tripartite_platform_oper():
                 )
 
     # 获取（刷新）授权公众号或小程序的接口调用凭据（令牌）
-    def refresh_exchange_calling_credentials(self, appid):
-        url = 'https:// api.weixin.qq.com /cgi-bin/component/api_authorizer_token'
+    def refresh_exchange_calling_credentials(self, appid, token, auth_type):
+        url = 'https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token'
         post_data = {
             "component_appid": self.tripartite_platform_appid,
             "authorizer_appid":appid,
-            "authorizer_refresh_token":self.token,
+            "authorizer_refresh_token":token,
         }
 
-        ret = requests.post(url, params=self.params, data=post_data)
-        print('refresh_exchange_calling_credentials----> ', ret.text)
+        ret = requests.post(url, params=self.params, data=json.dumps(post_data))
+        ret_json = ret.json()
+        print('获取（刷新）授权公众号或小程序的接口调用凭据（令牌）refresh_exchange_calling_credentials----> ', ret_json)
+        authorizer_access_token = ret_json.get('authorizer_access_token')
+        expires_in = int(time.time()) + int(ret_json.get('expires_in'))
+        authorizer_refresh_token = ret_json.get('authorizer_refresh_token')
+        # 更新令牌
+        if auth_type in [1, '1']:  # 公众号
+            models.CustomerOfficialNumber.objects.filter(appid=appid).update(
+                authorizer_access_token=authorizer_access_token,
+                authorizer_access_token_expires_in=expires_in,
+                authorizer_refresh_token=authorizer_refresh_token
+            )
+        else:  # 小程序
+            models.ClientApplet.objects.filter(appid=appid).update(
+
+            )
+
+        return authorizer_access_token
 
     # 公众号/小程序 获取授权方的帐号基本信息
-    def get_account_information(self, authorized_party_type, appid):
-        if authorized_party_type == 1: # 公众号
-            pass
-        else: # 小程序
-            pass
-
+    def get_account_information(self, auth_type, appid):
+        """
+        :param auth_type: 授权方类型 1公众号 2小程序
+        :param appid:    # 授权方APPID
+        :return:
+        """
         url = 'https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info'
         post_data = {
             "component_appid": self.tripartite_platform_appid,    # 第三方APPID
             "authorizer_appid": appid       # 授权方APPID
         }
-        ret = requests.post(url, params=self.params, data=post_data)
-        print('get_account_information=----> ', ret.text)
+        ret = requests.post(url, params=self.params, data=json.dumps(post_data))
+        ret_json = ret.json()
+        print('公众号/小程序 获取授权方的帐号基本信息get_account_information----> ', json.dumps(ret_json))
+
+
 
     # 获取授权方的选项设置信息
     def option_setting_information(self, option_name, appid):
@@ -159,6 +179,8 @@ def QueryWhetherCallingCredentialExpired(appid, auth_type):
     :param appid:  公众号/小程序 appid
     :param auth_type: 类型 (1公众号 2小程序) 区分查询数据库
     :return:
+        authorizer_access_token : 调用 凭证
+        flag： appid 是否存在
     """
     flag = False  # appid  是否存在
     response = {}
@@ -171,13 +193,18 @@ def QueryWhetherCallingCredentialExpired(appid, auth_type):
         obj = objs[0]
         authorizer_access_token_expires_in = obj.authorizer_access_token_expires_in
         authorizer_access_token = obj.authorizer_access_token
+        authorizer_refresh_token = obj.authorizer_refresh_token
+        time_stamp = authorizer_access_token_expires_in - int(time.time())
+        if time_stamp <= 100: # 已经过期
+            tripartite_platform_oper_obj = tripartite_platform_oper()
+            authorizer_access_token = tripartite_platform_oper_obj.refresh_exchange_calling_credentials(
+                appid,
+                authorizer_refresh_token,
+                auth_type
+            )
 
-        if authorizer_access_token_expires_in - int(time.time()) <= 100:
-
-            pass
-
-
+        response['authorizer_access_token'] = authorizer_access_token
     response['flag'] = flag
-
+    return response
 
 
