@@ -40,42 +40,48 @@ def tripartite_platform_oper(request, oper_type):
 
 
             return HttpResponse('success')
+
+
     else:
 
-        objs = models.TripartitePlatform.objects.filter(appid__isnull=False)
-        if objs:
-            obj = objs[0]
+        # 查询三方平台需要数据===============================================================
+        tripartite_objs = models.TripartitePlatform.objects.filter(appid__isnull=False)
+        if tripartite_objs:
+            tripartite_obj = tripartite_objs[0]
+            tripartite_appid = tripartite_obj.appid
+            tripartite_appsecret = tripartite_obj.appsecret
+            component_access_token = tripartite_obj.component_access_token
+            tripartite_objs = tripartite_platform(tripartite_appid, tripartite_appsecret) # 实例化三方平台
 
-            appid = obj.appid
-            appsecret = obj.appsecret
-            access_token = obj.component_access_token
-            tripartite_objs = tripartite_platform(appid, appsecret) # 实例化三方平台
+            authorization_type = request.GET.get('authorization_type') # 授权类型 (1公众号, 2小程序)
+            appid = request.GET.get('appid')
+
 
             # 授权
             if oper_type == "authorization":
                 form_data = {
                     'user_id': user_id,
-                    'appid': request.GET.get('appid'),
+                    'authorization_type': authorization_type,
+                    'appid': appid,
                 }
-
-                #  创建 form验证 实例（参数默认转成字典）
                 forms_obj = AuthorizationForm(form_data)
                 if forms_obj.is_valid():
                     get_pre_auth_code = tripartite_objs.get_pre_auth_code() # 获取预授权码
+                    forms_data = forms_obj.cleaned_data
+                    appid = forms_data.get('appid')
+                    authorization_type = forms_data.get('authorization_type')
 
-                    redirect_url = 'https://xcx.bjhzkq.com/api_hurong/xhs_phone_management/get_equipment_log'
+                    redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?appid={}&authorization_type={}'.format(appid, authorization_type)
                     wx_url = """
-                    https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&auth_type=3&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
+                        https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
                     """.format(
-                        component_appid=appid,              # 三方平台APPID
-                        pre_auth_code=get_pre_auth_code,    # 预授权码
-                        redirect_uri=redirect_url,          # 回调URL
-                        auth_type='',                       # 授权账户类型
-                        biz_appid=''
+                        component_appid=tripartite_appid,       # 三方平台APPID
+                        pre_auth_code=get_pre_auth_code,        # 预授权码
+                        redirect_uri=redirect_url,              # 回调URL
+                        auth_type=authorization_type,           # 授权账户类型
+                        biz_appid=appid
                     )
                     print('wx_url--> ', wx_url)
-                    # ret = requests.post(wx_url)
-                    # print('ret-------> ', ret.text)
 
 
                 else:
@@ -84,7 +90,13 @@ def tripartite_platform_oper(request, oper_type):
 
             # 用户确认 同意授权 回调
             elif oper_type == 'authorize_callback':
-                pass
+                if authorization_type in [1, '1']:
+                    objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
+
+                else:
+                    objs = models.ClientApplet.objects.filter(appid=appid)
+
+                objs.update(linshi=request.GET)
 
             # component_verify_ticket回调
             elif oper_type == 'component_verify_ticket_callback':
@@ -95,6 +107,7 @@ def tripartite_platform_oper(request, oper_type):
             else:
                 response.code = 402
                 response.msg = "请求异常"
+
         else:
             response.code = 301
             response.msg = '三方平台获取失败'

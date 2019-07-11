@@ -216,7 +216,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 iccid = forms_obj.cleaned_data['iccid']
                 imsi = forms_obj.cleaned_data['imsi']
 
-                objs = models.XiaohongshuBiji.objects.filter(
+                objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     user_id__phone_id__iccid=iccid,
                     user_id__phone_id__imsi=imsi,
                     status=1,
@@ -256,7 +256,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 }
                 q = conditionCom(request, field_dict)
 
-                objs = models.XiaohongshuBiji.objects.filter(
+                objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     q,
                 ).exclude(user_id_id=5).order_by(order)
                 count = objs.count()
