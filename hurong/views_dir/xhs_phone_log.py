@@ -224,9 +224,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                                 send_msg_flag = True
                                 content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
 
-                        else:
-                            send_msg_flag = True
-                            content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
+                        # else:
+                        #     send_msg_flag = True
+                        #     content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
                     # else:
                     #     send_msg_flag = True
