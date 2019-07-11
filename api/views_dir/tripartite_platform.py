@@ -71,7 +71,7 @@ def tripartite_platform_oper(request, oper_type):
                     appid = forms_data.get('appid')
                     authorization_type = forms_data.get('authorization_type')
 
-                    redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?appid={}&authorization_type={}'.format(appid, authorization_type)
+                    redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?t=phone&appid={}&authorization_type={}'.format(appid, authorization_type)
                     wx_url = """
                         https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
                     """.format(
@@ -84,6 +84,8 @@ def tripartite_platform_oper(request, oper_type):
                     print('wx_url--> ', wx_url)
 
                     tripartite_objs.update(linshi=wx_url)
+
+
                 else:
                     response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
