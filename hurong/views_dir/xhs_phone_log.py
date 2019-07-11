@@ -181,8 +181,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         xhs_version=xhs_version,
                     ) # 更新版本号
 
+                send_obj = WorkWeixinApi()
                 if log_msg.startswith('没有找到回复私信用户'): # 报错
-                    obj = WorkWeixinApi()
                     if phone_type == 1:
                         text_type = '查覆盖'
                     else:
@@ -191,8 +191,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     text = '类型:{}, 设备名称:{}, 日志:{}'.format(text_type, phone_name, log_msg)
 
                     content = """{} \n小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(datetime.datetime.today(), text)
-                    obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
-                    obj.message_send('JiShuBuCeShi', content)
+                    send_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+                    send_obj.message_send('JiShuBuCeShi', content)
 
 
                 now_date_time = datetime.datetime.today()
@@ -227,7 +227,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
                     if send_msg_flag:
-                        obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+                        send_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
 
                 response.code = 200
                 response.msg = "日志记录成功"
