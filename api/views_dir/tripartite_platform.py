@@ -3,7 +3,8 @@ from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
-from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
+from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
+    QueryWhetherCallingCredentialExpired as CredentialExpired
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 
 from urllib.parse import unquote, quote
@@ -135,10 +136,15 @@ def tripartite_platform_oper(request, oper_type):
                 tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code)
                 objs.update(
                     auth_code=auth_code,
-                    auth_code_expires_in=int(time.time()) + int(expires_in)
+                    authorizer_access_token_expires_in=int(time.time()) + int(expires_in)
                 )
 
-
+            #  获取授权方基本信息
+            elif oper_type == 'get_authorized_party_info':
+                auth_type = 1
+                CredentialExpired(appid, auth_type)
+                tripartite_platform_obj = tripartite_platform()
+                tripartite_platform_obj.get_account_information(auth_type, appid)
 
             else:
                 response.code = 402
