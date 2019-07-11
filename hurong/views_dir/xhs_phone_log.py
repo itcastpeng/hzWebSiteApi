@@ -204,7 +204,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     json_data = json.loads(log_msg.split((log_msg.split(':')[0]) + ':')[1])
                     if json_data.get('runtime'):
 
-                        deletionTime = (now_date_time - datetime.timedelta(minutes=5))
+                        deletionTime = (now_date_time - datetime.timedelta(minutes=10))
                         runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
                         package_type = json_data.get('package_type')
@@ -228,9 +228,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                             send_msg_flag = True
                             content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
-                    else:
-                        send_msg_flag = True
-                        content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
+                    # else:
+                    #     send_msg_flag = True
+                    #     content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
 
                     if send_msg_flag:
                         send_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
