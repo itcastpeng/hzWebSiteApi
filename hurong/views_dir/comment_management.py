@@ -347,6 +347,13 @@ def comment_management(request, oper_type):
                     'count': count
                 }
 
+        # 临时更改 设备有关联的 debug 改为False
+        elif oper_type == 'is_debug':
+            for obj in models.XiaohongshuPhone.objects.all():
+                if obj.xiaohongshuuserprofile_set.all():
+                    obj.is_debug = False
+                    obj.save()
+
         else:
             response.code = 402
             response.msg = '请求异常'

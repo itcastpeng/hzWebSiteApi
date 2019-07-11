@@ -134,7 +134,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 else:
                     data = {'imsi':imsi}
                 objs = models.XiaohongshuPhone.objects.filter(**data)
-                objs.update(phone_num=phone_num)
+                objs.update(phone_num=phone_num, is_debug=False)
                 print("objs --->", objs)
                 if objs:
                     obj = objs[0]
