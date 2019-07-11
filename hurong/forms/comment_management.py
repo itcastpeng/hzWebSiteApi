@@ -92,13 +92,13 @@ class mobilePhoneReviews(forms.Form):
     def clean_screenshots_address(self):
         screenshots_address = self.data.get('screenshots_address')
         if screenshots_address.endswith('400'):
-            screenshots_address = screenshots_address[:-3] + '100'
+            screenshots_address = screenshots_address[:-3] + '150'
         return screenshots_address
 
     def clean_article_picture_address(self):
         article_picture_address = self.data.get('article_picture_address')
         if article_picture_address.endswith('400'):
-            article_picture_address = article_picture_address[:-3] + '100'
+            article_picture_address = article_picture_address[:-3] + '150'
         return article_picture_address
 
 
