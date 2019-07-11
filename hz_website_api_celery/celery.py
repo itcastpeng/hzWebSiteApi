@@ -40,7 +40,7 @@ app.conf.beat_schedule = {
     # 每2秒执行一次
     'xiaohongshu_fugai_update_data': {
         'task': 'hz_website_api_celery.tasks.xiaohongshu_fugai_update_data',
-        'schedule': 20                                   # 单独设置  秒
+        'schedule': 2                                   # 单独设置  秒
         # 'schedule': crontab(hour=8, minute=30),
         # 'schedule': crontab('*', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
