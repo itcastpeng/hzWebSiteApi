@@ -209,7 +209,7 @@ def comment_management(request, oper_type):
 
                 iccid = form_obj.cleaned_data.get('iccid')
 
-                objs = models.commentResponseForm.objects.filter(
+                objs = models.commentResponseForm.objects.select_related('comment').filter(
                     comment__xhs_user__phone_id_id=iccid,
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
@@ -220,6 +220,7 @@ def comment_management(request, oper_type):
                     ret_data = {
                         'comments_content': obj.comment.comments_content,
                         'nick_name': obj.comment.nick_name,
+                        'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
                         'comment_response': obj.comment_response,
@@ -346,13 +347,6 @@ def comment_management(request, oper_type):
                     'ret_data': ret_data,
                     'count': count
                 }
-
-        # 临时更改 设备有关联的 debug 改为False
-        elif oper_type == 'is_debug':
-            for obj in models.XiaohongshuPhone.objects.all():
-                if obj.xiaohongshuuserprofile_set.all():
-                    obj.is_debug = False
-                    obj.save()
 
         else:
             response.code = 402
