@@ -53,6 +53,7 @@ def tripartite_platform_oper(request, oper_type):
             component_access_token = tripartite_obj.component_access_token
             tripartite_platform_objs = tripartite_platform(tripartite_appid, tripartite_appsecret) # 实例化三方平台
 
+            authorization_way = request.GET.get('authorization_way') # 授权方式 (1扫码, 2链接)
             authorization_type = request.GET.get('authorization_type') # 授权类型 (1公众号, 2小程序)
             appid = request.GET.get('appid')
 
@@ -61,30 +62,52 @@ def tripartite_platform_oper(request, oper_type):
             if oper_type == "authorization":
                 form_data = {
                     'user_id': user_id,
-                    'authorization_type': authorization_type,
+                    'authorization_type': authorization_type,# 授权类型 (1公众号, 2小程序)
+                    'authorization_way': authorization_way,# 授权方式 (1扫码, 2链接)
                     'appid': appid,
                 }
                 forms_obj = AuthorizationForm(form_data)
                 if forms_obj.is_valid():
                     get_pre_auth_code = tripartite_platform_objs.get_pre_auth_code() # 获取预授权码
                     forms_data = forms_obj.cleaned_data
+
                     appid = forms_data.get('appid')
+                    authorization_way = forms_data.get('authorization_way')
                     authorization_type = forms_data.get('authorization_type')
 
-                    redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?t=phone&appid={}&authorization_type={}'.format(appid, authorization_type)
-                    wx_url = """
-                        https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
-                    """.format(
-                        component_appid=tripartite_appid,       # 三方平台APPID
-                        pre_auth_code=get_pre_auth_code,        # 预授权码
-                        redirect_uri=redirect_url,              # 回调URL
-                        auth_type=authorization_type,           # 授权账户类型
-                        biz_appid=appid
+
+                    redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?t=phone&appid={}&authorization_type={}&authorization_way={}'.format(
+                        appid,
+                        authorization_type,
+                        authorization_way
                     )
+
+                    if authorization_way in [2, '2']:  # 链接形式
+                        wx_url = """
+                            https://mp.weixin.qq.com/safe/bindcomponent?action=bindcomponent&no_scan=1&component_appid={component_appid}&pre_auth_code={pre_auth_code}&redirect_uri={redirect_uri}&auth_type={auth_type}&biz_appid={biz_appid}#wechat_redirect
+                        """.format(
+                            component_appid=tripartite_appid,       # 三方平台APPID
+                            pre_auth_code=get_pre_auth_code,        # 预授权码
+                            redirect_uri=redirect_url,              # 回调URL
+                            auth_type=authorization_type,           # 授权账户类型
+                            biz_appid=appid
+                        )
+
+
+
+                    else:  # 扫码接入
+                        wx_url = """
+                            https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}&auth_type=1
+                            """.format(
+                            appid,
+                            get_pre_auth_code,
+                            redirect_url,
+                            authorization_type
+                        )
+                        ret = requests.get(wx_url)
+
+                        tripartite_objs.update(linshi=wx_url.strip() + '--' + ret.text)
                     print('wx_url--> ', wx_url)
-
-                    tripartite_objs.update(linshi=wx_url)
-
 
                 else:
                     response.code = 301

@@ -176,6 +176,7 @@ class TripartitePlatform(models.Model):
     component_access_token = models.TextField(verbose_name='component_access_token')
     access_token_time = models.IntegerField(verbose_name='access_token 过期时间')
     linshi = models.TextField(verbose_name='临时')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
 
 # 客户公众号授权 信息
 class CustomerOfficialNumber(models.Model):
