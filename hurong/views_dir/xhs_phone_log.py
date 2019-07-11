@@ -204,7 +204,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     json_data = json.loads(log_msg.split((log_msg.split(':')[0]) + ':')[1])
                     if json_data.get('runtime'):
 
-                        deletionTime = (now_date_time - datetime.timedelta(minutes=5))
+                        deletionTime = (now_date_time - datetime.timedelta(minutes=10))
                         runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
                         package_type = json_data.get('package_type')
