@@ -119,8 +119,8 @@ def comment_management(request, oper_type):
                 response.msg = '成功'
 
                 # 异步传递给小红书后台
-                # form_data['transfer_type'] = 2
-                # asynchronous_transfer_data.delay(form_data)
+                form_data['transfer_type'] = 2
+                asynchronous_transfer_data.delay(form_data)
 
             else:
                 response.code = 301
