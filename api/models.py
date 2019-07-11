@@ -182,6 +182,10 @@ class TripartitePlatform(models.Model):
 class CustomerOfficialNumber(models.Model):
     appid = models.CharField(verbose_name='公众号APPID', max_length=64)
     is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+
+    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
+    expires_in = models.IntegerField(verbose_name='过期时间', null=True)
+
     linshi = models.TextField(verbose_name='临时数据', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
@@ -189,8 +193,11 @@ class CustomerOfficialNumber(models.Model):
 class ClientApplet(models.Model):
     appid = models.CharField(verbose_name='公众号APPID', max_length=64)
     is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
-    linshi = models.TextField(verbose_name='临时数据', null=True)
 
+    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
+    expires_in = models.IntegerField(verbose_name='过期时间', null=True)
+
+    linshi = models.TextField(verbose_name='临时数据', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
