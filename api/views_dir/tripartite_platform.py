@@ -51,7 +51,7 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_appid = tripartite_obj.appid
             tripartite_appsecret = tripartite_obj.appsecret
             component_access_token = tripartite_obj.component_access_token
-            tripartite_objs = tripartite_platform(tripartite_appid, tripartite_appsecret) # 实例化三方平台
+            tripartite_platform_objs = tripartite_platform(tripartite_appid, tripartite_appsecret) # 实例化三方平台
 
             authorization_type = request.GET.get('authorization_type') # 授权类型 (1公众号, 2小程序)
             appid = request.GET.get('appid')
@@ -66,7 +66,7 @@ def tripartite_platform_oper(request, oper_type):
                 }
                 forms_obj = AuthorizationForm(form_data)
                 if forms_obj.is_valid():
-                    get_pre_auth_code = tripartite_objs.get_pre_auth_code() # 获取预授权码
+                    get_pre_auth_code = tripartite_platform_objs.get_pre_auth_code() # 获取预授权码
                     forms_data = forms_obj.cleaned_data
                     appid = forms_data.get('appid')
                     authorization_type = forms_data.get('authorization_type')
@@ -83,7 +83,7 @@ def tripartite_platform_oper(request, oper_type):
                     )
                     print('wx_url--> ', wx_url)
 
-
+                    tripartite_objs.update(linshi=wx_url)
                 else:
                     response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
