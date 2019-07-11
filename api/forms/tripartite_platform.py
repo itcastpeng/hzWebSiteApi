@@ -23,7 +23,12 @@ class AuthorizationForm(forms.Form):
             'required': '授权类型不能为空',
         }
     )
-
+    authorization_way = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '授权方式不能为空',
+        }
+    )
 
     def clean_authorization_type(self):
         authorization_type = self.data.get('authorization_type')
@@ -47,6 +52,12 @@ class AuthorizationForm(forms.Form):
         else:
             self.add_error('authorization_type', '请输入正确的收取按类型')
 
+    def clean_authorization_way(self):
+        authorization_way = self.data.get('authorization_way')
+        if authorization_way in [1, '1', 2, '2']:
+            return authorization_way
+        else:
+            self.add_error('authorization_way', '授权方式异常')
 
 
 

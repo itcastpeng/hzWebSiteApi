@@ -203,6 +203,7 @@ def xiaohongshu_phone_management(request, oper_type):
                     'phone_type': '',
                     'is_debug': '',
                     'name': '__contains',
+                    'status': '',
                     'phone_num': '__contains',
                 }
                 q = conditionCom(request, field_dict)
