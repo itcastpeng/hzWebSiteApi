@@ -202,33 +202,38 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     content = ''
 
                     json_data = json.loads(log_msg.split((log_msg.split(':')[0]) + ':')[1])
-                    deletionTime = (now_date_time - datetime.timedelta(minutes=5))
-                    runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
+                    if json_data.get('runtime'):
 
-                    package_type = json_data.get('package_type')
-                    current_version = json_data.get('current_version')
-                    if runtime > deletionTime:
-                        package_objs = models.InstallationPackage.objects.filter(
-                            package_type=package_type
-                        ).order_by('-id')
-                        if package_objs:
-                            package_obj = package_objs[0]
-                            if int(package_obj.id) != int(current_version):
-                                phone_objs.update(package_version=current_version)
+                        deletionTime = (now_date_time - datetime.timedelta(minutes=5))
+                        runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
+                        package_type = json_data.get('package_type')
+                        current_version = json_data.get('current_version')
+                        if runtime > deletionTime:
+                            package_objs = models.InstallationPackage.objects.filter(
+                                package_type=package_type
+                            ).order_by('-id')
+                            if package_objs:
+                                package_obj = package_objs[0]
+                                if int(package_obj.id) != int(current_version):
+                                    phone_objs.update(package_version=current_version)
+
+                                    send_msg_flag = True
+                                    content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
+                            else:
                                 send_msg_flag = True
-                                content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
+                                content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+
                         else:
                             send_msg_flag = True
-                            content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+                            content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
                     else:
                         send_msg_flag = True
-                        content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
+                        content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
 
                     if send_msg_flag:
                         send_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
-
                 response.code = 200
                 response.msg = "日志记录成功"
 
