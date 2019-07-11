@@ -320,19 +320,23 @@ def xiaohongshu_phone_monitor():
     objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
     err_phone = []
     for obj in objs:
-        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=10)).strftime("%Y-%m-%d %H:%M:%S")
+        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
         # 如果5分钟之内没有提交日志，说明机器异常了
         if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
-            err_phone.append(obj.name)
+            obj.status = 2
+        else:
+            obj.status = 1
+        obj.save()
+            # err_phone.append(obj.name)
 
 
-    if len(err_phone) > 0:
-            obj = WorkWeixinApi()
-            print("err_phone -->", err_phone)
-            content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
-            # obj.message_send('WorkWeixinApi', content)          # 张聪
-            obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
+    # if len(err_phone) > 0:
+    #         obj = WorkWeixinApi()
+    #         print("err_phone -->", err_phone)
+    #         content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
+    #         # obj.message_send('WorkWeixinApi', content)          # 张聪
+    #         obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
             # obj.message_send('1534764500636', content)      # 贺昂
 
 

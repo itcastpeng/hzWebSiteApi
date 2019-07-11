@@ -162,6 +162,11 @@ class XiaohongshuPhone(models.Model):
 
     is_debug = models.BooleanField(verbose_name="是否调试", default=True)
 
+    status_choices = (
+        (1, '设备正常'),
+        (2, '设备异常'),
+    )
+    status = models.SmallIntegerField(verbose_name='是否异常', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
