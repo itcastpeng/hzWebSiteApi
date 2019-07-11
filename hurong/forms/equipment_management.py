@@ -56,20 +56,10 @@ class AddForm(forms.Form):
                 objs = models.MobileTrafficInformation.objects.filter(select_number=i)
                 if objs:
                     continue
-                    # self.add_error('select_number', '{} 号码已存在'.format(i))
                 if not i.strip().isdigit():
                     continue
-                    # self.add_error('select_number', '{} 参数异常'.format(i))
                 if i.strip() not in data_list:
                     data_list.append(i.strip())
-        # for i in select_number.split('\r'):
-        #     if i.strip() not in data_list:
-        #         objs = models.MobileTrafficInformation.objects.filter(select_number=i)
-        #         if objs:
-        #             self.add_error('select_number', '{} 号码已存在'.format(i))
-        #         if not i.strip().isdigit():
-        #             self.add_error('select_number', '{} 参数异常'.format(i))
-        #         data_list.append(i.strip())
 
         return data_list
 

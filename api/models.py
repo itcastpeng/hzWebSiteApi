@@ -178,9 +178,19 @@ class TripartitePlatform(models.Model):
     linshi = models.TextField(verbose_name='临时')
 
 # 客户公众号授权 信息
-
+class CustomerOfficialNumber(models.Model):
+    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
+    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    linshi = models.TextField(verbose_name='临时数据', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 客户小程序授权 信息
+class ClientApplet(models.Model):
+    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
+    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    linshi = models.TextField(verbose_name='临时数据', null=True)
+
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
