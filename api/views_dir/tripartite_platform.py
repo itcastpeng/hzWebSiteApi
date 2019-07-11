@@ -94,7 +94,6 @@ def tripartite_platform_oper(request, oper_type):
                         )
 
 
-
                     else:  # 扫码接入
                         wx_url = """
                             https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}&auth_type={}
@@ -104,22 +103,36 @@ def tripartite_platform_oper(request, oper_type):
                             redirect_url,
                             authorization_type
                         )
-                        ret = requests.get(wx_url)
 
-                        tripartite_objs.update(linshi=wx_url.strip() + '--' + ret.text)
-                    print('wx_url--> ', wx_url)
+                    response.code = 200
+                    response.msg = '生成授权链接成功'
+                    response.data = {
+                        'wx_url': wx_url
+                    }
 
                 else:
                     response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
 
+
             # 用户确认 同意授权 回调
             elif oper_type == 'authorize_callback':
+                auth_code = request.GET.get('auth_code')
+                expires_in = request.GET.get('expires_in')
+
                 if authorization_type in [1, '1']:
-                    objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
+                    objs = models.CustomerOfficialNumber.objects.filter(
+                        appid=appid,
+                        auth_code=auth_code,
+                        expires_in=expires_in
+                    )
 
                 else:
-                    objs = models.ClientApplet.objects.filter(appid=appid)
+                    objs = models.ClientApplet.objects.filter(
+                        appid=appid,
+                        auth_code=auth_code,
+                        expires_in=expires_in
+                    )
 
                 objs.update(linshi=request.GET)
 
