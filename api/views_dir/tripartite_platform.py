@@ -107,7 +107,7 @@ def tripartite_platform_oper(request, oper_type):
                     response.code = 200
                     response.msg = '生成授权链接成功'
                     response.data = {
-                        'wx_url': wx_url
+                        'wx_url': wx_url.strip()
                     }
 
                 else:
@@ -117,6 +117,8 @@ def tripartite_platform_oper(request, oper_type):
 
             # 用户确认 同意授权 回调
             elif oper_type == 'authorize_callback':
+                objs = models.CustomerOfficialNumber.objects.filter(appid__isnull=False).update(linshi=request.GET)
+
                 auth_code = request.GET.get('auth_code')
                 expires_in = request.GET.get('expires_in')
 
