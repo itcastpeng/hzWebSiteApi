@@ -232,6 +232,8 @@ def xiaohongshu_phone_management(request, oper_type):
                         'ip_addr': obj.ip_addr,
                         'phone_num': phone_num,
                         'imsi': obj.imsi,
+                        'status_id': obj.status,
+                        'status': obj.get_status_display(),
                         'iccid': obj.iccid,
                         'phone_type_id': obj.phone_type,
                         'phone_type': obj.get_phone_type_display(),
@@ -259,6 +261,7 @@ def xiaohongshu_phone_management(request, oper_type):
                 response.data = {
                     'ret_data': ret_data,
                     'count': count,
+                    'status_choices': [{'id':i[0], 'name':i[1]} for i in models.XiaohongshuPhone.status_choices]
                 }
             else:
                 response.code = 301
