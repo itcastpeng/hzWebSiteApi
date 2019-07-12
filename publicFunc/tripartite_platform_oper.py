@@ -265,16 +265,79 @@ class tripartite_platform_oper():
 
     #===================================================小程序函数============================
 
-    # 推送授权相关通知
-    def xcx_get_basic_account_information(self, authorizer_access_token):
-        url = 'https://api.weixin.qq.com/cgi-bin/account/getaccountbasicinfo'
-        params = {
-            'access_token': authorizer_access_token
+    # 上传小程序代码
+    def xcx_update_code(self, appid, token):
+        # ext_json 格式
+
+        """
+            {
+                extAppid:"",   授权方APPID
+                ext:{           # 自定义字段 可在小程序调用
+                    "attr1":"value1",
+                    "attr2":"value2",
+                },
+                extPages:{      # 页面配置
+                    "index":{
+                    },
+                    "search/index":{
+                    },
+                },
+                pages:["index","search/index"],
+                "window":{
+                },
+                "networkTimeout":{
+                },
+                "tabBar":{
+                },
+            }
+
+        """
+
+        ext_json = {
+                'extAppid':appid,   #授权方APPID
+                'ext':{           # 自定义字段 可在小程序调用
+
+                },
+                'extPages':{      # 页面配置
+                    "index":{
+                    },
+                    "search/index":{
+                    },
+                },
+                'pages':["index","search/index"],
+                "window":{
+                },
+                "networkTimeout":{
+                },
+                "tabBar":{
+                },
+            }
+
+        url = 'https://api.weixin.qq.com/wxa/commit?access_token={}'.format(token)
+
+        data = {
+            # 代码库中的代码模板ID
+            "template_id": '',
+            "ext_json": ext_json,
+            # 代码版本号(自定义)
+            "user_version": '',
+            # 代码描述(自定义)
+            "user_desc": '',
         }
-        ret = requests.get(url, params=params)
-
-        print(ret.json())
-
+        ret = requests.post(url, data=data)
+        print('ret.text------> ', ret.text)
 
 
+    # 获取体验小程序二维码
+    def xcx_get_experience_qr_code(self, token, path=None):
+        url = 'https://api.weixin.qq.com/wxa/get_qrcode?access_token={}'.format(token)
+        ret = requests.get(url)
+
+        with open('1.png', 'wb') as f:
+            f.write(ret.content)
+
+    # 获取代码模板库中的所有小程序代码模板
+
+
+    # 删除指定小程序代码模板
 

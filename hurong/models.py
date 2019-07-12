@@ -300,7 +300,7 @@ class PhoneNumber(models.Model):
         (1, "未使用"),
         (2, "已使用"),
     )
-    status = models.SmallIntegerField(verbose_name="状态", default=1)
+    status = models.SmallIntegerField(verbose_name="状态", choices=status_choices, default=1)
     phone = models.ForeignKey('XiaohongshuPhone', verbose_name='哪个手机使用', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
