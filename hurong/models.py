@@ -216,7 +216,7 @@ class XiaohongshuBiji(models.Model):
     content = models.TextField(verbose_name="笔记内容")
 
     """
-        {
+        {   "title": "xxx",
             "img_list": [
                 {
                     "url": "图片地址",
@@ -253,6 +253,7 @@ class XiaohongshuBiji(models.Model):
     completion_time = models.DateTimeField(verbose_name="完成时间", null=True)
     biji_existing_url = models.CharField(verbose_name="笔记真实回链", max_length=256, null=True)
     biji_url = models.CharField(verbose_name="笔记回链", max_length=256, null=True)
+    reading_num = models.IntegerField(verbose_name="阅读量", default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

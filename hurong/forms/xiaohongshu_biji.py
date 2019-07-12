@@ -106,3 +106,38 @@ class UploadUrlForm(forms.Form):
             'invalid': "数据类型错误"
         }
     )
+
+
+# 更改阅读量
+class UpdateReding(forms.Form):
+    reading_num = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "阅读量不能为空",
+        }
+    )
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "笔记ID不能为空",
+        }
+    )
+
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.XiaohongshuBiji.objects.filter(id=o_id)
+        if objs:
+            return o_id
+        else:
+            self.add_error('o_id', '笔记不存在')
+
+
+
+
+
+
+
+
+
+
+
