@@ -210,14 +210,14 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         package_type = json_data.get('package_type')
                         current_version = json_data.get('current_version')
                         if runtime > deletionTime:
+                            phone_objs.update(package_version=current_version)
+
                             package_objs = models.InstallationPackage.objects.filter(
                                 package_type=package_type
                             ).order_by('-id')
                             if package_objs:
                                 package_obj = package_objs[0]
                                 if int(package_obj.id) != int(current_version):
-                                    phone_objs.update(package_version=current_version)
-
                                     send_msg_flag = True
                                     content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
                             else:
