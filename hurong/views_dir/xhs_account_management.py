@@ -43,7 +43,7 @@ def xhs_account_management(request, oper_type):
                 for obj in objs:
                     phone_id = ''
                     if obj.phone_id:
-                        phone_id = obj.phone_id
+                        phone_id = obj.phone_id_id
 
                     phone_name = ''
                     if obj.phone_id.name:
