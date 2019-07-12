@@ -4,7 +4,7 @@ from publicFunc.public import requests_log
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
-from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm
+from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding
 import requests, datetime, json, re
 
 
@@ -192,6 +192,35 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 obj.save()
             response.code = 200
             response.msg = '发布成功'
+
+        # 阅读量更改
+        elif oper_type == 'update_reding':
+            """
+            o_id: 笔记ID
+            reading_num: 阅读量
+            """
+            form_data = {
+                'o_id': o_id,
+                'reading_num': request.POST.get('reading_num')
+            }
+
+            form_obj = UpdateReding(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                reading_num = form_obj.cleaned_data.get('reading_num')
+
+                models.XiaohongshuBiji.objects.filter(
+                    id=o_id
+                ).update(
+                    reading_num=reading_num
+                )
+
+                response.code = 200
+                response.msg = '阅读量更新完成'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         else:
             response.code = 402
