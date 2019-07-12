@@ -12,6 +12,12 @@ import time, json, datetime, xml.etree.cElementTree as ET, requests
 # 三方平台操作
 @account.is_token(models.UserProfile)
 def tripartite_platform_oper(request, oper_type):
+    """
+
+    :param request:
+    :param oper_type:
+    :return:
+    """
     response = Response.ResponseObj()
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
@@ -27,6 +33,8 @@ def tripartite_platform_oper(request, oper_type):
     if request.method == "POST":
         appid = request.POST.get('appid')
 
+
+        # =========================公共=============================================
         # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
         if oper_type == 'tongzhi':
             signature = request.GET.get('signature')
@@ -111,6 +119,8 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+
+        # ============================小程序======================================
         # 上传小程序代码
         elif oper_type == 'upload_applet_code':
             pass
@@ -119,6 +129,8 @@ def tripartite_platform_oper(request, oper_type):
     else:
         appid = request.GET.get('appid') # 传递的APPID
 
+
+        # =============================公共=================================
         # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
         if oper_type == 'authorize_callback':
             """
@@ -159,6 +171,8 @@ def tripartite_platform_oper(request, oper_type):
             response.code = 200
             response.msg = '获取信息完成'
 
+
+        # ============================小程序====================================
         # 获取小程序体验二维码
         elif oper_type == 'get_experience_qr_code':
             # 判断调用凭证是否过期
@@ -166,8 +180,20 @@ def tripartite_platform_oper(request, oper_type):
             authorizer_access_token = data.get('authorizer_access_token')
             # tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
+        # 获取代码模板库中的所有小程序代码模板
+        elif oper_type == 'get_code':
+            data = CredentialExpired(appid, authorization_type)
+            response_data = tripartite_platform_objs.xcx_get_code_template()
 
+            response.code = 301
+            if response_data.get('errcode') in [0, '0']:
+                template_list = response_data.get('template_list')
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = template_list
 
+            else:
+                response.msg = response_data.get('errmsg')
 
         else:
             response.code = 402

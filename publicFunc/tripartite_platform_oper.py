@@ -337,7 +337,16 @@ class tripartite_platform_oper():
             f.write(ret.content)
 
     # 获取代码模板库中的所有小程序代码模板
-
-
-    # 删除指定小程序代码模板
-
+    def xcx_get_code_template(self):
+        url = 'https://api.weixin.qq.com/wxa/gettemplatelist?access_token={}'.format(self.token)
+        ret = requests.post(url)
+        print('获取代码模板库中的所有小程序代码模板=========--------> ', ret.text)
+        errcode = ret.json().get('errcode')
+        errmsg = ret.json().get('errmsg')
+        template_list = ret.json().get('template_list')
+        data = {
+            'errcode':errcode,
+            'template_list':template_list,
+            'errmsg':errmsg,
+        }
+        return data
