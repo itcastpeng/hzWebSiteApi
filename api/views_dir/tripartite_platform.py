@@ -120,6 +120,10 @@ def tripartite_platform_oper(request, oper_type):
 
             # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
             elif oper_type == 'authorize_callback':
+                """
+                    auth_code   : GZH/XCX 授权码
+                    expires_in  : GZH/XCX 授权码过期时间
+                """
                 auth_code = request.GET.get('auth_code')
                 expires_in = request.GET.get('expires_in')
 
@@ -132,13 +136,18 @@ def tripartite_platform_oper(request, oper_type):
                     objs = models.ClientApplet.objects.filter(
                         appid=appid,
                     )
+
+                # 使用授权码 获取调用 GZH/XCX 凭证
                 tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code)
+
+                # ==== 更改 GZH/XCX 授权码 和 过期时间
                 objs.update(
                     auth_code=auth_code,
-                    authorizer_access_token_expires_in=int(time.time()) + int(expires_in)
+                    auth_code_expires_in=int(time.time()) + int(expires_in)
                 )
-                CredentialExpired(appid, authorization_type)    # 判断调用凭证是否过期
-                tripartite_platform_objs.get_account_information(authorization_type, appid)
+                CredentialExpired(appid, authorization_type)    # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
+                objs.update(is_authorization=1) # 授权完成
 
             # 获取授权方基本信息
             elif oper_type == 'get_authorized_party_info':
