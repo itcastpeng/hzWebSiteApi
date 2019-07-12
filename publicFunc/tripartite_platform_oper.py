@@ -5,13 +5,66 @@ import requests, datetime, json, time
 
 
 
+# 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
+def QueryWhetherCallingCredentialExpired(appid, auth_type):
+    """
 
+    :param appid:  公众号/小程序 appid
+    :param auth_type: 类型 (1公众号 2小程序) 区分查询数据库
+    :return:
+        authorizer_access_token : 调用 凭证
+        flag： appid 是否存在
+    """
+    flag = False
+    response = {}
+    if auth_type in [1, '1']:
+        objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
+    else:
+        objs = models.ClientApplet.objects.filter(appid=appid)
+    if objs:
+        flag = True
+        obj = objs[0]
+        authorizer_access_token_expires_in = obj.authorizer_access_token_expires_in
+        authorizer_access_token = obj.authorizer_access_token
+        authorizer_refresh_token = obj.authorizer_refresh_token
+        time_stamp = authorizer_access_token_expires_in - int(time.time())
+        if time_stamp <= 100: # 已经过期
+            tripartite_platform_oper_obj = tripartite_platform_oper()
+            authorizer_access_token = tripartite_platform_oper_obj.refresh_exchange_calling_credentials(
+                appid,
+                authorizer_refresh_token,
+                auth_type
+            )
+
+        response['authorizer_access_token'] = authorizer_access_token
+    response['flag'] = flag
+    return response
+
+
+# 获取开放平台信息
+def GetTripartitePlatformInfo():
+    tripartite_objs = models.TripartitePlatform.objects.filter(appid__isnull=False)
+    flag = False
+    response = {}
+    if tripartite_objs:
+        tripartite_obj = tripartite_objs[0]
+        response['tripartite_appid'] = tripartite_obj.appid
+        response['tripartite_appsecret'] = tripartite_obj.appsecret
+        response['component_access_token'] = tripartite_obj.component_access_token
+    else:
+        flag = True
+    response['flag'] = flag
+
+    return response
 
 
 
 # 三方平台操作
 class tripartite_platform_oper():
     response = Response.ResponseObj()
+
+    # ========================================公共函数==========================================
+
     def __init__(self):
         obj = models.TripartitePlatform.objects.get(id=1)
         self.component_verify_ticket = obj.component_verify_ticket
@@ -183,8 +236,6 @@ class tripartite_platform_oper():
         else:
             models.ClientApplet.objects.filter(appid=appid).update(**data)
 
-
-
     # 获取授权方的选项设置信息
     def option_setting_information(self, option_name, appid):
         url = 'https://api.weixin.qq.com/cgi-bin/component/ api_get_authorizer_option'
@@ -210,44 +261,18 @@ class tripartite_platform_oper():
 
         print('set_authorizer_information------> ', ret.text)
 
+    #===================================================小程序函数============================
+
     # 推送授权相关通知
-    # def push_authorization_notification(self):
+    def xcx_get_basic_account_information(self, authorizer_access_token):
+        url = 'https://api.weixin.qq.com/cgi-bin/account/getaccountbasicinfo'
+        params = {
+            'access_token': authorizer_access_token
+        }
+        ret = requests.get(url, params=params)
+
+        print(ret.json())
 
 
-
-# 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
-def QueryWhetherCallingCredentialExpired(appid, auth_type):
-    """
-
-    :param appid:  公众号/小程序 appid
-    :param auth_type: 类型 (1公众号 2小程序) 区分查询数据库
-    :return:
-        authorizer_access_token : 调用 凭证
-        flag： appid 是否存在
-    """
-    flag = False
-    response = {}
-    if auth_type in [1, '1']:
-        objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
-    else:
-        objs = models.ClientApplet.objects.filter(appid=appid)
-    if objs:
-        flag = True
-        obj = objs[0]
-        authorizer_access_token_expires_in = obj.authorizer_access_token_expires_in
-        authorizer_access_token = obj.authorizer_access_token
-        authorizer_refresh_token = obj.authorizer_refresh_token
-        time_stamp = authorizer_access_token_expires_in - int(time.time())
-        if time_stamp <= 100: # 已经过期
-            tripartite_platform_oper_obj = tripartite_platform_oper()
-            authorizer_access_token = tripartite_platform_oper_obj.refresh_exchange_calling_credentials(
-                appid,
-                authorizer_refresh_token,
-                auth_type
-            )
-
-        response['authorizer_access_token'] = authorizer_access_token
-    response['flag'] = flag
-    return response
 
 
