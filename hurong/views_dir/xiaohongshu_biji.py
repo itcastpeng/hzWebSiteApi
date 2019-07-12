@@ -185,7 +185,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         # 发布笔记
         elif oper_type == 'published_articles':
-            id_list = request.POST.get('id_list')
+            id_list = json.loads(request.POST.get('id_list'))
             objs = models.XiaohongshuBiji.objects.filter(id__in=id_list)
             for obj in objs:
                 obj.status = 1

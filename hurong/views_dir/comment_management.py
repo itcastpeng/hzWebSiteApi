@@ -335,7 +335,13 @@ def comment_management(request, oper_type):
                     comment_completion_time = obj.comment_completion_time
                     if comment_completion_time:
                         comment_completion_time = obj.comment_completion_time.strftime('%Y-%m-%d %H:%M:%S')
+
+                    phone_name = ''
+                    if obj.comment.xhs_user.phone_id.name:
+                        phone_name = obj.comment.xhs_user.phone_id.name
                     ret_data.append({
+                        'phone_name': phone_name,
+                        'xhs_user_name': obj.comment.xhs_user.name,
                         'comment_id': obj.comment_id,
                         'comment_response': obj.comment_response,
                         'comment_completion_time': comment_completion_time,
