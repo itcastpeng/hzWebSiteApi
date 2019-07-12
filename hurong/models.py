@@ -164,8 +164,8 @@ class XiaohongshuPhone(models.Model):
 
     status_choices = (
         (1, '设备正常'),
-        (2, '设备五分钟未提交日志'),
-        (3, '距上次签到时间超10分钟'),
+        (2, '发布异常'),
+        (3, '自动更新异常'),
     )
     status = models.SmallIntegerField(verbose_name='是否异常', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
@@ -245,6 +245,7 @@ class XiaohongshuBiji(models.Model):
         (1, "发布中"),
         (2, "已发布"),
         (3, "待审核"),
+        (4, "发布异常"),
     )
 
     status = models.SmallIntegerField(choices=status_choices, verbose_name="笔记状态", default=3)

@@ -176,8 +176,6 @@ class TripartitePlatform(models.Model):
     access_token_time = models.IntegerField(verbose_name='access_token 过期时间')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
 
-    linshi = models.TextField(verbose_name='临时')
-
 
 # 客户公众号授权 信息
 class CustomerOfficialNumber(models.Model):
@@ -198,7 +196,6 @@ class CustomerOfficialNumber(models.Model):
     qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
 
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    linshi = models.TextField(verbose_name='临时数据', null=True)
 
 
 # 客户小程序授权 信息
@@ -219,7 +216,6 @@ class ClientApplet(models.Model):
     qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
 
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    linshi = models.TextField(verbose_name='临时数据', null=True)
 
 
 
