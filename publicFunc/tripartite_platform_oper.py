@@ -134,7 +134,7 @@ class tripartite_platform_oper():
         if authorization_info:
             authorizer_appid = authorization_info.get('authorizer_appid')
             authorizer_access_token = authorization_info.get('authorizer_access_token')
-            expires_in = authorization_info.get('expires_in')
+            expires_in = int(time.time()) + int(authorization_info.get('expires_in'))
             authorizer_refresh_token = authorization_info.get('authorizer_refresh_token')
             # 更新令牌
             if auth_type in [1, '1']: # 公众号
@@ -174,7 +174,9 @@ class tripartite_platform_oper():
             )
         else:  # 小程序
             models.ClientApplet.objects.filter(appid=appid).update(
-
+                authorizer_access_token=authorizer_access_token,
+                authorizer_access_token_expires_in=expires_in,
+                authorizer_refresh_token=authorizer_refresh_token
             )
 
         return authorizer_access_token
