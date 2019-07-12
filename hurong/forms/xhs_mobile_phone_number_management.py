@@ -2,6 +2,7 @@ from django import forms
 
 from hurong import models
 from publicFunc import account
+from publicFunc.public import verify_phone_number
 import re
 import json
 
@@ -37,23 +38,67 @@ class SelectForm(forms.Form):
         return length
 
 
-# 添加
+# 添加手机号
 class AddForm(forms.Form):
-
-    log_msg = forms.CharField(
-        required=True,
-        # error_messages={
-        #     'required': "日志信息不能为空"
-        # }
-    )
-
-
-# 修改用户
-class UpdateForm(forms.Form):
-    o_id = forms.IntegerField(
+    phone_number = forms.CharField(
         required=True,
         error_messages={
-            'required': "修改id不能为空",
-            'invalid': "数据类型错误"
+            'required': "手机号不能为空"
         }
     )
+    def clean_phone_number(self):
+        phone_number = self.data.get('phone_number')
+        if verify_phone_number(phone_number):
+            return phone_number
+        else:
+            self.add_error('phone_number', '手机号异常')
+
+
+# 修改手机号
+class UpdateForm(forms.Form):
+    id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "手机号ID不能为空"
+        }
+    )
+    phone_number = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "手机号不能为空"
+        }
+    )
+    remark = forms.CharField(
+        required=False,
+        error_messages={
+            'required': "备注类型错误"
+        }
+    )
+    def clean_phone_number(self):
+        phone_number = self.data.get('phone_number')
+        if verify_phone_number(phone_number):
+            return phone_number
+        else:
+            self.add_error('phone_number', '手机号异常')
+
+    def clean_id(self):
+        id = self.data.get('id')
+        objs = models.PhoneNumber.objects.filter(id=id)
+        if objs:
+            return id
+        else:
+            self.add_error('id', '手机号不存在')
+
+# 删除手机号
+class DeleteForm(forms.Form):
+    id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "手机号ID不能为空"
+        }
+    )
+    models.text_messages_received_cell_phone_number.objects.filter(
+
+    )
+
+

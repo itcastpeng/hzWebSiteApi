@@ -30,7 +30,9 @@ def xhs_account_management(request, oper_type):
                     'phone_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
-                objs = models.XiaohongshuUserProfile.objects.filter(
+                objs = models.XiaohongshuUserProfile.objects.select_related(
+                    'phone_id'
+                ).filter(
                     q,
                 ).order_by(order)
                 count = objs.count()

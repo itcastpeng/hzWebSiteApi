@@ -303,6 +303,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'phone_name': obj.user_id.phone_id.name,
                         'user_name': obj.user_id.name,
                         'status_id': obj.status,
+                        'reading_num': obj.reading_num,
                         'status': obj.get_status_display(),
                         'release_time': release_time,
                         'completion_time': completion_time,
