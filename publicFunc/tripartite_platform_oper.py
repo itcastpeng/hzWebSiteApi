@@ -92,7 +92,9 @@ class tripartite_platform_oper():
                 )
             else: # 小程序
                 models.ClientApplet.objects.filter(appid=authorizer_appid).update(
-
+                    authorizer_access_token=authorizer_access_token,
+                    authorizer_access_token_expires_in=expires_in,
+                    authorizer_refresh_token=authorizer_refresh_token
                 )
 
     # 获取（刷新）授权公众号或小程序的接口调用凭据（令牌）
