@@ -139,6 +139,47 @@ class tripartite_platform_oper():
         ret = requests.post(url, params=self.params, data=json.dumps(post_data))
         ret_json = ret.json()
         print('公众号/小程序 获取授权方的帐号基本信息get_account_information----> ', json.dumps(ret_json))
+        ret_json = ret_json.get('authorizer_info')
+        alias = ret_json.get('alias')                       # 授权方公众号所设置的微信号(公众号)
+        miniprograminfo = ret_json.get('miniprograminfo')   # 可根据这个字段判断是否为小程序类型授权(小程序)
+        network = ret_json.get('network')                   # 小程序已设置的各个服务器域名(小程序)
+
+        func_info = ret_json.get('func_info')               # 公众号授权给开发者的权限集列表
+        business_info = ret_json.get('business_info')       # 用以了解以下功能的开通状况（0代表未开通，1代表已开通)
+        open_store = ret_json.get('open_store')             # 是否开通微信门店功能 open_scan:是否开通微信扫商品功能
+        open_pay = ret_json.get('open_pay')                 # 是否开通微信支付功能 open_card:是否开通微信卡券功能
+        open_shake = ret_json.get('open_shake')             # 是否开通微信摇一摇功能
+        service_type_info = ret_json.get('service_type_info')# 小程序默认为0 公众号 0代表订阅号，1代表由历史老帐号升级后的订阅号，2代表服务号
+        verify_type_info = ret_json.get('verify_type_info') # 授权方认证类型
+        authorization_info = ret_json.get('authorization_info')     # 授权信息
+        authorization_appid = ret_json.get('authorization_appid')   # 授权方appid
+        """
+                    verify_type_info
+                    -1代表未认证，0代表微信认证  # 公共
+                    公众号：
+                        1代表新浪微博认证，2代表腾讯微博认证，
+                        3代表已资质认证通过但还未通过名称认证，
+                        4代表已资质认证通过、还未通过名称认证，但通过了新浪微博认证，
+                        5代表已资质认证通过、还未通过名称认证，但通过了腾讯微博认证
+                """
+
+        nick_name = ret_json.get('nick_name')               # 授权方昵称
+        head_img = ret_json.get('head_img')                 # 授权方头像
+        user_name = ret_json.get('user_name')               # 授权方原始ID
+        qrcode_url = ret_json.get('qrcode_url')             # 二维码图片的URL
+
+        data = {
+            'nick_name': nick_name,
+            'head_img': head_img,
+            'original_id': user_name,
+            'qrcode_url': qrcode_url
+        }
+
+        if auth_type in [1, '1']:
+            models.CustomerOfficialNumber.objects.filter(appid=appid).update(**data)
+
+        else:
+            models.ClientApplet.objects.filter(appid=appid).update(**data)
 
 
 
@@ -182,7 +223,7 @@ def QueryWhetherCallingCredentialExpired(appid, auth_type):
         authorizer_access_token : 调用 凭证
         flag： appid 是否存在
     """
-    flag = False  # appid  是否存在
+    flag = False
     response = {}
     if auth_type in [1, '1']:
         objs = models.CustomerOfficialNumber.objects.filter(appid=appid)

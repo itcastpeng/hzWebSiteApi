@@ -164,7 +164,8 @@ class XiaohongshuPhone(models.Model):
 
     status_choices = (
         (1, '设备正常'),
-        (2, '设备异常'),
+        (2, '设备五分钟未提交日志'),
+        (3, '距上次签到时间超10分钟'),
     )
     status = models.SmallIntegerField(verbose_name='是否异常', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
@@ -405,6 +406,12 @@ class commentResponseForm(models.Model):
 class noteAssociationScreenshot(models.Model):
     screenshots = models.CharField(verbose_name='截图', max_length=256)
     notes = models.ForeignKey('XiaohongshuBiji', verbose_name='截图')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 手机请求 后台 非200记录
+class PhoneRequestsBackgroundRecords(models.Model):
+    request_url = models.CharField(verbose_name='请求链接', max_length=512)
+    response_data = models.TextField(verbose_name='返回数据')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

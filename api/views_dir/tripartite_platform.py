@@ -118,7 +118,6 @@ def tripartite_platform_oper(request, oper_type):
                     response.code = 301
                     response.msg = json.loads(forms_obj.errors.as_json())
 
-
             # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
             elif oper_type == 'authorize_callback':
                 auth_code = request.GET.get('auth_code')
@@ -138,10 +137,12 @@ def tripartite_platform_oper(request, oper_type):
                     auth_code=auth_code,
                     authorizer_access_token_expires_in=int(time.time()) + int(expires_in)
                 )
+                CredentialExpired(appid, authorization_type)    # 判断调用凭证是否过期
+                tripartite_platform_objs.get_account_information(authorization_type, appid)
 
-            #  获取授权方基本信息
+            # 获取授权方基本信息
             elif oper_type == 'get_authorized_party_info':
-                auth_type = 1
+                auth_type = authorization_type
                 CredentialExpired(appid, auth_type)
                 tripartite_platform_obj = tripartite_platform()
                 tripartite_platform_obj.get_account_information(auth_type, appid)

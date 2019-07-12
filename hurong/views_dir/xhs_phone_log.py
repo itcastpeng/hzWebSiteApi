@@ -224,7 +224,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                                 send_msg_flag = True
                                 content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
 
-                        # else:
+                        else:
+                            objs.update(status=3)
                         #     send_msg_flag = True
                         #     content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
@@ -234,6 +235,21 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                     if send_msg_flag:
                         send_obj.message_send('HeZhongGaoJingJianCe', content)  # 张聪
+
+                if log_msg.startswith('请求接口异常'):
+                    log_msg = log_msg.replace('请求接口异常: ', '')
+                    log_msg = log_msg.split('返回数据->')
+                    request_url = log_msg[0].split('api_url->')[1]
+                    response_data = log_msg[1]
+                    models.PhoneRequestsBackgroundRecords.objects.create(
+                        request_url=request_url,
+                        response_data=response_data
+                    )
+
+                    last_there_days = (now_date_time - datetime.timedelta(days=1))
+                    models.PhoneRequestsBackgroundRecords.objects.filter(
+                        create_datetime__gt=last_there_days
+                    ).delete()
                 response.code = 200
                 response.msg = "日志记录成功"
 
