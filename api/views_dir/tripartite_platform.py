@@ -111,6 +111,10 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 上传小程序代码
+        elif oper_type == 'upload_applet_code':
+            pass
+
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
@@ -155,11 +159,14 @@ def tripartite_platform_oper(request, oper_type):
             response.code = 200
             response.msg = '获取信息完成'
 
-        # 获取小程序数据
-        elif oper_type == 'test':
+        # 获取小程序体验二维码
+        elif oper_type == 'get_experience_qr_code':
+            # 判断调用凭证是否过期
             data = CredentialExpired(appid, authorization_type)
             authorizer_access_token = data.get('authorizer_access_token')
-            tripartite_platform_objs.xcx_get_basic_account_information(authorizer_access_token)
+            # tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+
+
 
 
         else:
