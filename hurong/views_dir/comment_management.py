@@ -217,7 +217,7 @@ def comment_management(request, oper_type):
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False
-                ).order_by('-create_datetime')
+                ).order_by('create_datetime')
                 if objs:
                     obj = objs[0]
 
