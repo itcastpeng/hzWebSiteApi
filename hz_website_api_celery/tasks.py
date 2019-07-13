@@ -314,21 +314,21 @@ def debug_test():
 # 小红书手机监控
 @app.task
 def xiaohongshu_phone_monitor():
-    hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
+    # hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
     # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
-    from hurong import models
-    objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
     err_phone = []
-    for obj in objs:
+    phone_objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
+    for phone_obj in phone_objs:
         expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
         # 如果5分钟之内没有提交日志，说明机器异常了
-        if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
-            obj.status = 2
-            err_phone.append(obj.name)
+        objs = phone_obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date)
+        if not objs:
+            phone_obj.status = 2
+            err_phone.append(phone_obj.name)
         else:
-            obj.status = 1
-        obj.save()
+            phone_obj.status = 1
+        phone_obj.save()
 
 
     if len(err_phone) > 0:
