@@ -203,36 +203,37 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     if json_data.get('runtime'):
 
                         deletionTime = (now_date_time - datetime.timedelta(minutes=10))
-                        runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
+                        if json_data.get('runtime'):
+                            runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
-                        package_type = json_data.get('package_type')
-                        current_version = json_data.get('current_version')
-                        if runtime > deletionTime:
-                            phone_objs.update(package_version=current_version)
+                            package_type = json_data.get('package_type')
+                            current_version = json_data.get('current_version')
+                            if runtime > deletionTime:
+                                phone_objs.update(package_version=current_version)
 
-                            # package_objs = models.InstallationPackage.objects.filter(
-                            #     package_type=package_type
-                            # ).order_by('-id')
-                            # if package_objs:
-                            #     package_obj = package_objs[0]
-                            #     if int(package_obj.id) != int(current_version):
-                            #         send_msg_flag = True
-                            #         content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
-                            # else:
+                                # package_objs = models.InstallationPackage.objects.filter(
+                                #     package_type=package_type
+                                # ).order_by('-id')
+                                # if package_objs:
+                                #     package_obj = package_objs[0]
+                                #     if int(package_obj.id) != int(current_version):
+                                #         send_msg_flag = True
+                                #         content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
+                                # else:
+                                #     send_msg_flag = True
+                                #     content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+
+                            else:
+                                objs.update(status=3)
                             #     send_msg_flag = True
-                            #     content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+                            #     content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
-                        else:
-                            objs.update(status=3)
+                        # else:
                         #     send_msg_flag = True
-                        #     content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
+                        #     content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
 
-                    # else:
-                    #     send_msg_flag = True
-                    #     content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
-
-                    if send_msg_flag:
-                        send_error_msg(content)
+                        if send_msg_flag:
+                            send_error_msg(content)
 
                 if log_msg.startswith('请求接口异常'):
                     log_msg = log_msg.replace('请求接口异常: ', '')
