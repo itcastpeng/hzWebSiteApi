@@ -1,13 +1,8 @@
-
-import hashlib
-import time
-import random
-
 from django.http import JsonResponse
-
 from publicFunc import Response
 from hzWebSiteApi.settings import NoValidationTokenRoute
-
+from hurong import models
+import time, random, hashlib
 
 # 生产随机字符串
 def randon_str():
@@ -64,7 +59,15 @@ def is_token(table_obj):
             t = request.GET.get('t')
 
             if t == "phone" or t == 'ppxhs':
-
+                # if t == 'ppxhs':
+                #     models.AskLittleRedBook.objects.create(
+                #         request_url='',
+                #         get_request_parameter=request.GET,
+                #         post_request_parameter=request.POST,
+                #         response_data='',
+                #         request_type=1,
+                #         status=2,
+                #     )
                 return func(request, *args, **kwargs)
 
             # 不需要验证token的路由直接跳过
