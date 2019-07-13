@@ -60,7 +60,8 @@ def is_token(table_obj):
 
             if t == "phone" or t == 'ppxhs':
                 if t == 'ppxhs':
-                    if 'get_coverage_quantity' not in request.path:
+                    if 'get_coverage_quantity' not in request.path and \
+                        'xiaohongshuxiala/detail' not in request.path:
                         request_type = 1
                         if request.method == 'POST': # 请求方式
                             request_type = 2

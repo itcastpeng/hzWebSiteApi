@@ -332,8 +332,8 @@ def xiaohongshu_phone_monitor():
 
 
     if len(err_phone) > 0:
-            content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
-            send_error_msg(content) # 发送异常
+        content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
+        send_error_msg(content) # 发送异常
 
 
 
