@@ -345,11 +345,17 @@ def comment_management(request, oper_type):
                     phone_name = ''
                     if obj.comment.xhs_user.phone_id.name:
                         phone_name = obj.comment.xhs_user.phone_id.name
+
+                    try:
+                        comment_response = base64.b64decode(obj.comment_response)
+                    except Exception:
+                        comment_response = obj.comment_response
+
                     ret_data.append({
                         'phone_name': phone_name,
                         'xhs_user_name': obj.comment.xhs_user.name,
                         'comment_id': obj.comment_id,
-                        'comment_response': obj.comment_response,
+                        'comment_response': comment_response,
                         'comment_completion_time': comment_completion_time,
                         'create_datetime':obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     })
