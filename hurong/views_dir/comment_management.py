@@ -223,9 +223,9 @@ def comment_management(request, oper_type):
                     obj = objs[0]
 
                     # try:
-                    comment_response = base64.b64decode(obj.comment_response)
+                    # comment_response = base64.b64decode(obj.comment_response)
                     # except Exception :
-                    #     comment_response = obj.comment_response
+                    comment_response = obj.comment_response
 
                     ret_data = {
                         'comments_content': obj.comment.comments_content,
@@ -233,7 +233,8 @@ def comment_management(request, oper_type):
                         'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
-                        'comment_response': json.dumps({"content": comment_response}),
+                        'comment_response': comment_response,
+                        # 'comment_response': json.dumps({"content": comment_response}),
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
 
                     }
@@ -350,10 +351,10 @@ def comment_management(request, oper_type):
                     if obj.comment.xhs_user.phone_id.name:
                         phone_name = obj.comment.xhs_user.phone_id.name
 
-                    try:
-                        comment_response = base64.b64decode(obj.comment_response)
-                    except Exception:
-                        comment_response = obj.comment_response
+                    # try:
+                    #     comment_response = base64.b64decode(obj.comment_response)
+                    # except Exception:
+                    comment_response = obj.comment_response
 
                     ret_data.append({
                         'phone_name': phone_name,
