@@ -94,9 +94,13 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
                 response.data = obj.id
 
-                models.AskLittleRedBook.objects.filter(
-                    status=2
-                ).order_by('-create_datetime')
+                # models.AskLittleRedBook.objects.filter(  # 更新日志
+                #     status=2
+                # ).order_by('-create_datetime').update(
+                #     request_url='comment_management/reply_comment',
+                #     response_data=response,
+                #     request_type=2,
+                # )
 
             else:
                 response.code = 301
