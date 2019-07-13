@@ -1,4 +1,4 @@
-
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 from hurong import models
 import re, random, requests
 
@@ -89,7 +89,11 @@ def requests_log(url, request_parameters, response_content):
         'response_content': response_content # 响应数据
     })
 
-
-
-
+def send_error_msg(content, send_type=None):
+    obj = WorkWeixinApi()
+    if send_type in [1, '1']:
+        obj.message_send('1539939991515', content)  # 鹏
+    else:
+        obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
+        obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
 

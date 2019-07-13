@@ -19,7 +19,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
 import django, re, json, redis
 django.setup()
 from openpyxl import Workbook
-from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
+from publicFunc.public import send_error_msg
 from hurong import models
 from django.db.models.aggregates import Count
 from django.db.models import Q
@@ -325,19 +325,16 @@ def xiaohongshu_phone_monitor():
         # 如果5分钟之内没有提交日志，说明机器异常了
         if not obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date):
             obj.status = 2
+            err_phone.append(obj.name)
         else:
             obj.status = 1
         obj.save()
-            # err_phone.append(obj.name)
 
 
-    # if len(err_phone) > 0:
-    #         obj = WorkWeixinApi()
-    #         print("err_phone -->", err_phone)
-    #         content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
-    #         # obj.message_send('WorkWeixinApi', content)          # 张聪
-    #         obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
-            # obj.message_send('1534764500636', content)      # 贺昂
+    if len(err_phone) > 0:
+            content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
+            send_error_msg(content) # 发送异常
+
 
 
 # 手机号同步
@@ -404,11 +401,8 @@ def xiaohongshu_userprofile_register_monitor():
     from hurong import models
     objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
     if objs:
-        obj = WorkWeixinApi()
         content = """{} \n小红书有新的账号需要注册，请及时处理""".format(datetime.datetime.today())
-        # obj.message_send('ZhangCong', content)          # 张聪
-        # obj.message_send('1534764500636', content)      # 贺昂
-        obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
+        send_error_msg(content)
 
 
 # 小红书未发布笔记监控,监控有新的笔记需要发布
@@ -421,11 +415,8 @@ def xiaohongshu_biji_monitor():
     # objs = models.XiaohongshuBiji.objects.exclude(status=2).exclude(user_id_id=5)
     objs = models.XiaohongshuBiji.objects.filter(status=3).exclude(user_id_id=5)
     if objs:
-        obj = WorkWeixinApi()
         content = """{} \n 小红书有新的笔记需要发布，请及时处理""".format(datetime.datetime.today())
-        # obj.message_send('ZhangCong', content)          # 张聪
-        # obj.message_send('1534764500636', content)      # 贺昂
-        obj.message_send('HeZhongGaoJingJianCe', content)      # 贺昂
+        send_error_msg(content)
 
 
 # 同步小红书霸屏王关键词和链接

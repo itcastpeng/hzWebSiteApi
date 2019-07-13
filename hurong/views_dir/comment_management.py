@@ -217,13 +217,19 @@ def comment_management(request, oper_type):
                 )
                 if objs:
                     obj = objs[0]
+
+                    try:
+                        comment_response = base64.b64decode(obj.comment_response)
+                    except Exception :
+                        comment_response = obj.comment_response
+
                     ret_data = {
                         'comments_content': obj.comment.comments_content,
                         'nick_name': obj.comment.nick_name,
                         'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
-                        'comment_response': obj.comment_response,
+                        'comment_response': comment_response,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
 
                     }

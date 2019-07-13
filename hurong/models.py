@@ -416,9 +416,30 @@ class PhoneRequestsBackgroundRecords(models.Model):
     response_data = models.TextField(verbose_name='返回数据')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 小红书请求 和 请求小红书
+class AskLittleRedBook(models.Model):
+    request_url = models.CharField(verbose_name='请求链接', max_length=512)
+    get_request_parameter = models.TextField(verbose_name='GET请求参数', null=True)
+    post_request_parameter = models.TextField(verbose_name='POST请求参数', null=True)
+    response_data = models.TextField(verbose_name='返回数据', null=True)
+    request_type_choices = (
+        (1, 'GET'),
+        (2, 'POST')
+    )
+    request_type = models.SmallIntegerField(verbose_name='请求方式', choices=request_type_choices, default=1)
+    status_choices = (
+        (1, '后台请求小红书'),
+        (2, '小红书请求后台'),
+    )
+    status = models.SmallIntegerField(verbose_name='请求类型', choices=status_choices, default=1)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-# 查询是否关联
-# 关联  biji_url 文章截图 返回 笔记ID
 
-# 创建评论 传递 笔记ID
+
+
+
+
+
+
+
