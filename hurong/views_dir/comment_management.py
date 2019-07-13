@@ -6,8 +6,6 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask
 from publicFunc.public import update_xhs_admin_response
-from publicFunc.public import send_error_msg
-from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 import json, requests, base64, time, os, datetime
 
 
@@ -219,7 +217,7 @@ def comment_management(request, oper_type):
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False
-                )
+                ).order_by('-create_datetime')
                 if objs:
                     obj = objs[0]
 
