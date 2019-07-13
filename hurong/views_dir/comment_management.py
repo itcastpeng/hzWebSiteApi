@@ -6,6 +6,8 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask
 from publicFunc.public import update_xhs_admin_response
+from publicFunc.public import send_error_msg
+from publicFunc.weixin.workWeixin.workWeixinApi import WorkWeixinApi
 import json, requests, base64, time, os, datetime
 
 
@@ -370,6 +372,19 @@ def comment_management(request, oper_type):
                     'ret_data': ret_data,
                     'count': count
                 }
+
+        # 测试发送告警消息
+        elif oper_type == 'test':
+            content = '测试发送告警'
+            send_error_msg(content)
+            send_error_msg(content, 1)
+            obj = WorkWeixinApi()
+            obj.message_send('1539939991515', content)
+            obj.message_send('HeZhongGongSiJianKong', content)
+            obj.message_send('HeZhongGaoJingJianCe', content)
+
+            response.code = 200
+            response.msg = '发送成功'
 
         else:
             response.code = 402
