@@ -375,7 +375,7 @@ def comment_management(request, oper_type):
 
         # 测试发送告警消息
         elif oper_type == 'test':
-            content = '测试发送告警'
+            content = '测试发送 告警'
             send_error_msg(content)
             send_error_msg(content, 1)
             obj = WorkWeixinApi()
