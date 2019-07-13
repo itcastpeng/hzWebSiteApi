@@ -89,6 +89,7 @@ def requests_log(url, request_parameters, response_content):
         'response_content': response_content # 响应数据
     })
 
+# 发送告警信息
 def send_error_msg(content, send_type=None):
     obj = WorkWeixinApi()
     if send_type in [1, '1']:
@@ -96,4 +97,16 @@ def send_error_msg(content, send_type=None):
     else:
         obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
         obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
+
+# 更新 小红书后台 请求 该后台 返回值
+def update_xhs_admin_response(request, response):
+    method = 1
+    if request.method == 'POST':
+        method = 2
+    models.AskLittleRedBook.objects.filter(  # 更新日志
+        status=method,  # POST请求
+        request_url=request.path,
+    ).order_by('-create_datetime').update(
+        response_data=response.__dict__,
+    )
 

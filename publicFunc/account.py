@@ -59,15 +59,18 @@ def is_token(table_obj):
             t = request.GET.get('t')
 
             if t == "phone" or t == 'ppxhs':
-                # if t == 'ppxhs':
-                    # models.AskLittleRedBook.objects.create(
-                    #     request_url='',
-                    #     get_request_parameter=request.GET,
-                    #     post_request_parameter=request.POST,
-                    #     response_data='',
-                    #     request_type=1,
-                    #     status=2,
-                    # )
+                if t == 'ppxhs':
+                    request_type = 1
+                    if request.method == 'POST': # 请求方式
+                        request_type = 2
+                    models.AskLittleRedBook.objects.create(
+                        request_url=request.path,
+                        get_request_parameter=dict(request.GET),
+                        post_request_parameter=dict(request.POST),
+                        response_data='',
+                        request_type=request_type,
+                        status=2,
+                    )
                 return func(request, *args, **kwargs)
 
             # 不需要验证token的路由直接跳过
