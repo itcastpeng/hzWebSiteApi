@@ -239,11 +239,12 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     log_msg = log_msg.split('返回数据->')
                     request_url = log_msg[0].split('api_url->')[1]
                     response_data = log_msg[1]
-                    models.PhoneRequestsBackgroundRecords.objects.create(
+                    obj = models.PhoneRequestsBackgroundRecords.objects.create(
                         request_url=request_url,
                         response_data=response_data
                     )
-
+                    content = '{}\n 设备请求接口 非200 告警, \n 表名:PhoneRequestsBackgroundRecords, \n 报错日志ID：{}'.format(now_date_time,obj.id)
+                    send_error_msg(content, 1)
                     last_there_days = (now_date_time - datetime.timedelta(days=1))
                     models.PhoneRequestsBackgroundRecords.objects.filter(
                         create_datetime__gt=last_there_days
