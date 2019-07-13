@@ -5,6 +5,7 @@ from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask
+from publicFunc.public import update_xhs_admin_response
 import json, requests, base64, time, os, datetime
 
 
@@ -94,13 +95,7 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
                 response.data = obj.id
 
-                # models.AskLittleRedBook.objects.filter(  # 更新日志
-                #     status=2
-                # ).order_by('-create_datetime').update(
-                #     request_url='comment_management/reply_comment',
-                #     response_data=response,
-                #     request_type=2,
-                # )
+                update_xhs_admin_response(request, response)  # 更新小红书 请求接口返回值
 
             else:
                 response.code = 301
@@ -363,6 +358,7 @@ def comment_management(request, oper_type):
                     ret_data.append({
                         'phone_name': phone_name,
                         'xhs_user_name': obj.comment.xhs_user.name,
+                        'comments_content': obj.comment.comments_content,
                         'comment_id': obj.comment_id,
                         'comment_response':comment_response,
                         'comment_completion_time': comment_completion_time,
