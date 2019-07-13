@@ -128,15 +128,15 @@ def asynchronous_transfer_data(request):
     try:
         if transfer_type in [1, '1']:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
-            ret = requests.post(url, data=request.POST)
+            ret = requests.post(url, data=dict(request.POST))
 
         elif transfer_type  in [3, '3']:
             url =  'https://www.ppxhs.com/api/v1/sync/sync-read-num'
-            ret = requests.post(url, data=request.POST)
+            ret = requests.post(url, data=dict(request.POST))
 
         else:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
-            ret = requests.post(url, data=request.POST)
+            ret = requests.post(url, data=dict(request.POST))
 
         models.AskLittleRedBook.objects.create( # 创建日志
             request_url=url,
