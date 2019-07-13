@@ -94,6 +94,10 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
                 response.data = obj.id
 
+                models.AskLittleRedBook.objects.filter(
+                    status=2
+                ).order_by('-create_datetime')
+
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
@@ -218,10 +222,10 @@ def comment_management(request, oper_type):
                 if objs:
                     obj = objs[0]
 
-                    try:
-                        comment_response = base64.b64decode(obj.comment_response)
-                    except Exception :
-                        comment_response = obj.comment_response
+                    # try:
+                    comment_response = base64.b64decode(obj.comment_response)
+                    # except Exception :
+                    #     comment_response = obj.comment_response
 
                     ret_data = {
                         'comments_content': obj.comment.comments_content,
@@ -229,7 +233,7 @@ def comment_management(request, oper_type):
                         'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
-                        'comment_response': comment_response,
+                        'comment_response': json.dumps({"content": comment_response}),
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
 
                     }
@@ -345,11 +349,17 @@ def comment_management(request, oper_type):
                     phone_name = ''
                     if obj.comment.xhs_user.phone_id.name:
                         phone_name = obj.comment.xhs_user.phone_id.name
+
+                    try:
+                        comment_response = base64.b64decode(obj.comment_response)
+                    except Exception:
+                        comment_response = obj.comment_response
+
                     ret_data.append({
                         'phone_name': phone_name,
                         'xhs_user_name': obj.comment.xhs_user.name,
                         'comment_id': obj.comment_id,
-                        'comment_response': obj.comment_response,
+                        'comment_response': comment_response,
                         'comment_completion_time': comment_completion_time,
                         'create_datetime':obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     })

@@ -507,6 +507,7 @@ def get_traffic_information():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/get_traffic_information'
     requests.get(url)
 
+# 给小红书后台传递数据
 @app.task
 def asynchronous_transfer_data(data):
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/asynchronous_transfer_data'

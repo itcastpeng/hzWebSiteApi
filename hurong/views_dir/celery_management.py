@@ -117,23 +117,32 @@ def get_traffic_information(request):
     return HttpResponse('')
 
 
-# 异步传送小红书后台 手机抓取的评论
+# 异步传送小红书后台数据
 def asynchronous_transfer_data(request):
-    transfer_type = request.POST.get('transfer_type')  # 传递类型(1传递到小红书后台 2传递小红书评论成功)
+    """
+    transfer_type: 传递类型(1传递到小红书后台 2传递小红书评论成功 3更改笔记阅读量)
+    :param request:
+    :return:
+    """
+    transfer_type = request.POST.get('transfer_type')
     try:
         if transfer_type in [1, '1']:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
-            ret = requests.post(url, data=request.POST)
+            ret = requests.post(url, data=dict(request.POST))
+
+        elif transfer_type  in [3, '3']:
+            url =  'https://www.ppxhs.com/api/v1/sync/sync-read-num'
+            ret = requests.post(url, data=dict(request.POST))
 
         else:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
-            ret = requests.post(url, data=request.POST)
+            ret = requests.post(url, data=dict(request.POST))
 
         models.AskLittleRedBook.objects.create( # 创建日志
             request_url=url,
             get_request_parameter='',
             post_request_parameter=request.POST,
-            response_data=ret.text,
+            response_data=ret.json(),
             request_type=2,
             status=1,
         )

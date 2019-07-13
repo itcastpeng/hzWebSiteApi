@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding
+from hz_website_api_celery.tasks import asynchronous_transfer_data
 import requests, datetime, json, re
 
 
@@ -214,7 +215,10 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 ).update(
                     reading_num=reading_num
                 )
-
+                form_data['num'] = reading_num
+                form_data['transfer_type'] = 3
+                form_data['id'] = o_id
+                asynchronous_transfer_data.delay(form_data) # 传递到小红书后台
                 response.code = 200
                 response.msg = '阅读量更新完成'
 
