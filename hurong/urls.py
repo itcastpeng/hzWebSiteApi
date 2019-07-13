@@ -92,4 +92,7 @@ urlpatterns = [
     # 评论管理
     url(r'^comment_management/(?P<oper_type>\w+)', comment_management.comment_management),
 
+    # 小红书后台请求接口 and 接口请求小红书 日志
+    # url(r'^comment_management/(?P<oper_type>\w+)', comment_management.comment_management),
+
 ]
