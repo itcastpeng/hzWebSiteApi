@@ -373,18 +373,6 @@ def comment_management(request, oper_type):
                     'count': count
                 }
 
-        # 测试发送告警消息
-        elif oper_type == 'test':
-            content = '测试发送 告警'
-            send_error_msg(content)
-            send_error_msg(content, 1)
-            obj = WorkWeixinApi()
-            obj.message_send('1539939991515', content)
-            obj.message_send('HeZhongGongSiJianKong', content)
-            obj.message_send('HeZhongGaoJingJianCe', content)
-
-            response.code = 200
-            response.msg = '发送成功'
 
         else:
             response.code = 402
