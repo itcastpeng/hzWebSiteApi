@@ -205,12 +205,15 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                         'keywords': obj.keywords,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
+                biji_num = 0
+                if objs:
+                    biji_num = objs[0].parent.biji_num
                 #  查询成功 返回200 状态码
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
-                    'biji_num': objs[0].parent.biji_num,
+                    'biji_num': biji_num,
                     'data_count': count,
                 }
                 response.note = {
