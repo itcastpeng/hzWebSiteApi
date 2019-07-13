@@ -203,7 +203,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     if json_data.get('runtime'):
 
                         deletionTime = (now_date_time - datetime.timedelta(minutes=10))
-                        if json_data.get('runtime'):
+                        if json_data.get('runtime') and 'unknown' not in json_data.get('runtime'):
                             runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
                             package_type = json_data.get('package_type')
