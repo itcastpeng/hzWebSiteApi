@@ -274,9 +274,8 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 )
                 flag = False
                 update_reading_date = obj.update_reading_date
-                if update_reading_date:
-                    if datetime.datetime.strptime(update_reading_date,'%Y-%m-%d') == datetime.date.today():
-                        flag = True
+                if update_reading_date and update_reading_date == datetime.date.today():
+                    flag = True
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
