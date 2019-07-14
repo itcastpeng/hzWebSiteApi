@@ -209,8 +209,8 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
         # 修改阅读量更新时间
         elif oper_type == 'update_reading_update_time':
             form_data = {
-                'imsi': request.GET.get('imsi'),
-                'iccid': request.GET.get('iccid')
+                'imsi': request.POST.get('imsi'),
+                'iccid': request.POST.get('iccid')
             }
             form_obj = IsTodayUpdateReading(form_data)
             if form_obj.is_valid():
