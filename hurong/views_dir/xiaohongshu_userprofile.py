@@ -2,7 +2,7 @@ from hurong import models
 from publicFunc import Response, account
 from publicFunc.public import requests_log
 from django.http import JsonResponse
-from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm
+from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm, IsTodayUpdateReading
 import json
 import requests
 import datetime
@@ -206,6 +206,27 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 修改阅读量更新时间
+        elif oper_type == 'update_reading_update_time':
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid')
+            }
+            form_obj = IsTodayUpdateReading(form_data)
+            if form_obj.is_valid():
+                imsi = form_obj.cleaned_data.get('imsi')
+                obj = models.XiaohongshuUserProfile.objects.get(
+                    id=imsi
+                )
+                obj.update_reading_date = datetime.date.today()
+                obj.save()
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
     else:
         # 判断是否需要更新个人信息
         if oper_type == "is_update_userinfo":
@@ -238,6 +259,34 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
+        # 查询今天是否更新阅读量
+        elif oper_type == 'check_updated_today':
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid')
+            }
+            form_obj = IsTodayUpdateReading(form_data)
+            if form_obj.is_valid():
+                imsi = form_obj.cleaned_data.get('imsi')
+                obj = models.XiaohongshuUserProfile.objects.get(
+                    id=imsi
+                )
+                flag = False
+                update_reading_date = obj.update_reading_date
+                if update_reading_date:
+                    if datetime.datetime.strptime(update_reading_date,'%Y-%m-%d') == datetime.date.today():
+                        flag = True
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    "flag": flag
+                }
+
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         else:
             response.code = 402

@@ -190,7 +190,7 @@ class XiaohongshuUserProfile(models.Model):
     screenshot_time = models.SmallIntegerField(verbose_name="私信截图时间(单位:分钟)", default=20) # 早上8点 - 晚10点
     late_screenshot_time = models.SmallIntegerField(verbose_name="私信截图时间(单位:分钟)", default=120) # 晚上10点 - 早8点
     package_version = models.CharField(max_length=64, verbose_name='安装包版本号', null=True)
-
+    update_reading_date = models.DateField(verbose_name='阅读量更新时间', null=True)
 
 # 小红书账号注册
 class XiaohongshuUserProfileRegister(models.Model):

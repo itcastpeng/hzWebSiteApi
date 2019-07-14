@@ -1,5 +1,5 @@
 from django import forms
-
+from hurong import models
 # from hurong import models
 # from publicFunc import account
 # import re
@@ -113,5 +113,44 @@ class RegistreForm(forms.Form):
             'invalid': "类型错误"
         }
     )
+
+
+# 判断今天是否更新阅读量
+class IsTodayUpdateReading(forms.Form):
+    imsi = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "SIM卡ID不能为空"
+        }
+    )
+
+    iccid = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "设备IMSI号不能为空"
+        }
+    )
+
+    def clean_imsi(self):
+        imsi = self.data.get('imsi')
+        iccid = self.data.get('iccid')
+
+        objs = models.XiaohongshuPhone.objects.filter(imsi=imsi, iccid=iccid)
+        if objs:
+            obj = objs[0]
+            return obj.xiaohongshusserprofile_set.all()[0].id
+        else:
+            self.add_error('imsi', '设备不存在')
+
+
+
+
+
+
+
+
+
+
+
 
 
