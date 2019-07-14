@@ -138,7 +138,7 @@ class IsTodayUpdateReading(forms.Form):
         objs = models.XiaohongshuPhone.objects.filter(imsi=imsi, iccid=iccid)
         if objs:
             obj = objs[0]
-            return obj.xiaohongshusserprofile_set.all()[0].id
+            return obj.xiaohongshuuserprofile_set.all()[0].id
         else:
             self.add_error('imsi', '设备不存在')
 
