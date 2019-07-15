@@ -25,6 +25,8 @@ def ask_little_red_book(request):
                 'id': '',
                 'comments_status': '',
                 'xhs_user_id': '',
+                'status': '',
+                'request_url': '__contains',
             }
 
             q = conditionCom(request, field_dict)
@@ -66,7 +68,8 @@ def ask_little_red_book(request):
             response.msg = '查询成功'
             response.data = {
                 'ret_data': ret_data,
-                'count': count
+                'count': count,
+                'status_choices': [{'id': i[0], 'name': i[1]} for i in models.AskLittleRedBook.status_choices]
             }
 
         else:
