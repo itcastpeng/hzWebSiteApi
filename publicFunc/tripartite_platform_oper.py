@@ -327,7 +327,6 @@ class tripartite_platform_oper():
         ret = requests.post(url, data=data)
         print('ret.text------> ', ret.text)
 
-
     # 获取体验小程序二维码
     def xcx_get_experience_qr_code(self, token, path=None):
         url = 'https://api.weixin.qq.com/wxa/get_qrcode?access_token={}'.format(token)
@@ -350,3 +349,28 @@ class tripartite_platform_oper():
             'errmsg':errmsg,
         }
         return data
+
+    # 获取草稿箱内的所有临时代码草稿
+    def get_all_temporary_code_drafts(self):
+        url = 'https://api.weixin.qq.com/wxa/gettemplatedraftlist?access_token={}'.format(
+            self.token
+        )
+
+        ret = requests.get(url)
+        print('获取草稿箱内的所有临时代码草稿------------> ', ret.json())
+
+
+
+    # 获取代码模版库中的所有小程序代码模版
+
+    # 将草稿箱的草稿选为小程序代码模版
+
+    # 删除指定小程序代码模版
+
+
+
+
+
+
+
+

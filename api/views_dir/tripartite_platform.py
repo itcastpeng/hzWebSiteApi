@@ -55,8 +55,7 @@ def tripartite_platform_oper(request, oper_type):
             models.TripartitePlatform.objects.filter(
                 appid=xml_tree.find('AppId').text
             ).update(
-                component_verify_ticket=ComponentVerifyTicket,
-                linshi=decryp_xml
+                component_verify_ticket=ComponentVerifyTicket
             )
 
 
@@ -125,6 +124,14 @@ def tripartite_platform_oper(request, oper_type):
         elif oper_type == 'upload_applet_code':
             pass
 
+        # 绑定微信用户为小程序体验者
+        elif oper_type == '':
+            wechatid = request.POST.get('wechatid') # 微信号
+
+        # 解除绑定小程序体验者
+        elif oper_type == '':
+            pass
+
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
@@ -172,6 +179,7 @@ def tripartite_platform_oper(request, oper_type):
             response.msg = '获取信息完成'
 
 
+
         # ============================小程序====================================
         # 获取小程序体验二维码
         elif oper_type == 'get_experience_qr_code':
@@ -194,6 +202,20 @@ def tripartite_platform_oper(request, oper_type):
 
             else:
                 response.msg = response_data.get('errmsg')
+
+        # 获取小程序体验者列表
+        elif oper_type == '':
+            pass
+
+        # 查询提交审核的小程序代码
+        elif oper_type == '':
+            pass
+
+        # 获取草稿箱内的所有临时代码草稿
+        elif oper_type == 'get_all_temporary_code_drafts':
+            data = CredentialExpired(appid, authorization_type)
+            tripartite_platform_objs.get_all_temporary_code_drafts()
+
 
         else:
             response.code = 402
