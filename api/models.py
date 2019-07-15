@@ -218,9 +218,19 @@ class ClientApplet(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 小程序代码审核上线(代小程序上线)
+class GenerationAppletOnline(models.Model):
+    small_program = models.ForeignKey('ClientApplet', verbose_name='对应小程序')
+    auditid = models.CharField(verbose_name='审核编号', max_length=64)
 
-
-
+    status_choices = (
+        (1, '已提交审核'),
+        (2, '审核成功'),
+        (3, '审核失败'),
+    )
+    status = models.SmallIntegerField(verbose_name='审核状态', choices=status_choices, default=1)
+    reason = models.CharField(verbose_name='失败原因', max_length=512, null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
