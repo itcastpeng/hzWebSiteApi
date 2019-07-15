@@ -3,7 +3,9 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 import requests, datetime, json, time
 
-
+encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
+encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
+encoding_appid = 'wx1f63785f9acaab9c'
 
 # 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
 def QueryWhetherCallingCredentialExpired(appid, auth_type):
@@ -266,7 +268,7 @@ class tripartite_platform_oper():
     #===================================================小程序函数============================
 
     # 上传小程序代码
-    def xcx_update_code(self, appid, token):
+    def xcx_update_code(self, data):
         # ext_json 格式
 
         """
@@ -293,6 +295,12 @@ class tripartite_platform_oper():
 
         """
 
+        user_version = data.get('user_version')
+        user_desc = data.get('user_desc')
+        appid = data.get('appid')
+        template_id = data.get('template_id')
+        token = data.get('token')
+
         ext_json = {
                 'extAppid':appid,   #授权方APPID
                 'ext':{           # 自定义字段 可在小程序调用
@@ -317,12 +325,12 @@ class tripartite_platform_oper():
 
         data = {
             # 代码库中的代码模板ID
-            "template_id": '',
+            "template_id": template_id,
             "ext_json": ext_json,
             # 代码版本号(自定义)
-            "user_version": '',
+            "user_version": user_version,
             # 代码描述(自定义)
-            "user_desc": '',
+            "user_desc": user_desc,
         }
         ret = requests.post(url, data=data)
         print('ret.text------> ', ret.text)
@@ -351,21 +359,34 @@ class tripartite_platform_oper():
         return data
 
     # 获取草稿箱内的所有临时代码草稿
-    def get_all_temporary_code_drafts(self):
+    def xcx_get_all_temporary_code_drafts(self):
         url = 'https://api.weixin.qq.com/wxa/gettemplatedraftlist?access_token={}'.format(
             self.token
         )
 
         ret = requests.get(url)
         print('获取草稿箱内的所有临时代码草稿------------> ', ret.json())
-
-
+        return ret.json()
 
     # 获取代码模版库中的所有小程序代码模版
+    def xcx_all_small_program_code_templates(self):
+        url = 'https://api.weixin.qq.com/wxa/gettemplatelist?access_token={}'.format(
+            self.token
+        )
+        ret = requests.get(url)
+        print('---获取代码模版库中的所有小程序代码模版-> ', ret.json())
+        return ret.json()
 
-    # 将草稿箱的草稿选为小程序代码模版
-
-    # 删除指定小程序代码模版
+    # 查询某个指定版本的审核状态
+    def query_specified_version_code_audit(self, token, auditid):
+        url = 'https://api.weixin.qq.com/wxa/get_auditstatus?access_token={}'.format(
+            token
+        )
+        data = {
+            'auditid': auditid
+        }
+        ret = requests.post(url, data=data)
+        print('-查询某个指定版本的审核状态------> ', ret.json())
 
 
 

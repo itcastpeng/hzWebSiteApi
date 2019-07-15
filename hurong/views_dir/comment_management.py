@@ -346,9 +346,13 @@ def comment_management(request, oper_type):
                     if comment_completion_time:
                         comment_completion_time = obj.comment_completion_time.strftime('%Y-%m-%d %H:%M:%S')
 
+                    phone_id = ''
                     phone_name = ''
-                    if obj.comment.xhs_user.phone_id.name:
+                    phone_number = ''
+                    if obj.comment.xhs_user.phone_id:
+                        phone_id = obj.comment.xhs_user.phone_id_id
                         phone_name = obj.comment.xhs_user.phone_id.name
+                        phone_number = obj.comment.xhs_user.phone_id.phone_num
 
                     try:
                         comment_response =  str(base64.b64decode(obj.comment_response), 'utf8')
@@ -356,7 +360,9 @@ def comment_management(request, oper_type):
                         comment_response = obj.comment_response
 
                     ret_data.append({
+                        'phone_id': phone_id,
                         'phone_name': phone_name,
+                        'phone_number': phone_number,
                         'xhs_user_name': obj.comment.xhs_user.name,
                         'nick_name': obj.comment.nick_name,
                         'head_portrait': obj.comment.head_portrait,

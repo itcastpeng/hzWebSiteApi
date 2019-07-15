@@ -4,7 +4,8 @@ from publicFunc import account
 from django.http import JsonResponse, HttpResponse
 from api.forms.tripartite_platform import AuthorizationForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
-    QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo
+    QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, encodingAESKey, \
+    encoding_token, encoding_appid
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 from urllib.parse import unquote, quote
 from publicFunc.public import send_error_msg
@@ -95,10 +96,6 @@ def tripartite_platform_oper(request, oper_type):
 
 
         # ============================小程序======================================
-        # 上传小程序代码
-        elif oper_type == 'upload_applet_code':
-            pass
-
         # 绑定微信用户为小程序体验者
         elif oper_type == '':
             wechatid = request.POST.get('wechatid') # 微信号
@@ -110,8 +107,8 @@ def tripartite_platform_oper(request, oper_type):
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
-
-
+        credential_expired_data = CredentialExpired(appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+        authorizer_access_token = credential_expired_data.get('authorizer_access_token')
         # =============================公共=================================
         # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
         if oper_type == 'authorize_callback':
@@ -140,13 +137,12 @@ def tripartite_platform_oper(request, oper_type):
                 auth_code=auth_code,
                 auth_code_expires_in=int(time.time()) + int(expires_in)
             )
-            CredentialExpired(appid, authorization_type)    # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+
             tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
             objs.update(is_authorization=1) # 授权完成
 
         # 获取授权方基本信息(手动触发)
         elif oper_type == 'get_authorized_party_info':
-            CredentialExpired(appid, authorization_type)
             tripartite_platform_objs.get_account_information(
                 authorization_type, appid
             )
@@ -156,16 +152,28 @@ def tripartite_platform_oper(request, oper_type):
 
 
         # ============================小程序====================================
+        # 上传小程序代码
+        elif oper_type == 'upload_applet_code':
+            template_id = request.GET.get('template_id')    # 代码模板ID
+            user_version = request.GET.get('user_version')  # 代码版本号
+            user_desc = request.GET.get('user_desc')        # 代码描述
+            data = {
+                'appid': appid,
+                'token': authorizer_access_token,
+                'template_id': template_id,
+                'user_version': user_version,
+                'user_desc': user_desc
+            }
+            tripartite_platform_objs.xcx_update_code(data)
+
         # 获取小程序体验二维码
         elif oper_type == 'get_experience_qr_code':
             # 判断调用凭证是否过期
-            data = CredentialExpired(appid, authorization_type)
-            authorizer_access_token = data.get('authorizer_access_token')
+            print('--')
             # tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
         # 获取代码模板库中的所有小程序代码模板
         elif oper_type == 'get_code':
-            data = CredentialExpired(appid, authorization_type)
             response_data = tripartite_platform_objs.xcx_get_code_template()
 
             response.code = 301
@@ -178,6 +186,7 @@ def tripartite_platform_oper(request, oper_type):
             else:
                 response.msg = response_data.get('errmsg')
 
+
         # 获取小程序体验者列表
         elif oper_type == '':
             pass
@@ -188,9 +197,17 @@ def tripartite_platform_oper(request, oper_type):
 
         # 获取草稿箱内的所有临时代码草稿
         elif oper_type == 'get_all_temporary_code_drafts':
-            data = CredentialExpired(appid, authorization_type)
-            tripartite_platform_objs.get_all_temporary_code_drafts()
+            data = tripartite_platform_objs.xcx_get_all_temporary_code_drafts()
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = data
 
+        # 获取代码模版库中的所有小程序代码模版
+        elif oper_type =='all_small_program_code_templates':
+            data = tripartite_platform_objs.xcx_all_small_program_code_templates()
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = data
 
         else:
             response.code = 402
@@ -218,8 +235,7 @@ def tongzhi(request):
         )
         if objs:
             objs.update(linshi=postdata)
-            wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123',
-                'wx1f63785f9acaab9c')
+            wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
             ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
             decryp_xml_tree = ET.fromstring(decryp_xml)
             ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
