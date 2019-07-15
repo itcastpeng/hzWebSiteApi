@@ -58,6 +58,7 @@ urlpatterns = [
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
 
     # ------------------ 微信三方平台管理 ------------------
-    url(r'^tripartite_platform/(?P<oper_type>\w+)$', tripartite_platform.tripartite_platform_oper),  # 获取页面数据
+    url(r'^tripartite_platform/(?P<oper_type>\w+)$', tripartite_platform.tripartite_platform_oper),
+    url(r'^tripartite_platform$', tripartite_platform.tongzhi),  # 微信通知
 
 ]
