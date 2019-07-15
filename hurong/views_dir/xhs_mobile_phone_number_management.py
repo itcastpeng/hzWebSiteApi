@@ -91,6 +91,11 @@ def xhs_mobile_phone_number_management(request, oper_type):
                         phone_id = obj.phone_id
                         phone_num = obj.phone_num
 
+                    try:
+                        expire_date = obj.expire_date.strftime('%Y-%m-%d')
+                    except Exception :
+                        expire_date = obj.expire_date
+
                     ret_data.append({
                         'id': obj.id,
                         'phone_id': phone_id,
@@ -98,7 +103,7 @@ def xhs_mobile_phone_number_management(request, oper_type):
                         'status_id': obj.status,
                         'status': obj.get_status_display(),
                         'remark': obj.remark,
-                        'expire_date': obj.expire_date.strftime('%Y-%m-%d'),
+                        'expire_date': expire_date,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
                 response.code = 200
