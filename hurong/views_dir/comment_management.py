@@ -358,6 +358,8 @@ def comment_management(request, oper_type):
                     ret_data.append({
                         'phone_name': phone_name,
                         'xhs_user_name': obj.comment.xhs_user.name,
+                        'nick_name': obj.comment.nick_name,
+                        'head_portrait': obj.comment.head_portrait,
                         'comments_content': obj.comment.comments_content,
                         'comment_id': obj.comment_id,
                         'comment_response':comment_response,
