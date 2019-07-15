@@ -63,7 +63,8 @@ def get_traffic_information(request):
         q.add(Q(id=id), Q.AND)
         objs = models.MobileTrafficInformation.objects.filter(
             q,
-            select_number__isnull=False
+            select_number__isnull=False,
+            select_datetime__lt=datetime.datetime.today()
         )
         for obj in objs:
             ret_json = get_phone_info(obj.select_number)
@@ -116,6 +117,10 @@ def get_traffic_information(request):
                                     prepaid_phone_time=i.get('payTime'),
                                     equipment_id=obj.id,
                                 )
+
+            obj.select_datetime = datetime.datetime.today()
+            obj.save()
+
     except Exception as e:
         content = '{} \n 查询 流量信息报错\n错误:{}'.format(datetime.datetime.today(), e)
         send_error_msg(content, 1)
