@@ -27,6 +27,7 @@ def xhs_account_management(request, oper_type):
                     'name': '__contains',
                     'xiaohongshu_id': '__contains',
                     'home_url': '__contains',
+                    'xhs_version': '__contains',
                     'phone_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
