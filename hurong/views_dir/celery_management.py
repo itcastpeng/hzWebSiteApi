@@ -68,7 +68,7 @@ def get_traffic_information(request):
 
             else:
                 cardbaldata = ret_json.get('cardbaldata')
-                cardimsi = ret_json.get('cardimsi')
+                cardimsi = ret_json.get('cardimsi').strip()
                 cardstatus = ret_json.get('cardstatus')
 
                 phone_objs = models.XiaohongshuPhone.objects.filter(imsi=cardimsi)
@@ -152,6 +152,5 @@ def asynchronous_transfer_data(request):
         send_error_msg(content, 1)
 
     return HttpResponse('')
-
 
 

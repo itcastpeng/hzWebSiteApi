@@ -40,6 +40,11 @@ def messages_events_oper(request, oper_type, appid):
             FailTime = collection.getElementsByTagName("FailTime")[0].childNodes[0].data
             ScreenShot = collection.getElementsByTagName("ScreenShot")[0].childNodes[0].data
 
+            if Event == 'weapp_audit_success': # 小程序审核通知
+                pass
+
+            else:
+                pass
 
         else:
             pass

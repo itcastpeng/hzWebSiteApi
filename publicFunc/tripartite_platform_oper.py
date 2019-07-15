@@ -388,7 +388,13 @@ class tripartite_platform_oper():
         ret = requests.post(url, data=data)
         print('-查询某个指定版本的审核状态------> ', ret.json())
 
-
+    # 查询最新一次提交的审核状态
+    def check_status_most_recent_submission(self, token):
+        url = 'https://api.weixin.qq.com/wxa/get_latest_auditstatus?access_token={}'.format(
+            token
+        )
+        ret = requests.get(url)
+        print('查询最新一次提交的审核状态------> ', ret.json())
 
 
 
