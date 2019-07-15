@@ -319,6 +319,62 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
 
+        # 查询回复私信(胡蓉后台)
+        elif oper_type == 'get_reply_info':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                user_id = request.GET.get('user_id')
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'user_id_id': '',
+                    'user_id__name': '__contains',
+                    'name': '__contains',
+                    'msg': '__contains',
+                    'status': '__contains',
+                }
+
+                q = conditionCom(request, field_dict)
+
+                objs = models.XiaohongshuDirectMessagesReply.objects.select_related('user_id').filter(q).order_by(order)
+                count = objs.count()
+
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+
+                    update_datetime = obj.update_datetime
+                    if update_datetime:
+                        update_datetime = update_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+                    ret_data.append({
+                        'user_id': obj.user_id_id,
+                        'user_name': obj.user_id.name,
+                        'name': obj.name,
+                        'msg': obj.msg,
+                        'status_id': obj.status,
+                        'status': obj.get_status_display(),
+                        'update_datetime': update_datetime,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count,
+                    'status_choices': [{'id': i[0], 'name': i[1]} for i in models.XiaohongshuDirectMessagesReply.status_choices]
+                }
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+
         else:
             response.code = 402
             response.msg = "请求异常"
