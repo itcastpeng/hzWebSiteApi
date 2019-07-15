@@ -45,18 +45,20 @@ def tripartite_platform_oper(request, oper_type):
             postdata = request.body.decode(encoding='UTF-8')
 
             xml_tree = ET.fromstring(postdata)
+            appid = xml_tree.find('AppId').text
             Encrypt = xml_tree.find('Encrypt').text
-
-            wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123', 'wx1f63785f9acaab9c')
-            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-
-            decryp_xml_tree = ET.fromstring(decryp_xml)
-            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-            models.TripartitePlatform.objects.filter(
-                appid=xml_tree.find('AppId').text
-            ).update(
-                component_verify_ticket=ComponentVerifyTicket
+            objs = models.TripartitePlatform.objects.filter(
+                appid=appid
             )
+            if objs:
+                objs.update(linshi=postdata)
+                wx_obj = WXBizMsgCrypt('sisciiZiJCC6PuGOtFWwmDnIHMsZyX', 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123', 'wx1f63785f9acaab9c')
+                ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+                decryp_xml_tree = ET.fromstring(decryp_xml)
+                ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+                objs.update(
+                    component_verify_ticket=ComponentVerifyTicket
+                )
 
 
             return HttpResponse('success')
