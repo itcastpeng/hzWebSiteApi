@@ -304,7 +304,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     result_data = {
                         'id': obj.id,
                         'user_id': obj.user_id_id,
+                        'phone_id': obj.user_id.phone_id_id,
                         'phone_name': obj.user_id.phone_id.name,
+                        'phone_number': obj.user_id.phone_id.phone_num,
                         'user_name': obj.user_id.name,
                         'status_id': obj.status,
                         'reading_num': obj.reading_num,

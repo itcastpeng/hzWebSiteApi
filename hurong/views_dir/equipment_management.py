@@ -63,9 +63,20 @@ def equipment_management(request):
                 if obj.phone:
                     name = obj.phone.name
 
+                phone_id = ''
+                phone_number = ''
+                phone_name = ''
+                if obj.phone:
+                    phone_number = obj.phone.phone_num
+                    phone_name = obj.phone.name
+                    phone_id = obj.phone_id
+
                 ret_data.append({
                     'id': obj.id,
                     'name': name,
+                    'phone_id': phone_id,
+                    'phone_name': phone_name,
+                    'phone_number': phone_number,
                     'cardimsi': obj.cardimsi,
                     'cardstatus': obj.cardstatus,
                     'cardtype': obj.cardtype,
