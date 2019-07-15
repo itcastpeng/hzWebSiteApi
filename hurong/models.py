@@ -364,6 +364,7 @@ class MobileTrafficInformation(models.Model):
     cardstartdate = models.DateTimeField(verbose_name='卡开户时间', null=True)
     cardenddate = models.DateTimeField(verbose_name='卡到期时间', null=True)
     errmsg = models.CharField(verbose_name='错误日志', max_length=256, null=True)
+    select_datetime = models.DateTimeField(verbose_name="上次查询时间时间", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 移动设备充值记录
