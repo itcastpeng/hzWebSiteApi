@@ -3,6 +3,7 @@ from publicFunc.phone_management_platform import phone_management
 from hurong import models
 from publicFunc.public import get_traffic_information as get_phone_info, query_device_recharge_information
 from publicFunc.public import send_error_msg
+from django.db.models import Q
 import datetime, time, random, requests, json
 
 
@@ -57,7 +58,11 @@ def celery_get_phone_content(request):
 # 查询 流量信息
 def get_traffic_information(request):
     try:
+        id = request.GET.get('id')
+        q = Q()
+        q.add(Q(id=id), Q.AND)
         objs = models.MobileTrafficInformation.objects.filter(
+            q,
             select_number__isnull=False
         )
         for obj in objs:
