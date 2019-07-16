@@ -14,7 +14,6 @@ def DMS_screenshots(request, oper_type):
 
     # 截图
     if oper_type == "save_screenshots":
-        print('request.POST-request.POST-request.POST-request.POST---==========----------> ', request.POST)
         form_data = {
             'img_base64_data': request.POST.get('img_base64_data'),
             'iccid': request.POST.get('iccid'),

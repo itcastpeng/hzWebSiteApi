@@ -77,7 +77,7 @@ def xiaohongshu_check_forbidden_text(request):
                 'status_id': "状态值",
             }
         else:
-            print("forms_obj.errors -->", forms_obj.errors)
+            # print("forms_obj.errors -->", forms_obj.errors)
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
@@ -112,7 +112,7 @@ def xiaohongshu_check_forbidden_text_oper(request, oper_type, o_id):
                     'send_email_content': forms_obj.cleaned_data.get('send_email_content'),
                 }
                 send_email_list = forms_obj.cleaned_data.get('send_email_list')
-                print('create_data -->', create_data, send_email_list)
+                # print('create_data -->', create_data, send_email_list)
                 obj = models.TaskList.objects.create(**create_data)
 
                 query = []
@@ -265,7 +265,7 @@ def xiaohongshu_check_forbidden_text_oper(request, oper_type, o_id):
                 email_user_obj.save()
                 email_user = email_user_obj.email_user
                 email_pwd = email_user_obj.email_pwd
-                print(email_user, email_pwd, send_email_list)
+                # print(email_user, email_pwd, send_email_list)
                 response.data = {
                     'email_user_id': email_user_obj.id,
                     'email_user': email_user,

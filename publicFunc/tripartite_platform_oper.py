@@ -396,7 +396,60 @@ class tripartite_platform_oper():
         ret = requests.get(url)
         print('查询最新一次提交的审核状态------> ', ret.json())
 
+    # 获取小程序的第三方提交代码的页面配置
+    def get_code_page_configuration(self, token):
+        url = 'https://api.weixin.qq.com/wxa/get_page?access_token={}'.format(
+            token
+        )
+        ret = requests.get(url)
+        print('-获取小程序的第三方提交代码的页面配置--------> ', ret.text)
 
+    # 将第三方提交的代码包提交审核
+    def code_package_submitted_review(self, token):
+        url = 'https://api.weixin.qq.com/wxa/submit_audit?access_token={}'.format(
+            token
+        )
+        ret = requests.post(url)
+        print('将第三方提交的代码包提交审核---------> ', ret.text)
+
+    # 发布已通过审核的小程序
+    def publish_approved_applets(self, token):
+        url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
+            token
+        )
+
+        ret = requests.post(url)
+        print('_--------发布已通过审核的小程序------> ', ret.text)
+
+    # 获取体验者列表
+    def Get_list_experiencers(self, token):
+        url = 'https://api.weixin.qq.com/wxa/memberauth?access_token={}'.format(
+            token
+        )
+        ret = requests.post(url)
+        print('获取体验者列表-----> ', ret.text)
+
+    # 绑定微信用户为小程序体验者
+    def bind_weChat_user_small_program_experiencer(self, token, wechatid):
+        url = 'https://api.weixin.qq.com/wxa/bind_tester?access_token={}'.format(
+            token
+        )
+        data = {
+            'wechatid': wechatid
+        }
+        ret = requests.post(url, data=data)
+        print('绑定微信用户为小程序体验者----->', ret.text)
+
+    # 解除绑定小程序的体验者
+    def the_experiencer_unbound_applet(self, token, wechatid):
+        url = 'https://api.weixin.qq.com/wxa/unbind_tester?access_token={}'.format(
+            token
+        )
+        data = {
+            'wechatid': wechatid
+        }
+        ret = requests.post(url, data=data)
+        print('解除绑定小程序的体验者---------> ', ret.text)
 
 
 

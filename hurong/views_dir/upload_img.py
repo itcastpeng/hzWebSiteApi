@@ -24,7 +24,7 @@ def upload_img(request):
         extension_name = img.name.split('.')[-1]
         img_abs_name = os.path.join("statics", "imgs", timestamp) + "." + extension_name
 
-        print("img_abs_name -->", img_abs_name)
+        # print("img_abs_name -->", img_abs_name)
         with open(img_abs_name, "wb") as f:
             for chunk in img.chunks():
                 f.write(chunk)

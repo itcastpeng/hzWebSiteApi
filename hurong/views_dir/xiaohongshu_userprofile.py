@@ -135,10 +135,10 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                     data = {'imsi':imsi}
                 objs = models.XiaohongshuPhone.objects.filter(**data)
                 objs.update(phone_num=phone_num, is_debug=False)
-                print("objs --->", objs)
+                # print("objs --->", objs)
                 if objs:
                     obj = objs[0]
-                    print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
+                    # print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
                     if not obj.xiaohongshuuserprofile_set.all():
                         xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
                             name=name,
@@ -171,7 +171,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                             "mobile": phone_num,
                         }
                         ret = requests.post(api_url, data=data)
-                        print("ret.json() -->", ret.json())
+                        # print("ret.json() -->", ret.json())
                         requests_log(api_url, data, ret.json()) # 记录请求日志
                         xhs_userprofile_register_objs.update(
                             is_register=True,
@@ -255,7 +255,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                     "is_update": is_update
                 }
             else:
-                print("forms_obj.errors -->", forms_obj.errors)
+                # print("forms_obj.errors -->", forms_obj.errors)
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())

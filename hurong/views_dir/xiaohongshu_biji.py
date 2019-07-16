@@ -91,7 +91,7 @@ def xiaohongshu_biji(request):
                 'update_datetime': "更新时间",
             }
         else:
-            print("forms_obj.errors -->", forms_obj.errors)
+            # print("forms_obj.errors -->", forms_obj.errors)
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
@@ -174,7 +174,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
                 ret = requests.post(url=api_url, data=data)
-                print("ret.text -->", ret.text)
+                # print("ret.text -->", ret.text)
                 requests_log(api_url, data, ret.json()) # 记录请求日志
                 response.code = 200
                 response.msg = "提交成功"
@@ -262,7 +262,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     response.msg = "当前无任务"
 
             else:
-                print("forms_obj.errors -->", forms_obj.errors)
+                # print("forms_obj.errors -->", forms_obj.errors)
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
