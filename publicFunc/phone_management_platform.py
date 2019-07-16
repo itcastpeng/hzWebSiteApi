@@ -66,20 +66,21 @@ class phone_management():
             soup = BeautifulSoup(ret.text, 'lxml')
             content = soup.find('div', class_='tab-content')
             form_obj = content.find('form', class_='js-ajax-form').find_all('tr')
-            if len(form_obj) >= 2:
+            # if len(form_obj) >= 2:
+            #     print('form_obj---------> ', form_obj)
                 # yzm_obj = form_obj[1] # 获取最后一个验证码
-                for yzm_obj in form_obj[1: -1]:
-                    if '验证码' in yzm_obj.get_text():
-                        now = datetime.datetime.today()
-                        deletionTime = (now - datetime.timedelta(minutes=5))
-                        yzm_time = yzm_obj.find_all('td')[2].get_text()
-                        yzm_time = datetime.datetime.strptime(yzm_time, '%Y-%m-%d %H:%M:%S')
-                        if yzm_time >= deletionTime:
-                            if_yzm_text = yzm_obj.find_all('td')[1].get_text()
-                            if '验证码' in if_yzm_text:
-                                if_yzm_text = if_yzm_text.split('[From')[0]
-                                yzm = re.search('\d{6}', if_yzm_text)
-                                verification_code = yzm.group()
+            for yzm_obj in form_obj:
+                if '验证码' in yzm_obj.get_text():
+                    now = datetime.datetime.today()
+                    deletionTime = (now - datetime.timedelta(minutes=5))
+                    yzm_time = yzm_obj.find_all('td')[2].get_text()
+                    yzm_time = datetime.datetime.strptime(yzm_time, '%Y-%m-%d %H:%M:%S')
+                    if yzm_time >= deletionTime:
+                        if_yzm_text = yzm_obj.find_all('td')[1].get_text()
+                        if '验证码' in if_yzm_text:
+                            if_yzm_text = if_yzm_text.split('[From')[0]
+                            yzm = re.search('\d{6}', if_yzm_text)
+                            verification_code = yzm.group()
 
             if not verification_code:
                 continue

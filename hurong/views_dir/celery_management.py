@@ -135,8 +135,10 @@ def asynchronous_transfer_data(request):
     :return:
     """
     transfer_type = request.POST.get('transfer_type')
+    msg = '异步传送小红书后台数据'
     try:
         if transfer_type in [1, '1']:
+            msg = '异步传输小红书评论数据'
             url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
             ret = requests.post(url, data=request.POST)
             obj = models.littleRedBookReviewForm.objects.get(id=request.POST.get('comment_id')) # 修改上传状态
@@ -144,25 +146,34 @@ def asynchronous_transfer_data(request):
             obj.save()
 
         elif transfer_type  in [3, '3']:
+            msg = '异步传输小红书阅读量'
             url =  'https://www.ppxhs.com/api/v1/sync/sync-read-num'
             ret = requests.post(url, data=request.POST)
 
         else:
+            msg = '异步传输小红书回复评论状态'
             url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
             ret = requests.post(url, data=request.POST)
 
-        models.AskLittleRedBook.objects.create( # 创建日志
-            request_url=url,
-            get_request_parameter='',
-            post_request_parameter=dict(request.POST),
-            response_data=ret.json(),
-            request_type=2,
-            status=1,
-        )
+        response_content = ret.json()
 
     except Exception as e:
-        content = '{} \n 异步传输小红书评论数据报错{}\n错误:{}'.format(datetime.datetime.today(), transfer_type, e)
+        response_content = e
+        content = '{} \n {}报错{}\n错误:{}'.format(
+            datetime.datetime.today(),
+            msg,
+            transfer_type,
+            e)
         send_error_msg(content, 1)
+
+    models.AskLittleRedBook.objects.create( # 创建日志
+        request_url=url,
+        get_request_parameter='',
+        post_request_parameter=dict(request.POST),
+        response_data=response_content,
+        request_type=2,
+        status=1,
+    )
 
     return HttpResponse('')
 
