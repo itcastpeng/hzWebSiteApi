@@ -254,6 +254,7 @@ class XiaohongshuBiji(models.Model):
     biji_existing_url = models.CharField(verbose_name="笔记真实回链", max_length=256, null=True)
     biji_url = models.CharField(verbose_name="笔记回链", max_length=256, null=True)
     reading_num = models.IntegerField(verbose_name="阅读量", default=0)
+    update_reding_num_time = models.DateTimeField(verbose_name='更新阅读量时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
