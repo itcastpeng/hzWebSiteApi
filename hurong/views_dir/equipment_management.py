@@ -6,7 +6,9 @@ from publicFunc.condition_com import conditionCom
 from hurong.forms.equipment_management import AddForm, SelectForm, UpdateForm
 from hz_website_api_celery.tasks import get_traffic_information
 from django.db.models import Q
-import requests, datetime, json
+from openpyxl.styles import Font, Alignment
+from openpyxl import Workbook
+import requests, datetime, json, os
 
 
 # 设备管理 (手机 流量 操作 查询充值话费)
@@ -241,6 +243,110 @@ def equipment_management_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
+        # 下载报表
+        elif oper_type == 'download_report':
+            all = request.GET.get('all')
+            start_time = request.GET.get('start_time')
+            stop_time = request.GET.get('stop_time')
+
+            center = Alignment(horizontal='center', vertical='center')
+            ft1 = Font(name='宋体', size=22)
+            ft2 = Font(name='宋体', size=10)
+            now_date = datetime.datetime.today().strftime('%Y-%m-%d %H-%M-%S')
+            wb = Workbook()
+            ws = wb.active
+
+            title = ws.cell(row=1, column=1, value="设备流量信息")
+            title.font = ft1
+            title.alignment = center
+
+            ws.cell(row=2, column=6, value="查询时间:").alignment = center
+            data = ['卡号', '设备名称', '用户状态', '流量信息', '套餐类型', '卡编号', '时间']
+            for i in data:
+                index = data.index(i) + 1
+                key = ws.cell(row=4, column=index, value=i)
+                key.alignment = center
+                key.font = ft2
+
+
+            # 合并单元格        开始行      结束行       用哪列          占用哪列
+            ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=8)
+            for i in range(1, 8):
+                ws.merge_cells(start_row=2, end_row=3, start_column=i, end_column=i)
+
+            # print('设置列宽')
+            ws.column_dimensions['A'].width = 25
+            ws.column_dimensions['B'].width = 20
+            ws.column_dimensions['C'].width = 20
+            ws.column_dimensions['D'].width = 30
+            ws.column_dimensions['E'].width = 20
+            ws.column_dimensions['F'].width = 50
+            ws.column_dimensions['G'].width = 70
+
+            # print('设置行高')
+            ws.row_dimensions[1].height = 50
+            ws.row_dimensions[4].height = 30
+
+
+            # print('文本居中')
+            # ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+
+            ws.cell(row=2, column=7, value="{}".format(now_date)).alignment = center
+            row = 5
+            q = Q()
+            if not all:
+                q.add(Q(create_datetime__gte=start_time), Q(create_datetime__lte=stop_time), Q.AND)
+            objs = models.MobileTrafficInformation.objects.filter(q, select_number__isnull=False).order_by('-create_datetime')
+            for obj in objs:
+                ws.row_dimensions[row].height = 30
+                phone_name = ''
+                if obj.phone:
+                    phone_name = obj.phone.name
+
+                traffic_information = """剩余流量:{}\n已用流量:{}""".format(obj.cardbaldata, obj.cardusedata)
+
+                card_number = """卡编号:{}\nSIMI号{}""".format(obj.cardno, obj.cardimsi)
+
+                time_info = """卡开户时间:{}\n卡到期时间{}""".format(obj.cardstartdate, obj.cardenddate)
+
+                one = ws.cell(row=row, column=1, value="{}".format(obj.cardnumber))
+                one.font = ft2
+                one.alignment = center
+
+                two = ws.cell(row=row, column=2, value="{}".format(phone_name))
+                two.font = ft2
+                two.alignment = center
+
+                there = ws.cell(row=row, column=3, value="{}".format(obj.cardstatus))
+                there.font = ft2
+                there.alignment = center
+
+                four = ws.cell(row=row, column=4, value="{}".format(traffic_information))
+                four.font = ft2
+                four.alignment = center
+
+                four = ws.cell(row=row, column=5, value="{}".format(obj.cardtype))
+                four.font = ft2
+                four.alignment = center
+
+                five = ws.cell(row=row, column=6, value="{}".format(card_number))
+                five.font = ft2
+                five.alignment = center
+
+
+                five = ws.cell(row=row, column=7, value="{}".format(time_info))
+                five.font = ft2
+                five.alignment = center
+
+                row += 1
+
+            path = os.path.join('statics', 'imgs' , '1.xlsx')
+            wb.save(path)
+            response.code = 200
+            response.msg = '导出成功'
+            response.data = 'https://xcx.bjhzkq.com/' + path
 
         else:
 
