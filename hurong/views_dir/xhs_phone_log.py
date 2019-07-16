@@ -203,28 +203,33 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     if json_data.get('runtime'):
 
                         deletionTime = (now_date_time - datetime.timedelta(minutes=10))
-                        if json_data.get('runtime') and 'unknown' not in json_data.get('runtime'):
-                            runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
+                        if json_data.get('runtime'):
 
                             package_type = json_data.get('package_type')
                             current_version = json_data.get('current_version')
-                            if runtime > deletionTime:
-                                phone_objs.update(package_version=current_version)
+                            if 'unknown' not in json_data.get('runtime'):
+                                runtime = datetime.datetime.strptime(json_data.get('runtime'), '%Y-%m-%d %H:%M:%S')
 
-                                # package_objs = models.InstallationPackage.objects.filter(
-                                #     package_type=package_type
-                                # ).order_by('-id')
-                                # if package_objs:
-                                #     package_obj = package_objs[0]
-                                #     if int(package_obj.id) != int(current_version):
-                                #         send_msg_flag = True
-                                #         content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
-                                # else:
-                                #     send_msg_flag = True
-                                #     content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+                                if runtime > deletionTime:
+                                    phone_objs.update(package_version=current_version)
+
+                                    # package_objs = models.InstallationPackage.objects.filter(
+                                    #     package_type=package_type
+                                    # ).order_by('-id')
+                                    # if package_objs:
+                                    #     package_obj = package_objs[0]
+                                    #     if int(package_obj.id) != int(current_version):
+                                    #         send_msg_flag = True
+                                    #         content = '{}\n {} 移动设备 发布程序不是最新版,请及时更新'.format(now_date_time, phone_name)
+                                    # else:
+                                    #     send_msg_flag = True
+                                    #     content = '{}\n {} 移动设备 发布程序没有版本,请及时查看'.format(now_date_time, phone_name)
+
+                                else:
+                                    objs.update(status=3)
 
                             else:
-                                objs.update(status=3)
+                                phone_objs.update(package_version=current_version)
                             #     send_msg_flag = True
                             #     content = '{}\n {} 移动设备 自动更新程序异常,请及时处理'.format(now_date_time, phone_name)
 
