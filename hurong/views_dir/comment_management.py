@@ -131,6 +131,7 @@ def comment_management(request, oper_type):
 
         # 关联 笔记链接 和 文章截图②
         elif oper_type == 'associated_screenshots':
+            print('request.POST-------------->', request.POST)
             form_data = {
                 'notes_url': request.POST.get('notes_url'),  # 笔记回链
                 'screenshots': request.POST.get('screenshots')  # 文章截图
