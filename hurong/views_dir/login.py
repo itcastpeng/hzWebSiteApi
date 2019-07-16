@@ -15,7 +15,7 @@ def login(request):
         forms_obj = LoginForm(request.POST)
         if forms_obj.is_valid():
 
-            print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+            # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             objs = models.UserProfile.objects.select_related('role_id').filter(**forms_obj.cleaned_data)
             if objs:
                 obj = objs[0]
@@ -27,7 +27,7 @@ def login(request):
                         obj.token = account.get_token(obj.password)
                         obj.save()
                     response.code = 200
-                    print(obj.role_id.id)
+                    # print(obj.role_id.id)
                     response.data = {
                         'token': obj.token,
                         'id': obj.id,

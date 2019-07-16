@@ -77,7 +77,7 @@ def task_list(request):
                 'status_id': "状态值",
             }
         else:
-            print("forms_obj.errors -->", forms_obj.errors)
+            # print("forms_obj.errors -->", forms_obj.errors)
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
@@ -104,7 +104,7 @@ def task_list_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过")
+                # print("验证通过")
                 create_data = {
                     'create_user_id': forms_obj.cleaned_data.get('create_user_id'),
                     'name': forms_obj.cleaned_data.get('name'),
@@ -112,7 +112,7 @@ def task_list_oper(request, oper_type, o_id):
                     'send_email_content': forms_obj.cleaned_data.get('send_email_content'),
                 }
                 send_email_list = forms_obj.cleaned_data.get('send_email_list')
-                print('create_data -->', create_data, send_email_list)
+                # print('create_data -->', create_data, send_email_list)
                 obj = models.TaskList.objects.create(**create_data)
 
                 query = []
@@ -192,7 +192,7 @@ def task_list_oper(request, oper_type, o_id):
                     email_user_obj.save()
                     email_user = email_user_obj.email_user
                     email_pwd = email_user_obj.email_pwd
-                    print(email_user, email_pwd)
+                    # print(email_user, email_pwd)
                     send_email_obj = SendEmail(email_user, email_pwd, send_email_list, send_email_title,
                                                send_email_content)
                     send_email_obj.send_email()
@@ -220,7 +220,7 @@ def task_list_oper(request, oper_type, o_id):
             task_list_id = request.POST.get('task_list_id')
             send_status = request.POST.get('send_status')
             email_user_id = request.POST.get('email_user_id')
-            print(send_status)
+            # print(send_status)
 
             # 发送成功
             if send_status == "True":
@@ -265,7 +265,7 @@ def task_list_oper(request, oper_type, o_id):
                 email_user_obj.save()
                 email_user = email_user_obj.email_user
                 email_pwd = email_user_obj.email_pwd
-                print(email_user, email_pwd, send_email_list)
+                # print(email_user, email_pwd, send_email_list)
                 response.data = {
                     'email_user_id': email_user_obj.id,
                     'email_user': email_user,

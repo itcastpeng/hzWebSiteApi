@@ -19,7 +19,7 @@ def role(request):
 
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+            # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
 
             order = request.GET.get('order', '-create_datetime')
             user_id = request.GET.get('user_id')
@@ -108,7 +108,7 @@ def role_oper(request, oper_type, o_id):
                     'oper_user_id': forms_obj.cleaned_data.get('oper_user_id'),
                 })
                 permissionsList = forms_obj.cleaned_data.get('permissionsList')
-                print('permissionsList -->', permissionsList)
+                # print('permissionsList -->', permissionsList)
                 obj.permissions = permissionsList
                 obj.save()
                 response.code = 200

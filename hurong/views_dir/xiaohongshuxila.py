@@ -222,7 +222,7 @@ def xiaohongshuxila_oper(request, oper_type, o_id):
                     'create_datetime': "创建时间",
                 }
             else:
-                print("forms_obj.errors -->", forms_obj.errors)
+                # print("forms_obj.errors -->", forms_obj.errors)
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())

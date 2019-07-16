@@ -21,7 +21,7 @@ def user(request):
             user_id = request.GET.get('user_id')
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
-            print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+            # print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
@@ -67,7 +67,7 @@ def user(request):
                 'create_datetime': "创建时间"
             }
         else:
-            print("forms_obj.errors -->", forms_obj.errors)
+            # print("forms_obj.errors -->", forms_obj.errors)
             response.code = 402
             response.msg = "请求异常"
             response.data = json.loads(forms_obj.errors.as_json())
@@ -101,7 +101,7 @@ def user_oper(request, oper_type, o_id):
                     'token': forms_obj.cleaned_data.get('token'),
                     'role_id_id': forms_obj.cleaned_data.get('role_id'),
                 }
-                print('create_data -->', create_data)
+                # print('create_data -->', create_data)
                 obj = models.UserProfile.objects.create(**create_data)
                 response.code = 200
                 response.msg = "添加成功"
