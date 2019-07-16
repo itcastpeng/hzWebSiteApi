@@ -1,12 +1,9 @@
-
-
 from hurong import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from hurong.forms.public_form import SelectForm
 from publicFunc.condition_com import conditionCom
-import json, requests, base64, time, os, datetime
-
+import json
 
 
 
@@ -15,6 +12,11 @@ def ask_little_red_book(request):
     response = Response.ResponseObj()
     if request.method == 'POST':
         pass
+        # objs = models.noteAssociationScreenshot.objects.filter(
+        #     create_datetime__gte='2019-07-01 00:00:00'
+        # )
+        # print(objs.query)
+
 
     else:
         forms_obj = SelectForm(request.GET)

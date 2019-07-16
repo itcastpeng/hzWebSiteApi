@@ -244,7 +244,11 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     log_msg = log_msg.replace('请求接口异常: ', '')
                     log_msg = log_msg.split('返回数据->')
                     request_url = log_msg[0].split('api_url->')[1]
-                    response_data = log_msg[1]
+
+                    response_data = ''
+                    if len(log_msg) > 2:
+                        response_data = log_msg[1]
+
                     obj = models.PhoneRequestsBackgroundRecords.objects.create(
                         request_url=request_url,
                         response_data=response_data
