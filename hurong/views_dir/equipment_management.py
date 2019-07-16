@@ -241,6 +241,7 @@ def equipment_management_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
         else:
 
             response.code = 402
