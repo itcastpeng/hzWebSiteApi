@@ -395,6 +395,11 @@ class littleRedBookReviewForm(models.Model):
     article_picture_address = models.CharField(verbose_name='文章图片地址', max_length=512)
     screenshots_address = models.CharField(verbose_name='截图地址', max_length=512, null=True)
     article_notes = models.ForeignKey('XiaohongshuBiji', verbose_name='文章笔记', null=True)
+    status_choices = (
+        (1, '未上传'),
+        (2, '已上传')
+    )
+    status = models.SmallIntegerField(verbose_name='上传状态', choices=status_choices, default=1)  # 是否成功 上传小红书后台
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 评论回复表

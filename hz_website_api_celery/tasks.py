@@ -512,3 +512,28 @@ def get_traffic_information():
 def asynchronous_transfer_data(data):
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/asynchronous_transfer_data'
     requests.post(url, data=data)
+
+# 异步上传手机抓取的评论
+@app.task
+def error_asynchronous_transfer_data():
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/error_asynchronous_transfer_data'
+    requests.post(url)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

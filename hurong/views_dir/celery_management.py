@@ -139,6 +139,9 @@ def asynchronous_transfer_data(request):
         if transfer_type in [1, '1']:
             url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
             ret = requests.post(url, data=request.POST)
+            obj = models.littleRedBookReviewForm.objects.get(id=request.POST.get('comment_id')) # 修改上传状态
+            obj.status = 2
+            obj.save()
 
         elif transfer_type  in [3, '3']:
             url =  'https://www.ppxhs.com/api/v1/sync/sync-read-num'
@@ -163,4 +166,37 @@ def asynchronous_transfer_data(request):
 
     return HttpResponse('')
 
+# 异步上传手机抓取的评论
+def error_asynchronous_transfer_data(request):
+    objs = models.littleRedBookReviewForm.objects.filter(status=1)
+    for obj in objs:
+        try:
+            data = {
+                'xhs_user_id': obj.xhs_user_id,  # 小红书用户
+                'comments_status': obj.comments_status,  # 评论类型
+                'article_picture_address': obj.article_picture_address,  # 文章图片地址
+                'link': obj.screenshots_address,
+                'name': obj.nick_name,
+                'content': obj.comments_content,
+                'head_portrait': obj.head_portrait,
+                'comment_id': obj.id,
+            }
 
+            url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
+            ret = requests.post(url, data=data)
+            models.AskLittleRedBook.objects.create(  # 创建日志
+                request_url=url,
+                get_request_parameter='',
+                post_request_parameter=data,
+                response_data=ret.json(),
+                request_type=2,
+                status=1,
+            )
+
+            obj.status = 2
+            obj.save()
+        except Exception as e:
+            content = '{} \n 异步上传手机抓取的评论报错\n错误:{}'.format(datetime.datetime.today(), e)
+            send_error_msg(content, 1)
+
+    return HttpResponse('')

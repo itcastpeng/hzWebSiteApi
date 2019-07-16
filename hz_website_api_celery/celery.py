@@ -101,6 +101,11 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '*/2', '*', '*', '*'),
     },
 
+    # 异步上传手机抓取的评论（一小时执行一次）
+    'error_asynchronous_transfer_data':{
+        'task': 'hz_website_api_celery.tasks.error_asynchronous_transfer_data',
+        'schedule': crontab('0', '*/1', '*', '*', '*'),
+    }
 
 }
 app.conf.update(
