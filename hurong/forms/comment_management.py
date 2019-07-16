@@ -89,6 +89,10 @@ class mobilePhoneReviews(forms.Form):
         #     nick_name = nick_name.replace('回复了你的评论', '')
         elif '回复' in nick_name:
             nick_name = nick_name.split('回复')[0]
+
+        elif '评论' in nick_name:
+            nick_name = nick_name.split('评论')[0]
+
         return nick_name
 
     def clean_screenshots_address(self):

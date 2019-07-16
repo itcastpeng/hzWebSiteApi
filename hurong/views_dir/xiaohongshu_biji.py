@@ -213,7 +213,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 models.XiaohongshuBiji.objects.filter(
                     id=o_id
                 ).update(
-                    reading_num=reading_num
+                    reading_num=reading_num,
+                    update_reding_num_time=datetime.datetime.today()
                 )
                 form_data['num'] = reading_num
                 form_data['transfer_type'] = 3
