@@ -201,5 +201,5 @@ def set_wechat_column(request):
     ]
     data = WeChatApiObjs.createMenu(button)
 
-    return JsonResponse(data.__dict__)
+    return JsonResponse(data)
 
