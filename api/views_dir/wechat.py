@@ -194,11 +194,11 @@ def set_wechat_column(request):
     WeChatApiObjs = WeChatApi()
     button = [
         {
-            "type": "click",
+            "type": "view",
             "name": "阿斗建站",
             "url": "https://xcx.bjhzkq.com/wx/"
         },
     ]
-    WeChatApiObjs.createMenu(button)
+    data = WeChatApiObjs.createMenu(button)
 
-    return HttpResponse('创建完成')
+    return HttpResponse(data)

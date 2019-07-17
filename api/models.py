@@ -2,6 +2,23 @@ from django.db import models
 import json
 
 
+
+# 权限表
+class Permissions(models.Model):
+    name = models.CharField(verbose_name="权限名称", max_length=128)
+    title = models.CharField(verbose_name="权限标题", max_length=128)
+    pid = models.ForeignKey('self', verbose_name="父级权限", null=True, blank=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    oper_user = models.ForeignKey('UserProfile', verbose_name="创建用户", related_name='permissions_user', null=True, blank=True)
+
+
+# 角色表
+class Role(models.Model):
+    name = models.CharField(verbose_name="模板名称", max_length=256)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", related_name="role_create_user")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    permissions = models.ManyToManyField('Permissions', verbose_name="拥有权限")
+
 # 用户表
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128, null=True, blank=True)
@@ -69,12 +86,6 @@ class ClientUserProfile(models.Model):
     )
     user_type = models.SmallIntegerField(verbose_name="用户类型", choices=user_type_choices)
 
-
-# 角色表
-class Role(models.Model):
-    name = models.CharField(verbose_name="模板名称", max_length=256)
-    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", related_name="role_create_user")
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 # 模板表
