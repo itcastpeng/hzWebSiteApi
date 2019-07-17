@@ -70,12 +70,7 @@ def little_red_book_crawler(request, oper_type):
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
                 field_dict = {
-                    'status': '',
-                    'nick_name': '__contains',
-                    'keyword': '__contains',
-                    'uid': '__contains',
-                    'note_content': '__contains',
-                    'comments': '__contains',
+                    'uid': '',
                 }
 
                 q = conditionCom(request, field_dict)
@@ -99,8 +94,6 @@ def little_red_book_crawler(request, oper_type):
                         'uid': obj.uid,
                         'keyword': obj.keyword,
                         'number': obj.number,
-                        'nick_name': obj.nick_name,
-                        'heading': obj.heading,
                         'note_content': obj.note_content,
                         'comments': obj.comments,
                         'last_select_time': last_select_time,
@@ -118,7 +111,7 @@ def little_red_book_crawler(request, oper_type):
                 }
                 response.note = {
                     'ret_data': {
-                        'encryption_value': 'MD5加密值',
+                        'uid': '小红书后台ID',
                         'keyword': '关键词',
                         'number': '查询条数',
                         'nick_name': '名称',
