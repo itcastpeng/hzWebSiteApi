@@ -186,14 +186,37 @@ def tripartite_platform_oper(request, oper_type):
             else:
                 response.msg = response_data.get('errmsg')
 
+        # 将草稿箱的草稿选为小程序代码模版
+        elif oper_type == 'select_draft_applet_code_template':
+            draft_id = request.GET.get('draft_id') # 草稿ID
+            tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
 
         # 获取小程序体验者列表
         elif oper_type == '':
             pass
 
+        # 获取小程序的第三方提交代码的页面配置
+        elif oper_type == 'get_code_page_configuration':
+            tripartite_platform_objs.get_code_page_configuration(
+                authorizer_access_token
+            )
+
+
+        # 查询某个指定版本的审核状态
+        elif oper_type == 'query_specified_version_code_audit':
+            auditid = request.GET.get('auditid')
+            tripartite_platform_objs.query_specified_version_code_audit(
+                authorizer_access_token,
+                auditid
+            )
+
         # 查询最新一次提交的审核状态
         elif oper_type == 'check_status_most_recent_submission':
-            tripartite_platform_objs.check_status_most_recent_submission(authorizer_access_token)
+            auditid = request.GET.get('auditid')
+            tripartite_platform_objs.check_status_most_recent_submission(
+                authorizer_access_token,
+                auditid
+            )
 
         # 获取草稿箱内的所有临时代码草稿
         elif oper_type == 'get_all_temporary_code_drafts':
@@ -209,7 +232,17 @@ def tripartite_platform_oper(request, oper_type):
             response.msg = '查询成功'
             response.data = data
 
+        # 将第三方提交的代码包提交审核
+        elif oper_type == 'code_package_submitted_review':
+            tripartite_platform_objs.code_package_submitted_review(
+                authorizer_access_token
+            )
 
+        # 获取授权小程序帐号已设置的类目
+        # elif oper_type == 'xcx_applet_account_settings':
+        #     tripartite_platform_objs.xcx_applet_account_settings(
+        #         authorizer_access_token
+        #     )
 
         else:
             response.code = 402
