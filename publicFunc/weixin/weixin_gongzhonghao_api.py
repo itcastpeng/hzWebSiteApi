@@ -203,7 +203,11 @@ class WeChatApi(WeixinApiPublic):
         post_data_json = json.dumps(menu_data, ensure_ascii=False).encode()
         print(post_data_json)
         ret = requests.post(url, data=post_data_json)
-        return ret.json()
+        data = {
+            'errcode':ret.json().get('errcode'),
+            'errmsg':ret.json().get('errmsg'),
+        }
+        return data
 
     # 创建个性化菜单
     def createCustomMenu(self, menu_data):
