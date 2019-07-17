@@ -208,18 +208,19 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             form_obj = UpdateReding(form_data)
             if form_obj.is_valid():
                 o_id = form_obj.cleaned_data.get('o_id')
-                reading_num = form_obj.cleaned_data.get('reading_num')
+                reading_num = int(form_obj.cleaned_data.get('reading_num'))
+                if reading_num > 0:
 
-                models.XiaohongshuBiji.objects.filter(
-                    id=o_id
-                ).update(
-                    reading_num=reading_num,
-                    update_reding_num_time=datetime.datetime.today()
-                )
-                form_data['num'] = reading_num
-                form_data['transfer_type'] = 3
-                form_data['id'] = o_id
-                asynchronous_transfer_data.delay(form_data) # 传递到小红书后台
+                    models.XiaohongshuBiji.objects.filter(
+                        id=o_id
+                    ).update(
+                        reading_num=reading_num,
+                        update_reding_num_time=datetime.datetime.today()
+                    )
+                    form_data['num'] = reading_num
+                    form_data['transfer_type'] = 3
+                    form_data['id'] = o_id
+                    asynchronous_transfer_data.delay(form_data) # 传递到小红书后台
                 response.code = 200
                 response.msg = '阅读量更新完成'
 

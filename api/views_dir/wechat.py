@@ -3,23 +3,15 @@
 # Author:zhangcong
 # Email:zc_92@sina.com
 
-
 from django.shortcuts import HttpResponse
 from django.http import JsonResponse
-
 from api import models
-# import base64
-# import time
-import datetime
-import json
-import xml.dom.minidom
-
 from publicFunc.account import get_token
 from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
 from publicFunc import Response
 from publicFunc import account
 from publicFunc import base64_encryption
-import time
+import json, datetime, xml.dom.minidom, time
 
 
 # 创建或更新用户信息
@@ -170,38 +162,8 @@ def wechat(request):
         return HttpResponse(False)
 
 
-# @csrf_exempt
-# def wechat_login(request):
-#     response = ResponseObj()
-#     timestamp = request.POST.get('timestamp')
-#     user_objs = models.zhugedanao_userprofile.objects.select_related('level_name').filter(timestamp=timestamp)
-#     if user_objs:
-#         user_obj = user_objs[0]
-#         response.code = 200
-#         decode_username = base64.b64decode(user_obj.username)
-#         username = str(decode_username, 'utf-8')
-#         role_id = ''
-#         if user_obj.role:
-#             role_id = user_obj.role.id
-#         response.data = {
-#             'token': user_obj.token,
-#             'user_id': user_obj.id,
-#             'set_avator': user_obj.set_avator,
-#             'role_id':role_id,
-#             'username':username,
-#             'level_name': user_obj.level_name.name
-#         }
-#         response.msg = "登录成功"
-#     else:
-#         response.code = 405
-#         response.msg = '扫码登录异常，请重新扫描'
-#
-#     return JsonResponse(response.__dict__)
-
-
 @account.is_token(models.UserProfile)
 def wechat_oper(request, oper_type):
-    # print('oper_type -->', oper_type)
     response = Response.ResponseObj()
     if request.method == "POST":
         pass
@@ -224,53 +186,19 @@ def wechat_oper(request, oper_type):
                 'timestamp': timestamp,
             }
 
-        # 邀请成员页面展示信息
-        elif oper_type == "invite_members":
-            user_id = request.GET.get('user_id')
-            team_id = request.GET.get('team_id')
-
-            redirect_uri = "http://api.zhugeyingxiao.com/tianyan/team/invite_members/{team_id}".format(team_id=team_id)
-            open_weixin_url = "https://open.weixin.qq.com/connect/oauth2/authorize?" \
-                              "appid={appid}&redirect_uri={redirect_uri}&response_type=code&scope=snsapi_userinfo" \
-                              "&state={user_id}#wechat_redirect"\
-                .format(
-                    appid=weichat_api_obj.APPID,
-                    redirect_uri=redirect_uri,
-                    user_id=user_id
-                )
-
-            obj = models.UserProfileTeam.objects.select_related('team', 'user').get(team_id=team_id, user_id=user_id)
-            response.code = 200
-            response.data = {
-                "open_weixin_url": open_weixin_url,
-                "team_name": obj.team.name,
-                "user_name": base64_encryption.b64decode(obj.user.name),
-                "set_avator": obj.user.set_avator
-            }
-
-            response.note = {
-                "open_weixin_url": "点击接受邀请后请求的url",
-                "team_name": "团队名称",
-                "user_name": "邀请人名称",
-                "set_avator": "邀请人头像"
-            }
 
     return JsonResponse(response.__dict__)
 
-# # 获取用于登录的微信二维码
-# @account.is_token(models.UserProfile)
-# def weichat_generate_qrcode(request):
-#     weichat_api_obj = WeChatApi()
-#     response = ResponseObj()
-#     user_id = request.GET.get('user_id')
-#     qc_code_url = weichat_api_obj.generate_qrcode({'inviter_user_id': user_id})
-#     print(qc_code_url)
-#
-#     expire_date = (datetime.datetime.now().date() + datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-#     response.code = 200
-#     response.data = {
-#         'qc_code_url': qc_code_url,
-#         'expire_date': expire_date
-#     }
-#
-#     return JsonResponse(response.__dict__)
+# 创建栏目
+def set_wechat_column(request):
+    WeChatApiObjs = WeChatApi()
+    button = [
+        {
+            "type": "click",
+            "name": "阿斗建站",
+            "url": "https://xcx.bjhzkq.com/wx/"
+        },
+    ]
+    WeChatApiObjs.createMenu(button)
+
+    return HttpResponse('创建完成')

@@ -139,7 +139,7 @@ def asynchronous_transfer_data(request):
     try:
         if transfer_type in [1, '1']:
             msg = '异步传输小红书评论数据'
-            url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
+            url = 'https://a.ppxhs.com/api/v1/sync/sync-comment'
             ret = requests.post(url, data=request.POST)
             obj = models.littleRedBookReviewForm.objects.get(id=request.POST.get('comment_id')) # 修改上传状态
             obj.status = 2
@@ -147,12 +147,12 @@ def asynchronous_transfer_data(request):
 
         elif transfer_type  in [3, '3']:
             msg = '异步传输小红书阅读量'
-            url =  'https://www.ppxhs.com/api/v1/sync/sync-read-num'
+            url =  'https://a.ppxhs.com/api/v1/sync/sync-read-num'
             ret = requests.post(url, data=request.POST)
 
         else:
             msg = '异步传输小红书回复评论状态'
-            url = 'https://www.ppxhs.com/api/v1/sync/sync-reply-status'
+            url = 'https://a.ppxhs.com/api/v1/sync/sync-reply-status'
             ret = requests.post(url, data=request.POST)
 
         response_content = ret.json()
