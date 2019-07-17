@@ -58,13 +58,13 @@ def is_token(table_obj):
             # 手机设备不做token验证
             t = request.GET.get('t')
 
-            if t == "phone" or t == 'ppxhs':
+            if t in ['phone','ppxhs']:
+                request_type = 1
+                if request.method == 'POST': # 请求方式
+                    request_type = 2
                 if t == 'ppxhs':
                     if 'get_coverage_quantity' not in request.path and \
                         'xiaohongshuxiala/detail' not in request.path:
-                        request_type = 1
-                        if request.method == 'POST': # 请求方式
-                            request_type = 2
                         models.AskLittleRedBook.objects.create(
                             request_url=request.path,
                             get_request_parameter=dict(request.GET),
@@ -73,7 +73,11 @@ def is_token(table_obj):
                             request_type=request_type,
                             status=2,
                         )
+
                 return func(request, *args, **kwargs)
+
+
+
 
             # 不需要验证token的路由直接跳过
             for route in NoValidationTokenRoute:

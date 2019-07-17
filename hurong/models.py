@@ -442,6 +442,29 @@ class AskLittleRedBook(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# =============================小红书爬取数据=======================
+
+
+
+# 关键词表
+class XhsKeywordsList(models.Model):
+    uid = models.CharField(verbose_name='小红书后台id', max_length=64)       # 小红书后台传
+    keyword = models.CharField(verbose_name='关键词', max_length=64)        # 小红书后台传
+    number = models.IntegerField(verbose_name='获取条数')                   # 小红书后台传
+    related_keyword = models.CharField(verbose_name='相关关键词', max_length=128, null=True) # 小红书后台传
+    status_choices = (
+        (1, '未查询'),
+        (2, '已查询')
+    )
+    status = models.SmallIntegerField(verbose_name='查询状态', choices=status_choices, default=1)
+    nick_name = models.CharField(verbose_name='昵称', max_length=128, null=True)
+    heading = models.CharField(verbose_name='头像', max_length=512, null=True)
+    note_content = models.TextField(verbose_name='笔记内容', null=True)
+    comments = models.TextField(verbose_name='评论', null=True)
+    last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
 
 
 
