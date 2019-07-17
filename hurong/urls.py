@@ -4,7 +4,7 @@ from hurong.views_dir import upload_img, login, user, task_list, task_info, role
     xiaohongshufugai, xhs_phone_log, xiaohongshu_userprofile, xiaohongshu_biji, xiaohongshu_direct_essages, \
     permissions, xiaohongshu_phone_management, xhs_account_management, xhs_king_barings_screen, \
     xhs_mobile_phone_number_management, package_management, qiniu, equipment_management, registered_account, \
-    DMS_screenshots, comment_management, ask_little_red_book
+    DMS_screenshots, comment_management, ask_little_red_book, little_red_book_crawler
 
 
 urlpatterns = [
@@ -94,5 +94,9 @@ urlpatterns = [
 
     # 小红书后台请求接口 and 接口请求小红书 日志
     url(r'^ask_little_red_book$', ask_little_red_book.ask_little_red_book),
+
+    # ============================小红书爬虫===================================
+    url(r'^little_red_book_crawler/(?P<oper_type>\w+)$', little_red_book_crawler.little_red_book_crawler),  # 创建任务
+
 
 ]
