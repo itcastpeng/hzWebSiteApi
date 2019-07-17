@@ -306,13 +306,13 @@ class tripartite_platform_oper():
                 'ext':{           # 自定义字段 可在小程序调用
 
                 },
-                'extPages':{      # 页面配置
-                    "index":{
-                    },
-                    "search/index":{
-                    },
-                },
-                'pages':["index","search/index"],
+                # 'extPages':{      # 页面配置
+                #     "index":{
+                #     },
+                #     "":{
+                #     },
+                # },
+                # 'pages':["index","pages/index/tabBar01"],
                 "window":{
                 },
                 "networkTimeout":{
@@ -326,13 +326,13 @@ class tripartite_platform_oper():
         data = {
             # 代码库中的代码模板ID
             "template_id": template_id,
-            "ext_json": ext_json,
+            "ext_json": json.dumps(ext_json),
             # 代码版本号(自定义)
             "user_version": user_version,
             # 代码描述(自定义)
             "user_desc": user_desc,
         }
-        ret = requests.post(url, data=data)
+        ret = requests.post(url, data=json.dumps(data))
         print('ret.text------> ', ret.text)
 
     # 获取体验小程序二维码
@@ -377,6 +377,16 @@ class tripartite_platform_oper():
         print('---获取代码模版库中的所有小程序代码模版-> ', ret.json())
         return ret.json()
 
+    # 将草稿箱的草稿选为小程序代码模版
+    def xcx_select_draft_applet_code_template(self, draft_id):
+        url = 'https://api.weixin.qq.com/wxa/addtotemplate?access_token={}'.format(self.token)
+        data = {
+            'draft_id': draft_id
+        }
+        print('data------> ', data)
+        ret = requests.post(url, data=json.dumps(data))
+        print('-将草稿箱的草稿选为小程序代码模版=------> ', ret.text)
+
     # 查询某个指定版本的审核状态
     def query_specified_version_code_audit(self, token, auditid):
         url = 'https://api.weixin.qq.com/wxa/get_auditstatus?access_token={}'.format(
@@ -385,13 +395,13 @@ class tripartite_platform_oper():
         data = {
             'auditid': auditid
         }
-        ret = requests.post(url, data=data)
+        ret = requests.post(url, data=json.dumps(data))
         print('-查询某个指定版本的审核状态------> ', ret.json())
 
     # 查询最新一次提交的审核状态
-    def check_status_most_recent_submission(self, token):
+    def check_status_most_recent_submission(self, token, auditid):
         url = 'https://api.weixin.qq.com/wxa/get_latest_auditstatus?access_token={}'.format(
-            token
+            token,
         )
         ret = requests.get(url)
         print('查询最新一次提交的审核状态------> ', ret.json())
@@ -406,11 +416,42 @@ class tripartite_platform_oper():
 
     # 将第三方提交的代码包提交审核
     def code_package_submitted_review(self, token):
+        params = {
+            'access_token': token
+        }
+
+        # 获取小程序的第三方提交代码的页面配置
+        configuration_url = 'https://api.weixin.qq.com/wxa/get_page'
+        configuration_ret = requests.get(configuration_url, params=params).json()
+
+        # 获取授权小程序帐号已设置的类目
+        class_to_set_url = 'https://api.weixin.qq.com/wxa/get_category'
+        class_to_set_ret = requests.get(class_to_set_url, params=params).json()
+        category_list = class_to_set_ret.get('category_list')
+
         url = 'https://api.weixin.qq.com/wxa/submit_audit?access_token={}'.format(
             token
         )
-        ret = requests.post(url)
-        print('将第三方提交的代码包提交审核---------> ', ret.text)
+        data = {
+            "item_list": [
+            {
+                "address":configuration_ret.get('page_list')[0],
+                "first_class": category_list[0].get('first_class'),
+                "second_class": category_list[0].get('second_class'),
+                "first_id":287,
+                "second_id":614,
+                "tag":"首页",
+                "title": "首页"
+            }
+            ],
+                "feedback_info": "blablabla",
+                "feedback_stuff": "xx|yy|zz"
+        }
+
+        ret = requests.post(url, data=json.dumps(data,  ensure_ascii=False).encode('utf8'))
+        print('将第三方提交的代码包提交审核-------------> ', ret.text)
+        auditid = ret.json().get('auditid')
+
 
     # 发布已通过审核的小程序
     def publish_approved_applets(self, token):
@@ -450,6 +491,11 @@ class tripartite_platform_oper():
         }
         ret = requests.post(url, data=data)
         print('解除绑定小程序的体验者---------> ', ret.text)
+
+    # 获取授权小程序帐号已设置的类目
+    # def xcx_applet_account_settings(self, token):
+
+        # print('-----获取授权小程序帐号已设置的类目-----> ', ret.text)
 
 
 
