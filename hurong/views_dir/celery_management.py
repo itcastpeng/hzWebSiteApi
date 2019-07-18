@@ -60,11 +60,13 @@ def get_traffic_information(request):
     try:
         id = request.GET.get('id')
         q = Q()
-        q.add(Q(id=id), Q.AND)
+        if id:
+            q.add(Q(id=id), Q.AND)
+        q.add(Q(select_datetime__lt=datetime.datetime.today()) | Q(select_datetime__isnull=True), Q.AND)
+
         objs = models.MobileTrafficInformation.objects.filter(
             q,
-            select_number__isnull=False,
-            select_datetime__lt=datetime.datetime.today()
+            select_number__isnull=False
         )
         for obj in objs:
             ret_json = get_phone_info(obj.select_number)
