@@ -247,7 +247,8 @@ def comment_management(request, oper_type):
                     comment__xhs_user__phone_id_id=iccid,
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
-                    comment_response__isnull=False
+                    comment_response__isnull=False,
+                    delete=1,
                 ).order_by('create_datetime')
                 if objs:
                     obj = objs[0]

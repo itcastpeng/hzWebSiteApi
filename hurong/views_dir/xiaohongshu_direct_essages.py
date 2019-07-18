@@ -148,6 +148,10 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         name=name
                     )
 
+                    from_blogger = 0
+                    if request.POST.get('from_blogger'):
+                        from_blogger = 1
+
                     # 把私信截图发送给小红书后台
                     for i in range(3):
                         try:
@@ -156,6 +160,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                 "name": name,
                                 "img_url": img_url,
                                 "xiaohongshu_id": obj.xiaohongshu_id,
+                                "from_blogger": from_blogger,
                                 "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                             }
                             api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
