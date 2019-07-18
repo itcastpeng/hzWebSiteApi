@@ -54,6 +54,7 @@ class GeavyCheckTask(forms.Form):
 
     def clean_post_data(self):
         post_data = eval(self.data.get('post_data'))
+        models.ArticlesAndComments.objects.filter(keyword_id__in=post_data).delete()
         objs = models.XhsKeywordsList.objects.filter(uid__in=post_data)
         flag = False
         if objs:
@@ -102,6 +103,7 @@ class DeleteTasks(forms.Form):
 
     def clean_post_data(self):
         post_data = eval(self.data.get('post_data'))
+        models.ArticlesAndComments.objects.filter(keyword_id__in=post_data).delete()
         models.XhsKeywordsList.objects.filter(uid__in=post_data).delete()
 
 

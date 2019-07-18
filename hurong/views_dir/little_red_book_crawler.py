@@ -4,7 +4,8 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 from hurong.forms.little_red_book_crawler import GeneratedTask, GeavyCheckTask, SelectForm, DeleteTasks
 from publicFunc.condition_com import conditionCom
-import json
+from django.db.models import Q
+import json, datetime
 
 # 小红书爬虫
 def little_red_book_crawler(request, oper_type):
@@ -61,6 +62,43 @@ def little_red_book_crawler(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
 
+        # 更改状态(VPS) 获取昵称/头像/内容
+        elif oper_type == 'update_task_status':
+            id = request.POST.get('id')
+            nick_name = request.POST.get('nick_name')
+            heading = request.POST.get('heading')
+            note_id = request.POST.get('note_id')
+            article_content = request.POST.get('article_content')
+
+            objs = models.XhsKeywordsList.objects.filter(id=id)
+            if objs:
+                obj = objs[0]
+                obj.status = 2
+                obj.save()
+
+                models.ArticlesAndComments.objects.create(
+                    keyword=obj,
+                    nick_name=nick_name,
+                    note_id=note_id,
+                    heading=heading,
+                    article_content=article_content,
+                )
+            response.code = 200
+
+        # 更新评论
+        elif oper_type == 'update_comments':
+            id = request.POST.get('id')
+            note_id = request.POST.get('note_id')
+            comments_list_data = request.POST.get('comments_list_data')
+
+            models.ArticlesAndComments.objects.filter(
+                keyword_id=id,
+                note_id=note_id
+            ).update(
+                article_comment=comments_list_data
+            )
+
+
     else:
 
         # 查询任务信息
@@ -94,8 +132,6 @@ def little_red_book_crawler(request, oper_type):
                         'uid': obj.uid,
                         'keyword': obj.keyword,
                         'number': obj.number,
-                        'note_content': obj.note_content,
-                        'comments': obj.comments,
                         'last_select_time': last_select_time,
                         'status_id': obj.status,
                         'status': obj.get_status_display(),
@@ -116,8 +152,6 @@ def little_red_book_crawler(request, oper_type):
                         'number': '查询条数',
                         'nick_name': '名称',
                         'heading': '头像',
-                        'note_content': '笔记',
-                        'comments': '评论',
                         'last_select_time': '最后一次查询时间',
                         'status_id': '状态ID',
                         'status': '状态',
@@ -126,6 +160,43 @@ def little_red_book_crawler(request, oper_type):
                     'count': '总数',
                     'status_choices': '状态ID 和 名称'
                 }
+
+        # 查询是否有任务(VPS)
+        elif oper_type == 'query_whether_task':
+            objs = models.XhsKeywordsList.objects.filter(status=1)
+            flag = False
+            if objs:
+                flag = True
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'flag': flag
+            }
+
+        # 获取任务(VPS)
+        elif oper_type == 'get_task':
+            now_date = datetime.datetime.today()
+            deletionTime = (now_date - datetime.timedelta(minutes=5))
+            q = Q()
+            q.add(Q(last_select_time__lte=deletionTime) | Q(last_select_time__isnull=True,), Q.AND)
+            objs = models.XhsKeywordsList.objects.filter(
+                # q,
+                status=1,
+            )
+            data = {}
+            if objs:
+                obj = objs[0]
+                obj.last_select_time = now_date
+                obj.save()
+
+                data['id'] = obj.id
+                data['keyword'] = obj.keyword
+                data['number'] = obj.number
+                data['related_keyword'] = obj.related_keyword
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = data
 
         else:
             response.code = 402
