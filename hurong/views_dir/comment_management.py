@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
-    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask
+    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment
 from publicFunc.public import update_xhs_admin_response
 import json, requests, base64, time, os, datetime
 
@@ -101,12 +101,35 @@ def comment_management(request, oper_type):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         # 刪除评论
-        elif oper_type == '':
-            pass
+        elif oper_type == 'delete_comment':
+            form_data = {
+                'comment_id': request.POST.get('comment_id'),  # 删除哪个评论ID
+            }
+            form_obj = DeleteComment(form_data)
+            if form_obj.is_valid():
+                response.code = 200
+                response.msg = '操作成功, 等待删除...'
 
-        # 手机端删除评论是否完成
-        elif oper_type == '':
-            pass
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+        # 手机端 删除评论是否完成
+        elif oper_type == 'reply_comment_is_delete':
+            id = request.POST.get('comment_id')      # 删除的消息ID
+            models.commentResponseForm.objects.filter(
+                id=id
+            ).update(
+                delete=3
+            )
+            response.code = 200
+            response.msg = '操作完成'
+            data = {
+                'transfer_type': 4,
+                'id': id
+            }
+            asynchronous_transfer_data.delay(data)
+
 
         # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
@@ -266,8 +289,18 @@ def comment_management(request, oper_type):
                 response.msg = json.loads(form_obj.errors.as_json())
 
         # 查询删除评论任务(手机)
-        elif oper_type == '':
-            pass
+        elif oper_type == 'query_delete_comment':
+            objs = models.commentResponseForm.objects.filter(delete=2)
+            data = {}
+            if objs:
+                obj = objs[0]
+                data['id'] = obj.id
+                data['comment_response'] = obj.comment_response
+
+            else:
+                response.msg = '无任务'
+            response.code = 200
+            response.data = data
 
         # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':
