@@ -125,7 +125,6 @@ class SaveScreenshotsForm(forms.Form):
         }
     )
 
-
 class ReplyForm(forms.Form):
     xiaohongshu_id = forms.IntegerField(
         required=True,
