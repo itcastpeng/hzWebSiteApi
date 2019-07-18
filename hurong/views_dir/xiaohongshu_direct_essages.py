@@ -355,6 +355,9 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     ret_data.append({
                         'user_id': obj.user_id_id,
                         'user_name': obj.user_id.name,
+                        'phone_name': obj.user_id.phone_id.name,
+                        'phone_number': obj.user_id.phone_id.phone_num,
+                        'phone_id': obj.user_id.phone_id_id,
                         'name': obj.name,
                         'msg': obj.msg,
                         'status_id': obj.status,

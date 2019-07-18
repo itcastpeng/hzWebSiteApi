@@ -80,7 +80,6 @@ def comment_management(request, oper_type):
                         response.code = 301
                         response.msg = json.loads(forms_obj.errors.as_json())
 
-
         # 创建回复评论 小红书后台添加接口   (博主回复内容)④
         elif oper_type == 'reply_comment':
             form_data = {
@@ -100,6 +99,14 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 刪除评论
+        elif oper_type == '':
+            pass
+
+        # 手机端删除评论是否完成
+        elif oper_type == '':
+            pass
 
         # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
@@ -257,6 +264,10 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+
+        # 查询删除评论任务(手机)
+        elif oper_type == '':
+            pass
 
         # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':

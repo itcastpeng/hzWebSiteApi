@@ -279,6 +279,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 field_dict = {
                     'id': '',
                     'uid': '__contains',
+                    'content': '__contains',
                     'status': '',
                     'user_id__name': '__contains',
                 }
