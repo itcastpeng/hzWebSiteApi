@@ -153,8 +153,9 @@ def asynchronous_transfer_data(request):
             ret = requests.post(url, data=request.POST)
 
         elif transfer_type in [4, '4']:
-            msg = '异步传输小红书阅读量'
-            url = 'https://a.ppxhs.com/api/v1/sync/sync-read-num'
+            msg = '异步传输小红书回复评论是否删除'
+            url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
+            requests.post(url, data=request.POST)
 
         else:
             msg = '异步传输小红书回复评论状态'
