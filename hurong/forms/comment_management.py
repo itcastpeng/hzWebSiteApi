@@ -239,7 +239,22 @@ class QueryReplyTask(forms.Form):
         else:
             self.add_error('iccid', '设备不存在')
 
+# 删除评论
+class DeleteComment(forms.Form):
+    comment_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "评论ID不能为空"
+        }
+    )
 
+    def clean_comment_id(self):
+        comment_id = self.data.get('comment_id')
+        objs = models.commentResponseForm.objects.filter(id=comment_id)
+        if objs:
+            objs.update(delete=2)
+            return comment_id
 
-
+        else:
+            self.add_error('comment_id', '该评论ID 不存在')
 

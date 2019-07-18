@@ -408,6 +408,12 @@ class commentResponseForm(models.Model):
     comment = models.ForeignKey('littleRedBookReviewForm', verbose_name='回复哪个评论')
     comment_response = models.TextField(verbose_name='回复评论内容')
     comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
+    delete_choices = (
+        (1, '未删除'),
+        (2, '待删除'),
+        (3, '已删除')
+    )
+    delete = models.SmallIntegerField(verbose_name='是否删除', choices=delete_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
