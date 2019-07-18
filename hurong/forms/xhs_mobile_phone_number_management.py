@@ -46,12 +46,12 @@ class AddForm(forms.Form):
             'required': "手机号不能为空"
         }
     )
-    def clean_phone_number(self):
-        phone_number = self.data.get('phone_number')
-        if verify_phone_number(phone_number):
-            return phone_number
-        else:
-            self.add_error('phone_number', '手机号异常')
+    # def clean_phone_number(self):
+    #     phone_number = self.data.get('phone_number')
+    #     if verify_phone_number(phone_number):
+    #         return phone_number
+    #     else:
+    #         self.add_error('phone_number', '手机号异常')
 
 
 # 修改手机号
