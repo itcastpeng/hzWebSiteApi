@@ -7,6 +7,7 @@ import json
 
 
 
+
 @account.is_token(models.UserProfile)
 def ask_little_red_book(request):
     response = Response.ResponseObj()
@@ -84,9 +85,46 @@ def ask_little_red_book(request):
 
 
 
+# 栏目异常数量
+@account.is_token(models.UserProfile)
+def abnormal_number_columns(request):
+    response = Response.ResponseObj()
+    if request.method == 'POST':
+        pass
+
+    else:
+
+        yidongshebei_num = models.XiaohongshuPhone.objects.filter(
+            name__isnull=False
+        ).exclude(status=1).count()
+
+        biji_num = models.XiaohongshuBiji.objects.filter(
+            status=4
+        ).count()
+
+        huifupinglun_num = models.commentResponseForm.objects.filter(
+            comment_completion_time__isnull=True
+        ).count()
+
+        sixin_num = models.XiaohongshuDirectMessagesReply.objects.filter(
+            status=1
+        ).count()
+
+        response.code = 200
+        response.msg = '查询成功'
+        response.data = {
+            'yidongshebei_num': yidongshebei_num,
+            'biji_num': biji_num,
+            'huifupinglun_num': huifupinglun_num,
+            'sixin_num': sixin_num,
+        }
+        response.note = {
+            'yidongshebei_num': '移动设备异常总数',
+            'biji_num': '笔记异常总数',
+            'huifupinglun_num': '待回复评论总数',
+            'sixin_num': '待回复私信总数',
+        }
 
 
-
-
-
+    return JsonResponse(response.__dict__)
 

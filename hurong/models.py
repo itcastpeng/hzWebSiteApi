@@ -457,11 +457,17 @@ class XhsKeywordsList(models.Model):
         (2, '已查询')
     )
     status = models.SmallIntegerField(verbose_name='查询状态', choices=status_choices, default=1)
-    # nick_name = models.CharField(verbose_name='昵称', max_length=128, null=True)
-    # heading = models.CharField(verbose_name='头像', max_length=512, null=True)
-    note_content = models.TextField(verbose_name='笔记内容', null=True)
-    comments = models.TextField(verbose_name='评论', null=True)
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 文章/评论表
+class ArticlesAndComments(models.Model):
+    note_id = models.CharField(verbose_name='笔记ID', max_length=128)
+    keyword = models.ForeignKey('XhsKeywordsList', verbose_name='关键词')
+    nick_name = models.CharField(verbose_name='小红书客户昵称', max_length=64)
+    heading = models.CharField(verbose_name='头像', max_length=512)
+    article_content = models.TextField(verbose_name='文章内容')
+    article_comment = models.TextField(verbose_name='文章评论', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
