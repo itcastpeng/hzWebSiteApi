@@ -3,6 +3,7 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 from hurong.forms.public_form import SelectForm
 from publicFunc.condition_com import conditionCom
+from django.db.models import Q
 import json
 
 
@@ -27,6 +28,7 @@ def ask_little_red_book(request):
             field_dict = {
                 'id': '',
                 'comments_status': '',
+                'request_type': '',
                 'xhs_user_id': '',
                 'status': '',
                 'request_url': '__contains',
@@ -34,7 +36,18 @@ def ask_little_red_book(request):
 
             q = conditionCom(request, field_dict)
             order = request.GET.get('order', '-create_datetime')
+
             objs = models.AskLittleRedBook.objects.filter(q).order_by(order)
+            error = request.GET.get('error') # 0全部  1：非200 2：200
+            if error:
+                if error in [1, '1']:  # 查询异常的
+                    objs = objs.exclude(response_data__contains=200)
+
+                else:
+                    objs = objs.filter(response_data__contains=200)
+
+
+
             count = objs.count()
 
             if length != 0:
@@ -72,7 +85,8 @@ def ask_little_red_book(request):
             response.data = {
                 'ret_data': ret_data,
                 'count': count,
-                'status_choices': [{'id': i[0], 'name': i[1]} for i in models.AskLittleRedBook.status_choices]
+                'status_choices': [{'id': i[0], 'name': i[1]} for i in models.AskLittleRedBook.status_choices],
+                'request_type_choices': [{'id': i[0], 'name': i[1]} for i in models.AskLittleRedBook.request_type_choices]
             }
 
         else:
