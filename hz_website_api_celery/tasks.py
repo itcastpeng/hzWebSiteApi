@@ -534,6 +534,7 @@ def asynchronous_synchronous_trans(task_id=None):
             "id": obj.id,
             "link": obj.biji_url,
             "pubTime": obj.release_time,
+            "from_blogger": '1',
         }
         ret = requests.post(url=api_url, data=data)
         requests_log(api_url, data, ret.json())  # 记录请求日志

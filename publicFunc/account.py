@@ -59,20 +59,20 @@ def is_token(table_obj):
             t = request.GET.get('t')
 
             if t in ['phone','ppxhs']:
-                request_type = 1
-                if request.method == 'POST': # 请求方式
-                    request_type = 2
-                if t == 'ppxhs':
-                    if 'get_coverage_quantity' not in request.path and \
-                        'xiaohongshuxiala/detail' not in request.path:
-                        models.AskLittleRedBook.objects.create(
-                            request_url=request.path,
-                            get_request_parameter=dict(request.GET),
-                            post_request_parameter=dict(request.POST),
-                            response_data='',
-                            request_type=request_type,
-                            status=2,
-                        )
+                # request_type = 1
+                # if request.method == 'POST': # 请求方式
+                #     request_type = 2
+                # if t == 'ppxhs':
+                #     if 'get_coverage_quantity' not in request.path and \
+                #         'xiaohongshuxiala/detail' not in request.path:
+                #         models.AskLittleRedBook.objects.create(
+                #             request_url=request.path,
+                #             get_request_parameter=dict(request.GET),
+                #             post_request_parameter=dict(request.POST),
+                #             response_data='',
+                #             request_type=request_type,
+                #             status=2,
+                #         )
 
                 return func(request, *args, **kwargs)
 

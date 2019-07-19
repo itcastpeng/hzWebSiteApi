@@ -4,6 +4,7 @@ from hurong import models
 from publicFunc.public import get_traffic_information as get_phone_info, query_device_recharge_information
 from publicFunc.public import send_error_msg
 from django.db.models import Q
+from publicFunc.public import create_xhs_admin_response
 import datetime, time, random, requests, json
 
 
@@ -175,15 +176,8 @@ def asynchronous_transfer_data(request):
             transfer_type,
             e)
         send_error_msg(content, 1)
+    create_xhs_admin_response(request, response_content, 1, url=url, req_type=1) # 创建请求日志 后台请求小红书
 
-    models.AskLittleRedBook.objects.create( # 创建日志
-        request_url=url,
-        get_request_parameter='',
-        post_request_parameter=dict(request.POST),
-        response_data=response_content,
-        request_type=2,
-        status=1,
-    )
 
     return HttpResponse('')
 
