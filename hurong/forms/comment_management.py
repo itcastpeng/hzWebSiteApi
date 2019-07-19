@@ -203,8 +203,13 @@ class AssociatedScreenshots(forms.Form):
     )
     def clean_notes_url(self):
         notes_url = self.data.get('notes_url')
-        ret = requests.get(notes_url, allow_redirects=False)
-        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+
+        if 'www.xiaohongshu.com' in notes_url:
+            link = notes_url.split('?')[0]
+
+        else:
+            ret = requests.get(notes_url, allow_redirects=False)
+            link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
         if biji_objs:
