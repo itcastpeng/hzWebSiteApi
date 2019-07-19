@@ -143,7 +143,7 @@ def abnormal_number_columns(request):
 
 
 # 查询告警信息
-@account.is_token(models.UserProfile)
+# @account.is_token(models.UserProfile)
 def query_mobile_equipment_alarm_information(request):
     response = Response.ResponseObj()
     forms_obj = SelectForm(request.GET)
