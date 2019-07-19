@@ -16,4 +16,8 @@ urlpatterns = [
     url(r'^asynchronous_transfer_data$', celery_management.asynchronous_transfer_data),
 
 
+    # 线上临时做的操作
+    url(r'^test$', celery_management.test),
+
+
 ]
