@@ -105,7 +105,13 @@ app.conf.beat_schedule = {
     'error_asynchronous_transfer_data':{
         'task': 'hz_website_api_celery.tasks.error_asynchronous_transfer_data',
         'schedule': crontab('0', '*/1', '*', '*', '*'),
-    }
+    },
+
+    #  异步 同步 日记反链 （一小时一次）
+    'asynchronous_synchronous_trans':{
+        'task': 'hz_website_api_celery.tasks.asynchronous_synchronous_trans',
+        'schedule': crontab('0', '*/1', '*', '*', '*'),
+    },
 
 }
 app.conf.update(

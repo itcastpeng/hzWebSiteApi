@@ -23,6 +23,7 @@ from publicFunc.public import send_error_msg
 from hurong import models
 from django.db.models.aggregates import Count
 from django.db.models import Q
+from publicFunc.public import requests_log
 
 # 更新小红书下拉数据
 @app.task
@@ -520,7 +521,21 @@ def error_asynchronous_transfer_data():
     requests.post(url)
 
 
-
+# 异步 同步 日记反链
+@app.task
+def asynchronous_synchronous_trans(task_id=None):
+    q = Q()
+    if task_id:
+        q.add(Q(id=task_id), Q.AND)
+    objs = models.XiaohongshuBiji.objects.filter(q, user_id__isnull=False)
+    api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
+    for obj in objs:
+        data = {
+            "id": obj.id,
+            "link": obj.biji_url,
+        }
+        ret = requests.post(url=api_url, data=data)
+        requests_log(api_url, data, ret.json())  # 记录请求日志
 
 
 

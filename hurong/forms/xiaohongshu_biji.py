@@ -1,9 +1,7 @@
 from django import forms
-
 from hurong import models
 from publicFunc import account
-import re
-import json
+import json, re, requests
 
 
 # 判断是否是数字
@@ -131,13 +129,59 @@ class UpdateReding(forms.Form):
         else:
             self.add_error('o_id', '笔记不存在')
 
+# 发布中的笔记改为发布异常
+class InsteadAbnormalReleaseNotes(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "笔记ID不能为空",
+        }
+    )
 
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
 
+        objs = models.XiaohongshuBiji.objects.filter(id=o_id)
+        if objs:
+            obj = objs[0]
+            if obj.status in [1, '1']:
+                return o_id
+            else:
+                self.add_error('o_id', '该笔记{}不可修改发布异常'.format(obj.get_status_display()))
+        else:
+            self.add_error('o_id', '笔记不存在')
 
+# 已发布的可修改回链
+class PublishedNotesBackChain(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "笔记ID不能为空",
+        }
+    )
+    back_url = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "反链不能为空",
+        }
+    )
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.XiaohongshuBiji.objects.filter(id=o_id)
+        if objs:
+            obj = objs[0]
+            if obj.status in [2, '2']:
+                return o_id
+            else:
+                self.add_error('o_id', '该笔记{}不可修改反链'.format(obj.get_status_display()))
+        else:
+            self.add_error('o_id', '笔记不存在')
 
+    def clean_back_url(self):
+        back_url = self.data.get('back_url')
+        ret = requests.get(back_url, allow_redirects=False)
+        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-
-
-
+        return back_url, link
 
 

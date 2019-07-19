@@ -4,8 +4,9 @@ from publicFunc.public import requests_log
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
-from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding
-from hz_website_api_celery.tasks import asynchronous_transfer_data
+from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding, \
+    InsteadAbnormalReleaseNotes, PublishedNotesBackChain
+from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
 import requests, datetime, json, re
 
 
@@ -227,6 +228,47 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+
+        # 发布中的笔记 可以改为发布异常
+        elif oper_type == 'instead_abnormal_release_notes':
+            form_data = {
+                'o_id': o_id
+            }
+            form_obj = InsteadAbnormalReleaseNotes(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                obj = models.XiaohongshuBiji.objects.get(id=o_id)
+                obj.status = 4
+                obj.save()
+                response.code = 200
+                response.msg = '更改发布异常成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+        # 已发布的可修改回链
+        elif oper_type == 'published_notes_back_chain':
+            form_data = {
+                'o_id': o_id,
+                'back_url': request.POST.get('back_url')
+            }
+            form_obj = PublishedNotesBackChain(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                back_url, link = form_obj.cleaned_data.get('back_url')
+                obj = models.XiaohongshuBiji.objects.get(id=o_id)
+                obj.biji_url = back_url
+                obj.biji_existing_url = link
+                obj.save()
+                response.code = 200
+                response.msg = '修改反链成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+            asynchronous_synchronous_trans.delay(o_id) # 异步更改小红书后台回链
 
         else:
             response.code = 402
