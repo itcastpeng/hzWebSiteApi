@@ -429,7 +429,7 @@ class PhoneRequestsBackgroundRecords(models.Model):
     response_data = models.TextField(verbose_name='返回数据')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-# 小红书请求 和 请求小红书
+# 小红书请求 和 请求小红书 (请求日志)
 class AskLittleRedBook(models.Model):
     request_url = models.CharField(verbose_name='请求链接', max_length=512)
     get_request_parameter = models.TextField(verbose_name='GET请求参数', null=True)
@@ -447,6 +447,12 @@ class AskLittleRedBook(models.Model):
     )
     status = models.SmallIntegerField(verbose_name='请求类型', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 移动设备异常 发送消息给企业QQ记录
+class MobileEquipmentAbnormalSendMessageEnterpriseRecord(models.Model):
+    error_msg = models.TextField(verbose_name='错误日志')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
 
 
 # =============================小红书爬取数据=======================

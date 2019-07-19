@@ -94,7 +94,8 @@ urlpatterns = [
 
     # 小红书后台请求接口 and 接口请求小红书 日志
     url(r'^ask_little_red_book$', ask_little_red_book.ask_little_red_book),
-    url(r'^abnormal_number_columns$', ask_little_red_book.abnormal_number_columns),  #栏目查询异常数量
+    url(r'^abnormal_number_columns$', ask_little_red_book.abnormal_number_columns),  # 栏目查询异常数量
+    url(r'^query_mobile_equipment$', ask_little_red_book.query_mobile_equipment_alarm_information),  # 移动页面查询 移动设备告警信息
 
     # ============================小红书爬虫===================================
     url(r'^little_red_book_crawler/(?P<oper_type>\w+)$', little_red_book_crawler.little_red_book_crawler),  # 创建任务
