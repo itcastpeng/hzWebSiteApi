@@ -161,7 +161,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 ret = requests.get(url, allow_redirects=False)
                 link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-                models.XiaohongshuBiji.objects.filter(id=task_id).update(
+                biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
+                biji_objs.update(
                     biji_existing_url=link,
                     biji_url=url,
                     status=2,
@@ -172,6 +173,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 data = {
                     "id": task_id,
                     "link": url,
+                    "pubTime": biji_objs[0].release_time,
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
                 ret = requests.post(url=api_url, data=data)
@@ -263,12 +265,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 obj.save()
                 response.code = 200
                 response.msg = '修改反链成功'
-
+                asynchronous_synchronous_trans.delay(o_id) # 异步更改小红书后台回链
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
 
-            asynchronous_synchronous_trans.delay(o_id) # 异步更改小红书后台回链
 
         else:
             response.code = 402
@@ -382,3 +383,4 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             response.code = 402
             response.msg = "请求异常"
     return JsonResponse(response.__dict__)
+from hz_website_api_celery.tasks import asynchronous_synchronous_trans
