@@ -32,7 +32,6 @@ def verify_phone_number(phone_number):
         flag = True
     return flag
 
-
 # 查询手机流量
 def get_traffic_information(number):
     headers = {'User-Agent': pcRequestHeader[random.randint(0, len(pcRequestHeader) - 1)]}
@@ -79,8 +78,6 @@ def query_device_recharge_information(number):
 
     return data
 
-
-
 # 创建请求日志 requests 请求外界
 def requests_log(url, request_parameters, response_content):
     models.externalRequestRecord.objects.create(**{
@@ -104,7 +101,7 @@ def send_error_msg(content, send_type=None):
     )
 
 # 更新 小红书后台 请求 该后台 返回值
-def update_xhs_admin_response(request, response, status=None):
+def update_xhs_admin_response(request, response):
     method = 1
     if request.method == 'POST':
         method = 2
@@ -117,15 +114,45 @@ def update_xhs_admin_response(request, response, status=None):
     )
 
 # 创建请求日志
-def create_xhs_admin_response(request, response, status=1):
-    request_type = 1
-    if request.method == 'POST':
-        request_type = 2
+def create_xhs_admin_response(request, response, status, url=None, req_type=None):
+
+    if req_type:
+        request_type = req_type
+    else:
+        request_type = 1
+        if request.method == 'POST':
+            request_type = 2
+
+    if url:
+        req_url = url
+    else:
+        req_url = request.path
+
+    try:
+        response_data = response.__dict__
+    except Exception:
+        response_data = response
 
     models.AskLittleRedBook.objects.create(  # 更新日志
         request_type=request_type,  # POST请求
-        request_url=request.path,
-        response_data=response.__dict__,
+        request_url=req_url,
+        response_data=response_data,
         status=status
-
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

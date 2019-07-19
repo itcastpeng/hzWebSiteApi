@@ -5,7 +5,7 @@ from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment
-from publicFunc.public import update_xhs_admin_response
+from publicFunc.public import create_xhs_admin_response
 import json, requests, base64, time, os, datetime
 
 
@@ -80,6 +80,8 @@ def comment_management(request, oper_type):
                         response.code = 301
                         response.msg = json.loads(forms_obj.errors.as_json())
 
+            create_xhs_admin_response(request, response, 3) # 创建请求日志(手机)
+
         # 创建回复评论 小红书后台添加接口   (博主回复内容)④
         elif oper_type == 'reply_comment':
             form_data = {
@@ -94,13 +96,12 @@ def comment_management(request, oper_type):
                 response.msg = '创建成功'
                 response.data = obj.id
 
-                update_xhs_admin_response(request, response)  # 更新小红书 请求接口返回值
-
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 2) # 创建请求日志(小红书后台请求后台)
 
-        # 刪除评论
+        # 刪除评论(小红书请求)
         elif oper_type == 'delete_comment':
             form_data = {
                 'comment_id': request.POST.get('comment_id'),  # 删除哪个评论ID
@@ -113,6 +114,7 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 2) # 创建请求日志(小红书后台请求后台)
 
         # 手机端 删除评论是否完成
         elif oper_type == 'reply_comment_is_delete':
@@ -129,7 +131,7 @@ def comment_management(request, oper_type):
                 'id': id
             }
             asynchronous_transfer_data.delay(data)
-
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
@@ -158,10 +160,10 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(form_objs.errors.as_json())
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 关联 笔记链接 和 文章截图②
         elif oper_type == 'associated_screenshots':
-            # print('request.POST-------------->', request.POST)
             form_data = {
                 'notes_url': request.POST.get('notes_url'),  # 笔记回链
                 'screenshots': request.POST.get('screenshots')  # 文章截图
@@ -198,7 +200,7 @@ def comment_management(request, oper_type):
 
             response.code = code
             response.msg = msg
-
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
     else:
 
