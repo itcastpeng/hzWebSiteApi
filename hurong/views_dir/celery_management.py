@@ -221,3 +221,19 @@ def error_asynchronous_transfer_data(request):
             send_error_msg(content, 1)
 
     return HttpResponse('')
+
+
+
+
+
+
+
+# 线上临时做的操作
+def test(request):
+    models.AskLittleRedBook.objects.all().delete()
+
+
+    return HttpResponse('')
+
+
+
