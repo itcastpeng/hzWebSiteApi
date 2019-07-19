@@ -313,6 +313,8 @@ def comment_management(request, oper_type):
                     'id': '',
                     'comments_status': '',
                     'xhs_user_id': '',
+                    'xhs_user__phone_id__name': '__contains',
+                    'xhs_user__name': '__contains',
                 }
 
                 q = conditionCom(request, field_dict)
@@ -330,6 +332,9 @@ def comment_management(request, oper_type):
                 for obj in objs:
                     ret_data.append({
                         'id': obj.id,
+                        'phone_name': obj.xhs_user.phone_id.name,
+                        'phone_id': obj.xhs_user.phone_id_id,
+                        'phone_number': obj.xhs_user.phone_id.phone_num,
                         'xhs_user_id': obj.xhs_user_id,
                         'xhs_user_name': obj.xhs_user.name,
                         'head_portrait': obj.head_portrait,
