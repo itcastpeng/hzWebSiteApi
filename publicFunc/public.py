@@ -99,10 +99,11 @@ def send_error_msg(content, send_type=None):
         obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
 
 # 更新 小红书后台 请求 该后台 返回值
-def update_xhs_admin_response(request, response):
+def update_xhs_admin_response(request, response, status=None):
     method = 1
     if request.method == 'POST':
         method = 2
+
     models.AskLittleRedBook.objects.filter(  # 更新日志
         status=method,  # POST请求
         request_url=request.path,
@@ -110,3 +111,16 @@ def update_xhs_admin_response(request, response):
         response_data=response.__dict__,
     )
 
+# 创建请求日志
+def create_xhs_admin_response(request, response, status=1):
+    request_type = 1
+    if request.method == 'POST':
+        request_type = 2
+
+    models.AskLittleRedBook.objects.create(  # 更新日志
+        request_type=request_type,  # POST请求
+        request_url=request.path,
+        response_data=response.__dict__,
+        status=status
+
+    )

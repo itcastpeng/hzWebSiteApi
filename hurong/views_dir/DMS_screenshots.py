@@ -4,8 +4,8 @@ from publicFunc.qiniu.auth import Auth
 from publicFunc import Response
 from django.http import JsonResponse
 from hurong.forms.DMS_screenshots import Screenshots
+from publicFunc.public import update_xhs_admin_response
 import json, requests, base64, time, os, random
-
 
 
 def DMS_screenshots(request, oper_type):
@@ -88,10 +88,7 @@ def DMS_screenshots(request, oper_type):
             response.data = {
                 'key': key
             }
-
-            models.AskLittleRedBook.objects.create(
-                request_url=request
-            )
+            # update_xhs_admin_response(request, response, status=3)  # 更新小红书 请求接口返回值
 
         else:
             response.code = 301

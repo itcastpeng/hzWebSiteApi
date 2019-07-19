@@ -184,7 +184,7 @@ def asynchronous_transfer_data(request):
 
     return HttpResponse('')
 
-# 异步上传手机抓取的评论
+# 异步上传手机抓取的评论(避免创建的时候 异步上传报错)
 def error_asynchronous_transfer_data(request):
     objs = models.littleRedBookReviewForm.objects.filter(status=1)
     for obj in objs:

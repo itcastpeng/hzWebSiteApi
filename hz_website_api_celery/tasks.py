@@ -527,7 +527,7 @@ def asynchronous_synchronous_trans(task_id=None):
     q = Q()
     if task_id:
         q.add(Q(id=task_id), Q.AND)
-    objs = models.XiaohongshuBiji.objects.filter(q, user_id__isnull=False)
+    objs = models.XiaohongshuBiji.objects.filter(q, user_id__isnull=False, biji_url__isnull=False)
     api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
     for obj in objs:
         data = {

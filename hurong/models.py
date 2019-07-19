@@ -443,6 +443,7 @@ class AskLittleRedBook(models.Model):
     status_choices = (
         (1, '后台请求小红书'),
         (2, '小红书请求后台'),
+        (3, '手机请求接口'),
     )
     status = models.SmallIntegerField(verbose_name='请求类型', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
