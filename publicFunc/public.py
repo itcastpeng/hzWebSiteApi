@@ -95,10 +95,10 @@ def send_error_msg(content, send_type=None):
         obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
         obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
 
-    # 创建告警信息
-    models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.create(
-
-    )
+        # 创建告警信息
+        models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.create(
+            error_msg=content
+        )
 
 # 更新 小红书后台 请求 该后台 返回值
 def update_xhs_admin_response(request, response):
