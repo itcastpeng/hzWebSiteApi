@@ -105,11 +105,11 @@ def abnormal_number_columns(request):
         pass
 
     else:
-
+        exclude_list = [22, 10, 6]
         yidongshebei_num = models.XiaohongshuPhone.objects.filter(
             name__isnull=False,
             status=2
-        ).count()
+        ).exclude(id__in=exclude_list).count()
 
         biji_num = models.XiaohongshuBiji.objects.filter(
             status=3
