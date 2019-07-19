@@ -8,15 +8,18 @@ import datetime, time, random, requests, json
 
 
 
-# 定期删除 设备日志
+# 定期删除 设备日志/ 请求日志
 def delete_phone_log(request):
     try:
         now_date = datetime.date.today()
         last_there_days = (now_date - datetime.timedelta(days=2))
-        objs = models.XiaohongshuPhoneLog.objects.filter(
+        models.XiaohongshuPhoneLog.objects.filter(
             create_datetime__lt=last_there_days
-        )
-        objs.delete()
+        ).delete()
+        models.AskLittleRedBook.objects.filter(
+            create_datetime__lt=last_there_days
+        ).delete()
+
     except Exception as e:
         content = '{} \n 定期删除 设备日志报错\n错误:{}'.format(datetime.datetime.today(), e)
         send_error_msg(content, 1)
