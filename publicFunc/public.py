@@ -136,6 +136,8 @@ def create_xhs_admin_response(request, response, status, url=None, req_type=None
     models.AskLittleRedBook.objects.create(  # 更新日志
         request_type=request_type,  # POST请求
         request_url=req_url,
+        get_request_parameter=dict(request.GET),
+        post_request_parameter=dict(request.POST),
         response_data=response_data,
         status=status
     )
