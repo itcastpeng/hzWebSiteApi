@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from hurong.forms.little_red_book_crawler import GeneratedTask, GeavyCheckTask, SelectForm, DeleteTasks
 from publicFunc.condition_com import conditionCom
 from django.db.models import Q
+from publicFunc.base64_encryption import b64decode
 import json, datetime
 
 # 小红书爬虫
@@ -97,11 +98,11 @@ def little_red_book_crawler(request, oper_type):
             ).update(
                 article_comment=comments_list_data
             )
-
+            response.code = 200
 
     else:
 
-        # 查询任务信息
+        # 查询任务信息(小红书后台)
         if oper_type == 'query_task_info':
             forms_obj = SelectForm(request.GET)
             if forms_obj.is_valid():
@@ -196,6 +197,16 @@ def little_red_book_crawler(request, oper_type):
 
             response.code = 200
             response.msg = '查询成功'
+            response.data = data
+
+        # 临时
+        elif oper_type == 'test':
+            objs = models.ArticlesAndComments.objects.all()
+            data = []
+            for obj in objs:
+                data.append({
+                    'content': b64decode(obj.article_content)
+                })
             response.data = data
 
         else:

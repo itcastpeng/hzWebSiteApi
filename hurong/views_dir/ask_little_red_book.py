@@ -95,11 +95,12 @@ def abnormal_number_columns(request):
     else:
 
         yidongshebei_num = models.XiaohongshuPhone.objects.filter(
-            name__isnull=False
-        ).exclude(status=1).count()
+            name__isnull=False,
+            status=2
+        ).count()
 
         biji_num = models.XiaohongshuBiji.objects.filter(
-            status=4
+            status=3
         ).count()
 
         huifupinglun_num = models.commentResponseForm.objects.filter(

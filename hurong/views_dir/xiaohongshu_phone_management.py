@@ -209,9 +209,10 @@ def xiaohongshu_phone_management(request, oper_type):
                 q = conditionCom(request, field_dict)
 
                 select_id = request.GET.get('id')
+                exclude_list = [22, 10, 6]
                 objs = models.XiaohongshuPhone.objects.filter(
                     q,
-                ).order_by(order)
+                ).exclude(id__in=exclude_list).order_by(order)
                 count = objs.count()
 
                 if length != 0:
