@@ -250,7 +250,6 @@ def comment_management(request, oper_type):
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False,
-                    delete=1,
                 ).order_by('create_datetime')
                 if objs:
                     obj = objs[0]
@@ -293,7 +292,7 @@ def comment_management(request, oper_type):
 
         # 查询删除评论任务(手机)
         elif oper_type == 'query_delete_comment':
-            objs = models.commentResponseForm.objects.filter(delete=2)
+            objs = models.littleRedBookReviewForm.objects.filter(delete=2)
             data = {}
             if objs:
                 obj = objs[0]
