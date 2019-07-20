@@ -457,20 +457,13 @@ class MobileEquipmentAbnormalSendMessageEnterpriseRecord(models.Model):
 
 # =============================小红书爬取数据=======================
 
-
-
 # 关键词表
 class XhsKeywordsList(models.Model):
     uid = models.CharField(verbose_name='小红书后台id', max_length=64)       # 小红书后台传
     keyword = models.CharField(verbose_name='关键词', max_length=64)        # 小红书后台传
     number = models.IntegerField(verbose_name='获取条数')                   # 小红书后台传
-    related_keyword = models.CharField(verbose_name='相关关键词', max_length=128, null=True) # 小红书后台传
-    status_choices = (
-        (1, '未查询'),
-        (2, '已查询')
-    )
-    status = models.SmallIntegerField(verbose_name='查询状态', choices=status_choices, default=1)
-    total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)
+    # related_keyword = models.CharField(verbose_name='相关关键词', max_length=128, null=True) # 小红书后台传
+    total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)            # 查询关键词
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
@@ -481,10 +474,17 @@ class ArticlesAndComments(models.Model):
     nick_name = models.CharField(verbose_name='小红书客户昵称', max_length=64)
     heading = models.CharField(verbose_name='头像', max_length=512)
     article_content = models.TextField(verbose_name='文章内容')
-    article_comment = models.TextField(verbose_name='文章评论', null=True)
-    comment_time = models.CharField(verbose_name='文章评论时间戳', max_length=128, null=True)
+    article_comment = models.CharField(verbose_name='文章评论', max_length=128, null=True) # 保存redis KEY + _ num num=条数 20叠加
+    one_comments_list_count = models.IntegerField(verbose_name='一级评论总数', default=0)
+    comments_list_count = models.IntegerField(verbose_name='评论总数', default=0)
+    note_type_choices = (
+        (1, '图片'),
+        (2, '视频')
+    )
+    note_type = models.SmallIntegerField(verbose_name='笔记类型', choices=note_type_choices, default=1)
+    video_url = models.CharField(verbose_name='视频连接', max_length=512, null=True)
+    img_list = models.TextField(verbose_name='图片', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
 
 
 

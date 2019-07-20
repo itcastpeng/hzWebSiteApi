@@ -296,8 +296,9 @@ def comment_management(request, oper_type):
             data = {}
             if objs:
                 obj = objs[0]
-                data['id'] = obj.id
-                data['comment_response'] = obj.comment_response
+                data = {
+                    'id': obj.id,
+                }
 
             else:
                 response.msg = '无任务'
