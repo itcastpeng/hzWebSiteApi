@@ -12,7 +12,7 @@ import json, datetime, redis
 def little_red_book_crawler(request, oper_type):
     response = Response.ResponseObj()
 
-    redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     redis_hash_name = 'xhs_comments_name'  # redis_name
 
     if request.method == 'POST':
