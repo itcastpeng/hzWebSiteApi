@@ -6,7 +6,7 @@ from hurong.forms.little_red_book_crawler import GeneratedTask, GeavyCheckTask, 
 from publicFunc.condition_com import conditionCom
 from django.db.models import Q
 from publicFunc.base64_encryption import b64decode
-import json, datetime
+import json, datetime, redis
 
 # 小红书爬虫
 def little_red_book_crawler(request, oper_type):
@@ -68,6 +68,7 @@ def little_red_book_crawler(request, oper_type):
             id = request.POST.get('id')
             nick_name = request.POST.get('nick_name')
             heading = request.POST.get('heading')
+            total_count = request.POST.get('total_count')
             note_id = request.POST.get('note_id')
             article_content = request.POST.get('article_content')
 
@@ -75,6 +76,7 @@ def little_red_book_crawler(request, oper_type):
             if objs:
                 obj = objs[0]
                 obj.status = 2
+                obj.total_count = total_count
                 obj.save()
 
                 models.ArticlesAndComments.objects.create(
@@ -90,14 +92,44 @@ def little_red_book_crawler(request, oper_type):
         elif oper_type == 'update_comments':
             id = request.POST.get('id')
             note_id = request.POST.get('note_id')
-            comments_list_data = request.POST.get('comments_list_data')
+            comments_list = request.POST.get('comments_list')
+            time_stamp = request.POST.get('time_stamp') # 时间戳  判断是否为一次的评论
 
-            models.ArticlesAndComments.objects.filter(
-                keyword_id=id,
-                note_id=note_id
-            ).update(
-                article_comment=comments_list_data
-            )
+            redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+            redis_key = str(note_id + id)
+
+            redis_hash_name = 'xhs_comments_name'
+            get_redis_data = redis_obj.hget(redis_hash_name, redis_key)
+
+            if get_redis_data: # 如果存在 这个文章的评论
+                print()
+            else: # 如果不存在这个文章评论
+                redis_obj.hset(redis_hash_name, redis_key, comments_list)
+
+            data = redis_obj.hget(redis_hash_name, redis_key)
+            print('data----> ', data)
+
+            # objs = models.ArticlesAndComments.objects.filter(
+            #     keyword_id=id,
+            #     note_id=note_id
+            # )
+            # if objs:
+            #     obj = objs[0]
+            #     if obj.comment_time == time_stamp: # 如果是一次的时间戳
+            #         if not obj.article_comment:  # 没有评论
+            #             obj.article_comment = comments_list
+            #
+            #         else:
+            #             article_comment = json.loads(obj.article_comment)
+            #             article_comment.extend(json.dumps(comments_list))
+            #             obj.article_comment = article_comment
+            #     else:
+            #         obj.article_comment = comments_list
+            #
+            #     obj.comment_time = time_stamp
+            #     obj.save()
+
+
             response.code = 200
 
     else:

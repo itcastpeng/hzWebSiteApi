@@ -383,4 +383,3 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             response.code = 402
             response.msg = "请求异常"
     return JsonResponse(response.__dict__)
-from hz_website_api_celery.tasks import asynchronous_synchronous_trans
