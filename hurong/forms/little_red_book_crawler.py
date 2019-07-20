@@ -29,7 +29,7 @@ class GeneratedTask(forms.Form):
                     uid=uid,
                     keyword=keyword,
                     number=number,
-                    related_keyword=related_keyword,
+                    # related_keyword=related_keyword,
                     status=1,
                 )
             else:
@@ -39,7 +39,7 @@ class GeneratedTask(forms.Form):
                     uid=uid,
                     keyword=keyword,
                     number=number,
-                    related_keyword=related_keyword,
+                    # related_keyword=related_keyword,
                 )
 
 # 重查任务
@@ -54,12 +54,15 @@ class GeavyCheckTask(forms.Form):
 
     def clean_post_data(self):
         post_data = eval(self.data.get('post_data'))
-        models.ArticlesAndComments.objects.filter(keyword_id__in=post_data).delete()
+        models.ArticlesAndComments.objects.filter(keyword__uid__in=post_data).delete()
         objs = models.XhsKeywordsList.objects.filter(uid__in=post_data)
         flag = False
         if objs:
             flag = True
-            objs.update(status=1)
+            objs.update(
+                last_select_time=None,
+                total_count=0
+            )
         return flag
 
 # 判断是否是数字
@@ -103,13 +106,16 @@ class DeleteTasks(forms.Form):
 
     def clean_post_data(self):
         post_data = eval(self.data.get('post_data'))
-        models.ArticlesAndComments.objects.filter(keyword_id__in=post_data).delete()
+        models.ArticlesAndComments.objects.filter(keyword__uid__in=post_data).delete()
         models.XhsKeywordsList.objects.filter(uid__in=post_data).delete()
 
-
-
-
-
-
+# 查询任务
+class QueryComments(forms.Form):
+    article_comment = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "评论KEY不能为空"
+        }
+    )
 
 
