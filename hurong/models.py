@@ -473,6 +473,7 @@ class ArticlesAndComments(models.Model):
     keyword = models.ForeignKey('XhsKeywordsList', verbose_name='关键词')
     nick_name = models.CharField(verbose_name='小红书客户昵称', max_length=64)
     heading = models.CharField(verbose_name='头像', max_length=512)
+    desc = models.TextField(verbose_name='文章标题', null=True)
     article_content = models.TextField(verbose_name='文章内容')
     article_comment = models.CharField(verbose_name='文章评论', max_length=128, null=True) # 保存redis KEY + _ num num=条数 20叠加
     one_comments_list_count = models.IntegerField(verbose_name='一级评论总数', default=0)

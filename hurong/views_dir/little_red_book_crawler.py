@@ -77,6 +77,8 @@ def little_red_book_crawler(request, oper_type):
             video_url = request.POST.get('video_url')
             note_type = request.POST.get('note_type')
             img_list = request.POST.get('img_list')
+            desc = request.POST.get('desc')
+
             objs = models.XhsKeywordsList.objects.filter(id=id)
             if objs:
                 obj = objs[0]
@@ -88,6 +90,7 @@ def little_red_book_crawler(request, oper_type):
                 models.ArticlesAndComments.objects.create(
                     keyword=obj,
                     nick_name=nick_name,
+                    desc=desc,
                     note_id=note_id,
                     heading=heading,
                     article_content=article_content,
@@ -175,24 +178,41 @@ def little_red_book_crawler(request, oper_type):
                     ret_data = []
                     for obj in objs:
                         ret_data.append({
-                            'nick_name': obj.nick_name,  # 小红书昵称
-                            'heading': obj.heading,  # 小红书昵称
-                            'article_content': obj.article_content,  # 小红书昵称
-                            'article_comment': obj.article_comment,  # 小红书昵称
-                            'one_comments_list_count': obj.one_comments_list_count,  # 小红书昵称
-                            'comments_list_count': obj.comments_list_count,  # 小红书昵称
-                            'note_type': obj.note_type,  # 小红书昵称
-                            'video_url': obj.video_url,  # 小红书昵称
-                            'img_list': json.loads(obj.img_list),  # 小红书昵称
+                            'nick_name': obj.nick_name,
+                            'heading': obj.heading,
+                            'article_content': obj.article_content,
+                            'article_comment': obj.article_comment,
+                            'one_comments_list_count': obj.one_comments_list_count,
+                            'comments_list_count': obj.comments_list_count,
+                            'note_type': obj.note_type,
+                            'desc': obj.desc,
+                            'video_url': obj.video_url,
+                            'img_list': json.loads(obj.img_list),
                         })
 
                     response.code = 200
                     response.msg = '查询成功'
                     response.data = {
                         'ret_data': ret_data,
-                        'count': count
+                        'count': count,
+                        'note_type_choices': [{'id':i[0], 'name': i[1]} for i in models.ArticlesAndComments.note_type_choices],
                     }
-
+                    response.note = {
+                        'ret_data':{
+                            'nick_name': '小红书昵称',
+                            'heading': '小红书头像',
+                            'article_content': '文章内容',
+                            'article_comment': '文章评论键',
+                            'desc': '文章标题',
+                            'one_comments_list_count': '首级评论总数',
+                            'comments_list_count': '评论总数',
+                            'note_type': '笔记类型',
+                            'video_url': '视频链接',
+                            'img_list': '图片链接/封面链接',
+                        },
+                        'count': '总数',
+                        'note_type_choices': '笔记类型'
+                    }
                 else:
                     response.code = 301
                     response.msg = '获取笔记条数 大于爬取条数'
