@@ -119,7 +119,7 @@ def comment_management(request, oper_type):
         # 手机端 删除评论是否完成
         elif oper_type == 'reply_comment_is_delete':
             id = request.POST.get('comment_id')      # 删除的消息ID
-            models.commentResponseForm.objects.filter(
+            models.littleRedBookReviewForm.objects.filter(
                 id=id
             ).update(
                 delete=3

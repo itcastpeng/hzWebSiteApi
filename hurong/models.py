@@ -400,6 +400,12 @@ class littleRedBookReviewForm(models.Model):
         (1, '未上传'),
         (2, '已上传')
     )
+    delete_choices = (
+        (1, '未删除'),
+        (2, '待删除'),
+        (3, '已删除')
+    )
+    delete = models.SmallIntegerField(verbose_name='是否删除', choices=delete_choices, default=1)
     status = models.SmallIntegerField(verbose_name='上传状态', choices=status_choices, default=1)  # 是否成功 上传小红书后台
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
@@ -408,12 +414,6 @@ class commentResponseForm(models.Model):
     comment = models.ForeignKey('littleRedBookReviewForm', verbose_name='回复哪个评论')
     comment_response = models.TextField(verbose_name='回复评论内容')
     comment_completion_time = models.DateTimeField(verbose_name='评论完成时间', null=True)
-    delete_choices = (
-        (1, '未删除'),
-        (2, '待删除'),
-        (3, '已删除')
-    )
-    delete = models.SmallIntegerField(verbose_name='是否删除', choices=delete_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
@@ -470,6 +470,7 @@ class XhsKeywordsList(models.Model):
         (2, '已查询')
     )
     status = models.SmallIntegerField(verbose_name='查询状态', choices=status_choices, default=1)
+    total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
@@ -481,6 +482,7 @@ class ArticlesAndComments(models.Model):
     heading = models.CharField(verbose_name='头像', max_length=512)
     article_content = models.TextField(verbose_name='文章内容')
     article_comment = models.TextField(verbose_name='文章评论', null=True)
+    comment_time = models.CharField(verbose_name='文章评论时间戳', max_length=128, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

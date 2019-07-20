@@ -255,7 +255,7 @@ class DeleteComment(forms.Form):
 
     def clean_comment_id(self):
         comment_id = self.data.get('comment_id')
-        objs = models.commentResponseForm.objects.filter(id=comment_id)
+        objs = models.littleRedBookReviewForm.objects.filter(id=comment_id)
         if objs:
             objs.update(delete=2)
             return comment_id
