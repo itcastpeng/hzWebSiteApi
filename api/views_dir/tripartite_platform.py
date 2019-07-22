@@ -213,10 +213,13 @@ def tripartite_platform_oper(request, oper_type):
         # 查询最新一次提交的审核状态
         elif oper_type == 'check_status_most_recent_submission':
             auditid = request.GET.get('auditid')
-            tripartite_platform_objs.check_status_most_recent_submission(
+            ret_json = tripartite_platform_objs.check_status_most_recent_submission(
                 authorizer_access_token,
                 auditid
             )
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = ret_json
 
         # 获取草稿箱内的所有临时代码草稿
         elif oper_type == 'get_all_temporary_code_drafts':

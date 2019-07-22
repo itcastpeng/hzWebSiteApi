@@ -405,6 +405,7 @@ class tripartite_platform_oper():
         )
         ret = requests.get(url)
         print('查询最新一次提交的审核状态------> ', ret.json())
+        return ret.json()
 
     # 获取小程序的第三方提交代码的页面配置
     def get_code_page_configuration(self, token):

@@ -159,3 +159,43 @@ class DeleteForm(forms.Form):
             return list(delete_id_list)
         else:
             self.add_error('delete_id_list', "删除列表类型错误")
+
+
+
+
+# 本地禁词检测
+class ForbiddenWordsQuery(forms.Form):
+    forbidden_words = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "禁词不能为空"
+        }
+    )
+
+    def clean_forbidden_words(self):
+        forbidden_words = self.data.get('forbidden_words')
+        forbidden_word = forbidden_words
+        objs = models.XiaohongshuForbiddenText.objects.filter(create_datetime__isnull=False)
+        data = []
+        for obj in objs:
+            if obj.word in forbidden_words:
+                word = '{%s}' % obj.word
+                forbidden_words = forbidden_words.replace(obj.word, word)
+                data.append(obj.word)
+
+        print('forbidden_words------->', forbidden_words)
+
+        return data, forbidden_word
+
+
+
+
+
+
+
+
+
+
+
+
+

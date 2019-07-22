@@ -5,7 +5,7 @@ from publicFunc import account
 from publicFunc.send_email import SendEmail
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from hurong.forms.xiaohongshu import CheckForbiddenTextForm, SelectForm, AddForm
+from hurong.forms.xiaohongshu import CheckForbiddenTextForm, SelectForm, AddForm, ForbiddenWordsQuery
 from django.db.models import Q, F, Sum, Count
 from publicFunc.redisOper import get_redis_obj
 import json, redis, requests, datetime
@@ -240,6 +240,42 @@ def check_forbidden_text(request):
             '禁词数量_总数': forbidden_objs_count,
             '本周禁词统计': data_list
         }
+
+    return JsonResponse(response.__dict__)
+
+# 禁词操作
+@account.is_token(models.UserProfile)
+def forbidden_words_oper(request, oper_type):
+    response = Response.ResponseObj()
+    if request.method == 'POST':
+
+        # 禁词查询
+        if oper_type == 'forbidden_words_query':
+            form_data = {
+                'forbidden_words': request.POST.get('forbidden_words')
+            }
+            form_obj = ForbiddenWordsQuery(form_data)
+            if form_obj.is_valid():
+                data, forbidden_word = form_obj.cleaned_data.get('forbidden_words')
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'data': data,
+                }
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+    else:
+
+        if oper_type == '':
+            pass
+
+
+        else:
+            response.code = 402
+            response.msg = '请求异常'
 
     return JsonResponse(response.__dict__)
 

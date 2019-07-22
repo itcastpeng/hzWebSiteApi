@@ -110,7 +110,8 @@ def xhs_mobile_phone_number_management(request, oper_type):
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
-                    'count': count
+                    'count': count,
+                    'status_choices': [{'id':i[0], 'name':i[1]} for i in models.PhoneNumber.status_choices],
                 }
 
             else:
