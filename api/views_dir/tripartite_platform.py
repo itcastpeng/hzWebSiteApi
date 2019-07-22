@@ -237,9 +237,14 @@ def tripartite_platform_oper(request, oper_type):
 
         # 将第三方提交的代码包提交审核
         elif oper_type == 'code_package_submitted_review':
-            tripartite_platform_objs.code_package_submitted_review(
+            ret_json = tripartite_platform_objs.code_package_submitted_review(
                 authorizer_access_token
             )
+            auditid = ret_json.get('auditid')
+            response.code = 200
+            response.msg = '提交成功'
+            response.data = ret_json
+
 
         # 获取授权小程序帐号已设置的类目
         # elif oper_type == 'xcx_applet_account_settings':
