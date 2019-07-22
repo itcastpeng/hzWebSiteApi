@@ -424,7 +424,7 @@ class tripartite_platform_oper():
         # 获取小程序的第三方提交代码的页面配置
         configuration_url = 'https://api.weixin.qq.com/wxa/get_page'
         configuration_ret = requests.get(configuration_url, params=params).json()
-
+        print('configuration_ret-->', configuration_ret)
         # 获取授权小程序帐号已设置的类目
         class_to_set_url = 'https://api.weixin.qq.com/wxa/get_category'
         class_to_set_ret = requests.get(class_to_set_url, params=params).json()
@@ -451,8 +451,7 @@ class tripartite_platform_oper():
 
         ret = requests.post(url, data=json.dumps(data,  ensure_ascii=False).encode('utf8'))
         print('将第三方提交的代码包提交审核-------------> ', ret.text)
-        auditid = ret.json().get('auditid')
-
+        return ret.json()
 
     # 发布已通过审核的小程序
     def publish_approved_applets(self, token):
