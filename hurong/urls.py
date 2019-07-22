@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^task_info', task_info.task_info),
 
     # 小红书禁词检测
+    url(r'^xiaohongshu/(?P<oper_type>\w+)', xiaohongshu.forbidden_words_oper), # 禁词检测
     url(r'^xiaohongshu/check_forbidden_text', xiaohongshu.check_forbidden_text),
 
     # 小红书下拉

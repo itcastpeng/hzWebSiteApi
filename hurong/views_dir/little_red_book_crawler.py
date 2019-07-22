@@ -19,7 +19,6 @@ def little_red_book_crawler(request, oper_type):
         form_data = {
             'post_data':request.POST.get('post_data'),
         }
-
         # 生成任务
         if oper_type == 'generated_task':
             """
@@ -84,7 +83,6 @@ def little_red_book_crawler(request, oper_type):
                 obj = objs[0]
                 obj.status = 2
                 obj.total_count = total_count
-                obj.last_select_time = datetime.datetime.today()
                 obj.save()
 
                 models.ArticlesAndComments.objects.create(
@@ -163,7 +161,7 @@ def little_red_book_crawler(request, oper_type):
                 length = forms_obj.cleaned_data['length']
                 order = request.GET.get('order', '-create_datetime')
                 field_dict = {
-                    'notes__uid': '',
+                    'keyword__uid': '',
                 }
 
                 q = conditionCom(request, field_dict)
@@ -172,8 +170,7 @@ def little_red_book_crawler(request, oper_type):
                 start_line = (current_page - 1) * length
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
-
-                if objs and int(stop_line) < int(objs[0].keyword.number):
+                if objs and int(stop_line) <= int(objs[0].keyword.number):
 
                     ret_data = []
                     for obj in objs:
@@ -243,8 +240,7 @@ def little_red_book_crawler(request, oper_type):
             data = {}
             if objs:
                 obj = objs[0]
-                obj.last_select_time = now_date
-                obj.save()
+                models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
 
                 data['id'] = obj.id
                 data['keyword'] = obj.keyword
@@ -254,15 +250,14 @@ def little_red_book_crawler(request, oper_type):
             response.msg = '查询成功'
             response.data = data
 
-        # 临时
-        elif oper_type == 'test':
-            objs = models.ArticlesAndComments.objects.all()
-            data = []
-            for obj in objs:
-                data.append({
-                    'content': b64decode(obj.article_content)
-                })
-            response.data = data
+        # 更改完成时间
+        elif oper_type == 'update_task_status':
+            uid = request.GET.get('uid')
+            objs = models.XhsKeywordsList.objects.filter(id=uid)
+            objs.update(
+                last_select_time=datetime.datetime.today()
+            )
+            response.code = 200
 
         else:
             response.code = 402
