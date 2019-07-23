@@ -259,9 +259,7 @@ def forbidden_words_oper(request, oper_type):
                 data, forbidden_word = form_obj.cleaned_data.get('forbidden_words')
                 response.code = 200
                 response.msg = '查询成功'
-                response.data = {
-                    'data': data,
-                }
+                response.data = data
 
             else:
                 response.code = 301
