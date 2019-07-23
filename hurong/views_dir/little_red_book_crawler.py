@@ -130,6 +130,11 @@ def little_red_book_crawler(request, oper_type):
             response.code = 200
 
     else:
+        now = datetime.date.today()
+        now_date = datetime.datetime.today()
+        query_q = Q()
+        query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
+        query_q.add(Q(success_time__lt=now) | Q(success_time__isnull=True), Q.AND)
 
         # 查询评论(小红书后台)
         if oper_type == 'query_comments':
@@ -171,49 +176,49 @@ def little_red_book_crawler(request, oper_type):
                 start_line = (current_page - 1) * length
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
-                if objs and int(stop_line) <= int(objs[0].keyword.number):
+                # if objs and int(stop_line) <= int(objs[0].keyword.number):
 
-                    ret_data = []
-                    for obj in objs:
-                        ret_data.append({
-                            'nick_name': obj.nick_name,
-                            'heading': obj.heading,
-                            'article_content': obj.article_content,
-                            'article_comment': obj.article_comment,
-                            'one_comments_list_count': obj.one_comments_list_count,
-                            'comments_list_count': obj.comments_list_count,
-                            'note_type': obj.note_type,
-                            'desc': obj.desc,
-                            'video_url': obj.video_url,
-                            'img_list': json.loads(obj.img_list),
-                        })
+                ret_data = []
+                for obj in objs:
+                    ret_data.append({
+                        'nick_name': obj.nick_name,
+                        'heading': obj.heading,
+                        'article_content': obj.article_content,
+                        'article_comment': obj.article_comment,
+                        'one_comments_list_count': obj.one_comments_list_count,
+                        'comments_list_count': obj.comments_list_count,
+                        'note_type': obj.note_type,
+                        'desc': obj.desc,
+                        'video_url': obj.video_url,
+                        'img_list': json.loads(obj.img_list),
+                    })
 
-                    response.code = 200
-                    response.msg = '查询成功'
-                    response.data = {
-                        'ret_data': ret_data,
-                        'count': count,
-                        'note_type_choices': [{'id':i[0], 'name': i[1]} for i in models.ArticlesAndComments.note_type_choices],
-                    }
-                    response.note = {
-                        'ret_data':{
-                            'nick_name': '小红书昵称',
-                            'heading': '小红书头像',
-                            'article_content': '文章内容',
-                            'article_comment': '文章评论键',
-                            'desc': '文章标题',
-                            'one_comments_list_count': '首级评论总数',
-                            'comments_list_count': '评论总数',
-                            'note_type': '笔记类型',
-                            'video_url': '视频链接',
-                            'img_list': '图片链接/封面链接',
-                        },
-                        'count': '总数',
-                        'note_type_choices': '笔记类型'
-                    }
-                else:
-                    response.code = 301
-                    response.msg = '获取笔记条数 大于爬取条数'
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count,
+                    'note_type_choices': [{'id':i[0], 'name': i[1]} for i in models.ArticlesAndComments.note_type_choices],
+                }
+                response.note = {
+                    'ret_data':{
+                        'nick_name': '小红书昵称',
+                        'heading': '小红书头像',
+                        'article_content': '文章内容',
+                        'article_comment': '文章评论键',
+                        'desc': '文章标题',
+                        'one_comments_list_count': '首级评论总数',
+                        'comments_list_count': '评论总数',
+                        'note_type': '笔记类型',
+                        'video_url': '视频链接',
+                        'img_list': '图片链接/封面链接',
+                    },
+                    'count': '总数',
+                    'note_type_choices': '笔记类型'
+                }
+                # else:
+                #     response.code = 301
+                #     response.msg = '获取笔记条数 大于爬取条数'
 
             else:
                 response.code = 301
@@ -221,10 +226,7 @@ def little_red_book_crawler(request, oper_type):
 
         # 查询是否有任务(VPS)
         elif oper_type == 'query_whether_task':
-            now = datetime.date.today()
-            q = Q()
-            q.add(Q(last_select_time__lt=now) | Q(last_select_time__isnull=True), Q.AND)
-            objs = models.XhsKeywordsList.objects.filter(q)
+            objs = models.XhsKeywordsList.objects.filter(query_q)
             flag = False
             if objs:
                 flag = True
@@ -234,13 +236,14 @@ def little_red_book_crawler(request, oper_type):
 
         # 获取任务(VPS)
         elif oper_type == 'get_task':
-            now_date = datetime.date.today()
-            q = Q()
-            q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True,), Q.AND)
-            objs = models.XhsKeywordsList.objects.filter(q)
+            objs = models.XhsKeywordsList.objects.filter(query_q)
             data = {}
             if objs:
+                deletionTime = (datetime.datetime.today() + datetime.timedelta(hours=1))
+
                 obj = objs[0]
+                obj.last_select_time = deletionTime
+                obj.save()
                 models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
 
                 data['id'] = obj.id
@@ -257,7 +260,7 @@ def little_red_book_crawler(request, oper_type):
             objs = models.XhsKeywordsList.objects.filter(id=uid)
             now = datetime.datetime.today()
             objs.update(
-                last_select_time=now
+                success_time=now
             )
             response.code = 200
             if objs:
