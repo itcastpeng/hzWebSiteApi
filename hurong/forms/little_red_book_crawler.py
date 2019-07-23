@@ -61,7 +61,8 @@ class GeavyCheckTask(forms.Form):
             flag = True
             objs.update(
                 last_select_time=None,
-                total_count=0
+                total_count=0,
+                success_time=None
             )
         return flag
 

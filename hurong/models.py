@@ -465,6 +465,7 @@ class XhsKeywordsList(models.Model):
     # related_keyword = models.CharField(verbose_name='相关关键词', max_length=128, null=True) # 小红书后台传
     total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)            # 查询关键词
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
+    success_time = models.DateTimeField(verbose_name='完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 文章/评论表
