@@ -189,6 +189,7 @@ def little_red_book_crawler(request, oper_type):
                         'comments_list_count': obj.comments_list_count,
                         'note_type': obj.note_type,
                         'desc': obj.desc,
+                        'note_id': obj.note_id,
                         'video_url': obj.video_url,
                         'img_list': json.loads(obj.img_list),
                     })
