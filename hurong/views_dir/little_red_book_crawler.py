@@ -6,12 +6,13 @@ from hurong.forms.little_red_book_crawler import GeneratedTask, GeavyCheckTask, 
 from publicFunc.condition_com import conditionCom
 from django.db.models import Q
 from publicFunc.base64_encryption import b64decode
-import json, datetime, redis
+import json, datetime, redis, requests
 
 # 小红书爬虫
 def little_red_book_crawler(request, oper_type):
     response = Response.ResponseObj()
 
+    # redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     redis_hash_name = 'xhs_comments_name'  # redis_name
 
@@ -254,10 +255,21 @@ def little_red_book_crawler(request, oper_type):
         elif oper_type == 'update_task_status':
             uid = request.GET.get('uid')
             objs = models.XhsKeywordsList.objects.filter(id=uid)
+            now = datetime.datetime.today()
             objs.update(
-                last_select_time=datetime.datetime.today()
+                last_select_time=now
             )
             response.code = 200
+            if objs:
+                obj = objs[0]
+
+                # 通知小红书 完成数据
+                url = 'http://xhs.cn/api/v1/tools/keyword/check'
+                data = {
+                    'time_stamp':now,
+                    'id':obj.uid,
+                }
+                requests.post(url, data=data)
 
         else:
             response.code = 402
