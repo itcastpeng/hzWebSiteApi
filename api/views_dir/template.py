@@ -5,7 +5,7 @@ from publicFunc import account
 from django.http import JsonResponse
 
 from publicFunc.condition_com import conditionCom
-from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm
+from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm
 import json
 from api.views_dir.page import page_base_data
 
@@ -148,6 +148,26 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 修改模板分类id
+        elif oper_type == "update_class":
+            # 获取需要修改的信息
+            form_data = {
+                'o_id': o_id,
+                'class_id': request.POST.get('class_id'),
+            }
+
+            forms_obj = UpdateClassForm(form_data)
+            if forms_obj.is_valid():
+                # print("验证通过")
+                # print(forms_obj.cleaned_data)
+                o_id = forms_obj.cleaned_data['o_id']
+                class_id = forms_obj.cleaned_data['class_id']
+
+                # 更新数据
+                models.Template.objects.filter(id=o_id).update(template_class_id=class_id)
+
+                response.code = 200
+                response.msg = "修改成功"
     else:
         # 获取底部导航数据
         if oper_type == "get_tab_bar_data":
