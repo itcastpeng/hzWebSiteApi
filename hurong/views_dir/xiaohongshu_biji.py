@@ -343,6 +343,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'uid': '__contains',
                     'status': '',
                     'user_id__name': '__contains',
+                    'user_id__phone_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
                 objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
