@@ -103,6 +103,7 @@ def xiaohongshu_phone_management(request, oper_type):
                         if number_objs:
                             number_obj = number_objs[0]
                             number_obj.phone_id = phone_objs[0].id # 将手机号和设备进行关联
+                            number_obj.status = 2
                             number_obj.save()
                             phone_num = number_obj.phone_num
 
