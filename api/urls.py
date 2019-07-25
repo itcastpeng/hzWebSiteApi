@@ -34,7 +34,7 @@ urlpatterns = [
 
     # 模板分类管理
     url(r'^template_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', template_class.template_class_oper),
-    url(r'^template_class', template_class.template_class),
+    url(r'^template_class$', template_class.template_class),
 
     # 模板管理
     url(r'^template/(?P<oper_type>\w+)/(?P<o_id>\d+)', template.template_oper),
