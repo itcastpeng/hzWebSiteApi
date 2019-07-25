@@ -186,8 +186,8 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 创建 用户 (小红书后台调用)
         elif oper_type == "registre":
-            print("registre")
             form_data = {
                 'uid': request.POST.get('uid'),
                 'name': request.POST.get('name'),

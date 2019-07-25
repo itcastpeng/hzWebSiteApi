@@ -12,8 +12,8 @@ import json, datetime, redis, requests
 def little_red_book_crawler(request, oper_type):
     response = Response.ResponseObj()
 
-    # redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
-    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
+    # redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     redis_hash_name = 'xhs_comments_name'  # redis_name
 
     if request.method == 'POST':
@@ -132,9 +132,10 @@ def little_red_book_crawler(request, oper_type):
     else:
         now = datetime.date.today()
         now_date = datetime.datetime.today()
+        deletionTime = (now_date + datetime.timedelta(hours=1))
         query_q = Q()
-        query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
-        query_q.add(Q(success_time__lt=now) | Q(success_time__isnull=True), Q.AND)
+        query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
+        query_q.add(Q(last_select_comments_time__lt=now_date) | Q(last_select_comments_time__isnull=True), Q.OR)
 
         # 查询评论(小红书后台)
         if oper_type == 'query_comments':
@@ -165,7 +166,7 @@ def little_red_book_crawler(request, oper_type):
             if forms_obj.is_valid():
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
-                order = request.GET.get('order', '-create_datetime')
+                order = request.GET.get('order', 'create_datetime')
                 field_dict = {
                     'keyword__uid': '',
                 }
@@ -227,6 +228,7 @@ def little_red_book_crawler(request, oper_type):
 
         # 查询是否有任务(VPS)
         elif oper_type == 'query_whether_task':
+            query_q.add(Q(success_time__lt=now) | Q(success_time__isnull=True), Q.AND)
             objs = models.XhsKeywordsList.objects.filter(query_q)
             flag = False
             if objs:
@@ -235,24 +237,53 @@ def little_red_book_crawler(request, oper_type):
             response.msg = '查询成功'
             response.data = flag
 
-        # 获取任务(VPS)
+        # 获取任务(VPS) 分配什么任务(内容直接返回)
         elif oper_type == 'get_task':
+
             objs = models.XhsKeywordsList.objects.filter(query_q)
             data = {}
             if objs:
-                deletionTime = (datetime.datetime.today() + datetime.timedelta(hours=1))
-
                 obj = objs[0]
+                now = now.strftime('%Y-%m-%d')
+                last_time = obj.last_select_time
+                if last_time:
+                    last_time = obj.last_select_time.strftime('%Y-%m-%d')
+                print('last_time-----> ', last_time, now)
+                if last_time and last_time == now:
+                    type_status = 2
+                    obj.last_select_comments_time = deletionTime
+
+                else:
+                    models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
+                    type_status = 1
+
                 obj.last_select_time = deletionTime
                 obj.save()
-                models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
-
                 data['id'] = obj.id
                 data['keyword'] = obj.keyword
                 data['number'] = obj.number
+                data['type'] = type_status # 1 为查笔记内容 2为查评论
 
             response.code = 200
             response.msg = '查询成功'
+            response.data = data
+
+        # 获取评论任务
+        elif oper_type == 'get_comments_task':
+            keyword_id = request.GET.get('keyword_id')
+            q = Q()
+            q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now), Q.AND)
+            objs = models.ArticlesAndComments.objects.filter(q, keyword_id=keyword_id)
+            code = 301
+            data = {}
+            if objs:
+                obj = objs[0]
+                code = 200
+                obj.last_select_time = deletionTime
+                obj.save()
+
+                data['note_id'] = obj.note_id
+            response.code = code
             response.data = data
 
         # 更改完成时间
