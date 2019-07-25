@@ -490,8 +490,12 @@ class ArticlesAndComments(models.Model):
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-
-
+# 小红书 user_id 存储表
+class XhsUserId(models.Model):
+    xhs_user_id = models.CharField(verbose_name='小红书用户ID', max_length=128)
+    last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
+    success_time = models.DateTimeField(verbose_name='完成时间', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
