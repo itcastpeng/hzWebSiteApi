@@ -7,6 +7,8 @@ from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding, \
     InsteadAbnormalReleaseNotes, PublishedNotesBackChain
 from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
+from publicFunc.base64_encryption import b64decode, b64encode
+from django.db.models import Q
 import requests, datetime, json, re
 
 
@@ -189,13 +191,30 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         # 发布笔记
         elif oper_type == 'published_articles':
-            id_list = json.loads(request.POST.get('id_list'))
-            objs = models.XiaohongshuBiji.objects.filter(id__in=id_list)
-            for obj in objs:
-                obj.status = 1
-                obj.save()
-            response.code = 200
-            response.msg = '发布成功'
+            now = datetime.datetime.today()
+            flag = False
+            hms_date = datetime.datetime.today().strftime('%H:%M:%S')
+            hms_date = datetime.datetime.strptime(hms_date, '%H:%M:%S')
+
+            if datetime.datetime.strptime('8:30:00', '%H:%M:%S') >= hms_date >= datetime.datetime.strptime('7:30:00', '%H:%M:%S'):
+                flag = True
+            elif datetime.datetime.strptime('13:30:00', '%H:%M:%S') >= hms_date >= datetime.datetime.strptime('12:00:00', '%H:%M:%S'):
+                flag = True
+            elif datetime.datetime.strptime('21:30:00', '%H:%M:%S') >= hms_date >= datetime.datetime.strptime('17:00:00', '%H:%M:%S'):
+                flag = True
+
+            if flag:
+                id_list = json.loads(request.POST.get('id_list'))
+                objs = models.XiaohongshuBiji.objects.filter(id__in=id_list)
+                for obj in objs:
+                    obj.status = 1
+                    obj.save()
+                response.code = 200
+                response.msg = '发布成功'
+
+            else:
+                response.code = 301
+                response.msg = '当前时间不在发布时间段'
 
         # 阅读量更改
         elif oper_type == 'update_reding':
@@ -322,20 +341,20 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 field_dict = {
                     'id': '',
                     'uid': '__contains',
-                    'content': '__contains',
                     'status': '',
                     'user_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
-
                 objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     q,
                 ).exclude(user_id_id=5).order_by(order)
                 count = objs.count()
-                if length != 0:
-                    start_line = (current_page - 1) * length
-                    stop_line = start_line + length
-                    objs = objs[start_line: stop_line]
+                content = request.GET.get('content')
+                if not content:
+                    if length != 0:
+                        start_line = (current_page - 1) * length
+                        stop_line = start_line + length
+                        objs = objs[start_line: stop_line]
                 ret_data = []
                 select_id = request.GET.get('id')
                 for obj in objs:
@@ -364,9 +383,13 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     }
                     # if select_id:
                     result_data['content'] = json.loads(obj.content)
-
-                    ret_data.append(result_data)
-
+                    if content:
+                        if content in json.loads(obj.content).get('title'):
+                            ret_data.append(result_data)
+                    else:
+                        ret_data.append(result_data)
+                if content:
+                    count = len(ret_data)
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
