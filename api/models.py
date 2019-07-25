@@ -2,7 +2,6 @@ from django.db import models
 import json
 
 
-
 # 权限表
 class Permissions(models.Model):
     name = models.CharField(verbose_name="权限名称", max_length=128)
@@ -18,6 +17,7 @@ class Role(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", related_name="role_create_user")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     permissions = models.ManyToManyField('Permissions', verbose_name="拥有权限")
+
 
 # 用户表
 class UserProfile(models.Model):
@@ -87,10 +87,17 @@ class ClientUserProfile(models.Model):
     user_type = models.SmallIntegerField(verbose_name="用户类型", choices=user_type_choices)
 
 
+# 模板分类表
+class TemplateClass(models.Model):
+    name = models.CharField(verbose_name="模板分类名称", max_length=256)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
 
 # 模板表
 class Template(models.Model):
     name = models.CharField(verbose_name="模板名称", max_length=256)
+    template_class = models.ForeignKey('TemplateClass', verbose_name="模板分类", null=True)
     share_qr_code = models.CharField(verbose_name="微信分享二维码", max_length=256, null=True, blank=True)
     logo_img = models.CharField(
         verbose_name="logo图片",

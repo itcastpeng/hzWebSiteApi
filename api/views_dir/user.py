@@ -40,7 +40,6 @@ def user(request):
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
 
-
             ret_data = []
             for obj in objs:
                 # 返回的数据
