@@ -68,6 +68,7 @@ def template_class(request):
 @account.is_token(models.UserProfile)
 def template_class_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
+    print("request.POST -->", request.POST)
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
