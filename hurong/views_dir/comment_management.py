@@ -317,6 +317,7 @@ def comment_management(request, oper_type):
                     'xhs_user_id': '',
                     'xhs_user__phone_id__name': '__contains',
                     'xhs_user__name': '__contains',
+                    'comments_content': '__contains',
                 }
 
                 q = conditionCom(request, field_dict)
