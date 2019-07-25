@@ -12,8 +12,8 @@ import json, datetime, redis, requests
 def little_red_book_crawler(request, oper_type):
     response = Response.ResponseObj()
 
-    redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
-    # redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    # redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     redis_hash_name = 'xhs_comments_name'  # redis_name
 
     if request.method == 'POST':
@@ -140,6 +140,18 @@ def little_red_book_crawler(request, oper_type):
                         xhs_user_id=user_id,
                     ))
             models.XhsUserId.objects.bulk_create(querysetlist)
+
+        # 提交用户ID
+        elif oper_type == 'update_xhs_user_id':
+            info = request.POST.get('info')
+            xhs_user_id = request.POST.get('xhs_user_id')
+
+            models.XhsUserId.objects.filter(xhs_user_id=xhs_user_id).update(
+                success_time=datetime.datetime.today()
+            )
+            redis_name = 'xhs_user_id_name'
+
+            redis_obj.hset(redis_name, xhs_user_id, info)
 
 
     else:
