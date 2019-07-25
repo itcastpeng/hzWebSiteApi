@@ -135,7 +135,7 @@ def little_red_book_crawler(request, oper_type):
             user_id_list = eval(user_id_list)
             querysetlist = []
             for user_id in user_id_list:
-                if not models.XhsUserId.objects.filter(xhs_user_id=user_id.stiip()):
+                if not models.XhsUserId.objects.filter(xhs_user_id=user_id.strip()):
                     querysetlist.append(models.XhsUserId(
                         xhs_user_id=user_id.stiip(),
                     ))
