@@ -338,18 +338,16 @@ def little_red_book_crawler(request, oper_type):
             q.add(Q(success_time__isnull=True), Q.AND)
             q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
             objs = models.XhsUserId.objects.filter(q)
-
-            if objs.count() >= 10:
-                objs = objs[:10]
             data_list = []
-            for obj in  objs:
+            if objs:
+                obj = objs[0]
                 data_list.append(obj.xhs_user_id)
                 obj.last_select_time = deletionTime
                 obj.save()
                 response.code = 200
                 response.data = data_list
 
-            if len(data_list) < 1:
+            else:
                 response.code = 301
 
         else:
