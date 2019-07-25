@@ -129,6 +129,19 @@ def little_red_book_crawler(request, oper_type):
 
             response.code = 200
 
+        # 创建小红书user_id
+        elif oper_type == 'create_xhs_user_id':
+            user_id_list = request.POST.get('user_id_list')
+            user_id_list = eval(user_id_list)
+            querysetlist = []
+            for user_id in user_id_list:
+                if not models.XhsUserId.objects.filter(xhs_user_id=user_id):
+                    querysetlist.append(models.XhsUserId(
+                        xhs_user_id=user_id,
+                    ))
+            models.XhsUserId.objects.bulk_create(querysetlist)
+
+
     else:
         now = datetime.date.today()
         now_date = datetime.datetime.today()
@@ -305,6 +318,24 @@ def little_red_book_crawler(request, oper_type):
                     'id':obj.uid,
                 }
                 requests.post(url, data=data)
+
+        # 判断是否有查询 用户ID 任务
+        elif oper_type == 'get_user_id_task':
+            deletionTime = (now_date + datetime.timedelta(minutes=5))
+            q = Q()
+            q.add(Q(success_time__isnull=True), Q.AND)
+            q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
+            objs = models.XhsUserId.objects.filter(q)
+            data_list = []
+            for obj in  objs:
+                data_list.append(obj.xhs_user_id)
+                obj.last_select_time = deletionTime
+                obj.save()
+                response.code = 200
+                response.data = data_list
+
+            if len(data_list) < 1:
+                response.code = 301
 
         else:
             response.code = 402
