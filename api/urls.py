@@ -2,7 +2,7 @@
 from django.conf.urls import url
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
-    role
+    role, template_class
 from api.views_dir.xcx import template as xcx_template
 
 
@@ -31,6 +31,10 @@ urlpatterns = [
     url(r'^permissions/(?P<oper_type>\w+)/(?P<o_id>\d+)$', permissions.permissions_oper),
     url(r'^permissions$', permissions.permissions),
     url(r'^get_permissions$', permissions.get_permissions),
+
+    # 模板分类管理
+    url(r'^template_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', template_class.template_class_oper),
+    url(r'^template_class', template_class.template_class),
 
     # 模板管理
     url(r'^template/(?P<oper_type>\w+)/(?P<o_id>\d+)', template.template_oper),

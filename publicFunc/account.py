@@ -51,8 +51,8 @@ def is_token(table_obj):
             else:
                 ip = request.META['REMOTE_ADDR']
 
-            # if ip == "127.0.0.1":
-            #     return func(request, *args, **kwargs)
+            if ip == "127.0.0.1":
+                return func(request, *args, **kwargs)
 
 
             # 手机设备不做token验证
