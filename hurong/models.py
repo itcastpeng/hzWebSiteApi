@@ -170,6 +170,8 @@ class XiaohongshuPhone(models.Model):
     status = models.SmallIntegerField(verbose_name='是否异常', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+    request_ip_addr = models.CharField(verbose_name="真实请求ip地址", max_length=256, null=True)
+
 
 # 小红书手机日志记录
 class XiaohongshuPhoneLog(models.Model):

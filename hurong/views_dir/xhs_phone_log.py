@@ -103,6 +103,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
     if request.method == "POST":
         # 添加用户
         if oper_type == "add":
+
             form_data = {
                 'log_msg': request.POST.get('log_msg'),
                 'macaddr': request.POST.get('macaddr'),
@@ -156,11 +157,13 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     #
                     # else:
 
-
+                    ip = request.META['HTTP_X_FORWARDED_FOR']
                     objs = models.XiaohongshuPhone.objects.filter(**data)
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
+
+                        obj.request_ip_addr = ip
                         obj.save()
                     else:
                         obj = models.XiaohongshuPhone.objects.create(**data)
