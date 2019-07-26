@@ -122,7 +122,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 print("验证通过")
 
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
-                content = forms_obj.cleaned_data.get('content')
+                title, content = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
                 print(xiaohongshu_id)
                 xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
@@ -131,7 +131,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     obj = models.XiaohongshuBiji.objects.create(
                         user_id=xiaohongshu_user_obj,
                         content=content,
-                        release_time=release_time
+                        release_time=release_time,
+                        title=title
                     )
 
                     response.code = 200
