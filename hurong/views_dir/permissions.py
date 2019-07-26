@@ -218,10 +218,8 @@ def get_permissions(request):
         role_obj = models.Role.objects.filter(id=user_obj.role_id_id)
         data_list = []
         for i in role_obj[0].permissions.all():
-            objs = models.Permissions.objects.filter(pid_id=i.id)
-            if objs:
-                obj = objs[0]
-                data_list.append(obj.name)
+            if i.pid:
+                data_list.append(i.pid.name)
             data_list.append(i.name)
 
         user_info = {
