@@ -382,6 +382,52 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 查询历史私信
+        elif oper_type == 'inquire_historical_private_messages':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                user_id = request.GET.get('user_id')
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'user_id_id': '',
+                    'name': '__contains',
+                }
+
+                q = conditionCom(request, field_dict)
+                objs = models.XiaohongshuDirectMessages.objects.filter(q).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+                    user_id = ''
+                    user_name = ''
+                    if obj.user_id:
+                        user_id = obj.user_id_id
+                        user_name = obj.user_id.name
+
+                    ret_data.append({
+                        'user_id': user_id,
+                        'name': obj.name,
+                        'user_name': user_name,
+                        'img_url': obj.img_url,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'count': count
+                }
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
