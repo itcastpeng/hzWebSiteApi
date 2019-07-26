@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding, \
-    InsteadAbnormalReleaseNotes, PublishedNotesBackChain
+    InsteadAbnormalReleaseNotes, PublishedNotesBackChain, UpdateExistContentForm
 from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
 from publicFunc.base64_encryption import b64decode, b64encode
 from django.db.models import Q
@@ -293,6 +293,24 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
 
+        # 修改笔记是否存在内容的状态
+        elif oper_type == "update_exist_content":
+            form_data = {
+                'status': request.POST.get('status'),
+                'o_id': o_id,
+            }
+            #  创建 form验证 实例（参数默认转成字典）
+            forms_obj = UpdateExistContentForm(form_data)
+            if forms_obj.is_valid():
+                status = forms_obj.cleaned_data.get('status')
+                models.XiaohongshuBiji.objects.filter(id=o_id).update(exist_content=status)
+                response.code = 200
+                response.msg = "修改成功"
+
+            else:
+                print("验证不通过")
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
@@ -402,6 +420,19 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 获取 exist_content 字段为False的笔记链接，请求小红书接口进行获取数据，判断文章内容是否正常
+        elif oper_type == "exist_content_get_url":
+            objs = models.XiaohongshuBiji.objects.filter(status=2, exist_content=False)
+            if objs:
+                obj = objs[0]
+                response.code = 200
+                response.data = {
+                    'biji_url': obj.biji_url,
+                    'task_id': obj.id
+                }
+            else:
+                response.code = 0
+                response.msg = "当前无任务"
 
         else:
             response.code = 402

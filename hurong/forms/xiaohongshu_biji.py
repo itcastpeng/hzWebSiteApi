@@ -161,6 +161,7 @@ class InsteadAbnormalReleaseNotes(forms.Form):
         else:
             self.add_error('o_id', '笔记不存在')
 
+
 # 已发布的可修改回链
 class PublishedNotesBackChain(forms.Form):
     o_id = forms.IntegerField(
@@ -195,3 +196,26 @@ class PublishedNotesBackChain(forms.Form):
         return back_url, link
 
 
+# 判断笔记是否存在内容
+class UpdateExistContentForm(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "笔记ID不能为空"
+        }
+    )
+    status = forms.BooleanField(
+        required=True,
+        error_messages={
+            'required': "反链不能为空",
+            'invalid': "数据类型错误"
+        }
+    )
+
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.XiaohongshuBiji.objects.filter(id=o_id)
+        if objs:
+            return o_id
+        else:
+            self.add_error('o_id', '笔记不存在')
