@@ -113,6 +113,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '*/1', '*', '*', '*'),
     },
 
+    # 手机号 未使用的低于200 告警(一小时一次)
+    'unused_cell_phone_number_below_alarms':{
+        'task': 'hz_website_api_celery.tasks.unused_cell_phone_number_below_alarms',
+        'schedule': crontab('0', '*/1', '*', '*', '*'),
+    },
+
 }
 app.conf.update(
     result_expires=3600,
