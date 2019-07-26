@@ -383,6 +383,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'release_time': release_time,
                         'completion_time': completion_time,
                         'biji_url': obj.biji_url,
+                        'error_msg': obj.error_msg,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     # if select_id:
