@@ -253,13 +253,16 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
         # 发布中的笔记 可以改为发布异常
         elif oper_type == 'instead_abnormal_release_notes':
             form_data = {
-                'o_id': o_id
+                'o_id': o_id,
+                'error_msg': request.POST.get('error_msg')
             }
             form_obj = InsteadAbnormalReleaseNotes(form_data)
             if form_obj.is_valid():
                 o_id = form_obj.cleaned_data.get('o_id')
+                error_msg = form_obj.cleaned_data.get('error_msg')
                 obj = models.XiaohongshuBiji.objects.get(id=o_id)
                 obj.status = 4
+                obj.error_msg = error_msg
                 obj.save()
                 response.code = 200
                 response.msg = '更改发布异常成功'

@@ -137,7 +137,12 @@ class InsteadAbnormalReleaseNotes(forms.Form):
             'required': "笔记ID不能为空",
         }
     )
-
+    error_msg = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "错误日志不能为空",
+        }
+    )
     def clean_o_id(self):
         o_id = self.data.get('o_id')
 

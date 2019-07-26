@@ -19,11 +19,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
 import django, re, json, redis
 django.setup()
 from openpyxl import Workbook
-from publicFunc.public import send_error_msg
 from hurong import models
 from django.db.models.aggregates import Count
 from django.db.models import Q
-from publicFunc.public import requests_log
+from publicFunc.public import requests_log, send_error_msg
 
 # 更新小红书下拉数据
 @app.task
@@ -539,8 +538,16 @@ def asynchronous_synchronous_trans(task_id=None):
         ret = requests.post(url=api_url, data=data)
         requests_log(api_url, data, ret.json())  # 记录请求日志
 
-
-
+# 手机号 未使用的低于200 告警
+@app.task
+def unused_cell_phone_number_below_alarms():
+    count = models.PhoneNumber.objects.filter(status=1).count()
+    if int(count) < 200:
+        content = '{}\n 手机号未使用的剩余{}个'.format(
+            datetime.datetime.today(),
+            count
+        )
+        send_error_msg(content)
 
 
 

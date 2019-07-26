@@ -152,6 +152,7 @@ def query_mobile_equipment_alarm_information(request):
         length = forms_obj.cleaned_data['length']
         field_dict = {
             'id': '',
+            'error_msg': '__contains',
         }
         q = conditionCom(request, field_dict)
         order = request.GET.get('order', '-create_datetime')
