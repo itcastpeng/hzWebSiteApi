@@ -244,7 +244,7 @@ def equipment_management_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
 
-        # 下载报表
+        # 下载流量信息报表
         elif oper_type == 'download_report':
             all = request.GET.get('all')
             start_time = request.GET.get('start_time')
@@ -343,6 +343,93 @@ def equipment_management_oper(request, oper_type, o_id):
                 row += 1
 
             path = os.path.join('statics', 'imgs' , '1.xlsx')
+            wb.save(path)
+            response.code = 200
+            response.msg = '导出成功'
+            response.data = 'https://xcx.bjhzkq.com/' + path
+
+        # 下载充值记录报表
+        elif oper_type == 'download_recharge_record_report':
+            id=request.GET.get('id')
+            center = Alignment(horizontal='center', vertical='center')
+            ft1 = Font(name='宋体', size=22)
+            ft2 = Font(name='宋体', size=10)
+            wb = Workbook()
+            ws = wb.active
+            title = ws.cell(row=1, column=1, value="设备充值信息")
+            title.font = ft1
+            title.alignment = center
+
+            ws.cell(row=2, column=3, value="总额:").alignment = center
+            data = ['设备套餐', '充值时间', '设备名称', '创建时间']
+            for i in data:
+                index = data.index(i) + 1
+                key = ws.cell(row=4, column=index, value=i)
+                key.alignment = center
+                key.font = ft2
+
+            # 合并单元格        开始行      结束行       用哪列          占用哪列
+            ws.merge_cells(start_row=1, end_row=1, start_column=1, end_column=4)
+            for i in range(1, 8):
+                ws.merge_cells(start_row=2, end_row=3, start_column=i, end_column=i)
+
+            # print('设置列宽')
+            ws.column_dimensions['A'].width = 20
+            ws.column_dimensions['B'].width = 20
+            ws.column_dimensions['C'].width = 20
+            ws.column_dimensions['D'].width = 20
+            #
+            # # print('设置行高')
+            ws.row_dimensions[1].height = 50
+            ws.row_dimensions[4].height = 30
+            #
+            # # print('文本居中')
+            ws['A1'].alignment = Alignment(horizontal='center', vertical='center')
+
+            row = 5
+            if id:
+                objs = models.MobilePhoneRechargeInformation.objects.select_related(
+                    'equipment'
+                ).filter(equipment_id=id)
+
+            else:
+                objs = models.MobilePhoneRechargeInformation.objects.select_related(
+                    'equipment'
+                ).all()
+
+            money_count = 0
+            for obj in objs:
+                if '/月' in obj.equipment_package:
+                    money = obj.equipment_package.split('元')[0].split('联通')[1]
+                    money_count += int(money)
+
+                phone_name = ''
+                if obj.equipment.phone:
+                    phone_name = obj.equipment.phone.name
+
+                ws.row_dimensions[row].height = 20
+
+                one = ws.cell(row=row, column=1, value="{}".format(obj.equipment_package))
+                one.font = ft2
+                one.alignment = center
+
+                two = ws.cell(row=row, column=2, value="{}".format(obj.prepaid_phone_time))
+                two.font = ft2
+                two.alignment = center
+
+                there = ws.cell(row=row, column=3, value="{}".format(phone_name))
+                there.font = ft2
+                there.alignment = center
+
+                there = ws.cell(row=row, column=4, value="{}".format(obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')))
+                there.font = ft2
+                there.alignment = center
+
+                row += 1
+            ws.cell(row=2, column=4, value="{}".format(money_count)).alignment = center
+
+            # path = '1.xlsx'
+            path = os.path.join('statics', 'imgs', '2.xlsx')
             wb.save(path)
             response.code = 200
             response.msg = '导出成功'
