@@ -426,8 +426,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             if objs:
                 obj = objs[0]
                 response.code = 200
+                biji_id = obj.biji_existing_url.split('/')[-1]
                 response.data = {
-                    'biji_url': obj.biji_url,
+                    'biji_id': biji_id,
                     'task_id': obj.id
                 }
             else:
