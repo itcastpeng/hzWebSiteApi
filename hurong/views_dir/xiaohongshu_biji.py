@@ -350,16 +350,17 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'user_id__phone_id__name': '__contains',
                 }
                 q = conditionCom(request, field_dict)
+                content = request.GET.get('content')
+                if content:
+                    q.add(Q(title__contains=b64encode(content)), Q.AND)
                 objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     q,
                 ).exclude(user_id_id=5).order_by(order)
                 count = objs.count()
-                content = request.GET.get('content')
-                if not content:
-                    if length != 0:
-                        start_line = (current_page - 1) * length
-                        stop_line = start_line + length
-                        objs = objs[start_line: stop_line]
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
                 ret_data = []
                 select_id = request.GET.get('id')
                 for obj in objs:
@@ -389,13 +390,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     }
                     # if select_id:
                     result_data['content'] = json.loads(obj.content)
-                    if content:
-                        if content in json.loads(obj.content).get('title'):
-                            ret_data.append(result_data)
-                    else:
-                        ret_data.append(result_data)
-                if content:
-                    count = len(ret_data)
+                    ret_data.append(result_data)
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
@@ -407,14 +402,6 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 测试
-        elif oper_type == 'test':
-            objs = models.XiaohongshuBiji.objects.filter(title__isnull=True)
-            for obj in objs:
-                title = json.loads(obj.content).get('title')
-                obj.title = b64encode(title)
-                obj.save()
-            response.code = 200
 
         else:
             response.code = 402
