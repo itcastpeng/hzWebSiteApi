@@ -115,7 +115,7 @@ def template_class_oper(request, oper_type, o_id):
                 name = forms_obj.cleaned_data['name']
 
                 # 更新数据
-                models.Template.objects.filter(id=o_id).update(name=name)
+                models.TemplateClass.objects.filter(id=o_id).update(name=name)
 
                 response.code = 200
                 response.msg = "修改成功"
