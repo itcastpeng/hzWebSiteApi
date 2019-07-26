@@ -2,7 +2,7 @@ from django import forms
 from hurong import models
 from publicFunc import account
 import json, re, requests
-
+from publicFunc.base64_encryption import b64decode, b64encode
 
 # 判断是否是数字
 class SelectForm(forms.Form):
@@ -73,7 +73,7 @@ class AddForm(forms.Form):
         content_objs = self.data.get('content')
         content = json.loads(content_objs)
         title = content.get('title')
-        return title, content_objs
+        return b64encode(title), content_objs
 
 # 获取发布任务
 class GetReleaseTaskForm(forms.Form):
