@@ -407,6 +407,14 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 测试
+        elif oper_type == 'test':
+            objs = models.XiaohongshuBiji.objects.filter(title__isnull=True)
+            for obj in objs:
+                title = json.loads(obj.content).get('title')
+                obj.title = b64encode(title)
+                obj.save()
+            response.code = 200
 
         else:
             response.code = 402
