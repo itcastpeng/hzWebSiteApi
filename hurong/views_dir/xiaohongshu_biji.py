@@ -69,6 +69,7 @@ def xiaohongshu_biji(request):
                     'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'update_datetime': update_datetime,
+                    'exist_content': obj.exist_content
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -92,6 +93,7 @@ def xiaohongshu_biji(request):
                 'create_user__username': "创建人",
                 'create_datetime': "创建时间",
                 'update_datetime': "更新时间",
+                'exist_content': "比较是否存在内容"
             }
         else:
             # print("forms_obj.errors -->", forms_obj.errors)
