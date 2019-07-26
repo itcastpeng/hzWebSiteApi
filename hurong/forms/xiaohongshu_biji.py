@@ -69,6 +69,11 @@ class AddForm(forms.Form):
         else:
             self.add_error('user_id', "小红书账户不存在")
 
+    def clean_content(self):
+        content_objs = self.data.get('content')
+        content = json.loads(content_objs)
+        title = content.get('title')
+        return title, content_objs
 
 # 获取发布任务
 class GetReleaseTaskForm(forms.Form):

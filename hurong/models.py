@@ -214,7 +214,7 @@ class XiaohongshuBiji(models.Model):
     user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
     # img_list = models.TextField(verbose_name="图片链接数组")
     content = models.TextField(verbose_name="笔记内容")
-
+    title = models.TextField(verbose_name='标题', null=True)
     """
         {   "title": "xxx",
             "img_list": [
