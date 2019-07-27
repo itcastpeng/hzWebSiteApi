@@ -426,7 +426,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         # 获取 exist_content 字段为False的笔记链接，请求小红书接口进行获取数据，判断文章内容是否正常
         elif oper_type == "exist_content_get_url":
-            objs = models.XiaohongshuBiji.objects.filter(status=2, exist_content__isnull=True)
+            objs = models.XiaohongshuBiji.objects.filter(status=2, exist_content=0)
             if objs:
                 obj = objs[0]
                 response.code = 200

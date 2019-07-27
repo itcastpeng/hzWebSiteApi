@@ -219,7 +219,15 @@ class XiaohongshuBiji(models.Model):
     title = models.TextField(verbose_name='标题', null=True)
 
     # 由于发布出去的文章可能存在问题，则加这个字段将发布成功的文章进行请求，判断是否有内容
-    exist_content = models.BooleanField(verbose_name="是否存在文章内容", default=False, null=True)
+    exist_content_choices = (
+        (1, "有文章"),
+        (2, "没文章")
+    )
+    exist_content = models.SmallIntegerField(
+        choices=exist_content_choices,
+        verbose_name="是否存在文章内容",
+        default=0
+    )
     """
         {   "title": "xxx",
             "img_list": [

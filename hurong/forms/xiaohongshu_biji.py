@@ -204,7 +204,7 @@ class UpdateExistContentForm(forms.Form):
             'required': "笔记ID不能为空"
         }
     )
-    status = forms.BooleanField(
+    status = forms.IntegerField(
         required=True,
         error_messages={
             'required': "状态不能为空",
