@@ -220,6 +220,7 @@ class XiaohongshuBiji(models.Model):
 
     # 由于发布出去的文章可能存在问题，则加这个字段将发布成功的文章进行请求，判断是否有内容
     exist_content_choices = (
+        (0, "未检测"),
         (1, "有文章"),
         (2, "没文章")
     )
