@@ -207,7 +207,7 @@ class UpdateExistContentForm(forms.Form):
     status = forms.BooleanField(
         required=True,
         error_messages={
-            'required': "反链不能为空",
+            'required': "状态不能为空",
             'invalid': "数据类型错误"
         }
     )

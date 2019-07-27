@@ -297,10 +297,12 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         # 修改笔记是否存在内容的状态
         elif oper_type == "update_exist_content":
+            status = request.POST.get('status')
             form_data = {
                 'status': request.POST.get('status'),
                 'o_id': o_id,
             }
+            print("status -->", status, type(status))
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = UpdateExistContentForm(form_data)
             if forms_obj.is_valid():
