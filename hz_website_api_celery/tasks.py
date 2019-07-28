@@ -317,7 +317,7 @@ def xiaohongshu_phone_monitor():
     # hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
     # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
     err_phone = []
-    phone_objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
+    phone_objs = models.XiaohongshuPhone.objects.filter(is_debug=False).order_by('name')
     for phone_obj in phone_objs:
         expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
@@ -329,7 +329,6 @@ def xiaohongshu_phone_monitor():
         else:
             phone_obj.status = 1
         phone_obj.save()
-
 
     if len(err_phone) > 0:
         content = """{time} \n 小红书机器异常，请及时处理:  \n{phone_names}""".format(phone_names="\n".join(err_phone), time=datetime.datetime.today())
