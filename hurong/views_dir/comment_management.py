@@ -191,6 +191,7 @@ def comment_management(request, oper_type):
                     msg = '关联成功'
                     response.data = biji_id
                 else:
+                    code = 200
                     msg = '重复关联'
                     response.data = biji_id
 
