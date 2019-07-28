@@ -422,7 +422,7 @@ def xiaohongshu_biji_monitor():
 # 同步小红书霸屏王关键词和链接
 @app.task
 def xhs_bpw_keywords_rsync():
-    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='spider_redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
     # print("keys -->", keys)
     for key in keys:
@@ -457,7 +457,7 @@ def xhs_bpw_keywords_rsync():
 # 同步小红书霸屏王关键词覆盖数据到redis中
 @app.task
 def xhs_bpw_keywords_fugai_rsync():
-    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='spider_redis', port=6381, db=0, decode_responses=True)
 
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
 
