@@ -125,6 +125,7 @@ def xiaohongshu_fugai_update_data():
         print("更新霸屏王查覆盖数据")
         objs = models.xhs_bpw_keywords.objects.filter(keywords=keywords)
         print('objs -->', objs)
+        objs.update(update_datetime=datetime.datetime.now())
         for obj in objs:
             # obj.update_datetime = datetime.datetime.now()
             # obj.save()
@@ -144,8 +145,6 @@ def xiaohongshu_fugai_update_data():
                         rank=rank,
                         biji_num=total_count
                     )
-        objs.update(update_datetime=datetime.datetime.now())
-
         # 更新下拉笔记数据
         models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(
             biji_num=total_count,
