@@ -437,6 +437,7 @@ def comment_management(request, oper_type):
                         comment_response = obj.comment_response
 
                     ret_data.append({
+                        'id': obj.id,
                         'phone_id': phone_id,
                         'phone_name': phone_name,
                         'phone_number': phone_number,
