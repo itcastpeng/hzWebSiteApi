@@ -154,6 +154,7 @@ def xiaohongshu_fugai_update_data():
     if redis_obj.llen(redis_key) == 0:
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+        print('q -->', q)
         objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
         for obj in objs:
             item = {
