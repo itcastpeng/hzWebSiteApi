@@ -123,6 +123,10 @@ def abnormal_number_columns(request):
             status=1
         ).count()
 
+        delete_little_num = models.littleRedBookReviewForm.objects.filter(
+            delete=2
+        ).count()
+
         response.code = 200
         response.msg = '查询成功'
         response.data = {
@@ -130,11 +134,13 @@ def abnormal_number_columns(request):
             'biji_num': biji_num,
             'huifupinglun_num': huifupinglun_num,
             'sixin_num': sixin_num,
+            'delete_little_num': delete_little_num,
         }
         response.note = {
             'yidongshebei_num': '移动设备异常总数',
             'biji_num': '笔记异常总数',
             'huifupinglun_num': '待回复评论总数',
+            'delete_little_num': '待删除的评论总数',
             'sixin_num': '待回复私信总数',
         }
 

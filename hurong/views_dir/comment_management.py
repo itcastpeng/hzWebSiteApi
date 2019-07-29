@@ -343,6 +343,7 @@ def comment_management(request, oper_type):
                     'comments_status': '',
                     'xhs_user_id': '',
                     'xhs_user__phone_id__name': '__contains',
+                    'delete': '',
                     'xhs_user__name': '__contains',
                     'comments_content': '__contains',
                 }
@@ -373,6 +374,8 @@ def comment_management(request, oper_type):
                         'comments_status': obj.get_comments_status_display(),
                         'comments_content': obj.comments_content,
                         'article_picture_address': obj.article_picture_address,
+                        'delete_id': obj.delete,
+                        'delete': obj.get_delete_display(),
                         'article_notes_id': obj.article_notes_id,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
@@ -393,7 +396,8 @@ def comment_management(request, oper_type):
                 response.data = {
                     'ret_data':ret_data,
                     'count':count,
-                    'comments_choices': [{'id':i[0], 'name':i[1]} for i in models.littleRedBookReviewForm.comments_choices]
+                    'comments_choices': [{'id':i[0], 'name':i[1]} for i in models.littleRedBookReviewForm.comments_choices],
+                    'delete_choices': [{'id':i[0], 'name':i[1]} for i in models.littleRedBookReviewForm.delete_choices],
                 }
 
             else:
