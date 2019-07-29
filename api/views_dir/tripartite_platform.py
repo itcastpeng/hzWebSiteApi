@@ -77,7 +77,7 @@ def tripartite_platform_oper(request, oper_type):
                     wx_url = """
                         https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid={}&pre_auth_code={}&redirect_uri={}&auth_type={}
                         """.format(
-                        appid,
+                        tripartite_appid,
                         get_pre_auth_code,
                         redirect_url,
                         authorization_type
