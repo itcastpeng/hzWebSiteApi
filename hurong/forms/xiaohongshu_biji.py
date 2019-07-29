@@ -190,9 +190,10 @@ class PublishedNotesBackChain(forms.Form):
 
     def clean_back_url(self):
         back_url = self.data.get('back_url')
-        ret = requests.get(back_url, allow_redirects=False)
-        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-
+        link = back_url
+        if 'xiaohongshu' not in back_url:
+            ret = requests.get(back_url, allow_redirects=False)
+            link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
         return back_url, link
 
 
