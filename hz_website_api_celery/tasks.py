@@ -74,6 +74,7 @@ def xiaohongshu_xiala_update_data():
 @app.task
 def xiaohongshu_fugai_update_data():
     # 1、将redis中存储的覆盖数据存储到数据库中
+    print("将redis中存储的覆盖数据存储到数据库中---->", datetime.datetime.now())
     redis_obj = redis.StrictRedis(
         host='spider_redis',
         port=1111,
@@ -151,6 +152,7 @@ def xiaohongshu_fugai_update_data():
     redis_key = "xiaohongshu_task_list"
 
     # 霸屏王查排名
+    print("霸屏王查排名---->", datetime.datetime.now())
     if redis_obj.llen(redis_key) == 0:
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
@@ -164,6 +166,7 @@ def xiaohongshu_fugai_update_data():
             }
             redis_obj.lpush(redis_key, json.dumps(item))
 
+    print("普通关键词查排名---->", datetime.datetime.now())
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
         for obj in objs:
@@ -182,6 +185,7 @@ def xiaohongshu_fugai_update_data():
                 redis_obj.lpush(redis_key, json.dumps(item))
 
     # 相同关键词,不同链接,白天新添加的词单独跑
+    print("相同关键词,不同链接,白天新添加的词单独跑---->", datetime.datetime.now())
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.filter(update_datetime__isnull=True)
         for obj in objs:
