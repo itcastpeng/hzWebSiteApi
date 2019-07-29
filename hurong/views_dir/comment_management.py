@@ -314,7 +314,8 @@ def comment_management(request, oper_type):
                         'id': obj.id,
                         'comments_content':obj.comments_content,
                         'screenshots_address':obj.screenshots_address,
-                        'phone_name':obj.xhs_user.phone_id.name
+                        'phone_name':obj.xhs_user.phone_id.name,
+                        'user_name':obj.xhs_user.name,
                     }
 
                 else:
@@ -326,6 +327,7 @@ def comment_management(request, oper_type):
                     'comments_content': '删除评论',
                     'screenshots_address': '截图',
                     'phone_name': '设备名称',
+                    'user_name': '小红书博主名称',
                 }
 
             else:
