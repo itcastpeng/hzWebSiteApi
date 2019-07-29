@@ -263,3 +263,35 @@ class DeleteComment(forms.Form):
         else:
             self.add_error('comment_id', '该评论ID 不存在')
 
+# 查询删除评论任务 (手机端)
+class QueryDeleteComment(forms.Form):
+    imsi = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "IMSI不能为空"
+        }
+    )
+    iccid = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "ICCID不能为空"
+        }
+    )
+
+    def clean_iccid(self):
+        iccid = self.data.get('iccid')
+        imsi = self.data.get('imsi')
+
+        objs = models.XiaohongshuPhone.objects.filter(iccid=iccid, imsi=imsi)
+        if objs:
+            obj = objs[0]
+            return obj.id
+        else:
+            self.add_error('iccid', '设备不存在')
+
+
+
+
+
+
+

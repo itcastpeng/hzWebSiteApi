@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
-    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment
+    SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
 from publicFunc.public import create_xhs_admin_response
 import json, requests, base64, time, os, datetime
 
@@ -118,19 +118,22 @@ def comment_management(request, oper_type):
         # 手机端 删除评论是否完成
         elif oper_type == 'reply_comment_is_delete':
             id = request.POST.get('comment_id')      # 删除的消息ID
-            models.littleRedBookReviewForm.objects.filter(
+            objs = models.littleRedBookReviewForm.objects.filter(
                 id=id
-            ).update(
-                delete=3
             )
+            if objs:
+                models.commentResponseForm.objects.filter(comment_id=id).delete()
+                objs.update(
+                    delete=3
+                )
+                data = {
+                    'transfer_type': 4,
+                    'id': id
+                }
+                asynchronous_transfer_data.delay(data)
+                create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
             response.code = 200
             response.msg = '操作完成'
-            data = {
-                'transfer_type': 4,
-                'id': id
-            }
-            asynchronous_transfer_data.delay(data)
-            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 手机端 通知回复消息完成时间⑥
         elif oper_type == 'reply_comment_is_success':
@@ -292,18 +295,38 @@ def comment_management(request, oper_type):
 
         # 查询删除评论任务(手机)
         elif oper_type == 'query_delete_comment':
-            objs = models.littleRedBookReviewForm.objects.filter(delete=2)
-            data = {}
-            if objs:
-                obj = objs[0]
-                data = {
-                    'id': obj.id,
+            form_data = {
+                'imsi': request.GET.get('imsi'),
+                'iccid': request.GET.get('iccid'),
+            }
+            form_obj = QueryDeleteComment(form_data)
+            if form_obj.is_valid():
+                iccid = form_obj.cleaned_data.get('iccid')
+
+                objs = models.littleRedBookReviewForm.objects.filter(
+                    xhs_user__phone_id_id=iccid,
+                    delete=2
+                )
+                data = {}
+                if objs:
+                    obj = objs[0]
+                    data = {
+                        'id': obj.id,
+                        'comments_content':obj.comments_content
+                    }
+
+                else:
+                    response.msg = '无任务'
+                response.code = 200
+                response.data = data
+                response.note = {
+                    'id': '删除评论ID',
+                    'comments_content': '删除评论'
                 }
 
             else:
-                response.msg = '无任务'
-            response.code = 200
-            response.data = data
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':
