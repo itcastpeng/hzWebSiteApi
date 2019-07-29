@@ -39,13 +39,20 @@ def template(request):
             ret_data = []
 
             for obj in objs:
+                template_class_id = ''
+                template_class_name = ''
+                if obj.template_class:
+                    template_class_id = obj.template_class_id
+                    template_class_name = obj.template_class.name
 
-                #  将查询出来的数据 加入列表
+                # 将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
+                    'template_class_name': template_class_name,
+                    'template_class_id': template_class_id,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
