@@ -313,7 +313,8 @@ def comment_management(request, oper_type):
                     data = {
                         'id': obj.id,
                         'comments_content':obj.comments_content,
-                        'screenshots_address':obj.screenshots_address
+                        'screenshots_address':obj.screenshots_address,
+                        'phone_name':obj.xhs_user.phone_id.name
                     }
 
                 else:
@@ -323,7 +324,8 @@ def comment_management(request, oper_type):
                 response.note = {
                     'id': '删除评论ID',
                     'comments_content': '删除评论',
-                    'screenshots_address': '截图'
+                    'screenshots_address': '截图',
+                    'phone_name': '设备名称',
                 }
 
             else:
