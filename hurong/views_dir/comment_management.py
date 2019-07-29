@@ -315,7 +315,7 @@ def comment_management(request, oper_type):
                         'comments_content':obj.comments_content,
                         'screenshots_address':obj.screenshots_address,
                         'phone_name':obj.xhs_user.phone_id.name,
-                        'user_name':obj.xhs_user.name,
+                        'user_name':obj.nick_name,
                     }
 
                 else:
