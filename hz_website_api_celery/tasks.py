@@ -86,6 +86,7 @@ def xiaohongshu_fugai_update_data():
     for _ in range(redis_obj.llen(redis_key)):
         item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
         keywords = item['keywords']
+        print('keywords -->', keywords)
         page_id_list = item['page_id_list']
         total_count = item['total_count']       # 笔记次数
         # {'keywords': '隆鼻', 'total_count': 0, 'page_id_list': []}
