@@ -107,8 +107,20 @@ def comment_management(request, oper_type):
             }
             form_obj = DeleteComment(form_data)
             if form_obj.is_valid():
-                response.code = 200
-                response.msg = '操作成功, 等待删除...'
+                comment_id, objs = form_obj.cleaned_data.get('comment_id')
+
+                if objs[0].comments_content == '该评论已被删除':
+                    objs.update(delete=3)
+                    code = 200
+                    msg = '操作成功, 等待删除...'
+
+                else:
+                    objs.update(delete=2)
+                    code = 0
+                    msg = '删除成功'
+
+                response.code = code
+                response.msg = msg
 
             else:
                 response.code = 301

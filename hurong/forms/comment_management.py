@@ -257,8 +257,7 @@ class DeleteComment(forms.Form):
         comment_id = self.data.get('comment_id')
         objs = models.littleRedBookReviewForm.objects.filter(id=comment_id)
         if objs:
-            objs.update(delete=2)
-            return comment_id
+            return comment_id, objs
 
         else:
             self.add_error('comment_id', '该评论ID 不存在')
