@@ -79,7 +79,7 @@ def permissions(request):
                 #  将查询出来的数据 加入列表
                 pid_name = ''
                 if obj.pid:
-                    pid_name = obj.pid.name
+                    pid_name = obj.pid.title
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,  # 权限名字
