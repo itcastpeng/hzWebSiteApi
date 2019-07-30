@@ -123,7 +123,12 @@ class ReplyCommentForm(forms.Form):
                 'required': "回复评论内容不能为空"
             }
         )
-
+    comment_type = forms.IntegerField(
+            required=True,
+            error_messages={
+                'required': "评论类型不能为空"
+            }
+        )
 
     def clean_comment_id(self):
         comment_id = self.data.get('comment_id')
@@ -132,6 +137,13 @@ class ReplyCommentForm(forms.Form):
             return comment_id
         else:
             self.add_error('comment_id', '回复的评论不存在')
+
+    def clean_comment_type(self):
+        comment_type = int(self.data.get('comment_type'))
+        if comment_type in [1, 2]:
+            return comment_type
+        else:
+            self.add_error('comment_type', '请选择正确的评论类型')
 
 
 # 判断是否是数字

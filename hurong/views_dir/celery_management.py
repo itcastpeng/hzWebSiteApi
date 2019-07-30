@@ -159,7 +159,7 @@ def asynchronous_transfer_data(request):
         elif transfer_type in [4, '4']:
             msg = '异步传输小红书回复评论是否删除'
             url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
-            requests.post(url, data=request.POST)
+            ret = requests.post(url, data=request.POST)
 
         else:
             msg = '异步传输小红书回复评论状态'
@@ -213,19 +213,6 @@ def error_asynchronous_transfer_data(request):
         except Exception as e:
             content = '{} \n 异步上传手机抓取的评论报错\n错误:{}'.format(datetime.datetime.today(), e)
             send_error_msg(content, 1)
-
-    return HttpResponse('')
-
-
-
-
-
-
-
-# 线上临时做的操作
-def test(request):
-    models.AskLittleRedBook.objects.all().delete()
-
 
     return HttpResponse('')
 
