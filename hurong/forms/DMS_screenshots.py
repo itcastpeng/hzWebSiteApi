@@ -31,9 +31,9 @@ class Screenshots(forms.Form):
         imgdata = ''
         try:
             imgdata = base64.b64decode(img_base64_data)
+            return imgdata
         except Exception :
             self.add_error('img_base64_data', 'BASE64数据异常')
-        return imgdata
 
     def clean_iccid(self):
         imsi = self.data.get('imsi')
