@@ -1,7 +1,7 @@
 from api import models
 from publicFunc import Response, account
-from django.http import JsonResponse
-import requests, datetime, json, time
+import requests, json, time, os
+from publicFunc.public import upload_qiniu
 
 encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
 encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
@@ -265,9 +265,7 @@ class tripartite_platform_oper():
 
         print('set_authorizer_information------> ', ret.text)
 
-    #===================================================小程序函数============================
-
-    # 上传小程序代码
+    # 上传小程序代码====================================小程序函数============================
     def xcx_update_code(self, data):
         # ext_json 格式
 
@@ -336,12 +334,14 @@ class tripartite_platform_oper():
         print('ret.text------> ', ret.text)
 
     # 获取体验小程序二维码
-    def xcx_get_experience_qr_code(self, token, path=None):
+    def xcx_get_experience_qr_code(self, token):
         url = 'https://api.weixin.qq.com/wxa/get_qrcode?access_token={}'.format(token)
         ret = requests.get(url)
-
-        with open('1.png', 'wb') as f:
+        img_path = str(int(time.time())) + '.png'
+        with open(img_path, 'wb') as f:
             f.write(ret.content)
+        path = upload_qiniu(img_path, 800)
+        return path
 
     # 获取代码模板库中的所有小程序代码模板
     def xcx_get_code_template(self):
@@ -366,15 +366,6 @@ class tripartite_platform_oper():
 
         ret = requests.get(url)
         print('获取草稿箱内的所有临时代码草稿------------> ', ret.json())
-        return ret.json()
-
-    # 获取代码模版库中的所有小程序代码模版
-    def xcx_all_small_program_code_templates(self):
-        url = 'https://api.weixin.qq.com/wxa/gettemplatelist?access_token={}'.format(
-            self.token
-        )
-        ret = requests.get(url)
-        print('---获取代码模版库中的所有小程序代码模版-> ', ret.json())
         return ret.json()
 
     # 将草稿箱的草稿选为小程序代码模版
@@ -414,6 +405,7 @@ class tripartite_platform_oper():
         )
         ret = requests.get(url)
         print('-获取小程序的第三方提交代码的页面配置--------> ', ret.text)
+        return ret.json()
 
     # 将第三方提交的代码包提交审核
     def code_package_submitted_review(self, token):
@@ -480,6 +472,7 @@ class tripartite_platform_oper():
         }
         ret = requests.post(url, data=data)
         print('绑定微信用户为小程序体验者----->', ret.text)
+        return ret.json()
 
     # 解除绑定小程序的体验者
     def the_experiencer_unbound_applet(self, token, wechatid):
@@ -491,12 +484,28 @@ class tripartite_platform_oper():
         }
         ret = requests.post(url, data=data)
         print('解除绑定小程序的体验者---------> ', ret.text)
+        return ret.json()
 
-    # 获取授权小程序帐号已设置的类目
-    # def xcx_applet_account_settings(self, token):
+    # 查询小程序当前隐私设置（是否可被搜索）
+    def query_current_privacy_settings(self, token):
+        url = 'https://api.weixin.qq.com/wxa/getwxasearchstatus?access_token={}'.format(
+            token
+        )
+        ret = requests.get(url)
+        print('查询小程序当前隐私设置-----------> ', ret.text)
+        return ret.json()
 
-        # print('-----获取授权小程序帐号已设置的类目-----> ', ret.text)
-
+    # 设置小程序隐私设置（是否可被搜索）
+    def set_applet_privacy_Settings(self, token, status): # 1表示不可搜索，0表示可搜索
+        url = 'https://api.weixin.qq.com/wxa/changewxasearchstatus?access_token={}'.format(
+         token
+        )
+        data = {
+            'status': status
+        }
+        ret = requests.post(url, data=data)
+        print('设置小程序隐私设置------> ', ret.text)
+        return ret.json()
 
 
 

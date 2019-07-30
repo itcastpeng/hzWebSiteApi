@@ -467,6 +467,8 @@ class MobileEquipmentAbnormalSendMessageEnterpriseRecord(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+class test(models.Model):
+    test = models.IntegerField(verbose_name='xxx', default=1)
 
 # =============================小红书爬取数据=======================
 
