@@ -40,7 +40,7 @@ app.conf.beat_schedule = {
     # 每2秒执行一次
     'xiaohongshu_fugai_update_data': {
         'task': 'hz_website_api_celery.tasks.xiaohongshu_fugai_update_data',
-        'schedule': 2                                   # 单独设置  秒
+        'schedule': 30                                   # 单独设置  秒
         # 'schedule': crontab(hour=8, minute=30),
         # 'schedule': crontab('*', '*', '*', '*', '*'),  # 此处跟 linux 中 crontab 的格式一样
     },
@@ -92,7 +92,7 @@ app.conf.beat_schedule = {
     # 获取 手机号短信
     'celery_get_phone_content': {
         'task': 'hz_website_api_celery.tasks.celery_get_phone_content',
-        'schedule': crontab('*/10', '*', '*', '*', '*'),
+        'schedule': crontab('*/30', '*', '*', '*', '*'),
     },
 
     # 获取 设备流量信息
