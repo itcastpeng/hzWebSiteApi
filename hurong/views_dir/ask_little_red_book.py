@@ -127,6 +127,10 @@ def abnormal_number_columns(request):
             delete=2
         ).count()
 
+        unregistered_num = models.XiaohongshuUserProfileRegister.objects.filter(
+            is_register=False
+        )
+
         response.code = 200
         response.msg = '查询成功'
         response.data = {
@@ -135,6 +139,7 @@ def abnormal_number_columns(request):
             'huifupinglun_num': huifupinglun_num,
             'sixin_num': sixin_num,
             'delete_little_num': delete_little_num,
+            'unregistered_num': unregistered_num,
         }
         response.note = {
             'yidongshebei_num': '移动设备异常总数',
@@ -142,6 +147,7 @@ def abnormal_number_columns(request):
             'huifupinglun_num': '待回复评论总数',
             'delete_little_num': '待删除的评论总数',
             'sixin_num': '待回复私信总数',
+            'unregistered_num': '未注册数量',
         }
 
 
