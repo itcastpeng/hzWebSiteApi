@@ -104,10 +104,11 @@ def DMS_screenshots(request, oper_type):
             'iccid': request.POST.get('iccid'),
             'imsi': request.POST.get('imsi')
         }
-        print("form_data -->", form_data)
+
         form_obj = Screenshots(form_data)
         if form_obj.is_valid():
             forms_data = form_obj.cleaned_data
+            print("forms_data -->", forms_data)
             imgdata = forms_data.get('img_base64_data')
 
             judge_key = forms_data.get('iccid') + forms_data.get('imsi')
