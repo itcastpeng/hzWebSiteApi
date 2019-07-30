@@ -6,7 +6,8 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
 from publicFunc.public import create_xhs_admin_response
-import json, requests, base64, time, os, datetime
+from django.db.models import Q
+import json, base64, datetime
 
 
 # 评论管理
@@ -258,16 +259,26 @@ def comment_management(request, oper_type):
             }
             form_obj = QueryReplyTask(form_data)
             if form_obj.is_valid():
-
                 iccid = form_obj.cleaned_data.get('iccid')
 
+                q = Q()
+                objs = models.test.objects.filter(test__isnull=False)
+                if objs:
+                    obj = objs[0]
+                    if obj.test in [1, '1']:
+                        q.add(Q(comment_type=1), Q.AND)
+                    elif obj.test in [2, '2']:
+                        q.add(Q(comment_type=2), Q.AND)
+
+
                 objs = models.commentResponseForm.objects.select_related('comment').filter(
+                    q,
                     comment__xhs_user__phone_id_id=iccid,
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False,
-                    comment_type=1
                 ).order_by('create_datetime')
+
                 if objs:
                     obj = objs[0]
                     comment_response = obj.comment_response

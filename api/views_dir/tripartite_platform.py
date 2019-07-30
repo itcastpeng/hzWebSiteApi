@@ -14,12 +14,6 @@ import time, json, datetime, xml.etree.cElementTree as ET, requests
 # 三方平台操作
 @account.is_token(models.UserProfile)
 def tripartite_platform_oper(request, oper_type):
-    """
-
-    :param request:
-    :param oper_type:
-    :return:
-    """
     response = Response.ResponseObj()
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
@@ -34,10 +28,10 @@ def tripartite_platform_oper(request, oper_type):
 
     if request.method == "POST":
         appid = request.POST.get('appid')
+        credential_expired_data = CredentialExpired(appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+        authorizer_access_token = credential_expired_data.get('authorizer_access_token')
 
-
-        # =========================公共=============================================
-        # 授权
+        # 授权===========================公共
         if oper_type == "authorization":
             form_data = {
                 'user_id': user_id,
@@ -95,22 +89,38 @@ def tripartite_platform_oper(request, oper_type):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
 
-        # ============================小程序======================================
-        # 绑定微信用户为小程序体验者
-        elif oper_type == '':
+        # 绑定微信用户为小程序体验者===================小程序
+        elif oper_type == 'bind_weChat_user_small_program_experiencer':
             wechatid = request.POST.get('wechatid') # 微信号
+            data = tripartite_platform_objs.bind_weChat_user_small_program_experiencer(
+                authorizer_access_token, wechatid
+            )
+            return data
 
         # 解除绑定小程序体验者
-        elif oper_type == '':
-            pass
+        elif oper_type == 'the_experiencer_unbound_applet':
+            wechatid = request.POST.get('wechatid')  # 微信号
+            data = tripartite_platform_objs.the_experiencer_unbound_applet(
+                authorizer_access_token, wechatid
+            )
+            return data
+
+        # 设置小程序隐私设置（是否可被搜索） # 1表示不可搜索，0表示可搜索
+        elif oper_type == 'set_applet_privacy_Settings':
+            status = request.POST.get('status')
+            data = tripartite_platform_objs.set_applet_privacy_Settings(
+                authorizer_access_token,
+                status
+            )
+            return data
 
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
         credential_expired_data = CredentialExpired(appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
         authorizer_access_token = credential_expired_data.get('authorizer_access_token')
-        # =============================公共=================================
-        # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
+
+        # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)=============公共
         if oper_type == 'authorize_callback':
             """
                 auth_code   : GZH/XCX 授权码
@@ -151,8 +161,7 @@ def tripartite_platform_oper(request, oper_type):
 
 
 
-        # ============================小程序====================================
-        # 上传小程序代码
+        # 上传小程序代码===========================小程序
         elif oper_type == 'upload_applet_code':
             template_id = request.GET.get('template_id')    # 代码模板ID
             user_version = request.GET.get('user_version')  # 代码版本号
@@ -168,9 +177,8 @@ def tripartite_platform_oper(request, oper_type):
 
         # 获取小程序体验二维码
         elif oper_type == 'get_experience_qr_code':
-            # 判断调用凭证是否过期
-            print('--')
-            # tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+            path = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+            return path
 
         # 获取代码模板库中的所有小程序代码模板
         elif oper_type == 'get_code':
@@ -192,15 +200,18 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
 
         # 获取小程序体验者列表
-        elif oper_type == '':
-            pass
+        elif oper_type == 'Get_list_experiencers':
+            data = tripartite_platform_objs.Get_list_experiencers(
+                authorizer_access_token
+            )
+            return data
 
         # 获取小程序的第三方提交代码的页面配置
         elif oper_type == 'get_code_page_configuration':
-            tripartite_platform_objs.get_code_page_configuration(
+            data = tripartite_platform_objs.get_code_page_configuration(
                 authorizer_access_token
             )
-
+            return data
 
         # 查询某个指定版本的审核状态
         elif oper_type == 'query_specified_version_code_audit':
@@ -228,13 +239,6 @@ def tripartite_platform_oper(request, oper_type):
             response.msg = '查询成功'
             response.data = data
 
-        # 获取代码模版库中的所有小程序代码模版
-        elif oper_type =='all_small_program_code_templates':
-            data = tripartite_platform_objs.xcx_all_small_program_code_templates()
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = data
-
         # 将第三方提交的代码包提交审核
         elif oper_type == 'code_package_submitted_review':
             ret_json = tripartite_platform_objs.code_package_submitted_review(
@@ -245,16 +249,19 @@ def tripartite_platform_oper(request, oper_type):
             response.msg = '提交成功'
             response.data = ret_json
 
-
-        # 获取授权小程序帐号已设置的类目
-        # elif oper_type == 'xcx_applet_account_settings':
-        #     tripartite_platform_objs.xcx_applet_account_settings(
-        #         authorizer_access_token
-        #     )
-
-        else:
-            response.code = 402
-            response.msg = "请求异常"
+        # 查询小程序当前隐私设置（是否可被搜索）
+        elif oper_type == 'query_current_privacy_settings':
+            data = tripartite_platform_objs.query_current_privacy_settings(
+                authorizer_access_token
+            )
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = data
+            response.note = {
+                    "status":'1表示不可搜索，0表示可搜索',
+                    "errcode":'0',
+                    "errmsg":"ok",
+                }
 
 
     return JsonResponse(response.__dict__)
