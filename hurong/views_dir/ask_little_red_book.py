@@ -129,7 +129,7 @@ def abnormal_number_columns(request):
 
         unregistered_num = models.XiaohongshuUserProfileRegister.objects.filter(
             is_register=False
-        )
+        ).count()
 
         response.code = 200
         response.msg = '查询成功'
