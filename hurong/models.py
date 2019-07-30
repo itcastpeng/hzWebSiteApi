@@ -390,13 +390,6 @@ class MobilePhoneRechargeInformation(models.Model):
     equipment = models.ForeignKey('MobileTrafficInformation', verbose_name='设备')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-# 对外requests请求 参数 结果 记录
-class externalRequestRecord(models.Model):
-    request_parameters = models.TextField(verbose_name='请求参数')
-    request_url = models.CharField(verbose_name='请求链接', max_length=512)
-    response_content = models.TextField(verbose_name='响应数据')
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
 # 评论表
 class littleRedBookReviewForm(models.Model):
     xhs_user = models.ForeignKey('XiaohongshuUserProfile', verbose_name='小红书账号')

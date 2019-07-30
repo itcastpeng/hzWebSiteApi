@@ -5,7 +5,7 @@ from publicFunc import Response
 from django.http import JsonResponse
 from hurong.forms.DMS_screenshots import Screenshots
 import json, requests, base64, time, os, random
-
+from publicFunc.public import create_xhs_admin_response
 
 def DMS_screenshots(request, oper_type):
     response = Response.ResponseObj()
@@ -91,7 +91,7 @@ def DMS_screenshots(request, oper_type):
         else:
             response.code = 301
             response.msg = json.loads(form_obj.errors.as_json())
-
+        create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
     else:
 
         # 查询截图

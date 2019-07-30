@@ -119,6 +119,11 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '*/1', '*', '*', '*'),
     },
 
+    # celery任务过多告警
+    'celery_task_toomuch_alarm': {
+        'task': 'hz_website_api_celery.tasks.celery_task_toomuch_alarm',
+        'schedule': crontab('0', '*/1', '*', '*', '*'),
+    },
 }
 app.conf.update(
     result_expires=3600,

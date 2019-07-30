@@ -1,6 +1,6 @@
 from hurong import models
 from publicFunc import Response, account
-from publicFunc.public import requests_log
+from publicFunc.public import create_xhs_admin_response
 from django.http import JsonResponse
 from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm, IsTodayUpdateReading
 import json
@@ -172,7 +172,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         }
                         ret = requests.post(api_url, data=data)
                         # print("ret.json() -->", ret.json())
-                        requests_log(api_url, data, ret.json()) # 记录请求日志
+                        create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
                         xhs_userprofile_register_objs.update(
                             is_register=True,
                             register_datetime=datetime.datetime.now()

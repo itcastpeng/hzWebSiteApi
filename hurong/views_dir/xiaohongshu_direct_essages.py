@@ -6,7 +6,7 @@ from hurong.forms.xiaohongshu_direct_essages import SelectForm, AddForm, GetRele
 from django.db.models import Q
 from publicFunc.redisOper import get_redis_obj
 from publicFunc.qiniu.auth import Auth
-from publicFunc.public import requests_log
+from publicFunc.public import create_xhs_admin_response
 import base64, time, os, datetime, json, requests
 
 @account.is_token(models.UserProfile)
@@ -166,7 +166,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                             api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
                             ret = requests.post(api_url, data=data)
                             print("ret.json", ret.json())
-                            requests_log(api_url, data, ret.json()) # 记录请求日志
+                            create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)
                             break
                         except:
                             pass
@@ -240,7 +240,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat-log'
             ret = requests.post(api_url, data=post_data)
             print(ret.text)
-            requests_log(api_url, post_data, ret.json()) # 记录请求日志
+            create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
 
         else:
             response.code = 402
