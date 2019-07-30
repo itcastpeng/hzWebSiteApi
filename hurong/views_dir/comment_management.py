@@ -92,7 +92,20 @@ def comment_management(request, oper_type):
 
             forms_obj = ReplyCommentForm(form_data)
             if forms_obj.is_valid():
-                obj = models.commentResponseForm.objects.create(**forms_obj.cleaned_data)
+                comment_type = forms_obj.cleaned_data.get('comment_type')
+
+                is_perform = True
+                if comment_type in [2, '2']:
+                    is_perform = False
+
+                data = {
+                    'comment_id': forms_obj.cleaned_data.get('comment_id'),
+                    'comment_response': forms_obj.cleaned_data.get('comment_response'),
+                    'comment_type': comment_type,
+                    'is_perform': is_perform,
+                }
+                print(data)
+                obj = models.commentResponseForm.objects.create(**data)
                 response.code = 200
                 response.msg = '创建成功'
                 response.data = obj.id
@@ -261,22 +274,12 @@ def comment_management(request, oper_type):
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
 
-                q = Q()
-                objs = models.test.objects.filter(test__isnull=False)
-                if objs:
-                    obj = objs[0]
-                    if obj.test in [1, '1']:
-                        q.add(Q(comment_type=1), Q.AND)
-                    elif obj.test in [2, '2']:
-                        q.add(Q(comment_type=2), Q.AND)
-
-
                 objs = models.commentResponseForm.objects.select_related('comment').filter(
-                    q,
                     comment__xhs_user__phone_id_id=iccid,
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False,
+                    is_perform=True,
                 ).order_by('create_datetime')
 
                 if objs:
@@ -292,7 +295,6 @@ def comment_management(request, oper_type):
                         'id': obj.id,
                         'comment_response': comment_response,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-
                     }
 
                     response.msg = '查询成功'
