@@ -22,7 +22,7 @@ from openpyxl import Workbook
 from hurong import models
 from django.db.models.aggregates import Count
 from django.db.models import Q
-from publicFunc.public import requests_log, send_error_msg
+from publicFunc.public import send_error_msg, create_xhs_admin_response
 
 # 更新小红书下拉数据
 @app.task
@@ -550,7 +550,7 @@ def asynchronous_synchronous_trans(task_id=None):
             "from_blogger": '1',
         }
         ret = requests.post(url=api_url, data=data)
-        requests_log(api_url, data, ret.json())  # 记录请求日志
+        create_xhs_admin_response(1, ret.json(), 1, url=api_url, req_type=2)  # 记录请求日志
 
 # 手机号 未使用的低于200 告警
 @app.task
@@ -563,9 +563,15 @@ def unused_cell_phone_number_below_alarms():
         )
         send_error_msg(content)
 
-
-
-
+# celery任务过多告警
+@app.task
+def celery_task_toomuch_alarm():
+    redis_obj = redis.StrictRedis(host='redis', port=6379, db=15, decode_responses=True)
+    celery_task_num = redis_obj.llen('celery')
+    if celery_task_num:
+        celery_task_num = int(celery_task_num)
+        if celery_task_num >= 1000:
+            send_error_msg('celery任务大于1000条 请及时处理 {}'.format(celery_task_num))
 
 
 

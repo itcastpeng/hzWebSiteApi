@@ -197,7 +197,7 @@ def error_asynchronous_transfer_data(request):
                 'comment_id': obj.id,
             }
 
-            url = 'https://www.ppxhs.com/api/v1/sync/sync-comment'
+            url = 'https://a.ppxhs.com/api/v1/sync/sync-comment'
             ret = requests.post(url, data=data)
             models.AskLittleRedBook.objects.create(  # 创建日志
                 request_url=url,

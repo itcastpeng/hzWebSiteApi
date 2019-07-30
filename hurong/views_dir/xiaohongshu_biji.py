@@ -1,6 +1,6 @@
 from hurong import models
 from publicFunc import Response, account
-from publicFunc.public import requests_log
+from publicFunc.public import create_xhs_admin_response
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
@@ -182,8 +182,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
                 ret = requests.post(url=api_url, data=data)
-                # print("ret.text -->", ret.text)
-                requests_log(api_url, data, ret.json()) # 记录请求日志
+                create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)  # 记录请求日志
                 response.code = 200
                 response.msg = "提交成功"
 

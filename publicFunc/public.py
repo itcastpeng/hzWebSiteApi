@@ -78,27 +78,19 @@ def query_device_recharge_information(number):
 
     return data
 
-# 创建请求日志 requests 请求外界
-def requests_log(url, request_parameters, response_content):
-    models.externalRequestRecord.objects.create(**{
-        'request_parameters': request_parameters,  # 请求参数
-        'request_url': url,
-        'response_content': response_content # 响应数据
-    })
-
 # 发送告警信息
 def send_error_msg(content, send_type=None):
-    obj = WorkWeixinApi()
-    if send_type in [1, '1']:
-        obj.message_send('1539939991515', content)  # 鹏
-    else:
-        obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
-        obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
+    # obj = WorkWeixinApi()
+    # if send_type in [1, '1']:
+    #     obj.message_send('1539939991515', content)  # 鹏
+    # else:
+    #     obj.message_send('HeZhongGaoJingJianCe', content)          # 张聪
+    #     obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
 
-        # 创建告警信息
-        models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.create(
-            error_msg=content
-        )
+    # 创建告警信息
+    models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.create(
+        error_msg=content
+    )
 
 # 更新 小红书后台 请求 该后台 返回值
 def update_xhs_admin_response(request, response):

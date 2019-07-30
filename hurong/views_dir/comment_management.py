@@ -248,6 +248,7 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = '参数异常'
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 查询回复任务（手机）⑤
         elif oper_type == 'query_reply_task':
@@ -302,6 +303,7 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 查询删除评论任务(手机)
         elif oper_type == 'query_delete_comment':
@@ -343,6 +345,7 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 查询评论（胡蓉后台）
         elif oper_type == 'query_comments':
