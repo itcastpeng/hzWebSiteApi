@@ -35,6 +35,7 @@ def DMS_screenshots(request, oper_type):
                         break
 
             if not img_flag:
+                print("没有保存过，提交七牛云获取url")
                 upload_token = redis_obj.get('qiniu_upload_token')
                 if not upload_token:
                     qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
@@ -59,6 +60,7 @@ def DMS_screenshots(request, oper_type):
                     'token': upload_token,
                 }
                 ret = requests.post(url, data=data, files=files, headers=headers)
+                print("七牛云返回数据 -->", ret.json())
 
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
                 if judge_key_objs:
