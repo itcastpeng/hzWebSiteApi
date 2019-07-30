@@ -18,6 +18,7 @@ def DMS_screenshots(request, oper_type):
             'iccid': request.POST.get('iccid'),
             'imsi': request.POST.get('imsi')
         }
+        print("form_data -->", form_data)
         form_obj = Screenshots(form_data)
         if form_obj.is_valid():
             forms_data = form_obj.cleaned_data
@@ -28,12 +29,13 @@ def DMS_screenshots(request, oper_type):
             img_flag = False
             key = ''
             if judge_key_objs:
+                print("")
                 for i in eval(judge_key_objs):
                     if imgdata == i['imgdata']:
                         img_flag = True
                         key = i['key']
                         break
-
+            print("key -->", key)
             if not img_flag:
                 print("没有保存过，提交七牛云获取url")
                 upload_token = redis_obj.get('qiniu_upload_token')
