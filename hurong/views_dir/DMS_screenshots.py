@@ -182,7 +182,7 @@ def DMS_screenshots(request, oper_type):
             response.code = 301
             response.msg = json.loads(form_obj.errors.as_json())
         create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
-        print("response.data -->", response)
+        print("response.data -->", response.data, response.code, response.code)
     else:
 
         # 查询截图
