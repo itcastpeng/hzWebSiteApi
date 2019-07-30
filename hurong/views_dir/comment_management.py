@@ -483,6 +483,9 @@ def comment_management(request, oper_type):
                         'comments_content': obj.comment.comments_content,
                         'comment_id': obj.comment_id,
                         'comment_response':comment_response,
+                        'comment_type_id':obj.comment_type,
+                        'comment_type':obj.get_comment_type_display(),
+                        'is_perform':obj.is_perform,
                         'comment_completion_time': comment_completion_time,
                         'create_datetime':obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     })
@@ -490,7 +493,8 @@ def comment_management(request, oper_type):
                 response.msg = '查询成功'
                 response.data = {
                     'ret_data': ret_data,
-                    'count': count
+                    'count': count,
+                    'comment_type_choices': [{'id':i[0], 'name':i[1]} for i in models.commentResponseForm.comment_type_choices]
                 }
 
 
