@@ -177,6 +177,7 @@ def DMS_screenshots(request, oper_type):
             response.data = {
                 'key': key
             }
+            print("response.data -->", response.data)
 
         else:
             response.code = 301
