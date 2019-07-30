@@ -427,6 +427,7 @@ class commentResponseForm(models.Model):
         (2, '回复私信')
     )
     comment_type = models.SmallIntegerField(verbose_name='回复评论类型', choices=comment_type_choices, default=1)
+    is_perform = models.BooleanField(verbose_name='是否执行', default=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
@@ -465,10 +466,6 @@ class AskLittleRedBook(models.Model):
 class MobileEquipmentAbnormalSendMessageEnterpriseRecord(models.Model):
     error_msg = models.TextField(verbose_name='错误日志')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
-
-class test(models.Model):
-    test = models.IntegerField(verbose_name='xxx', default=1)
 
 # =============================小红书爬取数据=======================
 
