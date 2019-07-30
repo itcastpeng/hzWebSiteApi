@@ -85,6 +85,7 @@ def comment_management(request, oper_type):
         elif oper_type == 'reply_comment':
             form_data = {
                 'comment_id': request.POST.get('comment_id'),               # 回复哪个评论ID
+                'comment_type': request.POST.get('comment_type'),           # (回复评论类型 1回复评论 2 回复私信)
                 'comment_response': request.POST.get('comment_response'),   # 回复评论内容
             }
 
@@ -250,7 +251,6 @@ def comment_management(request, oper_type):
 
         # 查询回复任务（手机）⑤
         elif oper_type == 'query_reply_task':
-
             form_data = {
                 'imsi': request.GET.get('imsi'),
                 'iccid': request.GET.get('iccid'),
@@ -265,23 +265,20 @@ def comment_management(request, oper_type):
                     comment_completion_time__isnull=True,
                     comment__isnull=False,
                     comment_response__isnull=False,
+                    comment_type=1
                 ).order_by('create_datetime')
                 if objs:
                     obj = objs[0]
-
-                    # try:
-                    # comment_response = base64.b64decode(obj.comment_response)
-                    # except Exception :
                     comment_response = obj.comment_response
 
                     ret_data = {
+                        'comment_type': obj.comment_type,
                         'comments_content': obj.comment.comments_content,
                         'nick_name': obj.comment.nick_name,
                         'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
                         'comment_response': comment_response,
-                        # 'comment_response': json.dumps({"content": comment_response}),
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
 
                     }
@@ -295,6 +292,7 @@ def comment_management(request, oper_type):
                         'screenshots_address': '文章截图',
                         'nick_name': '昵称',
                         'comments_content': '评论内容',
+                        'comment_type': '评论类型 1为回复评论 2为回复私信',
                     }
 
                 else:
