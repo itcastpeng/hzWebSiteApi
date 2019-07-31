@@ -173,7 +173,7 @@ def query_mobile_equipment_alarm_information(request):
         objs = models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.filter(q)
         status = request.GET.get('status')
         if not status:
-            objs.exclude(status=2)
+            objs = objs.exclude(status=2)
 
         objs = objs.order_by(order)
         count = objs.count()
