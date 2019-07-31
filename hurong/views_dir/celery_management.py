@@ -137,7 +137,13 @@ def get_traffic_information(request):
 # 异步传送小红书后台数据
 def asynchronous_transfer_data(request):
     """
-    transfer_type: 传递类型(1传递到小红书后台 2传递小红书评论成功 3更改笔记阅读量 4删除评论是否成功)
+    transfer_type: 传递类型(
+        1传递到小红书后台
+        2传递小红书评论成功
+        3更改笔记阅读量
+        4删除评论是否成功
+        5传递更改笔记为发布异常
+    )
     :param request:
     :return:
     """
@@ -162,7 +168,12 @@ def asynchronous_transfer_data(request):
             url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
             ret = requests.post(url, data=request.POST)
 
-        else:
+        elif transfer_type in [5, '5']:
+            msg = '异步传输 笔记改为发布异常'
+            # url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
+            # ret = requests.post(url, data=request.POST)
+
+        else: # 2
             msg = '异步传输小红书回复评论状态'
             url = 'https://a.ppxhs.com/api/v1/sync/sync-reply-status'
             ret = requests.post(url, data=request.POST)

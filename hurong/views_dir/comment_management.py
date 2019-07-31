@@ -6,7 +6,7 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
 from publicFunc.public import create_xhs_admin_response, send_error_msg
-import json, base64, datetime
+import json, base64, datetime, requests
 
 
 # 评论管理
@@ -522,7 +522,22 @@ def comment_management(request, oper_type):
                     'comment_type_choices': [{'id':i[0], 'name':i[1]} for i in models.commentResponseForm.comment_type_choices]
                 }
 
-
+        # # test
+        # elif oper_type == 'test':
+        #     objs = models.XiaohongshuBiji.objects.filter(create_datetime__isnull=False)
+        #     data = []
+        #     for obj in objs:
+        #         if obj.biji_url:
+        #             ret = requests.get(obj.biji_url)
+        #             print(ret.status_code, obj.biji_url)
+        #             if ret.status_code in [404, '404']:
+        #                 print('obj.biji_url-------------------------------------------404')
+        #                 data.append({
+        #                     'name': obj.user_id.phone_id.name,
+        #                     'biji_url':obj.biji_url
+        #                 })
+        #
+        #     print('data-> ,', data)
         else:
             response.code = 402
             response.msg = '请求异常'

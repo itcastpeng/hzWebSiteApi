@@ -150,7 +150,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
 
                     from_blogger = 0
                     if request.POST.get('from_blogger'):
-                        from_blogger = 1
+                        from_blogger = 1 # 来自于博主
 
                     # 把私信截图发送给小红书后台
                     for i in range(3):
