@@ -170,10 +170,12 @@ def query_mobile_equipment_alarm_information(request):
 
         q = conditionCom(request, field_dict)
         order = request.GET.get('order', '-create_datetime')
-        exclude = request.GET.get('exclude')
-        objs = models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.filter(q).order_by(order).exclude(
-            status=exclude
-        )
+        objs = models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.filter(q)
+        status = request.GET.get('status')
+        if not status:
+            objs.exclude(status=2)
+
+        objs = objs.order_by(order)
         count = objs.count()
 
         if length != 0:
