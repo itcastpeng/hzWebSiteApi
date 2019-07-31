@@ -117,11 +117,123 @@ def tripartite_platform_oper(request, oper_type):
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
-        credential_expired_data = CredentialExpired(appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
-        authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+        if oper_type != 'authorize_callback':
+            credential_expired_data = CredentialExpired(appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+            authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+
+            # 获取授权方基本信息(手动触发)
+            if oper_type == 'get_authorized_party_info':
+                tripartite_platform_objs.get_account_information(
+                    authorization_type, appid
+                )
+                response.code = 200
+                response.msg = '获取信息完成'
+
+            # 上传小程序代码===========================小程序
+            elif oper_type == 'upload_applet_code':
+                template_id = request.GET.get('template_id')  # 代码模板ID
+                user_version = request.GET.get('user_version')  # 代码版本号
+                user_desc = request.GET.get('user_desc')  # 代码描述
+                data = {
+                    'appid': appid,
+                    'token': authorizer_access_token,
+                    'template_id': template_id,
+                    'user_version': user_version,
+                    'user_desc': user_desc
+                }
+                tripartite_platform_objs.xcx_update_code(data)
+
+            # 获取小程序体验二维码
+            elif oper_type == 'get_experience_qr_code':
+                path = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+                return path
+
+            # 获取代码模板库中的所有小程序代码模板
+            elif oper_type == 'get_code':
+                response_data = tripartite_platform_objs.xcx_get_code_template()
+
+                response.code = 301
+                if response_data.get('errcode') in [0, '0']:
+                    template_list = response_data.get('template_list')
+                    response.code = 200
+                    response.msg = '查询成功'
+                    response.data = template_list
+
+                else:
+                    response.msg = response_data.get('errmsg')
+
+            # 将草稿箱的草稿选为小程序代码模版
+            elif oper_type == 'select_draft_applet_code_template':
+                draft_id = request.GET.get('draft_id')  # 草稿ID
+                tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+
+            # 获取小程序体验者列表
+            elif oper_type == 'Get_list_experiencers':
+                data = tripartite_platform_objs.Get_list_experiencers(
+                    authorizer_access_token
+                )
+                return data
+
+            # 获取小程序的第三方提交代码的页面配置
+            elif oper_type == 'get_code_page_configuration':
+                data = tripartite_platform_objs.get_code_page_configuration(
+                    authorizer_access_token
+                )
+                return data
+
+            # 查询某个指定版本的审核状态
+            elif oper_type == 'query_specified_version_code_audit':
+                auditid = request.GET.get('auditid')
+                tripartite_platform_objs.query_specified_version_code_audit(
+                    authorizer_access_token,
+                    auditid
+                )
+
+            # 查询最新一次提交的审核状态
+            elif oper_type == 'check_status_most_recent_submission':
+                auditid = request.GET.get('auditid')
+                ret_json = tripartite_platform_objs.check_status_most_recent_submission(
+                    authorizer_access_token,
+                    auditid
+                )
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = ret_json
+
+            # 获取草稿箱内的所有临时代码草稿
+            elif oper_type == 'get_all_temporary_code_drafts':
+                data = tripartite_platform_objs.xcx_get_all_temporary_code_drafts()
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = data
+
+            # 将第三方提交的代码包提交审核
+            elif oper_type == 'code_package_submitted_review':
+                ret_json = tripartite_platform_objs.code_package_submitted_review(
+                    authorizer_access_token
+                )
+                auditid = ret_json.get('auditid')
+                response.code = 200
+                response.msg = '提交成功'
+                response.data = ret_json
+
+            # 查询小程序当前隐私设置（是否可被搜索）
+            elif oper_type == 'query_current_privacy_settings':
+                data = tripartite_platform_objs.query_current_privacy_settings(
+                    authorizer_access_token
+                )
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = data
+                response.note = {
+                    "status": '1表示不可搜索，0表示可搜索',
+                    "errcode": '0',
+                    "errmsg": "ok",
+                }
 
         # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)=============公共
-        if oper_type == 'authorize_callback':
+        # if oper_type == 'authorize_callback':
+        else:
             """
                 auth_code   : GZH/XCX 授权码
                 expires_in  : GZH/XCX 授权码过期时间
@@ -150,118 +262,6 @@ def tripartite_platform_oper(request, oper_type):
 
             tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
             objs.update(is_authorization=1) # 授权完成
-
-        # 获取授权方基本信息(手动触发)
-        elif oper_type == 'get_authorized_party_info':
-            tripartite_platform_objs.get_account_information(
-                authorization_type, appid
-            )
-            response.code = 200
-            response.msg = '获取信息完成'
-
-
-
-        # 上传小程序代码===========================小程序
-        elif oper_type == 'upload_applet_code':
-            template_id = request.GET.get('template_id')    # 代码模板ID
-            user_version = request.GET.get('user_version')  # 代码版本号
-            user_desc = request.GET.get('user_desc')        # 代码描述
-            data = {
-                'appid': appid,
-                'token': authorizer_access_token,
-                'template_id': template_id,
-                'user_version': user_version,
-                'user_desc': user_desc
-            }
-            tripartite_platform_objs.xcx_update_code(data)
-
-        # 获取小程序体验二维码
-        elif oper_type == 'get_experience_qr_code':
-            path = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
-            return path
-
-        # 获取代码模板库中的所有小程序代码模板
-        elif oper_type == 'get_code':
-            response_data = tripartite_platform_objs.xcx_get_code_template()
-
-            response.code = 301
-            if response_data.get('errcode') in [0, '0']:
-                template_list = response_data.get('template_list')
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = template_list
-
-            else:
-                response.msg = response_data.get('errmsg')
-
-        # 将草稿箱的草稿选为小程序代码模版
-        elif oper_type == 'select_draft_applet_code_template':
-            draft_id = request.GET.get('draft_id') # 草稿ID
-            tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
-
-        # 获取小程序体验者列表
-        elif oper_type == 'Get_list_experiencers':
-            data = tripartite_platform_objs.Get_list_experiencers(
-                authorizer_access_token
-            )
-            return data
-
-        # 获取小程序的第三方提交代码的页面配置
-        elif oper_type == 'get_code_page_configuration':
-            data = tripartite_platform_objs.get_code_page_configuration(
-                authorizer_access_token
-            )
-            return data
-
-        # 查询某个指定版本的审核状态
-        elif oper_type == 'query_specified_version_code_audit':
-            auditid = request.GET.get('auditid')
-            tripartite_platform_objs.query_specified_version_code_audit(
-                authorizer_access_token,
-                auditid
-            )
-
-        # 查询最新一次提交的审核状态
-        elif oper_type == 'check_status_most_recent_submission':
-            auditid = request.GET.get('auditid')
-            ret_json = tripartite_platform_objs.check_status_most_recent_submission(
-                authorizer_access_token,
-                auditid
-            )
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = ret_json
-
-        # 获取草稿箱内的所有临时代码草稿
-        elif oper_type == 'get_all_temporary_code_drafts':
-            data = tripartite_platform_objs.xcx_get_all_temporary_code_drafts()
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = data
-
-        # 将第三方提交的代码包提交审核
-        elif oper_type == 'code_package_submitted_review':
-            ret_json = tripartite_platform_objs.code_package_submitted_review(
-                authorizer_access_token
-            )
-            auditid = ret_json.get('auditid')
-            response.code = 200
-            response.msg = '提交成功'
-            response.data = ret_json
-
-        # 查询小程序当前隐私设置（是否可被搜索）
-        elif oper_type == 'query_current_privacy_settings':
-            data = tripartite_platform_objs.query_current_privacy_settings(
-                authorizer_access_token
-            )
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = data
-            response.note = {
-                    "status":'1表示不可搜索，0表示可搜索',
-                    "errcode":'0',
-                    "errmsg":"ok",
-                }
 
 
     return JsonResponse(response.__dict__)
