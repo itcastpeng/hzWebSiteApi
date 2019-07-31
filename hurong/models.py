@@ -465,6 +465,11 @@ class AskLittleRedBook(models.Model):
 # 移动设备异常 发送消息给企业QQ记录
 class MobileEquipmentAbnormalSendMessageEnterpriseRecord(models.Model):
     error_msg = models.TextField(verbose_name='错误日志')
+    status_choices = (
+        (1, '设备异常'),
+        (2, '关联笔记-截图异常'),
+    )
+    status = models.SmallIntegerField(verbose_name='异常状态', choices=status_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # =============================小红书爬取数据=======================

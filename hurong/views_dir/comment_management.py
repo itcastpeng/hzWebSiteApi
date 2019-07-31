@@ -5,8 +5,7 @@ from publicFunc.condition_com import conditionCom
 from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
-from publicFunc.public import create_xhs_admin_response
-from django.db.models import Q
+from publicFunc.public import create_xhs_admin_response, send_error_msg
 import json, base64, datetime
 
 
@@ -197,7 +196,6 @@ def comment_management(request, oper_type):
                 'notes_url': request.POST.get('notes_url'),  # 笔记回链
                 'screenshots': request.POST.get('screenshots')  # 文章截图
             }
-
             code = 301
             form_obj = AssociatedScreenshots(form_data)
             if form_obj.is_valid():
@@ -226,6 +224,18 @@ def comment_management(request, oper_type):
                     response.data = biji_id
 
             else:
+                iccid = request.POST.get('iccid')
+                imsi = request.POST.get('imsi')
+                phone_objs = models.XiaohongshuPhone.objects.filter(iccid=iccid, imsi=imsi)
+                device_number = '设备不存在, iccid:{}, imsi:{}'.format(iccid, imsi)
+                if phone_objs:
+                    device_number = phone_objs[0].name
+                content = '{datetime}关联笔记截图异常, \n设备号:{device_number}, \n笔记回链:{notes_url}'.format(
+                    datetime=datetime.datetime.today(),
+                    device_number=device_number,
+                    notes_url=form_data.get('notes_url')
+                )
+                send_error_msg(content, 2)
                 msg = json.loads(form_obj.errors.as_json())
 
             response.code = code

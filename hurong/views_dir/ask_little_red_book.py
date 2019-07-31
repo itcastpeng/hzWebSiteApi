@@ -165,6 +165,7 @@ def query_mobile_equipment_alarm_information(request):
         field_dict = {
             'id': '',
             'error_msg': '__contains',
+            'status': '',
         }
         q = conditionCom(request, field_dict)
         order = request.GET.get('order', '-create_datetime')
@@ -180,6 +181,8 @@ def query_mobile_equipment_alarm_information(request):
         for obj in objs:
             ret_data.append({
                 'error_msg': obj.error_msg,
+                'status_id': obj.status,
+                'status': obj.get_status_display(),
                 'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
             })
         response.code = 200
@@ -187,6 +190,7 @@ def query_mobile_equipment_alarm_information(request):
         response.data = {
             'ret_data': ret_data,
             'count': count,
+            'status_choices': [{'id':i[0], 'name': i[1]} for i in models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.status_choices],
         }
 
     else:
