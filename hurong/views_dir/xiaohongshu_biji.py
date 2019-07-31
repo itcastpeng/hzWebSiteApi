@@ -123,6 +123,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 print("验证通过")
 
+
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 title, content = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
@@ -130,15 +131,23 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
                 if xiaohongshu_user_objs:
                     xiaohongshu_user_obj = xiaohongshu_user_objs[0]
-                    obj = models.XiaohongshuBiji.objects.create(
-                        user_id=xiaohongshu_user_obj,
-                        content=content,
-                        release_time=release_time,
-                        title=title
-                    )
 
+                    biji_id = request.POST.get('biji_id') # 如果有 该值 则更新 待审核状态
+                    if biji_id:
+                        biji_objs = models.XiaohongshuBiji.objects.filter(id=biji_id)
+                        obj = biji_objs[0]
+                        biji_objs.update(status=3, content=content, release_time=release_time, title=title)
+                        response.msg = "更新成功"
+
+                    else:
+                        obj = models.XiaohongshuBiji.objects.create(
+                            user_id=xiaohongshu_user_obj,
+                            content=content,
+                            release_time=release_time,
+                            title=title
+                        )
+                        response.msg = "添加成功"
                     response.code = 200
-                    response.msg = "添加成功"
                     response.data = {
                         'biji_id': obj.id
                     }
@@ -269,6 +278,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = '更改发布异常成功'
 
+                # form_data['transfer_type'] = 5
+                # asynchronous_transfer_data.delay(form_data)  # 传递到小红书后台
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())

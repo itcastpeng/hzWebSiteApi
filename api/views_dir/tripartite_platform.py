@@ -39,7 +39,7 @@ def tripartite_platform_oper(request, oper_type):
                 'authorization_way': authorization_way,  # 授权方式 (1扫码, 2链接)
                 'appid': appid,
             }
-            forms_obj = AuthorizationForm(form_data)
+            forms_obj = AuthorizationForm(form_data)  # 创建 XCX/GZH appid
             if forms_obj.is_valid():
                 get_pre_auth_code = tripartite_platform_objs.get_pre_auth_code()  # 获取预授权码
                 forms_data = forms_obj.cleaned_data

@@ -213,7 +213,7 @@ class CustomerOfficialNumber(models.Model):
     head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
     original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
     qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
-
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
@@ -233,7 +233,7 @@ class ClientApplet(models.Model):
     head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
     original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
     qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
-
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

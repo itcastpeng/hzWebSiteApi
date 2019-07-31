@@ -32,6 +32,7 @@ class AuthorizationForm(forms.Form):
 
     def clean_authorization_type(self):
         authorization_type = self.data.get('authorization_type')
+        user_id = self.data.get('user_id')
         appid = self.data.get('appid')
 
         if authorization_type in [1, '1', 2, '2']:
@@ -43,14 +44,14 @@ class AuthorizationForm(forms.Form):
 
             if not objs:
                 if authorization_type in [1, '1']: # 公众号授权
-                    models.CustomerOfficialNumber.objects.create(appid=appid)
+                    models.CustomerOfficialNumber.objects.create(appid=appid, user_id=user_id)
 
-                else:
-                    models.ClientApplet.objects.create(appid=appid)
+                else:   # 小程序授权
+                    models.ClientApplet.objects.create(appid=appid, user_id=user_id)
 
             return authorization_type
         else:
-            self.add_error('authorization_type', '请输入正确的收取按类型')
+            self.add_error('authorization_type', '请输入正确的授权类型')
 
     def clean_authorization_way(self):
         authorization_way = self.data.get('authorization_way')
