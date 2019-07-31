@@ -416,7 +416,7 @@ def xiaohongshu_userprofile_register_monitor():
     objs = models.XiaohongshuUserProfileRegister.objects.filter(is_register=False)
     if objs:
         content = """{} \n小红书有新的账号需要注册，请及时处理""".format(datetime.datetime.today())
-        send_error_msg(content)
+        send_error_msg(content, 3)
 
 
 # 小红书未发布笔记监控,监控有新的笔记需要发布
@@ -430,7 +430,7 @@ def xiaohongshu_biji_monitor():
     objs = models.XiaohongshuBiji.objects.filter(status=3).exclude(user_id_id=5)
     if objs:
         content = """{} \n 小红书有新的笔记需要发布，请及时处理""".format(datetime.datetime.today())
-        send_error_msg(content)
+        send_error_msg(content, 3)
 
 
 # 同步小红书霸屏王关键词和链接
@@ -561,7 +561,7 @@ def unused_cell_phone_number_below_alarms():
             datetime.datetime.today(),
             count
         )
-        send_error_msg(content)
+        send_error_msg(content, 4)
 
 # celery任务过多告警
 @app.task
@@ -571,7 +571,7 @@ def celery_task_toomuch_alarm():
     if celery_task_num:
         celery_task_num = int(celery_task_num)
         if celery_task_num >= 1000:
-            send_error_msg('celery任务大于1000条 请及时处理 {}'.format(celery_task_num))
+            send_error_msg('celery任务大于1000条 请及时处理 {}'.format(celery_task_num), 5)
 
 
 

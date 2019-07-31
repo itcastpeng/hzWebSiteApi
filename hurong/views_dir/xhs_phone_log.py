@@ -193,7 +193,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     text = '类型:{}, 设备名称:{}, 日志:{}'.format(text_type, phone_name, log_msg)
 
                     content = """{} \n小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(datetime.datetime.today(), text)
-                    send_error_msg(content) # 发送消息
+                    send_error_msg(content, 6) # 发送消息
 
 
                 now_date_time = datetime.datetime.today()
@@ -241,7 +241,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         #     content = '{}\n {} 移动设备 自动更新程序异常runtime字符为空,请及时处理, \nlog_msg参数:{}'.format(now_date_time, phone_name, log_msg)
 
                         if send_msg_flag:
-                            send_error_msg(content)
+                            send_error_msg(content, 6)
 
                 if log_msg.startswith('请求接口异常'):
                     log_msg = log_msg.replace('请求接口异常: ', '')
