@@ -80,5 +80,6 @@ urlpatterns = [
     # ---------------------------- 微信三方平台管理 -------------------------------
     url(r'^tripartite_platform/(?P<oper_type>\w+)$', tripartite_platform.tripartite_platform_oper),
     url(r'^tripartite_platform$', tripartite_platform.tongzhi),  # 微信通知
+    url(r'^authorize_callback$', tripartite_platform.authorize_callback),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
 
 ]
