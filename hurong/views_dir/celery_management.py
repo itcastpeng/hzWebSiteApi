@@ -23,7 +23,7 @@ def delete_phone_log(request):
 
     except Exception as e:
         content = '{} \n 定期删除 设备日志报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content, 1)
+        send_error_msg(content)
     return HttpResponse('')
 
 
@@ -54,7 +54,7 @@ def celery_get_phone_content(request):
                     )
     except Exception as e:
         content = '{} \n 获取 手机号短信报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content, 1)
+        send_error_msg(content)
 
     return HttpResponse('')
 
@@ -129,7 +129,7 @@ def get_traffic_information(request):
 
     except Exception as e:
         content = '{} \n 查询 流量信息报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content, 1)
+        send_error_msg(content)
     return HttpResponse('')
 
 
@@ -175,7 +175,7 @@ def asynchronous_transfer_data(request):
             msg,
             transfer_type,
             e)
-        send_error_msg(content, 1)
+        send_error_msg(content)
     create_xhs_admin_response(request, response_content, 1, url=url, req_type=1) # 创建请求日志 后台请求小红书
 
 
@@ -212,7 +212,7 @@ def error_asynchronous_transfer_data(request):
             obj.save()
         except Exception as e:
             content = '{} \n 异步上传手机抓取的评论报错\n错误:{}'.format(datetime.datetime.today(), e)
-            send_error_msg(content, 1)
+            send_error_msg(content)
 
     return HttpResponse('')
 

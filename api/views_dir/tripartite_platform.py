@@ -296,7 +296,7 @@ def tongzhi(request):
         content = '{}三方平台后台回调异常:{}'.format(
             datetime.datetime.today(), e
         )
-        send_error_msg(content, 1)
+        send_error_msg(content)
 
     return HttpResponse('success')
 
