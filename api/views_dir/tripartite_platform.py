@@ -48,11 +48,12 @@ def tripartite_platform_oper(request, oper_type):
                 authorization_way = forms_data.get('authorization_way')
                 authorization_type = forms_data.get('authorization_type')
 
-                redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?t=phone&appid={}&authorization_type={}&authorization_way={}'.format(
-                    appid,
-                    authorization_type,
-                    authorization_way
-                )
+                # redirect_url = 'https://xcx.bjhzkq.com/api/tripartite_platform/authorize_callback?t=phone&appid={}&authorization_type={}&authorization_way={}'.format(
+                #     appid,
+                #     authorization_type,
+                #     authorization_way
+                # )
+                redirect_url = 'https://xcx.bjhzkq.com/thirdTerrace/thirdTerrace_index'
                 redirect_url = quote(redirect_url)
 
                 if authorization_way in [2, '2']:  # 链接形式
