@@ -232,6 +232,24 @@ def comment_management(request, oper_type):
             response.msg = msg
             create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
+        # 修改 回复(管理/私信) 是否开放
+        elif oper_type == 'whether_the_modification_open':
+            comment_id = request.POST.get('comment_id')
+            objs = models.commentResponseForm.objects.filter(id=comment_id)
+            if objs:
+                obj = objs[0]
+                if obj.is_perform:
+                    obj.is_perform = False
+                else:
+                    obj.is_perform = True
+                obj.save()
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = '修改的任务不存在'
+
     else:
 
         order = request.GET.get('order', '-create_datetime')
