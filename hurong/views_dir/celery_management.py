@@ -13,17 +13,18 @@ import datetime, time, random, requests, json
 def delete_phone_log(request):
     try:
         now_date = datetime.date.today()
-        last_there_days = (now_date - datetime.timedelta(days=2))
         models.XiaohongshuPhoneLog.objects.filter(
-            create_datetime__lt=last_there_days
+            create_datetime__lt=(now_date - datetime.timedelta(days=2))
         ).delete()
         models.AskLittleRedBook.objects.filter(
-            create_datetime__lt=last_there_days
+            create_datetime__lt=(now_date - datetime.timedelta(days=1))
         ).delete()
-
+        models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.filter(
+            create_datetime__lt=(now_date - datetime.timedelta(days=2))
+        ).delete()
     except Exception as e:
         content = '{} \n 定期删除 设备日志报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content)
+        send_error_msg(content, 5)
     return HttpResponse('')
 
 
@@ -54,7 +55,7 @@ def celery_get_phone_content(request):
                     )
     except Exception as e:
         content = '{} \n 获取 手机号短信报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content)
+        send_error_msg(content, 5)
 
     return HttpResponse('')
 
@@ -106,7 +107,7 @@ def get_traffic_information(request):
 
                 if flag and cardbaldata and float(cardbaldata) <= 500:
                     content = '{} \n 流量低于五百兆提醒, 查询号码:{}, 剩余流量:{}, ISMI号:{}'.format(datetime.datetime.today(), obj.select_number, cardbaldata, cardimsi)
-                    send_error_msg(content)
+                    send_error_msg(content, 5)
 
                 if flag:  # 查询 充值情况
                     info_json = query_device_recharge_information(obj.select_number)
@@ -129,7 +130,7 @@ def get_traffic_information(request):
 
     except Exception as e:
         content = '{} \n 查询 流量信息报错\n错误:{}'.format(datetime.datetime.today(), e)
-        send_error_msg(content)
+        send_error_msg(content, 5)
     return HttpResponse('')
 
 
@@ -175,7 +176,7 @@ def asynchronous_transfer_data(request):
             msg,
             transfer_type,
             e)
-        send_error_msg(content)
+        send_error_msg(content, 5)
     create_xhs_admin_response(request, response_content, 1, url=url, req_type=1) # 创建请求日志 后台请求小红书
 
 
@@ -212,7 +213,7 @@ def error_asynchronous_transfer_data(request):
             obj.save()
         except Exception as e:
             content = '{} \n 异步上传手机抓取的评论报错\n错误:{}'.format(datetime.datetime.today(), e)
-            send_error_msg(content)
+            send_error_msg(content, 5)
 
     return HttpResponse('')
 

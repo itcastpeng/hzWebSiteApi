@@ -82,7 +82,7 @@ def query_device_recharge_information(number):
 # 发送告警信息
 def send_error_msg(content, status=None):
     if not status:
-        status = 1
+        status = 6
     # obj = WorkWeixinApi()
     # if send_type in [1, '1']:
     #     obj.message_send('1539939991515', content)  # 鹏
