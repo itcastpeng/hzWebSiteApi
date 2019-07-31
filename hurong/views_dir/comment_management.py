@@ -238,10 +238,7 @@ def comment_management(request, oper_type):
             objs = models.commentResponseForm.objects.filter(id=comment_id)
             if objs:
                 obj = objs[0]
-                if obj.is_perform:
-                    obj.is_perform = False
-                else:
-                    obj.is_perform = True
+                obj.is_perform = bool(1-obj.is_perform)
                 obj.save()
                 response.code = 200
                 response.msg = '修改成功'
