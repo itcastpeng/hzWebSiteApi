@@ -361,7 +361,7 @@ def equipment_management_oper(request, oper_type, o_id):
             title.alignment = center
 
             ws.cell(row=2, column=3, value="总额:").alignment = center
-            data = ['设备套餐', '充值时间', '设备名称', '创建时间']
+            data = ['设备套餐', '充值钱数', '充值时间', '设备名称', '创建时间']
             for i in data:
                 index = data.index(i) + 1
                 key = ws.cell(row=4, column=index, value=i)
@@ -396,9 +396,10 @@ def equipment_management_oper(request, oper_type, o_id):
                 objs = models.MobilePhoneRechargeInformation.objects.select_related(
                     'equipment'
                 ).all()
-
+            objs = objs.order_by('-prepaid_phone_time')
             money_count = 0
             for obj in objs:
+                money = 0
                 if '/月' in obj.equipment_package:
                     money = obj.equipment_package.split('元')[0].split('联通')[1]
                     money_count += int(money)
@@ -413,17 +414,21 @@ def equipment_management_oper(request, oper_type, o_id):
                 one.font = ft2
                 one.alignment = center
 
-                two = ws.cell(row=row, column=2, value="{}".format(obj.prepaid_phone_time))
+                two = ws.cell(row=row, column=2, value="{}".format(money))
                 two.font = ft2
                 two.alignment = center
 
-                there = ws.cell(row=row, column=3, value="{}".format(phone_name))
+                there = ws.cell(row=row, column=3, value="{}".format(obj.prepaid_phone_time))
                 there.font = ft2
                 there.alignment = center
 
-                there = ws.cell(row=row, column=4, value="{}".format(obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')))
-                there.font = ft2
-                there.alignment = center
+                four = ws.cell(row=row, column=4, value="{}".format(phone_name))
+                four.font = ft2
+                four.alignment = center
+
+                five = ws.cell(row=row, column=5, value="{}".format(obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')))
+                five.font = ft2
+                five.alignment = center
 
                 row += 1
             ws.cell(row=2, column=4, value="{}".format(money_count)).alignment = center
