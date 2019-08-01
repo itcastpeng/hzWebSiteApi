@@ -343,7 +343,7 @@ def xiaohongshu_phone_monitor():
             elif seconds > 60 * 60 * 1:
                 name = name + " 异常超过1小时"
             else:
-                name = name + " 异常%s分钟" % (seconds / 60)
+                name = name + " 异常%s分钟" % (int(seconds / 60))
 
             err_phone.append(name)
         else:
