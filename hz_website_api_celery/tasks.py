@@ -333,11 +333,10 @@ def xiaohongshu_phone_monitor():
 
         # # 如果5分钟之内没有提交日志，说明机器异常了
         # objs = phone_obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date)
-        if phone_obj.last_sign_in_time < expire_date:
+        if phone_obj.last_sign_in_time < expire_date and phone_obj.last_sign_in_time:
             phone_obj.status = 2
-            if phone_obj.last_sign_in_time:
-                seconds = (expire_date - phone_obj.last_sign_in_time).seconds
-                print("seconds -->", seconds)
+            seconds = (expire_date - phone_obj.last_sign_in_time).seconds
+            print("seconds -->", seconds)
 
             err_phone.append(phone_obj.name)
         else:
