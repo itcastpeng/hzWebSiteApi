@@ -31,7 +31,7 @@ def DMS_screenshots(request, oper_type):
             key = ''
             if judge_key_objs:
                 print("")
-                for i in eval(judge_key_objs):
+                for i in json.loads(judge_key_objs):
                     if imgdata == i['imgdata']:
                         img_flag = True
                         key = i['key']
@@ -67,12 +67,12 @@ def DMS_screenshots(request, oper_type):
 
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
                 if judge_key_objs:
-                    data_list = eval(judge_key_objs)
+                    data_list = json.loads(judge_key_objs)
                     data_list.append({'key': key, 'imgdata': imgdata})
                     redis_obj.delete(judge_key)
-                    redis_obj.set(judge_key, data_list)
+                    redis_obj.set(judge_key, json.dumps(data_list))
                 else:
-                    redis_obj.set(judge_key, [{'imgdata': imgdata, 'key': key}])
+                    redis_obj.set(judge_key, json.dumps([{'imgdata': imgdata, 'key': key}]))
 
             # ===================保存最后 十张截图=====================
             num = 0
