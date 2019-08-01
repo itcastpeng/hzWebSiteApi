@@ -241,6 +241,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             ret = requests.post(api_url, data=post_data)
             print(ret.text)
             create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
+            response.code = 200
+            response.msg = "操作完成"
 
         else:
             response.code = 402
