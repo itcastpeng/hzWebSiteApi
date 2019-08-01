@@ -24,15 +24,15 @@ def DMS_screenshots(request, oper_type):
             forms_data = form_obj.cleaned_data
             # print("forms_data -->", forms_data)
             imgdata = forms_data.get('img_base64_data')
+            img_base64_data = request.POST.get('img_base64_data')
 
-            judge_key = forms_data.get('iccid') + forms_data.get('imsi')
+            judge_key = "screenshots_" + forms_data.get('iccid') + forms_data.get('imsi')
             judge_key_objs = redis_obj.get(judge_key)
             img_flag = False
             key = ''
             if judge_key_objs:
-                print("")
                 for i in json.loads(judge_key_objs):
-                    if imgdata == i['imgdata']:
+                    if img_base64_data == i['img_base64_data']:
                         img_flag = True
                         key = i['key']
                         break
@@ -68,18 +68,18 @@ def DMS_screenshots(request, oper_type):
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
                 if judge_key_objs:
                     data_list = json.loads(judge_key_objs)
-                    data_list.append({'key': key, 'imgdata': imgdata})
+                    data_list.append({'key': key, 'img_base64_data': img_base64_data})
                     redis_obj.delete(judge_key)
                     redis_obj.set(judge_key, json.dumps(data_list))
                 else:
-                    redis_obj.set(judge_key, json.dumps([{'imgdata': imgdata, 'key': key}]))
+                    redis_obj.set(judge_key, json.dumps([{'img_base64_data': img_base64_data, 'key': key}]))
 
             # ===================保存最后 十张截图=====================
             num = 0
             while True:
                 num += 1
                 xhs_screenshots = redis_obj.llen('xhs_screenshots') # 保存截图
-                if int(xhs_screenshots) < 100:  # 只保存十个 追加
+                if int(xhs_screenshots) < 10:  # 只保存十个 追加
                     redis_obj.rpush('xhs_screenshots', key)
                     break
                 else:
