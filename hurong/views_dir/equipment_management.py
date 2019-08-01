@@ -378,6 +378,7 @@ def equipment_management_oper(request, oper_type, o_id):
             ws.column_dimensions['B'].width = 20
             ws.column_dimensions['C'].width = 20
             ws.column_dimensions['D'].width = 20
+            ws.column_dimensions['E'].width = 20
             #
             # # print('设置行高')
             ws.row_dimensions[1].height = 50
