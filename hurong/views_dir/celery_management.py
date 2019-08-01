@@ -170,8 +170,8 @@ def asynchronous_transfer_data(request):
 
         elif transfer_type in [5, '5']:
             msg = '异步传输 笔记改为发布异常'
-            # url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
-            # ret = requests.post(url, data=request.POST)
+            url = 'https://a.ppxhs.com/api/v1/sync/article-error'
+            ret = requests.post(url, data=request.POST)
 
         else: # 2
             msg = '异步传输小红书回复评论状态'

@@ -278,8 +278,10 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = '更改发布异常成功'
 
-                # form_data['transfer_type'] = 5
-                # asynchronous_transfer_data.delay(form_data)  # 传递到小红书后台
+                form_data['transfer_type'] = 5
+                form_data['id'] = o_id
+                form_data['content'] = error_msg
+                asynchronous_transfer_data.delay(form_data)  # 传递到小红书后台
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
