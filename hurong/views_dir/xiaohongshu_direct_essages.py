@@ -266,16 +266,14 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
 
                 if objs:
                     obj = objs[0]
-                    response.code = 200
                     response.data = {
                         "id": obj.id,
                         "name": obj.name,
                         "msg": obj.msg
                     }
                 else:
-                    response.code = 0
                     response.msg = "当前无任务"
-
+                response.code = 200
             else:
                 print("forms_obj.errors -->", forms_obj.errors)
                 response.code = 402
