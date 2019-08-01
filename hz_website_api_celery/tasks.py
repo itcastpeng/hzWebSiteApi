@@ -336,9 +336,16 @@ def xiaohongshu_phone_monitor():
         if phone_obj.last_sign_in_time and phone_obj.last_sign_in_time < expire_date :
             phone_obj.status = 2
             seconds = (expire_date - phone_obj.last_sign_in_time).seconds
-            print("seconds -->", seconds)
 
-            err_phone.append(phone_obj.name)
+            name = phone_obj.name
+            if seconds > 60 * 60 * 2:
+                name = name + " 异常超过2小时"
+            elif seconds > 60 * 60 * 1:
+                name = name + " 异常超过1小时"
+            else:
+                name = name + " 异常%s分钟" % (seconds / 60)
+
+            err_phone.append(name)
         else:
             phone_obj.status = 1
         phone_obj.save()
