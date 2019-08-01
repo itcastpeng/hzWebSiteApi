@@ -9,6 +9,7 @@ from publicFunc.tripartite_platform_oper import tripartite_platform_oper as trip
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 from urllib.parse import unquote, quote
 from publicFunc.public import send_error_msg
+from django.shortcuts import redirect
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -269,7 +270,7 @@ def tripartite_platform_oper(request, oper_type):
 
 
 #
-# @account.is_token(models.UserProfile)
+@account.is_token(models.UserProfile)
 def tripartite_platform_admin(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
@@ -400,7 +401,8 @@ def authorize_callback(request):
     tripartite_platform_objs.get_account_information(authorization_type, appid)  # 获取基本信息入库
     objs.update(is_authorization=1)  # 授权完成
 
-    return HttpResponse('success')
+    return redirect('https://xcx.bjhzkq.com/thirdTerrace/thirdTerrace_index')
+    # return HttpResponse('success')
 
 
 
