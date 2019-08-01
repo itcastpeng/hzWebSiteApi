@@ -354,14 +354,13 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 if objs:
                     obj = objs[0]
 
-                    response.code = 200
                     response.data = {
                         "id": obj.id,
                         "content": obj.content
                     }
                 else:
-                    response.code = 0
                     response.msg = "当前无任务"
+                response.code = 200
 
             else:
                 # print("forms_obj.errors -->", forms_obj.errors)
