@@ -165,7 +165,7 @@ def asynchronous_transfer_data(request):
 
         elif transfer_type in [4, '4']:
             msg = '异步传输小红书回复评论是否删除'
-            url = 'https://a.ppxhs.com/api/v1/sync-delete-comment'
+            url = 'https://a.ppxhs.com/api/v1/sync/sync-delete-comment'
             ret = requests.post(url, data=request.POST)
 
         elif transfer_type in [5, '5']:
@@ -188,7 +188,11 @@ def asynchronous_transfer_data(request):
             transfer_type,
             e)
         send_error_msg(content, 5)
-    create_xhs_admin_response(request, response_content, 1, url=url, req_type=1) # 创建请求日志 后台请求小红书
+    req_type = 1
+    if request.method == 'POST':
+        req_type = 2
+
+    create_xhs_admin_response(request, response_content, 1, url=url, req_type=req_type) # 创建请求日志 后台请求小红书
 
 
     return HttpResponse('')
