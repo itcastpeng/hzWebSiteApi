@@ -335,7 +335,7 @@ def xiaohongshu_phone_monitor():
         # objs = phone_obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date)
         if phone_obj.last_sign_in_time < expire_date:
             phone_obj.status = 2
-            print('minutes -->', (expire_date - phone_obj.last_sign_in_time).minutes )
+            print('minutes -->', (expire_date - phone_obj.last_sign_in_time).seconds )
             err_phone.append(phone_obj.name)
         else:
             phone_obj.status = 1
