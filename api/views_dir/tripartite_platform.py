@@ -268,6 +268,72 @@ def tripartite_platform_oper(request, oper_type):
     return JsonResponse(response.__dict__)
 
 
+#
+# @account.is_token(models.UserProfile)
+def tripartite_platform_admin(request, oper_type, o_id):
+    response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
+
+    if request.method == "POST":
+        if oper_type == '':
+            pass
+
+    else:
+
+        # 查询个人XCX/GZH
+        if oper_type == 'select_xcx_gzh_info':
+            applet_objs = models.ClientApplet.objects.filter(user_id=user_id)
+            offici_objs = models.CustomerOfficialNumber.objects.filter(user_id=user_id)
+
+            result_data = {}
+            applet_flag = False
+            offici_flag = False
+            flag = False
+            if applet_objs:
+                flag = True
+                applet_flag = True
+                obj = applet_objs[0]
+
+            if offici_objs:
+                flag = True
+                offici_flag = True
+                obj = offici_objs[0]
+
+            if flag:
+                result_data['is_authorization']=obj.is_authorization
+                result_data['nick_name']=obj.nick_name
+                result_data['head_img']=obj.head_img
+                result_data['qrcode_url']=obj.qrcode_url
+                result_data['appid']=obj.appid
+                result_data['create_datetime']=obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'applet_flag': applet_flag,
+                'offici_flag': offici_flag,
+                'result_data': result_data,
+            }
+            response.note = {
+                'applet_flag': '是否有小程序',
+                'offici_flag': '是否有公众号',
+                'result_data': {
+                    'is_authorization':'是否完成授权',
+                    'nick_name':'名称',
+                    'head_img':'头像',
+                    'qrcode_url':'二维码',
+                    'appid':'appid',
+                    'create_datetime':'创建时间',
+                },
+            }
+
+        else:
+            response.code = 402
+            response.msg = '请求异常'
+
+    return JsonResponse(response.__dict__)
+
+
 # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
 def tongzhi(request):
     try:
