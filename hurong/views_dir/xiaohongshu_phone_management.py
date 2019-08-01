@@ -51,12 +51,14 @@ def xiaohongshu_phone_management(request, oper_type):
                     obj = objs[0]
                     now = datetime.datetime.today()
                     deletionTime = (now - datetime.timedelta(minutes=5))  # 当前时间减去5分钟
-                    phone_log_objs = models.XiaohongshuPhoneLog.objects.filter(
-                        parent=obj.id,
-                        create_datetime__gte=deletionTime
-                    ).order_by('-create_datetime')
-                    if phone_log_objs:
+                    if obj.last_sign_in_time and  obj.last_sign_in_time >= deletionTime:
                         flag = False
+
+                    # phone_log_objs = models.XiaohongshuPhoneLog.objects.filter(
+                    #     parent=obj.id,
+                    #     create_datetime__gte=deletionTime
+                    # ).order_by('-create_datetime')
+                    # if phone_log_objs:
 
                     response.code = 200
                     response.data = {'flag': flag}

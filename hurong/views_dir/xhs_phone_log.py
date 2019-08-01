@@ -140,10 +140,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         obj = models.XiaohongshuPhone.objects.create(macaddr=macaddr, ip_addr=ip_addr)
 
                         print('obj -->', obj)
-                    models.XiaohongshuPhoneLog.objects.create(
-                        log_msg=log_msg,
-                        parent=obj
-                    )
+
 
                 else: #  phone_type == 2
                     # print("记录发布")
@@ -168,10 +165,15 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     else:
                         obj = models.XiaohongshuPhone.objects.create(**data)
 
-                    models.XiaohongshuPhoneLog.objects.create(
-                        log_msg=log_msg,
-                        parent=obj
-                    )
+                models.XiaohongshuPhone.objects.filter(
+                    iccid=iccid,
+                    imsi=imsi
+                ).update(last_sign_in_time=datetime.datetime.today())
+
+                models.XiaohongshuPhoneLog.objects.create(
+                    log_msg=log_msg,
+                    parent=obj
+                )
 
                 phone_id = obj.id
                 phone_name = obj.name
