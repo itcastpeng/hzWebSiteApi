@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xhs_phone_log import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
 from publicFunc.public import send_error_msg
+from publicFunc.redisOper import get_redis_obj
 import json, datetime
 
 @account.is_token(models.UserProfile)
@@ -101,7 +102,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     # print('request.POST -->', request.POST)
     if request.method == "POST":
-        # 添加用户
+        #
         if oper_type == "add":
 
             form_data = {
@@ -165,10 +166,16 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     else:
                         obj = models.XiaohongshuPhone.objects.create(**data)
 
-                models.XiaohongshuPhone.objects.filter(
-                    iccid=iccid,
-                    imsi=imsi
-                ).update(last_sign_in_time=datetime.datetime.today())
+                redis_obj = get_redis_obj()
+                redis_key = str(iccid + imsi)
+                if not redis_obj.get(redis_key):
+                    redis_obj.set(redis_key, 1)
+                    redis_obj.expire(redis_key, 30)
+                    # 更新最后一次 签到时间
+                    models.XiaohongshuPhone.objects.filter(
+                        iccid=iccid,
+                        imsi=imsi
+                    ).update(last_sign_in_time=datetime.datetime.today())
 
                 models.XiaohongshuPhoneLog.objects.create(
                     log_msg=log_msg,
@@ -196,7 +203,6 @@ def xhs_phone_log_oper(request, oper_type, o_id):
 
                     content = """{} \n小红书添加日志中出现-->没有找到回复私信用户，请及时处理:  \n{}""".format(datetime.datetime.today(), text)
                     send_error_msg(content, 6) # 发送消息
-
 
                 now_date_time = datetime.datetime.today()
                 if log_msg.startswith('自动更新日志'): # 判断时间 与当前时间相差五分钟 and 版本号是否为最新
