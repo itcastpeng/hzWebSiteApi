@@ -242,13 +242,13 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                             send_error_msg(content, 6)
 
                 if log_msg.startswith('请求接口异常'):
-                    log_msg = log_msg.replace('请求接口异常: ', '')
-                    log_msg = log_msg.split('返回数据->')
-                    request_url = log_msg[0].split('api_url->')[1]
-                    response_data = ''
-                    if len(log_msg) > 2:
-                        response_data = log_msg[1]
-                    create_xhs_admin_response(request, response_data, 3, url=request_url, req_type=2)
+                    create_xhs_admin_response(request, log_msg, 3)
+                    # log_msg_one = log_msg.replace('请求接口异常: ', '')
+                    # log_msg_one = log_msg_one.split('返回数据->')
+                    # request_url = log_msg_one[0].split('api_url->')[1]
+                    # response_data = ''
+                    # if len(log_msg_one) > 2:
+                    #     response_data = log_msg_one[1]
                     # obj = models.PhoneRequestsBackgroundRecords.objects.create(
                     #     request_url=request_url,
                     #     response_data=response_data
