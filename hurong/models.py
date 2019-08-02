@@ -168,6 +168,12 @@ class XiaohongshuPhone(models.Model):
         (3, '自动更新异常'),
     )
     status = models.SmallIntegerField(verbose_name='是否异常', choices=status_choices, default=1)
+
+    attribution_choices = (
+        (1, '平台'),
+        (2, '客户')
+    )
+    phone_num_attribution = models.SmallIntegerField(verbose_name='号码归属', choices=attribution_choices, default=2)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     last_sign_in_time = models.DateTimeField(verbose_name='最后一次签到时间', null=True)
     request_ip_addr = models.CharField(verbose_name="真实请求ip地址", max_length=256, null=True)

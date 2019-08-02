@@ -48,7 +48,6 @@ class phone_management():
         ]
         return data
 
-
     # 查询验证码
     def query_verification_code(self, phone_number):
         zh_data = self.login()
@@ -126,6 +125,33 @@ class phone_management():
             except Exception:
                 pass
         return data_list
+
+
+    # 查询所有手机号
+    def get_all_phone_num(self):
+        zh_data = self.login()
+        phone_num_list = []
+        for data in zh_data:
+            login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
+            self.requests_obj.post(url=login_url, headers=self.headers, data=data)
+            num = 1
+            break_flag = False
+            while True:
+                if break_flag:
+                    break
+                yzm_url = data.get('login_url') + '/index.php?g=cust&m=cardno_cust&a=sub&p={}'.format(num)
+                ret = self.requests_obj.post(yzm_url, headers=self.headers)
+                soup = BeautifulSoup(ret.text, 'lxml')
+                tbody = soup.find('tbody')
+                tr_tags = tbody.find_all('tr')
+                for tr_tag in tr_tags:
+                    phone_num = tr_tag.find_all('td')[1].get_text().strip()
+                    if phone_num in phone_num_list:
+                        break_flag = True
+                        break
+                    phone_num_list.append(phone_num)
+                num += 1
+        return phone_num_list
 
 if __name__ == '__main__':
     obj = phone_management()
