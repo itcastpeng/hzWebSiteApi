@@ -326,15 +326,26 @@ def xiaohongshu_phone_monitor():
     # hour_now = datetime.datetime.now().strftime("%H")  # 当前的时间
     # if 7 < int(hour_now) < 21:  # 只在 8:00 - 21:00 运行
     err_phone = []
+    # expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
+    expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5))
     phone_objs = models.XiaohongshuPhone.objects.filter(is_debug=False)
     for phone_obj in phone_objs:
-        expire_date = (datetime.datetime.now() - datetime.timedelta(minutes=5)).strftime("%Y-%m-%d %H:%M:%S")
 
-        # 如果5分钟之内没有提交日志，说明机器异常了
-        objs = phone_obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date)
-        if not objs:
+        # # 如果5分钟之内没有提交日志，说明机器异常了
+        # objs = phone_obj.xiaohongshuphonelog_set.filter(create_datetime__gt=expire_date)
+        if phone_obj.last_sign_in_time and phone_obj.last_sign_in_time < expire_date :
             phone_obj.status = 2
-            err_phone.append(phone_obj.name)
+            seconds = (expire_date - phone_obj.last_sign_in_time).seconds
+
+            name = phone_obj.name
+            if seconds > 60 * 60 * 2:
+                name = name + " 异常超过2小时"
+            elif seconds > 60 * 60 * 1:
+                name = name + " 异常超过1小时"
+            else:
+                name = name + " 异常%s分钟" % (int(seconds / 60))
+
+            err_phone.append(name)
         else:
             phone_obj.status = 1
         phone_obj.save()

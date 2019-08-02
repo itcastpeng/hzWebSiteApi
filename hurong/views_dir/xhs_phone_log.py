@@ -6,6 +6,7 @@ from publicFunc.condition_com import conditionCom
 from hurong.forms.xhs_phone_log import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
 from publicFunc.public import send_error_msg
 from publicFunc.redisOper import get_redis_obj
+from publicFunc.public import create_xhs_admin_response
 import json, datetime
 
 @account.is_token(models.UserProfile)
@@ -244,21 +245,20 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     log_msg = log_msg.replace('请求接口异常: ', '')
                     log_msg = log_msg.split('返回数据->')
                     request_url = log_msg[0].split('api_url->')[1]
-
                     response_data = ''
                     if len(log_msg) > 2:
                         response_data = log_msg[1]
-
-                    obj = models.PhoneRequestsBackgroundRecords.objects.create(
-                        request_url=request_url,
-                        response_data=response_data
-                    )
+                    create_xhs_admin_response(request, response_data, 3, url=request_url, req_type=2)
+                    # obj = models.PhoneRequestsBackgroundRecords.objects.create(
+                    #     request_url=request_url,
+                    #     response_data=response_data
+                    # )
                     # content = '{}\n 设备请求接口 非200 告警, \n 表名:PhoneRequestsBackgroundRecords, \n 报错日志ID：{}'.format(now_date_time,obj.id)
                     # send_error_msg(content, 1)
-                    last_there_days = (now_date_time - datetime.timedelta(days=1))
-                    models.PhoneRequestsBackgroundRecords.objects.filter(
-                        create_datetime__lte=last_there_days
-                    ).delete()
+                    # last_there_days = (now_date_time - datetime.timedelta(days=1))
+                    # models.PhoneRequestsBackgroundRecords.objects.filter(
+                    #     create_datetime__lte=last_there_days
+                    # ).delete()
                 response.code = 200
                 response.msg = "日志记录成功"
 
