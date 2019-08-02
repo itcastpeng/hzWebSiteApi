@@ -193,6 +193,7 @@ class XiaohongshuUserProfile(models.Model):
     late_screenshot_time = models.SmallIntegerField(verbose_name="私信截图时间(单位:分钟)", default=120) # 晚上10点 - 早8点
     package_version = models.CharField(max_length=64, verbose_name='安装包版本号', null=True)
     update_reading_date = models.DateField(verbose_name='阅读量更新时间', null=True)
+    # add_map_not = models.BooleanField(verbose_name='是否开启地图', default=False)
 
 # 小红书账号注册
 class XiaohongshuUserProfileRegister(models.Model):
