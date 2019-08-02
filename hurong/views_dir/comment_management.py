@@ -257,6 +257,21 @@ def comment_management(request, oper_type):
                 response.code = 301
                 response.msg = '修改的任务不存在'
 
+        # 回复评论管理 发布异常
+        elif oper_type == 'comment_management_changed_publish_exceptions':
+            comment_id = request.POST.get('comment_id')
+            objs = models.commentResponseForm.objects.filter(id=comment_id)
+            if objs:
+                objs.update(
+                    is_error=True,
+                    comment_completion_time=datetime.datetime.today()
+                )
+                response.code = 200
+                response.msg = '发布异常成功'
+            else:
+                response.code = 301
+                response.msg = '该任务不存在'
+
     else:
 
         order = request.GET.get('order', '-create_datetime')
@@ -515,6 +530,7 @@ def comment_management(request, oper_type):
                         'comment_type_id':obj.comment_type,
                         'comment_type':obj.get_comment_type_display(),
                         'is_perform':obj.is_perform,
+                        'is_error':obj.is_error,
                         'comment_completion_time': comment_completion_time,
                         'create_datetime':obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     })
