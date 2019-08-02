@@ -230,13 +230,14 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
             objs = models.XiaohongshuUserProfile.objects.filter(id=o_id)
             if objs:
                 obj = objs[0]
-                objs.update(add_map_not=1-obj.add_map_not)
+                add_map_not = 1 - obj.add_map_not
+                objs.update(add_map_not=add_map_not)
                 response.code = 200
                 response.msg = '更改成功'
                 data = {
                     'transfer_type': 6,
                     'xiaohongshu_id': obj.id,
-                    'pubStatus':obj.add_map_not
+                    'pubStatus':add_map_not
                 }
                 asynchronous_transfer_data.delay(data)
 

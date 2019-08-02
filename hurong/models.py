@@ -427,6 +427,7 @@ class commentResponseForm(models.Model):
         (1, '回复评论'),
         (2, '回复私信')
     )
+    is_error = models.BooleanField(verbose_name='是否异常', default=False)
     comment_type = models.SmallIntegerField(verbose_name='回复评论类型', choices=comment_type_choices, default=1)
     is_perform = models.BooleanField(verbose_name='是否执行', default=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
