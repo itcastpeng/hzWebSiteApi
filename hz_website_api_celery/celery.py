@@ -124,6 +124,12 @@ app.conf.beat_schedule = {
         'task': 'hz_website_api_celery.tasks.celery_task_toomuch_alarm',
         'schedule': crontab('0', '*/1', '*', '*', '*'),
     },
+
+    # 查询手机号平台 判断设备 手机号是自己的还是客户的
+    'determine_phone_number_ownership': {
+        'task': 'hz_website_api_celery.tasks.determine_phone_number_ownership',
+        'schedule': crontab('0', '*/5', '*', '*', '*'),
+    },
 }
 app.conf.update(
     result_expires=3600,

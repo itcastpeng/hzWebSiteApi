@@ -584,7 +584,10 @@ def celery_task_toomuch_alarm():
         if celery_task_num >= 1000:
             send_error_msg('celery任务大于1000条 请及时处理 {}'.format(celery_task_num), 5)
 
-
+# 查询手机号平台 判断设备 手机号是自己的还是客户的
+def determine_phone_number_ownership():
+    url = 'https://xcx.bjhzkq.com/api_hurong/celery/determine_phone_number_ownership'
+    requests.post(url)
 
 
 
