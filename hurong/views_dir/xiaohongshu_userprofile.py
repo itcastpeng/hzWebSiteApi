@@ -3,10 +3,8 @@ from publicFunc import Response, account
 from publicFunc.public import create_xhs_admin_response
 from django.http import JsonResponse
 from hurong.forms.xiaohongshu_userprofile import IsUpdateUserinfoForm, UpdateUserinfoForm, RegistreForm, IsTodayUpdateReading
-import json
-import requests
-import datetime
-import re
+from hz_website_api_celery.tasks import asynchronous_transfer_data
+import requests, json, datetime, re
 
 
 # @account.is_token(models.UserProfile)
@@ -226,6 +224,25 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+
+        # 更改是否开启地图
+        elif oper_type == 'change_whether_open_the_map':
+            objs = models.XiaohongshuUserProfile.objects.filter(id=o_id)
+            if objs:
+                obj = objs[0]
+                objs.update(add_map_not=1-obj.add_map_not)
+                response.code = 200
+                response.msg = '更改成功'
+                data = {
+                    'transfer_type': 6,
+                    'xiaohongshu_id': obj.id,
+                    'pubStatus':obj.add_map_not
+                }
+                asynchronous_transfer_data.delay(data)
+
+            else:
+                response.code = 301
+                response.msg = '博主不存在'
 
     else:
         # 判断是否需要更新个人信息

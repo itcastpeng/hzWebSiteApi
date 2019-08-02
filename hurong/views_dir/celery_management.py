@@ -173,6 +173,11 @@ def asynchronous_transfer_data(request):
             url = 'https://a.ppxhs.com/api/v1/sync/article-error'
             ret = requests.post(url, data=request.POST)
 
+        elif transfer_type in [6, '6']:
+            msg = '异步传输 更改博主是否开启地图'
+            url = 'https://a.ppxhs.com/api/v1/sync/open-location'
+            ret = requests.post(url, data=request.POST)
+
         else: # 2
             msg = '异步传输小红书回复评论状态'
             url = 'https://a.ppxhs.com/api/v1/sync/sync-reply-status'
