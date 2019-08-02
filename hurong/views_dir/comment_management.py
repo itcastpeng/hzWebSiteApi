@@ -260,7 +260,10 @@ def comment_management(request, oper_type):
         # 回复评论管理 发布异常(手机)
         elif oper_type == 'comment_management_changed_publish_exceptions':
             comment_id = request.POST.get('comment_id')
-            objs = models.commentResponseForm.objects.filter(id=comment_id)
+            objs = models.commentResponseForm.objects.filter(
+                id=comment_id,
+                comment_completion_time__isnull=True
+            )
             if objs:
                 objs.update(
                     is_error=True,
@@ -270,13 +273,23 @@ def comment_management(request, oper_type):
                 response.msg = '发布异常成功'
             else:
                 response.code = 301
-                response.msg = '该任务不存在'
+                response.msg = '该任务不存在或已发布'
 
         # 回复评论管理 发布正常(后台)
-        elif oper_type == 'Reply comment management release normal':
-            pass
+        elif oper_type == 'reply_comment_management_release_normal':
+            comment_id = request.POST.get('comment_id')
+            objs = models.commentResponseForm.objects.filter(id=comment_id)
+            if objs:
+                objs.update(
+                    is_error=False,
+                    comment_completion_time=None,
+                )
+                response.code = 200
+                response.msg = '重新发布成功'
 
-
+            else:
+                response.code = 301
+                response.msg = '该任务不存在'
     else:
 
         order = request.GET.get('order', '-create_datetime')
