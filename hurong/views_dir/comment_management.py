@@ -257,7 +257,7 @@ def comment_management(request, oper_type):
                 response.code = 301
                 response.msg = '修改的任务不存在'
 
-        # 回复评论管理 发布异常
+        # 回复评论管理 发布异常(手机)
         elif oper_type == 'comment_management_changed_publish_exceptions':
             comment_id = request.POST.get('comment_id')
             objs = models.commentResponseForm.objects.filter(id=comment_id)
@@ -271,6 +271,11 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = '该任务不存在'
+
+        # 回复评论管理 发布正常(后台)
+        elif oper_type == 'Reply comment management release normal':
+            pass
+
 
     else:
 

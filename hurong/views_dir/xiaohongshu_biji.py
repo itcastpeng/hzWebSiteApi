@@ -9,6 +9,7 @@ from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskFor
 from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
 from publicFunc.base64_encryption import b64decode, b64encode
 from django.db.models import Q
+from publicFunc.public import create_xhs_admin_response
 import requests, datetime, json, re
 
 
@@ -159,6 +160,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 2)
 
         # 提交反链
         elif oper_type == "upload_url":
@@ -199,6 +201,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 3)
 
         # 发布笔记
         elif oper_type == 'published_articles':
@@ -260,6 +263,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 3)
 
         # 发布中的笔记 可以改为发布异常
         elif oper_type == 'instead_abnormal_release_notes':
