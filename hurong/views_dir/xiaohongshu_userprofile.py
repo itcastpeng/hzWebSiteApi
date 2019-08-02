@@ -236,7 +236,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.msg = '更改成功'
                 data = {
                     'transfer_type': 6,
-                    'xiaohongshu_id': obj.id,
+                    'xiaohongshu_id': obj.xiaohongshu_id,
                     'pubStatus':add_map_not
                 }
                 asynchronous_transfer_data.delay(data)

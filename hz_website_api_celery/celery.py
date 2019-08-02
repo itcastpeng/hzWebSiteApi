@@ -97,7 +97,7 @@ app.conf.beat_schedule = {
 
     # 获取 设备流量信息
     'get_traffic_information':{
-        'task': 'hz_website_api_celery.tasks.celery_get_phone_content',
+        'task': 'hz_website_api_celery.tasks.get_traffic_information',
         'schedule': crontab('0', '*/2', '*', '*', '*'),
     },
 
