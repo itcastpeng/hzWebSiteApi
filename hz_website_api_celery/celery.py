@@ -98,7 +98,7 @@ app.conf.beat_schedule = {
     # 获取 设备流量信息
     'get_traffic_information':{
         'task': 'hz_website_api_celery.tasks.get_traffic_information',
-        'schedule': crontab('0', '*/2', '*', '*', '*'),
+        'schedule': crontab('0', '*/5', '*', '*', '*'),
     },
 
     # 异步上传手机抓取的评论（一小时执行一次）

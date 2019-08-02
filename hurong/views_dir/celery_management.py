@@ -238,4 +238,17 @@ def error_asynchronous_transfer_data(request):
     return HttpResponse('')
 
 
+# 查询手机号平台 判断设备 手机号是自己的还是客户的
+def determine_phone_number_ownership(request):
+    try:
+        phone_management_objs = phone_management()
+        phone_num_list = phone_management_objs.get_all_phone_num()
+        models.XiaohongshuPhone.objects.filter(phone_num__in=phone_num_list).update(
+            phone_num_attribution=1
+        )
 
+    except Exception as e:
+        content = '{}查询手机号平台异常, 错误{}'.format(datetime.datetime.today(), e)
+        send_error_msg(content, 5)
+
+    return HttpResponse('')
