@@ -174,7 +174,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = "保存成功"
             else:
-                print("验证不通过")
+                print("验证不通过", forms_obj.errors.as_json())
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
