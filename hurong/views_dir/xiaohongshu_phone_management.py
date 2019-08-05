@@ -294,11 +294,13 @@ def xiaohongshu_phone_management(request, oper_type):
 
                 n = 0
                 for obj in objs:
+                    msg = json.loads(obj)['log_msg']
+                    create_date = json.loads(obj)['create_date']
                     n += 1
                     ret_data.append({
                         'id': n,
-                        'msg': obj,
-                        # 'create_date': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                        'msg': msg,
+                        'create_date': create_date
                     })
                 response.code = 200
                 response.msg = '查询成功'
