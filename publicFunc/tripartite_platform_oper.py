@@ -447,11 +447,10 @@ class tripartite_platform_oper():
 
     # 发布已通过审核的小程序
     def publish_approved_applets(self, token):
-        # url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
-        #     token
-        # )
-        url = 'https://api.weixin.qq.com/wxa/release'
-        ret = requests.post(url, params=self.params)
+        url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
+            token
+        )
+        ret = requests.post(url)
         print('_--------发布已通过审核的小程序------> ', ret.text)
 
     # 获取体验者列表
@@ -469,13 +468,14 @@ class tripartite_platform_oper():
 
     # 绑定微信用户为小程序体验者
     def bind_weChat_user_small_program_experiencer(self, token, wechatid):
-        url = 'https://api.weixin.qq.com/wxa/bind_tester?access_token={}'.format(
-            token
-        )
+        # url = 'https://api.weixin.qq.com/wxa/bind_tester?access_token={}'.format(
+        #     token
+        # )
+        url = 'https://api.weixin.qq.com/wxa/bind_tester'
         data = {
             'wechatid': wechatid
         }
-        ret = requests.post(url, data=json.dumps(data))
+        ret = requests.post(url, params=self.params, data=json.dumps(data))
         print('绑定微信用户为小程序体验者----->', ret.text)
         return ret.json()
 
