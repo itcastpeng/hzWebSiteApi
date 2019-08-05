@@ -460,7 +460,7 @@ class tripartite_platform_oper():
             token
         )
         ret = requests.post(url)
-        print('获取体验者列表-----> ', ret.text)
+        return ret.json()
 
     # 绑定微信用户为小程序体验者
     def bind_weChat_user_small_program_experiencer(self, token, wechatid):
