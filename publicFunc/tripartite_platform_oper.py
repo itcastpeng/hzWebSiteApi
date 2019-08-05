@@ -502,9 +502,7 @@ class tripartite_platform_oper():
 
     # 设置小程序隐私设置（是否可被搜索）
     def set_applet_privacy_Settings(self, token, status): # 1表示不可搜索，0表示可搜索
-        url = 'https://api.weixin.qq.com/wxa/changewxasearchstatus?access_token={}'.format(
-         token
-        )
+        url = 'https://api.weixin.qq.com/wxa/changewxasearchstatus?access_token={}'.format(token)
         data = {
             'status': status
         }
