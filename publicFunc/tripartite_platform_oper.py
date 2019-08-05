@@ -508,7 +508,7 @@ class tripartite_platform_oper():
         data = {
             'status': status
         }
-        ret = requests.post(url, data=data)
+        ret = requests.post(url, data=json.dumps(data))
         print('设置小程序隐私设置------> ',  url, ret.text)
         return ret.json()
 
