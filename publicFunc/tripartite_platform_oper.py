@@ -464,6 +464,7 @@ class tripartite_platform_oper():
         }
         url = 'https://api.weixin.qq.com/wxa/memberauth'
         ret = requests.post(url, params=self.params, data=post_data)
+        print('ret.url-----> ', ret.url)
         return ret.json()
 
     # 绑定微信用户为小程序体验者
