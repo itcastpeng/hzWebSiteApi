@@ -174,8 +174,12 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
-                ret = requests.get(url, allow_redirects=False)
-                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                if "www.xiaohongshu.com" in url:
+                    link = url
+                else:
+                    ret = requests.get(url, allow_redirects=False)
+                    link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+
 
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
                 biji_objs.update(
