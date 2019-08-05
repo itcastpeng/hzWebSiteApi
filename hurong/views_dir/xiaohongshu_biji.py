@@ -401,6 +401,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 ret_data = []
                 select_id = request.GET.get('id')
                 for obj in objs:
+
+                    biji_type = 'img'
+                    if json.loads(obj.content).get('type') and json.loads(obj.content).get('type') != 'images':
+                        biji_type = 'video'
+
                     release_time = obj.release_time
                     if release_time:
                         release_time = obj.release_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -423,6 +428,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'completion_time': completion_time,
                         'biji_url': obj.biji_url,
                         'error_msg': obj.error_msg,
+                        'biji_type': biji_type,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     # if select_id:
