@@ -175,8 +175,10 @@ def tripartite_platform_oper(request, oper_type):
             # 将草稿箱的草稿选为小程序代码模版
             elif oper_type == 'select_draft_applet_code_template':
                 draft_id = request.GET.get('draft_id')  # 草稿ID
-                tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
-                response.code = 200
+                data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
             # 获取小程序体验者列表
             elif oper_type == 'Get_list_experiencers':
@@ -192,36 +194,39 @@ def tripartite_platform_oper(request, oper_type):
                 data = tripartite_platform_objs.get_code_page_configuration(
                     authorizer_access_token
                 )
-                response.code = 200
-                response.data = data
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
             # 查询某个指定版本的审核状态
             elif oper_type == 'query_specified_version_code_audit':
                 auditid = request.GET.get('auditid')
-                tripartite_platform_objs.query_specified_version_code_audit(
+                data = tripartite_platform_objs.query_specified_version_code_audit(
                     authorizer_access_token,
                     auditid
                 )
-                response.code = 200
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
 
             # 查询最新一次提交的审核状态
             elif oper_type == 'check_status_most_recent_submission':
                 auditid = request.GET.get('auditid')
-                ret_json = tripartite_platform_objs.check_status_most_recent_submission(
+                data = tripartite_platform_objs.check_status_most_recent_submission(
                     authorizer_access_token,
                     auditid
                 )
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = ret_json
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
             # 获取草稿箱内的所有临时代码草稿
             elif oper_type == 'get_all_temporary_code_drafts':
                 data = tripartite_platform_objs.xcx_get_all_temporary_code_drafts()
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = data
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
             # 将第三方提交的代码包提交审核
             elif oper_type == 'code_package_submitted_review':
