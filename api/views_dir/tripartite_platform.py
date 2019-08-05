@@ -97,7 +97,9 @@ def tripartite_platform_oper(request, oper_type):
             data = tripartite_platform_objs.bind_weChat_user_small_program_experiencer(
                 authorizer_access_token, wechatid
             )
-            return data
+            response.code = 200
+            response.msg = '绑定完成'
+            response.data = data
 
         # 解除绑定小程序体验者
         elif oper_type == 'the_experiencer_unbound_applet':
@@ -105,7 +107,8 @@ def tripartite_platform_oper(request, oper_type):
             data = tripartite_platform_objs.the_experiencer_unbound_applet(
                 authorizer_access_token, wechatid
             )
-            return data
+            response.code = 200
+            response.msg = '解除绑定体验者成功'
 
         # 设置小程序隐私设置（是否可被搜索） # 1表示不可搜索，0表示可搜索
         elif oper_type == 'set_applet_privacy_Settings':
@@ -114,7 +117,9 @@ def tripartite_platform_oper(request, oper_type):
                 authorizer_access_token,
                 status
             )
-            return data
+            response.code = 200
+            response.data = data
+
 
 
     else:
