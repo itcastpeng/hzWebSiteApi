@@ -456,13 +456,13 @@ class tripartite_platform_oper():
 
     # 获取体验者列表
     def Get_list_experiencers(self, token):
-        # url = 'https://api.weixin.qq.com/wxa/memberauth?access_token={}'.format(
-            # token
-        # )
+        url = 'https://api.weixin.qq.com/wxa/memberauth?access_token={}'.format(
+            token
+        )
         post_data = {
             "action": "get_experiencer"
         }
-        url = 'https://api.weixin.qq.com/wxa/memberauth'
+        # url = 'https://api.weixin.qq.com/wxa/memberauth'
         ret = requests.post(url, params=self.params, data=json.dumps(post_data))
         print('ret.url-----> ', ret.url)
         return ret.json()
