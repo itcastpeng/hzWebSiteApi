@@ -463,7 +463,7 @@ class tripartite_platform_oper():
             "action": "get_experiencer"
         }
         url = 'https://api.weixin.qq.com/wxa/memberauth'
-        ret = requests.post(url, params=self.params, data=post_data)
+        ret = requests.post(url, params=self.params, data=json.dumps(post_data))
         print('ret.url-----> ', ret.url)
         return ret.json()
 
@@ -475,7 +475,7 @@ class tripartite_platform_oper():
         data = {
             'wechatid': wechatid
         }
-        ret = requests.post(url, data=data)
+        ret = requests.post(url, data=json.dumps(data))
         print('绑定微信用户为小程序体验者----->', ret.text)
         return ret.json()
 
@@ -487,7 +487,7 @@ class tripartite_platform_oper():
         data = {
             'wechatid': wechatid
         }
-        ret = requests.post(url, data=data)
+        ret = requests.post(url, data=json.dumps(data))
         print('解除绑定小程序的体验者---------> ', ret.text)
         return ret.json()
 
