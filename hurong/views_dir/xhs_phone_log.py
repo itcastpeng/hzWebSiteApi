@@ -176,7 +176,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 phone_log_list_key = "phone_log_list"
                 if redis_obj.llen(phone_log_id_key) > 500:
                     redis_obj.rpop(phone_log_id_key)
-                redis_obj.lpush(phone_log_id_key, json.loads({
+                redis_obj.lpush(phone_log_id_key, json.dumps({
                     "log_msg": log_msg,
                     "create_date": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 }))
