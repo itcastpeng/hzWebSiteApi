@@ -509,7 +509,7 @@ class tripartite_platform_oper():
             'status': status
         }
         ret = requests.post(url, data=data)
-        print('设置小程序隐私设置------> ', ret.text)
+        print('设置小程序隐私设置------> ',  url, ret.text)
         return ret.json()
 
 
