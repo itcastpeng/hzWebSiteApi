@@ -167,10 +167,16 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         imsi=imsi
                     ).update(last_sign_in_time=datetime.datetime.today())
 
-                models.XiaohongshuPhoneLog.objects.create(
-                    log_msg=log_msg,
-                    parent=obj
-                )
+                # models.XiaohongshuPhoneLog.objects.create(
+                #     log_msg=log_msg,
+                #     parent=obj
+                # )
+                #  将日志存入redis中
+                phone_log_id_key = "phone_log_{phone_id}".format(phone_id=obj.id)
+                phone_log_list_key = "phone_log_list"
+                if redis_obj.llen(phone_log_id_key) > 500:
+                    redis_obj.rpop(phone_log_id_key)
+                redis_obj.lpush(phone_log_id_key, log_msg)
 
                 phone_id = obj.id
                 phone_name = obj.name

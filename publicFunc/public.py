@@ -79,6 +79,7 @@ def query_device_recharge_information(number):
 
     return data
 
+
 # 发送告警信息
 def send_error_msg(content, status=None):
     if not status:
@@ -91,6 +92,12 @@ def send_error_msg(content, status=None):
     #     obj.message_send('HeZhongGongSiJianKong', content)      # 贺昂A
 
     # 创建告警信息
+    # redis_obj = get_redis_obj()
+    # redis_key = "mobile_equipment_abnormal_send_message_enterprise_record"
+    # if redis_obj.llen(redis_key) > 500:
+    #     redis_obj.rpop(redis_key)
+    # redis_obj.lpush(redis_key, content)
+
     models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.create(
         error_msg=content,
         status=status
