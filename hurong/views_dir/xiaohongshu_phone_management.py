@@ -7,7 +7,7 @@ from publicFunc.phone_management_platform import phone_management
 from hurong.forms.public_form import SelectForm
 from publicFunc.condition_com import conditionCom
 import os, json, datetime, requests
-
+from publicFunc.redisOper import get_redis_obj
 
 
 # 手机 功能 管理
@@ -280,18 +280,25 @@ def xiaohongshu_phone_management(request, oper_type):
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
                 order = request.GET.get('order', '-create_datetime')
-                objs = models.XiaohongshuPhoneLog.objects.filter(parent_id=equipment_id).order_by(order)
-                count = objs.count()
-                if length != 0:
-                    start_line = (current_page - 1) * length
-                    stop_line = start_line + length
-                    objs = objs[start_line: stop_line]
+                # objs = models.XiaohongshuPhoneLog.objects.filter(parent_id=equipment_id).order_by(order)
+
+                redis_obj = get_redis_obj()
+                # 从redis中获取数据
+                phone_log_id_key = "phone_log_{phone_id}".format(phone_id=equipment_id)
+
+                count = redis_obj.llen(phone_log_id_key)
+                start_line = (current_page - 1) * length
+                stop_line = start_line + length
+                objs = redis_obj.lrange(phone_log_id_key, start_line, stop_line)
                 ret_data = []
+
+                n = 0
                 for obj in objs:
+                    n += 1
                     ret_data.append({
-                        'id': obj.id,
-                        'msg': obj.log_msg,
-                        'create_date': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
+                        'id': n,
+                        'msg': obj,
+                        # 'create_date': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     })
                 response.code = 200
                 response.msg = '查询成功'
