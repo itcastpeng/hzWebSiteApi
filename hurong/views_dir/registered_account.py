@@ -49,6 +49,7 @@ def registered_account(request, oper_type):
                         'name':obj.name,
                         'uid':obj.uid,
                         'gender_id':obj.gender,
+                        'remark':obj.remark,
                         'gender':obj.get_gender_display(),
                         'birthday':obj.birthday,
                         'is_register':obj.is_register,

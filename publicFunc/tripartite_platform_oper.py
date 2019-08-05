@@ -497,7 +497,7 @@ class tripartite_platform_oper():
             token
         )
         ret = requests.get(url)
-        print('查询小程序当前隐私设置-----------> ', ret.text)
+        print('查询小程序当前隐私设置-----------> ', url, ret.text)
         return ret.json()
 
     # 设置小程序隐私设置（是否可被搜索）

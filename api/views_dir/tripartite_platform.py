@@ -246,8 +246,8 @@ def tripartite_platform_oper(request, oper_type):
                     "errmsg": "ok",
                 }
 
-        #
-        # if oper_type == 'authorize_callback':
+
+        # authorize_callback
         else:
             """
                 auth_code   : GZH/XCX 授权码
