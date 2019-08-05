@@ -216,7 +216,7 @@ class XiaohongshuUserProfileRegister(models.Model):
     is_register = models.BooleanField(verbose_name="是否已经注册", default=False)
     register_datetime = models.DateTimeField(verbose_name="注册时间", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
+    remark = models.CharField(verbose_name='备注', max_length=128, null=True)
 
 # 小红书笔记
 class XiaohongshuBiji(models.Model):
