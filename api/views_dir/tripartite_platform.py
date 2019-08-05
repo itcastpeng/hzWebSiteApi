@@ -144,11 +144,13 @@ def tripartite_platform_oper(request, oper_type):
                     'user_desc': user_desc
                 }
                 tripartite_platform_objs.xcx_update_code(data)
+                response.code = 200
 
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
                 path = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
-                return path
+                response.code = 200
+                response.data = path
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
@@ -168,20 +170,23 @@ def tripartite_platform_oper(request, oper_type):
             elif oper_type == 'select_draft_applet_code_template':
                 draft_id = request.GET.get('draft_id')  # 草稿ID
                 tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+                response.code = 200
 
             # 获取小程序体验者列表
             elif oper_type == 'Get_list_experiencers':
                 data = tripartite_platform_objs.Get_list_experiencers(
                     authorizer_access_token
                 )
-                return data
+                response.data = data
+                response.code = 200
 
             # 获取小程序的第三方提交代码的页面配置
             elif oper_type == 'get_code_page_configuration':
                 data = tripartite_platform_objs.get_code_page_configuration(
                     authorizer_access_token
                 )
-                return data
+                response.code = 200
+                response.data = data
 
             # 查询某个指定版本的审核状态
             elif oper_type == 'query_specified_version_code_audit':
@@ -190,6 +195,8 @@ def tripartite_platform_oper(request, oper_type):
                     authorizer_access_token,
                     auditid
                 )
+                response.code = 200
+
 
             # 查询最新一次提交的审核状态
             elif oper_type == 'check_status_most_recent_submission':
