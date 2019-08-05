@@ -456,10 +456,11 @@ class tripartite_platform_oper():
 
     # 获取体验者列表
     def Get_list_experiencers(self, token):
-        url = 'https://api.weixin.qq.com/wxa/memberauth?access_token={}'.format(
-            token
-        )
-        ret = requests.post(url)
+        # url = 'https://api.weixin.qq.com/wxa/memberauth?access_token={}'.format(
+            # token
+        # )
+        url = 'https://api.weixin.qq.com/wxa/memberauth'
+        ret = requests.post(url, params=self.params)
         return ret.json()
 
     # 绑定微信用户为小程序体验者
