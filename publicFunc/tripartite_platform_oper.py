@@ -377,6 +377,7 @@ class tripartite_platform_oper():
         print('data------> ', data)
         ret = requests.post(url, data=json.dumps(data))
         print('-将草稿箱的草稿选为小程序代码模版=------> ', ret.text)
+        return ret.json()
 
     # 查询某个指定版本的审核状态
     def query_specified_version_code_audit(self, token, auditid):
@@ -388,6 +389,7 @@ class tripartite_platform_oper():
         }
         ret = requests.post(url, data=json.dumps(data))
         print('-查询某个指定版本的审核状态------> ', ret.json())
+        return ret.json()
 
     # 查询最新一次提交的审核状态
     def check_status_most_recent_submission(self, token, auditid):
