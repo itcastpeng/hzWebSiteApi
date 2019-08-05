@@ -113,7 +113,12 @@ class RegistreForm(forms.Form):
             'invalid': "类型错误"
         }
     )
-
+    remark = forms.CharField(
+        required=False,
+        error_messages={
+            'invalid': "类型错误"
+        }
+    )
 
 # 判断今天是否更新阅读量
 class IsTodayUpdateReading(forms.Form):

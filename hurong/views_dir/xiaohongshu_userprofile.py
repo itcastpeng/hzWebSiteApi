@@ -191,7 +191,8 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 'name': request.POST.get('name'),
                 'head_portrait': request.POST.get('head_portrait'),
                 'gender': request.POST.get('gender'),
-                'birthday': request.POST.get('birthday')
+                'birthday': request.POST.get('birthday'),
+                'remark': request.POST.get('remark')
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = RegistreForm(form_data)
