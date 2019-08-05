@@ -97,9 +97,9 @@ def tripartite_platform_oper(request, oper_type):
             data = tripartite_platform_objs.bind_weChat_user_small_program_experiencer(
                 authorizer_access_token, wechatid
             )
-            response.code = 200
-            response.msg = '绑定完成'
-            response.data = data
+            response.code = data.get('errcode')
+            response.msg = data.get('errmsg')
+            response.data = data.get('userstr')
 
         # 解除绑定小程序体验者
         elif oper_type == 'the_experiencer_unbound_applet':
@@ -182,8 +182,9 @@ def tripartite_platform_oper(request, oper_type):
                 data = tripartite_platform_objs.Get_list_experiencers(
                     authorizer_access_token
                 )
-                response.data = data
-                response.code = 200
+                response.data = data.get('members')
+                response.code = data.get('errcode')
+                response.msg = data.get('errmsg')
 
             # 获取小程序的第三方提交代码的页面配置
             elif oper_type == 'get_code_page_configuration':
