@@ -117,8 +117,9 @@ def tripartite_platform_oper(request, oper_type):
                 authorizer_access_token,
                 status
             )
-            response.code = 200
-            response.data = data
+            response.data = data.get('members')
+            response.code = data.get('errcode')
+            response.msg = data.get('errmsg')
 
 
 
