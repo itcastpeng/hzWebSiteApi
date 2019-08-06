@@ -38,6 +38,7 @@ def QueryWhetherCallingCredentialExpired(appid, auth_type):
                 auth_type
             )
 
+        response['id'] = obj.id
         response['authorizer_access_token'] = authorizer_access_token
     response['flag'] = flag
     return response
