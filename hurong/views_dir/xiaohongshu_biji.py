@@ -128,30 +128,35 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 title, content = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
-                print(xiaohongshu_id)
+
                 xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
                 if xiaohongshu_user_objs:
                     xiaohongshu_user_obj = xiaohongshu_user_objs[0]
-
-                    biji_id = request.POST.get('biji_id') # 如果有 该值 则更新 待审核状态
-                    if biji_id:
-                        biji_objs = models.XiaohongshuBiji.objects.filter(id=biji_id)
-                        obj = biji_objs[0]
-                        biji_objs.update(status=3, content=content, release_time=release_time, title=title)
-                        response.msg = "更新成功"
-
+                    objs = models.XiaohongshuBiji.objects.filter(title=title, user_id_id=xiaohongshu_user_obj.id)
+                    if objs:
+                        response.code = 301
+                        response.msg = '笔记已存在, 请勿重复添加'
                     else:
-                        obj = models.XiaohongshuBiji.objects.create(
-                            user_id=xiaohongshu_user_obj,
-                            content=content,
-                            release_time=release_time,
-                            title=title
-                        )
-                        response.msg = "添加成功"
-                    response.code = 200
-                    response.data = {
-                        'biji_id': obj.id
-                    }
+
+                        biji_id = request.POST.get('biji_id') # 如果有 该值 则更新 待审核状态
+                        if biji_id:
+                            biji_objs = models.XiaohongshuBiji.objects.filter(id=biji_id)
+                            obj = biji_objs[0]
+                            biji_objs.update(status=3, content=content, release_time=release_time, title=title)
+                            response.msg = "更新成功"
+
+                        else:
+                            obj = models.XiaohongshuBiji.objects.create(
+                                user_id=xiaohongshu_user_obj,
+                                content=content,
+                                release_time=release_time,
+                                title=title
+                            )
+                            response.msg = "添加成功"
+                        response.code = 200
+                        response.data = {
+                            'biji_id': obj.id
+                        }
                 else:
                     response.code = 0
                     response.msg = "添加失败, 小红书id不存在"
