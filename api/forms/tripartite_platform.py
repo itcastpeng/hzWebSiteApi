@@ -38,8 +38,10 @@ class AuthorizationForm(forms.Form):
         if authorization_type in [1, '1', 2, '2']:
             if authorization_type in [1, '1']: # 公众号授权
                 objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
+                app_type = '公众号'
 
             else: # 小程序
+                app_type = '小程序'
                 objs = models.ClientApplet.objects.filter(appid=appid)
 
             if not objs:
@@ -48,7 +50,8 @@ class AuthorizationForm(forms.Form):
 
                 else:   # 小程序授权
                     models.ClientApplet.objects.create(appid=appid, user_id=user_id)
-
+            else:
+                self.add_error('authorization_type', '该{}已经授权'.format(app_type))
             return authorization_type
         else:
             self.add_error('authorization_type', '请输入正确的授权类型')
@@ -60,24 +63,6 @@ class AuthorizationForm(forms.Form):
         else:
             self.add_error('authorization_way', '授权方式异常')
 
-    def clean_appid(self):
-        appid = self.data.get('appid')
-        authorization_type = self.data.get('authorization_type')
-        flag = True
-        if authorization_type in [1, '1']:
-            app_type = '公众号'
-            objs = models.CustomerOfficialNumber.objects.filter(appid=appid)
-        else:
-            app_type = '小程序'
-            objs = models.ClientApplet.objects.filter(appid=appid)
-
-        if objs:
-            flag = False
-
-        if flag:
-            self.add_error('appid', '该{}已经授权'.format(app_type))
-        else:
-            return appid
 
 
 
