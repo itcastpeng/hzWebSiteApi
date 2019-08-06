@@ -87,6 +87,10 @@ def tripartite_platform_oper(request, oper_type):
                 }
 
             else:
+                if authorization_type in [1, '1']:
+                    models.ClientApplet.objects.filter(appid=appid).delete()
+                else:
+                    models.CustomerOfficialNumber.objects.filter(appid=appid).delete()
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
@@ -98,11 +102,25 @@ def tripartite_platform_oper(request, oper_type):
                 authorizer_access_token, wechatid
             )
             code = 301
+            userstr = data.get('userstr')
             if data.get('errcode') in [0, '0']:
                 code = 200
+                objs = models.AppletExperiencerList.objects.filter(
+                    applet__appid=appid,
+                    userstr=userstr
+                )
+                if not objs:
+                    models.AppletExperiencerList.objects.create(
+                        applet='',
+                        userstr=userstr,
+                        wechat_id=wechatid
+                    )
+                else:
+                    objs.update(is_delete=1)
+
             response.code = code
             response.msg = data.get('errmsg')
-            response.data = data.get('userstr')
+            response.data = userstr
 
         # 解除绑定小程序体验者
         elif oper_type == 'the_experiencer_unbound_applet':
@@ -195,11 +213,23 @@ def tripartite_platform_oper(request, oper_type):
                     authorizer_access_token
                 )
                 code = 301
+                members = []
                 if data.get('errcode') in [0, '0']:
                     code = 200
+                    for member_obj in data.get('members'):
+                        objs = models.AppletExperiencerList.objects.filter(
+                            userstr=member_obj, appid=appid
+                        )
+                        if objs:
+                            obj = objs[0]
+                            wechat_id = obj.wechat_id
+                        else:
+                            wechat_id = member_obj
+                        members.append(wechat_id)
+
                 response.code = code
 
-                response.data = data.get('members')
+                response.data = members
                 response.msg = data.get('errmsg')
 
             # 获取小程序的第三方提交代码的页面配置
