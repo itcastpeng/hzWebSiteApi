@@ -341,6 +341,7 @@ class tripartite_platform_oper():
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)
+        print('获取体验小程序二维码----------> ', url, ret.content)
         path = upload_qiniu(img_path, 800)
         return path
 
