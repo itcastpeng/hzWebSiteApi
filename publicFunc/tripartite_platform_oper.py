@@ -473,7 +473,6 @@ class tripartite_platform_oper():
         url = 'https://api.weixin.qq.com/wxa/bind_tester?access_token={}'.format(
             token
         )
-        # url = 'https://api.weixin.qq.com/wxa/bind_tester'
         data = {
             'wechatid': wechatid
         }

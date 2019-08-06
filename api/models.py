@@ -251,7 +251,13 @@ class GenerationAppletOnline(models.Model):
     reason = models.CharField(verbose_name='失败原因', max_length=512, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-
+# 小程序体验者列表
+class AppletExperiencerList(models.Model):
+    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
+    userstr = models.CharField(verbose_name='体验者微信userstr', max_length=256)
+    wechat_id = models.CharField(verbose_name='体验者微信ID', max_length=256)
+    is_delete = models.BooleanField(verbose_name='是否删除', default=0)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
