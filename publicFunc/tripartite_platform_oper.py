@@ -299,11 +299,14 @@ class tripartite_platform_oper():
         appid = data.get('appid')
         template_id = data.get('template_id')
         token = data.get('token')
+        user_id = data.get('user_id') # 用戶ID
+        xcx_id = data.get('id')
 
         ext_json = {
                 'extAppid':appid,   #授权方APPID
                 'ext':{           # 自定义字段 可在小程序调用
-
+                    'user_id': user_id,
+                    'xcx_id': xcx_id,
                 },
                 # 'extPages':{      # 页面配置
                 #     "index":{

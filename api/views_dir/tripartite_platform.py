@@ -166,12 +166,15 @@ def tripartite_platform_oper(request, oper_type):
                 template_id = request.GET.get('template_id')  # 代码模板ID
                 user_version = request.GET.get('user_version')  # 代码版本号
                 user_desc = request.GET.get('user_desc')  # 代码描述
+                user_id = request.GET.get('user_id')
                 data = {
                     'appid': appid,
                     'token': authorizer_access_token,
                     'template_id': template_id,
                     'user_version': user_version,
-                    'user_desc': user_desc
+                    'user_desc': user_desc,
+                    'user_id': user_id,
+                    'id': credential_expired_data.get('id')
                 }
                 tripartite_platform_objs.xcx_update_code(data)
                 response.code = 200
