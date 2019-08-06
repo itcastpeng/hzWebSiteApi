@@ -97,7 +97,10 @@ def tripartite_platform_oper(request, oper_type):
             data = tripartite_platform_objs.bind_weChat_user_small_program_experiencer(
                 authorizer_access_token, wechatid
             )
-            response.code = data.get('errcode')
+            code = 301
+            if data.get('errcode') in [0, '0']:
+                code = 200
+            response.code = code
             response.msg = data.get('errmsg')
             response.data = data.get('userstr')
 
@@ -117,8 +120,11 @@ def tripartite_platform_oper(request, oper_type):
                 authorizer_access_token,
                 status
             )
+            code = 301
+            if data.get('errcode') in [0, '0']:
+                code = 200
+            response.code = code
             response.data = data.get('members')
-            response.code = data.get('errcode')
             response.msg = data.get('errmsg')
 
 
@@ -176,8 +182,11 @@ def tripartite_platform_oper(request, oper_type):
             elif oper_type == 'select_draft_applet_code_template':
                 draft_id = request.GET.get('draft_id')  # 草稿ID
                 data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
             # 获取小程序体验者列表
@@ -185,8 +194,12 @@ def tripartite_platform_oper(request, oper_type):
                 data = tripartite_platform_objs.Get_list_experiencers(
                     authorizer_access_token
                 )
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
+
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
             # 获取小程序的第三方提交代码的页面配置
@@ -194,8 +207,11 @@ def tripartite_platform_oper(request, oper_type):
                 data = tripartite_platform_objs.get_code_page_configuration(
                     authorizer_access_token
                 )
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
             # 查询某个指定版本的审核状态
@@ -205,8 +221,11 @@ def tripartite_platform_oper(request, oper_type):
                     authorizer_access_token,
                     auditid
                 )
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
 
@@ -217,15 +236,21 @@ def tripartite_platform_oper(request, oper_type):
                     authorizer_access_token,
                     auditid
                 )
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
             # 获取草稿箱内的所有临时代码草稿
             elif oper_type == 'get_all_temporary_code_drafts':
                 data = tripartite_platform_objs.xcx_get_all_temporary_code_drafts()
+                code = 301
+                if data.get('errcode') in [0, '0']:
+                    code = 200
+                response.code = code
                 response.data = data.get('members')
-                response.code = data.get('errcode')
                 response.msg = data.get('errmsg')
 
             # 将第三方提交的代码包提交审核
@@ -305,27 +330,29 @@ def tripartite_platform_admin(request, oper_type, o_id):
             applet_objs = models.ClientApplet.objects.filter(user_id=user_id)
             offici_objs = models.CustomerOfficialNumber.objects.filter(user_id=user_id)
 
-            result_data = {}
             applet_flag = False
             offici_flag = False
-            flag = False
+            result_data = {}
             if applet_objs:
-                flag = True
                 applet_flag = True
                 obj = applet_objs[0]
+                result_data['xcx_is_authorization'] = obj.is_authorization
+                result_data['xcx_nick_name'] = obj.nick_name
+                result_data['xcx_head_img'] = obj.head_img
+                result_data['xcx_qrcode_url'] = obj.qrcode_url
+                result_data['xcx_appid'] = obj.appid
+                result_data['xcx_create_datetime'] = obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
             if offici_objs:
-                flag = True
                 offici_flag = True
                 obj = offici_objs[0]
+                result_data['gzh_is_authorization']=obj.is_authorization
+                result_data['gzh_nick_name']=obj.nick_name
+                result_data['gzh_head_img']=obj.head_img
+                result_data['gzh_qrcode_url']=obj.qrcode_url
+                result_data['gzh_appid']=obj.appid
+                result_data['gzh_create_datetime']=obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
-            if flag:
-                result_data['is_authorization']=obj.is_authorization
-                result_data['nick_name']=obj.nick_name
-                result_data['head_img']=obj.head_img
-                result_data['qrcode_url']=obj.qrcode_url
-                result_data['appid']=obj.appid
-                result_data['create_datetime']=obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
             response.code = 200
             response.msg = '查询成功'
