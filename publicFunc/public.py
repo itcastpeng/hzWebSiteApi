@@ -162,7 +162,6 @@ def upload_qiniu(img_path, img_size):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
     }
-    print('-----------==================写入=-=============---------------------')
     with open(img_path, 'rb') as f:
         imgdata = f.read()
 
@@ -173,14 +172,11 @@ def upload_qiniu(img_path, img_size):
     data = {
         'token': upload_token,
     }
-    print('data-----> ', data)
-    print('files-----> ', files)
     ret = requests.post(url, data=data, files=files, headers=headers)
     key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/{img_size}".format(
         key=ret.json()["key"],
         img_size=img_size
     )
-    print('---------key---------> ', key)
     return key
 
 
