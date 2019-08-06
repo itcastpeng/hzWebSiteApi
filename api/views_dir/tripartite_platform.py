@@ -355,8 +355,26 @@ def tripartite_platform_admin(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
 
     if request.method == "POST":
-        if oper_type == '':
-            pass
+
+        # 保存小程序页面数据
+        if oper_type == 'applet_code_version':
+            page_data = request.POST.get('page_data')               # 页面数据
+            appid = request.POST.get('appid')                       # appid
+            navigation_data = request.POST.get('navigation_data')   # 导航数据
+            objs = models.ClientApplet.objects.filter(appid=appid)
+            if objs:
+                obj = objs[0]
+                models.AppletCodeVersion.objects.create(
+                    applet_id=obj.id,
+                    page_data=page_data,
+                    navigation_data=navigation_data,
+                )
+                response.code = 200
+                response.msg = '保存成功'
+
+            else:
+                response.code = 301
+                response.msg = '该小程序不存在'
 
     else:
 

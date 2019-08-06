@@ -237,6 +237,13 @@ class ClientApplet(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 小程序保存代码版本页面数据 （预览用）
+class AppletCodeVersion(models.Model):
+    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
+    navigation_data = models.TextField(verbose_name='导航数据', null=True)
+    page_data = models.TextField(verbose_name='页面数据', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
 # 小程序代码审核上线(代小程序上线)
 class GenerationAppletOnline(models.Model):
     small_program = models.ForeignKey('ClientApplet', verbose_name='对应小程序')
