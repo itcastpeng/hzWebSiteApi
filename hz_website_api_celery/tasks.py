@@ -510,7 +510,7 @@ def xhs_bpw_keywords_fugai_rsync():
         key = "XHS_FUGAI_{now_date}_{uid}".format(now_date=now_date, uid=uid)
         ex_seconds = 60 * 15    # key 失效的时间是15分钟
         redis_obj.set(key, json.dumps(keywords_data), ex_seconds)
-        # print("key -->", key)
+        print("key -->", key)
         # print("json.dumps(keywords_data) -->", json.dumps(keywords_data))
 
 # 定时删除 设备日志(保留近三天)
