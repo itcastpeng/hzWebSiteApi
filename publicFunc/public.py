@@ -173,10 +173,9 @@ def upload_qiniu(img_path, img_size):
     data = {
         'token': upload_token,
     }
-    print('-----------------------------开始请求')
+    print('data-----> ', data)
+    print('files-----> ', files)
     ret = requests.post(url, data=data, files=files, headers=headers)
-    print(ret.text)
-    print(ret.json())
     key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/{img_size}".format(
         key=ret.json()["key"],
         img_size=img_size
