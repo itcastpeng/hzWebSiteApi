@@ -111,7 +111,7 @@ def tripartite_platform_oper(request, oper_type):
                 )
                 if not objs:
                     models.AppletExperiencerList.objects.create(
-                        applet='',
+                        applet_id=credential_expired_data.get('id'),
                         userstr=userstr,
                         wechat_id=wechatid
                     )
@@ -217,14 +217,16 @@ def tripartite_platform_oper(request, oper_type):
                 if data.get('errcode') in [0, '0']:
                     code = 200
                     for member_obj in data.get('members'):
+                        userstr = member_obj.get('userstr')
                         objs = models.AppletExperiencerList.objects.filter(
-                            userstr=member_obj, appid=appid
+                            userstr=userstr,
+                            applet__appid=appid
                         )
                         if objs:
                             obj = objs[0]
                             wechat_id = obj.wechat_id
                         else:
-                            wechat_id = member_obj
+                            wechat_id = userstr
                         members.append(wechat_id)
 
                 response.code = code
