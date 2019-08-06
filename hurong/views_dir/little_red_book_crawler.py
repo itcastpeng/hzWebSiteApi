@@ -82,7 +82,7 @@ def little_red_book_crawler(request, oper_type):
             objs = models.XhsKeywordsList.objects.filter(id=id)
             if objs:
                 obj = objs[0]
-                obj.status = 2
+                # obj.status = 2
                 obj.total_count = total_count
                 obj.save()
 
