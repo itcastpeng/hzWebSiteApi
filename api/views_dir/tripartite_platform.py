@@ -218,7 +218,8 @@ def tripartite_platform_oper(request, oper_type):
                     code = 200
                     for member_obj in data.get('members'):
                         objs = models.AppletExperiencerList.objects.filter(
-                            userstr=member_obj, appid=appid
+                            userstr=member_obj,
+                            applet__appid=appid
                         )
                         if objs:
                             obj = objs[0]
