@@ -30,7 +30,7 @@ class GeneratedTask(forms.Form):
                     keyword=keyword,
                     number=number,
                     # related_keyword=related_keyword,
-                    status=1,
+                    # status=1,
                 )
             else:
                 if int(number) == 0:
