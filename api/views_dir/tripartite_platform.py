@@ -111,7 +111,7 @@ def tripartite_platform_oper(request, oper_type):
                 )
                 if not objs:
                     models.AppletExperiencerList.objects.create(
-                        applet='',
+                        applet=models.ClientApplet.objects.filter(appid=appid),
                         userstr=userstr,
                         wechat_id=wechatid
                     )
