@@ -483,7 +483,7 @@ def xhs_bpw_keywords_rsync():
                     query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
-        models.linshi.objects.create(json.dumps(key))
+        models.linshi.objects.create(linshi=key)
 
 # 同步小红书霸屏王关键词覆盖数据到redis中
 @app.task
