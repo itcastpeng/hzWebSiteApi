@@ -185,6 +185,7 @@ def user_oper(request, oper_type, o_id):
                 response.msg = "是否显示产品传参异常"
 
     else:
+
         if oper_type == "member_info":
             obj = models.UserProfile.objects.get(id=user_id)
 
@@ -217,6 +218,7 @@ def user_oper(request, oper_type, o_id):
                 'overdue_date': "有效期至",
                 'remaining_days': "剩余天数"
             }
+
 
     return JsonResponse(response.__dict__)
 

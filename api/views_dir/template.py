@@ -175,6 +175,10 @@ def template_oper(request, oper_type, o_id):
 
                 response.code = 200
                 response.msg = "修改成功"
+
+        # 绑定模板
+
+
     else:
         # 获取底部导航数据
         if oper_type == "get_tab_bar_data":
