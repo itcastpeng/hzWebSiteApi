@@ -449,6 +449,7 @@ def xiaohongshu_biji_monitor():
 def xhs_bpw_keywords_rsync():
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
+    models.linshi.objects.create(linshi=json.dumps(keys))
     for key in keys:
         print('key-----> ', key)
         uid = key.replace('XHS_SCREEN_', "")
@@ -483,7 +484,7 @@ def xhs_bpw_keywords_rsync():
                     query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
-        models.linshi.objects.create(linshi=key)
+
 
 # 同步小红书霸屏王关键词覆盖数据到redis中
 @app.task
