@@ -89,6 +89,8 @@ def template_oper(request, oper_type, o_id):
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
                 'name': request.POST.get('name'),
+                'thumbnail': request.POST.get('thumbnail'), # 缩略图
+                'template_class_id': request.POST.get('template_class_id'), # 缩略图
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)

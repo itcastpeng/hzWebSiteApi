@@ -19,7 +19,18 @@ class AddForm(forms.Form):
             'required': "模板名称不能为空"
         }
     )
-
+    template_class_id = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': '类型错误',
+        }
+    )
+    thumbnail = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '缩略图不能为空',
+        }
+    )
     # 查询名称是否存在
     def clean_name(self):
         name = self.data['name']
