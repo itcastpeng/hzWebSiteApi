@@ -50,15 +50,11 @@ def wechat_login(request):
         objs = models.UserProfile.objects.filter(login_timestamp=login_timestamp)
         if objs:
             obj = objs[0]
-            is_template = False
-            if obj.template_set.filter(oper_user=obj.id):
-                is_template = True
             response.code = 200
             response.data = {
                 'token': obj.token,
                 'id': obj.id,
                 'name': base64_encryption.b64decode(obj.name),
-                'is_template': is_template,
                 'head_portrait': obj.head_portrait
             }
     else:

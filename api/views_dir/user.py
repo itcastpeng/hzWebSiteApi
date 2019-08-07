@@ -25,14 +25,12 @@ def user(request):
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
-                'name': '__contains',
-                'create_datetime': '',
             }
 
             q = conditionCom(request, field_dict)
 
             print('q -->', q)
-            objs = models.UserProfile.objects.filter(q).order_by(order)
+            objs = models.UserProfile.objects.filter(q, openid__isnull=False).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -42,27 +40,17 @@ def user(request):
 
             ret_data = []
             for obj in objs:
-                # 返回的数据
-                team_list = []
-                team_objs = models.UserProfileTeam.objects.filter(user_id=obj.id)
-                for team_obj in team_objs:
-                    team_list.append(team_obj.team_id)
-                brand_list = [i['name'] for i in obj.brand_classify.values('name')]
-                #  将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
                     'name': base64_encryption.b64decode(obj.name),
-                    'phone_number': obj.phone_number,
-                    'signature': obj.signature,
-                    'show_product': obj.show_product,
-                    'register_date': obj.register_date.strftime('%Y-%m-%d'),
-                    'overdue_date': obj.overdue_date.strftime('%Y-%m-%d'),
-                    'set_avator': obj.set_avator,
-                    'qr_code': obj.qr_code,
-                    'brand_list': brand_list,
-                    'team_list': team_list,
-                    'vip_type': obj.get_vip_type_display(),
+                    'role': obj.role_id,
+                    'role_name': obj.role.name,
+                    'head_portrait': obj.head_portrait,
+                    'sex_id': obj.sex,
+                    'sex': obj.get_sex_display(),
+                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
+
             #  查询成功 返回200 状态码
             response.code = 200
             response.msg = '查询成功'
@@ -70,20 +58,7 @@ def user(request):
                 'ret_data': ret_data,
                 'data_count': count,
             }
-            response.note = {
-                'id': "用户id",
-                'name': "姓名",
-                'phone_number': "手机号",
-                'signature': "个性签名",
-                'show_product': "文章底部是否显示产品",
-                'register_date': "注册时间",
-                'overdue_date': "过期时间",
-                'set_avator': "头像",
-                'qr_code': "微信二维码",
-                'vip_type': "会员类型",
-                'brand_list': "公司/品牌列表",
-                'team_list': "团队ID数组",
-            }
+
         else:
             print("forms_obj.errors -->", forms_obj.errors)
             response.code = 402
@@ -218,6 +193,8 @@ def user_oper(request, oper_type, o_id):
                 'overdue_date': "有效期至",
                 'remaining_days': "剩余天数"
             }
+
+
 
 
     return JsonResponse(response.__dict__)

@@ -23,6 +23,7 @@ def template(request):
             field_dict = {
                 'id': '',
                 'name': '__contains',
+                'create_user_id': '',
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
@@ -175,9 +176,6 @@ def template_oper(request, oper_type, o_id):
 
                 response.code = 200
                 response.msg = "修改成功"
-
-        # 绑定模板
-
 
     else:
         # 获取底部导航数据
