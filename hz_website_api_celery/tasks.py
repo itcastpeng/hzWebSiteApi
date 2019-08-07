@@ -451,10 +451,8 @@ def xhs_bpw_keywords_rsync():
     keys = redis_obj.keys("XHS_SCREEN*")
     for key in keys:
         models.linshi.objects.create(linshi=key)
-        print('key-----> ', key)
         uid = key.replace('XHS_SCREEN_', "")
         data = redis_obj.get(key)
-        print('data------> ', data)
         data = json.loads(data)
         links = data["links"]
 
@@ -480,8 +478,8 @@ def xhs_bpw_keywords_rsync():
                     # if while_flag>=5:
                     #     break
 
-                if not models.xhs_bpw_biji_url.objects.filter(uid=uid, biji_url=link):
-                    query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
+                if not models.xhs_bpw_biji_url.objects.filter(uid=uid, original_back=link):
+                    query_list.append(models.xhs_bpw_biji_url(uid=uid, original_back=link))
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
 
