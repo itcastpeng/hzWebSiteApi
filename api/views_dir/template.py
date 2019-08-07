@@ -56,6 +56,7 @@ def template(request):
                     'name': obj.name,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
+                    'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
@@ -97,7 +98,9 @@ def template_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 template_obj = models.Template.objects.create(
                     create_user_id=forms_obj.cleaned_data.get('create_user_id'),
-                    name=forms_obj.cleaned_data.get('name')
+                    name=forms_obj.cleaned_data.get('name'),
+                    thumbnail=forms_obj.cleaned_data.get('thumbnail'),
+                    template_class_id=forms_obj.cleaned_data.get('template_class_id'),
                 )
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
