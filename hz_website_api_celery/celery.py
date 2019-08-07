@@ -132,10 +132,10 @@ app.conf.beat_schedule = {
     },
 
     # 笔记链接转为 正常链接
-    'note_links_converted_normal_links': {
-        'task': 'hz_website_api_celery.tasks.note_links_converted_normal_links',
-        'schedule': crontab('0', '*/5', '*', '*', '*'),
-    },
+    # 'note_links_converted_normal_links': {
+    #     'task': 'hz_website_api_celery.tasks.note_links_converted_normal_links',
+    #     'schedule': crontab('0', '*/5', '*', '*', '*'),
+    # },
 }
 app.conf.update(
     result_expires=3600,
