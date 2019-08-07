@@ -467,19 +467,19 @@ def xhs_bpw_keywords_rsync():
             for link in links:
                 # 处理短链接
                 while_flag = 0
-                # while True:
-                #     while_flag += 1
-                    # try:
-                        # if link.startswith("http://t.cn"):
-                        #     ret = requests.get(link, allow_redirects=False)
-                        #     link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-                    # except Exception:
-                    #     continue
-                    # if while_flag>=5:
-                    #     break
+                while True:
+                    while_flag += 1
+                    try:
+                        if link.startswith("http://t.cn"):
+                            ret = requests.get(link, allow_redirects=False, timeout=10)
+                            link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                    except Exception:
+                        continue
+                    if while_flag>=5:
+                        break
 
-                if not models.xhs_bpw_biji_url.objects.filter(uid=uid, original_back=link):
-                    query_list.append(models.xhs_bpw_biji_url(uid=uid, original_back=link))
+                if not models.xhs_bpw_biji_url.objects.filter(uid=uid, biji_url=link):
+                    query_list.append(models.xhs_bpw_biji_url(uid=uid, biji_url=link))
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
 
