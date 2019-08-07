@@ -340,7 +340,6 @@ class xhs_bpw_keywords(models.Model):
 class xhs_bpw_biji_url(models.Model):
     biji_url = models.CharField(verbose_name="笔记链接", max_length=256, null=True)
     uid = models.IntegerField(verbose_name="小红书后台用户id")
-    original_back = models.CharField(verbose_name='原始回链', max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     update_datetime = models.DateTimeField(verbose_name="更新时间", null=True, blank=True)
 

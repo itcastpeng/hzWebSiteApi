@@ -595,22 +595,22 @@ def determine_phone_number_ownership():
     requests.post(url)
 
 # 笔记链接转为 正常链接
-@app.task
-def note_links_converted_normal_links():
-    objs = models.xhs_bpw_biji_url.objects.filter(create_datetime__isnull=False)
-    for obj in objs:
-        flag = 0
-        link = obj.original_back
-        print('link====================> ', link)
-        while True:
-            flag += 1
-            if obj.original_back.startswith("http://t.cn"):
-                ret = requests.get(obj.original_back, allow_redirects=False)
-                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-            if flag >= 5:
-                break
-        obj.biji_url = link
-        obj.save()
+# @app.task
+# def note_links_converted_normal_links():
+#     objs = models.xhs_bpw_biji_url.objects.filter(create_datetime__isnull=False)
+#     for obj in objs:
+#         flag = 0
+#         link = obj.original_back
+#         print('link====================> ', link)
+#         while True:
+#             flag += 1
+#             if obj.original_back.startswith("http://t.cn"):
+#                 ret = requests.get(obj.original_back, allow_redirects=False)
+#                 link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+#             if flag >= 5:
+#                 break
+#         obj.biji_url = link
+#         obj.save()
 
 
 
