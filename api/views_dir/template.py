@@ -3,7 +3,7 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
-
+from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm
 import json
@@ -19,15 +19,17 @@ def template(request):
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+            user_id = request.GET.get('user_id')
+            obj = models.UserProfile.objects.get(id=user_id)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
                 'name': '__contains',
-                'create_user_id': '',
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
-            # print('q -->', q)
+            if obj.role_id in [7, '7']:
+                q.add(Q(create_user_id=user_id), Q.AND)
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 
