@@ -601,6 +601,7 @@ def note_links_converted_normal_links():
     for obj in objs:
         flag = 0
         link = obj.original_back
+        print('link====================> ', link)
         while True:
             flag += 1
             if obj.original_back.startswith("http://t.cn"):
@@ -610,7 +611,6 @@ def note_links_converted_normal_links():
                 break
         obj.biji_url = link
         obj.save()
-
 
 
 
