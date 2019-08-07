@@ -51,9 +51,8 @@ def wechat_login(request):
         if objs:
             obj = objs[0]
             is_template = False
-            if obj.template_set.all(): # 是否存在模板
+            if obj.template_set.filter(oper_user=obj.id):
                 is_template = True
-
             response.code = 200
             response.data = {
                 'token': obj.token,
