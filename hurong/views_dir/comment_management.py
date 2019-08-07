@@ -257,6 +257,8 @@ def comment_management(request, oper_type):
                 response.code = 301
                 response.msg = '修改的任务不存在'
 
+
+
         # 回复评论管理 发布异常(手机)
         elif oper_type == 'comment_management_changed_publish_exceptions':
             comment_id = request.POST.get('comment_id')
@@ -290,6 +292,26 @@ def comment_management(request, oper_type):
             else:
                 response.code = 301
                 response.msg = '该任务不存在'
+
+        # 评论改为删除异常 (手机)
+        elif oper_type == 'comment_post_exception_instead':
+            comment_id = request.POST.get('comment_id')
+            objs = models.littleRedBookReviewForm.objects.filter(id=comment_id)
+            if objs and objs[0].is_error == False:
+                objs.update(is_error=True)
+                response.code = 200
+                response.msg = '删除异常成功'
+
+            else:
+                if objs:
+                    response.msg = '该评论不存在'
+                else:
+                    response.msg = '该评论已经为删除异常'
+                response.code = 301
+
+
+        """当 手机找不到 评论 和 回复评论 时 改为发布异常"""
+
     else:
 
         order = request.GET.get('order', '-create_datetime')
@@ -338,6 +360,7 @@ def comment_management(request, oper_type):
                     comment__isnull=False,
                     comment_response__isnull=False,
                     is_perform=True,
+                    is_error=False
                 ).order_by('create_datetime')
 
                 if objs:
@@ -388,7 +411,8 @@ def comment_management(request, oper_type):
 
                 objs = models.littleRedBookReviewForm.objects.filter(
                     xhs_user__phone_id_id=iccid,
-                    delete=2
+                    delete=2,
+                    is_error=False
                 )
                 data = {}
                 if objs:

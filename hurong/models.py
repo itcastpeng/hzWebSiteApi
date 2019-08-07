@@ -421,7 +421,8 @@ class littleRedBookReviewForm(models.Model):
         (3, '已删除')
     )
     delete = models.SmallIntegerField(verbose_name='是否删除', choices=delete_choices, default=1)
-    status = models.SmallIntegerField(verbose_name='上传状态', choices=status_choices, default=1)  # 是否成功 上传小红书后台
+    is_error = models.BooleanField(verbose_name='是否异常', default=False)
+    status = models.SmallIntegerField(verbose_name='上传状态', choices=status_choices, default=1)  # 该评论抓取到 上传小红书后台是否成功
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 评论回复表
