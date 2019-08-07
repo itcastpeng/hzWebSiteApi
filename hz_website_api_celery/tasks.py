@@ -475,11 +475,12 @@ def xhs_bpw_keywords_rsync():
                 while_flag = 0
                 while True:
                     while_flag += 1
-
-                    if link.startswith("http://t.cn"):
-                        ret = requests.get(link, allow_redirects=False)
-                        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-
+                    try:
+                        if link.startswith("http://t.cn"):
+                            ret = requests.get(link, allow_redirects=False)
+                            link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                    except Exception:
+                        continue
                     if while_flag>=5:
                         break
 
