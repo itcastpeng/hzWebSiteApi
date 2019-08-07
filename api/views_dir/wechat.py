@@ -91,6 +91,7 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
         user_data['subscribe'] = subscribe
         user_data['name'] = encode_username
         user_data['openid'] = ret_obj.get('openid')
+        user_data['role_id'] = 7
         # user_data['overdue_date'] = overdue_date
         user_data['token'] = get_token()
         print("user_data --->", user_data)

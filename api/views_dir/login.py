@@ -54,6 +54,8 @@ def wechat_login(request):
             response.data = {
                 'token': obj.token,
                 'id': obj.id,
+                'role_id': obj.role_id,
+                'role_name': obj.role.name,
                 'name': base64_encryption.b64decode(obj.name),
                 'head_portrait': obj.head_portrait
             }
