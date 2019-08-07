@@ -470,6 +470,7 @@ def xhs_bpw_keywords_rsync():
 
             query_list = []
             for link in links:
+                print('link------------> ', link)
                 # 处理短链接
                 if link.startswith("http://t.cn"):
                     ret = requests.get(link, allow_redirects=False)
