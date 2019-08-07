@@ -450,7 +450,9 @@ def xhs_bpw_keywords_rsync():
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     keys = redis_obj.keys("XHS_SCREEN*")
     # print("keys -->", keys)
+    key_list = []
     for key in keys:
+        key_list.append(key)
         uid = key.replace('XHS_SCREEN_', "")
         data = redis_obj.get(key)
 
@@ -478,6 +480,7 @@ def xhs_bpw_keywords_rsync():
 
             models.xhs_bpw_biji_url.objects.bulk_create(query_list)
 
+    models.linshi.objects.create(json.dumps(key_list))
 
 # 同步小红书霸屏王关键词覆盖数据到redis中
 @app.task

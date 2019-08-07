@@ -132,6 +132,7 @@ class Template(models.Model):
     }
     tab_bar_data = models.TextField(verbose_name="底部导航数据", default=json.dumps(tab_bar_base_data))
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
+    thumbnail = models.CharField(verbose_name='缩略图', max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
