@@ -19,6 +19,7 @@ def template(request):
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
+            is_all = request.GET.get('is_all')
             user_id = request.GET.get('user_id')
             obj = models.UserProfile.objects.get(id=user_id)
             order = request.GET.get('order', '-create_datetime')
@@ -28,7 +29,7 @@ def template(request):
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
-            if obj.role_id in [7, '7']:
+            if obj.role_id in [7, '7'] and is_all:
                 q.add(Q(create_user_id=user_id), Q.AND)
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
