@@ -198,6 +198,18 @@ def template_oper(request, oper_type, o_id):
                 template_id, data = form_obj.cleaned_data.get('template_id')
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
+
+                page_group_obj = models.PageGroup.objects.create(
+                    name="默认组",
+                    template=obj
+                )
+
+                print('page_base_data -->', page_base_data)
+                models.Page.objects.create(
+                    name="首页",
+                    page_group=page_group_obj,
+                    data=json.dumps(page_base_data)
+                )
                 response.code = 200
                 response.msg = '创建成功'
                 response.data = {
