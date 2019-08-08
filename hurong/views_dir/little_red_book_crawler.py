@@ -249,7 +249,7 @@ def little_red_book_crawler(request, oper_type):
 
         # 查询是否有任务(VPS)
         elif oper_type == 'query_whether_task':
-            xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date), Q.AND)
+            xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date), Q(is_success_time__isnull=True), Q.AND)
             objs = models.XhsKeywordsList.objects.filter(xhskeywordslist_q)
             flag = False
             if objs:
