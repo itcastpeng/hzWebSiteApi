@@ -247,17 +247,6 @@ def little_red_book_crawler(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 查询是否有任务(VPS)
-        elif oper_type == 'query_whether_task':
-            xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date) | Q(is_success_time__isnull=True), Q.AND)
-            objs = models.XhsKeywordsList.objects.filter(xhskeywordslist_q)
-            flag = False
-            if objs:
-                flag = True
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = flag
-
         # 获取任务(VPS) 分配什么任务(内容直接返回)
         elif oper_type == 'get_task':
             """
@@ -266,25 +255,31 @@ def little_red_book_crawler(request, oper_type):
             type_status = 2 为评论任务  获取该笔记所有评论
             type_status = 3 为获取小红书用户ID任务 获取用户ID  
             """
-            query_q = Q()
-            query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
-            objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
-            data = {}
-
+            flag = False
             type_status = 0  # 无任务
-            if objs and models.ArticlesAndComments.objects.filter(keyword_id=objs[0].id).count() >= objs[0].number:    # 笔记任务
-                obj = objs[0]
-                obj.last_select_time = deletionTime
-                obj.save()
-                data['id'] = obj.id
-                data['keyword'] = obj.keyword
-                data['number'] = obj.number
-                type_status = 1
-            else:
+
+            data = {}
+            if not flag:# 笔记任务
+                query_q = Q()
+                query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
+                objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
+                if objs:
+                    obj = objs[0]
+                    comments_count = models.ArticlesAndComments.objects.filter(keyword_id=obj.id).count()
+                    if comments_count < obj.number:
+                        flag = True
+                        obj.last_select_time = deletionTime
+                        obj.save()
+                        data['id'] = obj.id
+                        data['keyword'] = obj.keyword
+                        data['number'] = obj.number
+                        type_status = 1
+
+            if not flag:# 评论任务
                 comment_q = Q()
                 comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now), Q.AND)
                 objs = models.ArticlesAndComments.objects.filter(comment_q)
-                if objs:  # 评论任务
+                if objs:
                     type_status = 2
                     comment_obj = objs[0]
                     comment_obj.last_select_time = deletionTime
@@ -292,7 +287,6 @@ def little_red_book_crawler(request, oper_type):
                     note_id = comment_obj.note_id
                     data['id'] = comment_obj.id
                     data['note_id'] = note_id
-                # else:
 
 
             data['type_status'] = type_status # 1 为查笔记内容 2为查评论
@@ -339,6 +333,16 @@ def little_red_book_crawler(request, oper_type):
         #     else:
         #         response.code = 301
 
+        # # 查询是否有任务(VPS)
+        # elif oper_type == 'query_whether_task':
+        #     xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date) | Q(is_success_time__isnull=True), Q.AND)
+        #     objs = models.XhsKeywordsList.objects.filter(xhskeywordslist_q)
+        #     flag = False
+        #     if objs:
+        #         flag = True
+        #     response.code = 200
+        #     response.msg = '查询成功'
+        #     response.data = flag
         else:
             response.code = 402
             response.msg = '请求异常'
