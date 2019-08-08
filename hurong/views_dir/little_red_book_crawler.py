@@ -268,11 +268,11 @@ def little_red_book_crawler(request, oper_type):
             """
             query_q = Q()
             query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
-            objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=now_date)
+            objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
             data = {}
 
             type_status = 0  # 无任务
-            if objs:    # 笔记任务
+            if objs and models.ArticlesAndComments.objects.filter(keyword_id=objs[0].id).count() >= objs[0].number:    # 笔记任务
                 obj = objs[0]
                 obj.last_select_time = deletionTime
                 obj.save()

@@ -160,3 +160,43 @@ class GetTabBarDataForm(forms.Form):
             'invalid': "参数数据类型错误"
         }
     )
+
+# 客户添加模板
+class UserAddTemplateForm(forms.Form):
+    template_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '创建人不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )
+    def clean_template_id(self):
+        template_id = self.data.get('template_id')
+        objs = models.Template.objects.filter(id=template_id)
+        if objs:
+            obj = objs[0]
+            template_class_id = None
+            if obj.template_class:
+                template_class_id = obj.template_class_id
+            data = {
+                'template_class_id': template_class_id,
+                'name': obj.name,
+                'share_qr_code': obj.share_qr_code,
+                'logo_img': obj.logo_img,
+                'tab_bar_data': obj.tab_bar_data,
+                'thumbnail': obj.thumbnail,
+            }
+
+            return template_id, data
+        else:
+            self.add_error('template_id', '模板不存在')
+
+
+
+
+
+
+
+
+
+
