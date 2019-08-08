@@ -5,7 +5,7 @@ from publicFunc import account
 from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
-from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm
+from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm
 import json
 from api.views_dir.page import page_base_data
 
@@ -85,6 +85,8 @@ def template(request):
 @account.is_token(models.UserProfile)
 def template_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
+
     if request.method == "POST":
         if oper_type == "add":
             form_data = {
@@ -185,6 +187,25 @@ def template_oper(request, oper_type, o_id):
 
                 response.code = 200
                 response.msg = "修改成功"
+
+        # 客户创建模板
+        elif oper_type == 'user_add_template':
+            form_data = {
+                'template_id':request.POST.get('template_id')
+            }
+            form_obj = UserAddTemplateForm(form_data)
+            if form_obj.is_valid():
+                template_id, data = form_obj.cleaned_data.get('template_id')
+                data['create_user_id'] = user_id
+                obj = models.Template.objects.create(**data)
+                response.code = 200
+                response.msg = '创建成功'
+                response.data = {
+                    'id': obj.id
+                }
+            else:
+                response.code = 301
+                response.msg = json.load(form_obj.errors.as_json())
 
     else:
         # 获取底部导航数据
