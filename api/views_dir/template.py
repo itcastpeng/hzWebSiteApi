@@ -191,7 +191,7 @@ def template_oper(request, oper_type, o_id):
         # 客户创建模板
         elif oper_type == 'user_add_template':
             form_data = {
-                'template_id':request.POST.get('template_id')
+                'template_id':o_id
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
