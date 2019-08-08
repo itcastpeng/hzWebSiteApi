@@ -492,11 +492,11 @@ class XhsKeywordsList(models.Model):
     uid = models.CharField(verbose_name='小红书后台id', max_length=64)       # 小红书后台传
     keyword = models.CharField(verbose_name='关键词', max_length=64)        # 小红书后台传
     number = models.IntegerField(verbose_name='获取条数')                   # 小红书后台传
-    # related_keyword = models.CharField(verbose_name='相关关键词', max_length=128, null=True) # 小红书后台传
-    total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)            # 查询关键词
+
+    total_count = models.IntegerField(verbose_name='查询到多少数据', null=True)            # 查询关键词时 搜索到多少数据
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
-    last_select_comments_time = models.DateTimeField(verbose_name='最后一次查询评论时间', null=True)
-    success_time = models.DateTimeField(verbose_name='完成时间', null=True)
+
+    is_success_time = models.DateTimeField(verbose_name='完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 文章/评论表
@@ -523,6 +523,7 @@ class ArticlesAndComments(models.Model):
 # 小红书 user_id 存储表
 class XhsUserId(models.Model):
     xhs_user_id = models.CharField(verbose_name='小红书用户ID', max_length=128)
+    little_can_query_user_id = models.CharField(verbose_name='小红书可查询用户ID', max_length=128, null=True)
     last_select_time = models.DateTimeField(verbose_name='最后一次查询时间', null=True)
     success_time = models.DateTimeField(verbose_name='完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

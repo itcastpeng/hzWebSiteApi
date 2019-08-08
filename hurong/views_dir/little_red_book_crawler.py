@@ -12,8 +12,8 @@ import json, datetime, redis, requests
 def little_red_book_crawler(request, oper_type):
     response = Response.ResponseObj()
 
-    # redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
-    redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+    redis_obj = redis.StrictRedis(host='redis', port=6379, db=0, decode_responses=True)
+    # redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
     redis_hash_name = 'xhs_comments_name'  # redis_name
 
     if request.method == 'POST':
@@ -110,8 +110,7 @@ def little_red_book_crawler(request, oper_type):
             redis_key = str(note_id + id + '_' + num)
 
             models.ArticlesAndComments.objects.filter(
-                keyword_id=id,
-                note_id=note_id
+                id=id,
             ).update(
                 article_comment=redis_key.split('_')[0],
                 one_comments_list_count=one_comments_list_count,
@@ -141,26 +140,23 @@ def little_red_book_crawler(request, oper_type):
                     ))
             models.XhsUserId.objects.bulk_create(querysetlist)
 
-        # 提交用户ID
-        elif oper_type == 'update_xhs_user_id':
-            info = request.POST.get('info')
-            xhs_user_id = request.POST.get('xhs_user_id')
-
-            models.XhsUserId.objects.filter(xhs_user_id=xhs_user_id).update(
-                success_time=datetime.datetime.today()
-            )
-            redis_name = 'xhs_user_id_name'
-
-            redis_obj.hset(redis_name, xhs_user_id, info)
+        # 提交用户ID是否查询完成
+        # elif oper_type == 'update_xhs_user_id':
+        #     info = request.POST.get('info')
+        #     xhs_user_id = request.POST.get('xhs_user_id')
+        #
+        #     models.XhsUserId.objects.filter(xhs_user_id=xhs_user_id).update(
+        #         success_time=datetime.datetime.today()
+        #     )
+        #     redis_name = 'xhs_user_id_name'
+        #
+        #     redis_obj.hset(redis_name, xhs_user_id, info)
 
 
     else:
         now = datetime.date.today()
         now_date = datetime.datetime.today()
         deletionTime = (now_date + datetime.timedelta(hours=1))
-        query_q = Q()
-        query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
-        query_q.add(Q(last_select_comments_time__lt=now_date) | Q(last_select_comments_time__isnull=True), Q.OR)
 
         # 查询评论(小红书后台)
         if oper_type == 'query_comments':
@@ -253,8 +249,8 @@ def little_red_book_crawler(request, oper_type):
 
         # 查询是否有任务(VPS)
         elif oper_type == 'query_whether_task':
-            query_q.add(Q(success_time__lt=now) | Q(success_time__isnull=True), Q.AND)
-            objs = models.XhsKeywordsList.objects.filter(query_q)
+            xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date), Q.AND)
+            objs = models.XhsKeywordsList.objects.filter(xhskeywordslist_q)
             flag = False
             if objs:
                 flag = True
@@ -264,51 +260,44 @@ def little_red_book_crawler(request, oper_type):
 
         # 获取任务(VPS) 分配什么任务(内容直接返回)
         elif oper_type == 'get_task':
-
-            objs = models.XhsKeywordsList.objects.filter(query_q)
+            """
+            type_status = 0 无任务  
+            type_status = 1 为笔记任务  获取该关键词对应条数笔记
+            type_status = 2 为评论任务  获取该笔记所有评论
+            type_status = 3 为获取小红书用户ID任务 获取用户ID  
+            """
+            query_q = Q()
+            query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
+            objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=now_date)
             data = {}
-            if objs:
+
+            type_status = 0  # 无任务
+            if objs:    # 笔记任务
                 obj = objs[0]
-                now = now.strftime('%Y-%m-%d')
-                last_time = obj.last_select_time
-                if last_time:
-                    last_time = obj.last_select_time.strftime('%Y-%m-%d')
-                print('last_time-----> ', last_time, now)
-                if last_time and last_time == now:
-                    type_status = 2
-                    obj.last_select_comments_time = deletionTime
-
-                else:
-                    models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
-                    type_status = 1
-
                 obj.last_select_time = deletionTime
                 obj.save()
                 data['id'] = obj.id
                 data['keyword'] = obj.keyword
                 data['number'] = obj.number
-                data['type'] = type_status # 1 为查笔记内容 2为查评论
+                type_status = 1
+            else:
+                comment_q = Q()
+                comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now), Q.AND)
+                objs = models.ArticlesAndComments.objects.filter(comment_q)
+                if objs:  # 评论任务
+                    type_status = 2
+                    comment_obj = objs[0]
+                    comment_obj.last_select_time = deletionTime
+                    comment_obj.save()
+                    note_id = comment_obj.note_id
+                    data['id'] = comment_obj.id
+                    data['note_id'] = note_id
+                # else:
 
+
+            data['type_status'] = type_status # 1 为查笔记内容 2为查评论
             response.code = 200
             response.msg = '查询成功'
-            response.data = data
-
-        # 获取评论任务
-        elif oper_type == 'get_comments_task':
-            keyword_id = request.GET.get('keyword_id')
-            q = Q()
-            q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now), Q.AND)
-            objs = models.ArticlesAndComments.objects.filter(q, keyword_id=keyword_id)
-            code = 301
-            data = {}
-            if objs:
-                obj = objs[0]
-                code = 200
-                obj.last_select_time = deletionTime
-                obj.save()
-
-                data['note_id'] = obj.note_id
-            response.code = code
             response.data = data
 
         # 更改完成时间
@@ -317,7 +306,7 @@ def little_red_book_crawler(request, oper_type):
             objs = models.XhsKeywordsList.objects.filter(id=uid)
             now = datetime.datetime.today()
             objs.update(
-                success_time=now
+                is_success_time=now
             )
             response.code = 200
             if objs:
@@ -332,23 +321,23 @@ def little_red_book_crawler(request, oper_type):
                 requests.post(url, data=data)
 
         # 判断是否有查询 用户ID 任务
-        elif oper_type == 'get_user_id_task':
-            deletionTime = (now_date + datetime.timedelta(minutes=5))
-            q = Q()
-            q.add(Q(success_time__isnull=True), Q.AND)
-            q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
-            objs = models.XhsUserId.objects.filter(q)
-            data_list = []
-            if objs:
-                obj = objs[0]
-                data_list.append(obj.xhs_user_id)
-                obj.last_select_time = deletionTime
-                obj.save()
-                response.code = 200
-                response.data = data_list
-
-            else:
-                response.code = 301
+        # elif oper_type == 'get_user_id_task':
+        #     deletionTime = (now_date + datetime.timedelta(minutes=5))
+        #     q = Q()
+        #     q.add(Q(success_time__isnull=True), Q.AND)
+        #     q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
+        #     objs = models.XhsUserId.objects.filter(q)
+        #     data_list = []
+        #     if objs:
+        #         obj = objs[0]
+        #         data_list.append(obj.xhs_user_id)
+        #         obj.last_select_time = deletionTime
+        #         obj.save()
+        #         response.code = 200
+        #         response.data = data_list
+        #
+        #     else:
+        #         response.code = 301
 
         else:
             response.code = 402

@@ -17,7 +17,7 @@ def delete_phone_log(request):
             create_datetime__lt=(now_date - datetime.timedelta(days=2))
         ).delete()
         models.AskLittleRedBook.objects.filter(
-            create_datetime__lt=(now_date - datetime.timedelta(days=1))
+            create_datetime__lt=(now_date - datetime.timedelta(days=0))
         ).delete()
         models.MobileEquipmentAbnormalSendMessageEnterpriseRecord.objects.filter(
             create_datetime__lt=(now_date - datetime.timedelta(days=2))
