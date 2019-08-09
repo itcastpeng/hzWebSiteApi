@@ -1,14 +1,9 @@
-# from django.shortcuts import render
 from api import models
-from publicFunc import Response
-from publicFunc import account
+from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from api.forms.user import SelectForm
-import json
-# from django.db.models import Q
-import re
-import datetime
+from api.forms.user import SelectForm, UpdateRoleForm
+import datetime, re, json
 from publicFunc import base64_encryption
 
 
@@ -158,6 +153,29 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = "是否显示产品传参异常"
+
+        # 修改用户角色
+        elif oper_type == 'update_role':
+            form_data = {
+                 'role_id': request.POST.get('role_id'),
+                 'user_id': user_id,
+                 'o_id': o_id
+            }
+            form_obj = UpdateRoleForm(form_data)
+            if form_obj.is_valid():
+                role_id = form_obj.cleaned_data.get('role_id')
+                o_id = form_obj.cleaned_data.get('o_id')
+                models.UserProfile.objects.filter(
+                    id=o_id
+                ).update(
+                    role_id=role_id
+                )
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
     else:
 
