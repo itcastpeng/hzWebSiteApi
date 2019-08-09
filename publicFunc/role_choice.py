@@ -1,7 +1,7 @@
 
 
 # 管理员
-admin_list = []
+admin_list = [6]
 
 # 普通用户
 average_user_list = []

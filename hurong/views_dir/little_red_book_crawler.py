@@ -261,19 +261,20 @@ def little_red_book_crawler(request, oper_type):
             data = {}
             if not flag:# 笔记任务
                 query_q = Q()
-                query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.OR)
+                query_q.add(Q(last_select_time__lt=now) | Q(last_select_time__isnull=True), Q.OR)
                 objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
                 if objs:
                     obj = objs[0]
-                    comments_count = models.ArticlesAndComments.objects.filter(keyword_id=obj.id).count()
-                    if comments_count < obj.number:
-                        flag = True
-                        obj.last_select_time = deletionTime
-                        obj.save()
-                        data['id'] = obj.id
-                        data['keyword'] = obj.keyword
-                        data['number'] = obj.number
-                        type_status = 1
+                    # comments_count = models.ArticlesAndComments.objects.filter(keyword_id=obj.id).count()
+                    # print('comments_count-------------> ', comments_count, obj.number)
+                    # if comments_count <= obj.number:
+                    flag = True
+                    obj.last_select_time = deletionTime
+                    obj.save()
+                    data['id'] = obj.id
+                    data['keyword'] = obj.keyword
+                    data['number'] = obj.number
+                    type_status = 1
 
             if not flag:# 评论任务
                 comment_q = Q()
