@@ -38,7 +38,7 @@ def user(request):
                 ret_data.append({
                     'id': obj.id,
                     'name': base64_encryption.b64decode(obj.name),
-                    'role': obj.role_id,
+                    'role_id': obj.role_id,
                     'role_name': obj.role.name,
                     'head_portrait': obj.head_portrait,
                     'sex_id': obj.sex,
