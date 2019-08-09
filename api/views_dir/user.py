@@ -161,6 +161,7 @@ def user_oper(request, oper_type, o_id):
                  'user_id': user_id,
                  'o_id': o_id
             }
+
             form_obj = UpdateRoleForm(form_data)
             if form_obj.is_valid():
                 role_id = form_obj.cleaned_data.get('role_id')
