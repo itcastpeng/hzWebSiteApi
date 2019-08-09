@@ -4,7 +4,7 @@ from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
 from django.db.models import Q
-
+from publicFunc.role_choice import admin_list
 from publicFunc.condition_com import conditionCom
 from api.forms.photo_library_group import AddForm, UpdateForm, SelectForm
 import json
@@ -32,7 +32,7 @@ def photo_library_group(request):
             q = Q()
 
             if get_type == "system":  # 获取系统分组
-                q.add(Q(**{'create_user_id__isnull': True}), Q.AND)
+                q.add(Q(create_user__role_id__in=admin_list), Q.AND)
             elif get_type == "is_me":
                 q.add(Q(**{'create_user_id': user_id}), Q.AND)
 
