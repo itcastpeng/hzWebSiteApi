@@ -6,8 +6,9 @@ from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm
-import json
 from api.views_dir.page import page_base_data
+from publicFunc.role_choice import admin_list
+import json
 
 
 @account.is_token(models.UserProfile)
@@ -32,6 +33,8 @@ def template(request):
             q = conditionCom(request, field_dict)
             if obj.role_id in [7, '7'] and not is_all:
                 q.add(Q(create_user_id=user_id), Q.AND)
+            else:
+                q.add(Q(create_user__role_id__in=admin_list), Q.AND)
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 
