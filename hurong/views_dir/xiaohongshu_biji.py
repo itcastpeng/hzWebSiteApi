@@ -356,7 +356,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             form_obj = RepublishInsteadForm(form_data)
             if form_obj.is_valid():
                 o_id = form_obj.cleaned_data.get('o_id')
-                models.XiaohongshuBiji.objects.filter(id=o_id).update(status=5)
+                models.XiaohongshuBiji.objects.filter(id=o_id).update(
+                    status=5,
+                )
                 response.code = 200
                 response.msg = '修改成功'
 
@@ -364,22 +366,6 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
             create_xhs_admin_response(request, response, 2)
-
-        # 重新发布的笔记 改为待审核(后台)
-        elif oper_type == 'change_pending_review':
-            form_data = {
-                'o_id': o_id
-            }
-            form_obj = ChangePendingReview(form_data)
-            if form_obj.is_valid():
-                o_id = form_obj.cleaned_data.get('o_id')
-                models.XiaohongshuBiji.objects.filter(id=o_id).update(status=3)
-                response.code = 200
-                response.msg = '修改成功'
-
-            else:
-                response.code = 301
-                response.msg = json.loads(form_obj.errors.as_json())
 
         else:
             response.code = 402
