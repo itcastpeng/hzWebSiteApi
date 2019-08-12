@@ -235,8 +235,8 @@ class ClientApplet(models.Model):
     original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
     qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
     user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
-    # template = models.ForeignKey(verbose_name='')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    template = models.ForeignKey('Template', verbose_name='对应模板', null=True)
 
 
 # 小程序保存代码版本页面数据 （预览用）
