@@ -267,6 +267,7 @@ class XiaohongshuBiji(models.Model):
         (2, "已发布"),
         (3, "待审核"),
         (4, "发布异常"),
+        (5, "重新发布"),
     )
 
     status = models.SmallIntegerField(choices=status_choices, verbose_name="笔记状态", default=3)

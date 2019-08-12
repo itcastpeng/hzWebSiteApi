@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
 from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskForm, UploadUrlForm, UpdateReding, \
-    InsteadAbnormalReleaseNotes, PublishedNotesBackChain, UpdateExistContentForm
+    InsteadAbnormalReleaseNotes, PublishedNotesBackChain, UpdateExistContentForm, RepublishInsteadForm, ChangePendingReview
 from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
 from publicFunc.base64_encryption import b64decode, b64encode
 from django.db.models import Q
@@ -242,6 +242,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = '当前时间不在发布时间段'
+            create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
         # 阅读量更改
         elif oper_type == 'update_reding':
@@ -278,7 +279,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(form_obj.errors.as_json())
             create_xhs_admin_response(request, response, 3)
 
-        # 发布中的笔记 可以改为发布异常
+        # 发布中的笔记 可以改为发布异常(小红书后台)
         elif oper_type == 'instead_abnormal_release_notes':
             form_data = {
                 'o_id': o_id,
@@ -302,8 +303,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 2)
 
-        # 已发布的可修改回链
+        # 已发布的可修改回链（后台）
         elif oper_type == 'published_notes_back_chain':
             form_data = {
                 'o_id': o_id,
@@ -323,6 +325,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 1)
 
         # 修改笔记是否存在内容的状态
         elif oper_type == "update_exist_content":
@@ -344,6 +347,39 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 已发布的笔记 改为重新发布(小红书后台)
+        elif oper_type == 'republish_instead':
+            form_data = {
+                'o_id':o_id,
+            }
+            form_obj = RepublishInsteadForm(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                models.XiaohongshuBiji.objects.filter(id=o_id).update(status=5)
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+            create_xhs_admin_response(request, response, 2)
+
+        # 重新发布的笔记 改为待审核(后台)
+        elif oper_type == 'change_pending_review':
+            form_data = {
+                'o_id': o_id
+            }
+            form_obj = ChangePendingReview(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                models.XiaohongshuBiji.objects.filter(id=o_id).update(status=3)
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         else:
             response.code = 402
