@@ -191,12 +191,75 @@ class UserAddTemplateForm(forms.Form):
         else:
             self.add_error('template_id', '模板不存在')
 
+# 绑定模板和小程序
+class BindTemplatesAndApplets(forms.Form):
+    user_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '登录异常',
+        }
+    )
+    template_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '模板ID不能为空',
+        }
+    )
+    appid = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '小程序ID不能为空',
+        }
+    )
 
+    def clean_template_id(self):
+        template_id = self.data.get('template_id')
+        objs = models.Template.objects.filter(id=template_id)
+        if objs:
+            return template_id
+        else:
+            self.add_error('template_id', '该模板不存在')
 
+    def clean_appid(self):
+        appid = self.data.get('appid')
+        user_id = self.data.get('user_id')
+        objs = models.ClientApplet.objects.filter(appid=appid, user_id=user_id)
+        if not objs:
+            self.add_error('appid', '该小程序不存在')
 
+        else:
+            obj = objs[0]
+            if obj.template:
+                self.add_error('appid', '该小程序已有模板, 请先解除绑定')
+            else:
+                return appid
 
+# 解除绑定模板和小程序
+class UnbindAppletAndTemplate(forms.Form):
+    appid = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '小程序ID不能为空',
+        }
+    )
+    user_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '登录异常',
+        }
+    )
+    def clean_appid(self):
+        appid = self.data.get('appid')
+        user_id = self.data.get('user_id')
+        objs = models.ClientApplet.objects.filter(appid=appid, user_id=user_id)
+        if not objs:
+            self.add_error('appid', '该小程序不存在')
 
-
-
+        else:
+            obj = objs[0]
+            if obj.template:
+                self.add_error('appid', '该小程序已有模板, 请先解除绑定')
+            else:
+                return appid
 
 

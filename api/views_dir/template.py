@@ -5,7 +5,8 @@ from publicFunc import account
 from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
-from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm
+from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm, \
+    BindTemplatesAndApplets, UnbindAppletAndTemplate
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 import json
@@ -162,7 +163,6 @@ def template_oper(request, oper_type, o_id):
 
                 # 更新数据
                 models.Template.objects.filter(id=o_id).update(**update_data)
-
                 response.code = 200
                 response.msg = "修改成功"
 
@@ -225,6 +225,51 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.load(form_obj.errors.as_json())
 
+        # 绑定模板和小程序
+        elif oper_type == 'bind_templates_and_applets':
+            form_data = {
+                'template_id': request.POST.get('template_id'),
+                'appid': request.POST.get('appid'),
+                'user_id': user_id,
+            }
+            form_obj = BindTemplatesAndApplets(form_data)
+            if form_obj.is_valid():
+                appid = form_obj.cleaned_data.get('appid')
+                template_id = form_obj.cleaned_data.get('template_id')
+                models.ClientApplet.objects.filter(
+                    appid=appid
+                ).update(
+                    template_id=template_id
+                )
+                response.code = 200
+                response.msg = '绑定成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+        # 解除绑定小程序和模板
+        elif oper_type == 'unbind_applet_and_template':
+            form_data = {
+                'appid': request.POST.get('appid'),
+                'user_id': user_id,
+            }
+            form_obj = UnbindAppletAndTemplate(form_data)
+            if form_obj.is_valid():
+                appid = form_obj.cleaned_data.get('appid')
+                user_id = form_obj.cleaned_data.get('user_id')
+                objs = models.ClientApplet.objects.filter(
+                    appid=appid,
+                    user_id=user_id
+                )
+                objs.update(template=None)
+                response.code = 200
+                response.msg = '解除绑定成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
     else:
         # 获取底部导航数据
         if oper_type == "get_tab_bar_data":
@@ -252,6 +297,45 @@ def template_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 发布审核时 判断模板是否关联 小程序
+        elif oper_type == 'determines_whether_template_associated_applet':
+            objs = models.ClientApplet.objects.filter(user_id=user_id)
+            flag = False
+            for obj in objs:
+                if obj.template:
+                    if obj.template_id == int(o_id):
+                        flag = True
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'flag': flag
+            }
+
+        # 查询该用户 所有小程序
+        elif oper_type == 'query_all_applets_this_user':
+            objs = models.ClientApplet.objects.filter(
+                user_id=user_id
+            ).exclude(
+                template__isnull=False,
+                is_authorization=0
+            )
+            count = objs.count()
+            data_list = []
+            for obj in objs:
+                data_list.append({
+                    'id': obj.id,
+                    'nick_name': obj.nick_name,
+                    'appid': obj.appid,
+                    'head_img': obj.head_img,
+                })
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'data_list': data_list,
+                'count': count
+            }
+
         else:
             response.code = 402
             response.msg = "请求异常"

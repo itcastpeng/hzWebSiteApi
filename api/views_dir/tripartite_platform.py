@@ -163,9 +163,9 @@ def tripartite_platform_oper(request, oper_type):
 
             # 上传小程序代码===========================小程序
             elif oper_type == 'upload_applet_code':
-                template_id = request.GET.get('template_id')  # 代码模板ID
+                template_id = request.GET.get('template_id')    # 代码模板ID
                 user_version = request.GET.get('user_version')  # 代码版本号
-                user_desc = request.GET.get('user_desc')  # 代码描述
+                user_desc = request.GET.get('user_desc')        # 代码描述
                 user_id = request.GET.get('user_id')
                 data = {
                     'appid': appid,
