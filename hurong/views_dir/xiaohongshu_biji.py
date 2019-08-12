@@ -1,6 +1,5 @@
 from hurong import models
 from publicFunc import Response, account
-from publicFunc.public import create_xhs_admin_response
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.public_form import SelectForm as select_form
@@ -367,6 +366,31 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(form_obj.errors.as_json())
             create_xhs_admin_response(request, response, 2)
 
+        # 重新发布的笔记 改为待审核
+        elif oper_type == 'change_pending_review':
+            form_data = {
+                'o_id': o_id
+            }
+            form_obj = ChangePendingReview(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                models.XiaohongshuBiji.objects.filter(id=o_id).update(
+                    is_delete_old_biji=True
+                )
+                response.code = 200
+                response.msg = '删除成功'
+                url = 'https://www.ppxhs.com/api/v1/sync/screen-notfound'
+                data = {
+                    'id':o_id
+                }
+                ret = requests.post(url, data=data)
+                create_xhs_admin_response(request, ret.json(), 1, url=url, req_type=2)  # 创建请求日志 后台请求小红书
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+
         else:
             response.code = 402
             response.msg = "请求异常"
@@ -464,6 +488,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'biji_url': obj.biji_url,
                         'error_msg': obj.error_msg,
                         'biji_type': biji_type,
+                        'is_delete_old_biji': obj.is_delete_old_biji,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     # if select_id:
