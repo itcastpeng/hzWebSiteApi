@@ -269,7 +269,7 @@ class XiaohongshuBiji(models.Model):
         (4, "发布异常"),
         (5, "重新发布"),
     )
-
+    is_delete_old_biji = models.BooleanField(verbose_name='重新发布是否删除原文', default=False)
     status = models.SmallIntegerField(choices=status_choices, verbose_name="笔记状态", default=3)
     release_time = models.DateTimeField(verbose_name="发布时间")
     completion_time = models.DateTimeField(verbose_name="完成时间", null=True)
