@@ -565,13 +565,16 @@ def asynchronous_synchronous_trans(task_id=None):
     objs = models.XiaohongshuBiji.objects.filter(q, user_id__isnull=False, biji_url__isnull=False)
     api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
     for obj in objs:
+        print('obj.id--obj.id---obj.id---obj.id-----------obj.id---> obj.id', obj.id)
         data = {
             "id": obj.id,
             "link": obj.biji_url,
             "pubTime": obj.release_time,
             "from_blogger": '1',
         }
+        print('============================开始请求-------------------》', datetime.datetime.today())
         ret = requests.post(url=api_url, data=data)
+        print('============================结束请求-------------------》', datetime.datetime.today())
         create_xhs_admin_response(1, ret.json(), 1, url=api_url, req_type=2)  # 记录请求日志
 
 # 手机号 未使用的低于200 告警
