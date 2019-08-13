@@ -576,7 +576,7 @@ def asynchronous_synchronous_trans(task_id=None):
             request_type=2,  # POST请求
             request_url=api_url,
             get_request_parameter='',
-            post_request_parameter=json.dumps(data),
+            post_request_parameter=data,
             response_data=json.dumps(ret.json()),
             status=1
         )
