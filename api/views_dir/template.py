@@ -312,29 +312,28 @@ def template_oper(request, oper_type, o_id):
                 'flag': flag
             }
 
-        # 查询该用户 所有小程序
-        elif oper_type == 'query_all_applets_this_user':
+        # 查询该用户 模板绑定的小程序信息
+        elif oper_type == 'template_binding_applet_information':
             objs = models.ClientApplet.objects.filter(
-                user_id=user_id
-            ).exclude(
-                template__isnull=False,
-                is_authorization=0
+                user_id=user_id,
+                template_id=o_id,
             )
-            count = objs.count()
-            data_list = []
-            for obj in objs:
-                data_list.append({
-                    'id': obj.id,
-                    'nick_name': obj.nick_name,
-                    'appid': obj.appid,
-                    'head_img': obj.head_img,
-                })
-            response.code = 200
-            response.msg = '查询成功'
-            response.data = {
-                'data_list': data_list,
-                'count': count
-            }
+            data_dict = {}
+            if objs:
+                obj = objs[0]
+                data_dict['appid'] = obj.appid
+                data_dict['head_img'] = obj.head_img
+                data_dict['nick_name'] = obj.nick_name
+                data_dict['id'] = obj.id
+                code = 200
+                msg = '查询成功'
+
+            else:
+                code = 301
+                msg = '未绑定小程序'
+
+            response.code = code
+            response.msg = msg
 
         else:
             response.code = 402

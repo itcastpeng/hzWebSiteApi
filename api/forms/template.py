@@ -191,7 +191,7 @@ class UserAddTemplateForm(forms.Form):
         else:
             self.add_error('template_id', '模板不存在')
 
-# 绑定模板和小程序
+    # 绑定模板和小程序
 class BindTemplatesAndApplets(forms.Form):
     user_id = forms.IntegerField(
         required=True,
@@ -256,10 +256,6 @@ class UnbindAppletAndTemplate(forms.Form):
             self.add_error('appid', '该小程序不存在')
 
         else:
-            obj = objs[0]
-            if obj.template:
-                self.add_error('appid', '该小程序已有模板, 请先解除绑定')
-            else:
-                return appid
+            return appid
 
 
