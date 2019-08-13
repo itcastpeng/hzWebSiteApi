@@ -94,6 +94,40 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
+        # 上传小程序代码===========================小程序
+        elif oper_type == 'upload_applet_code':
+            if credential_expired_data.get('flag'):
+                obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+                if obj.template:
+
+                    template_id = request.POST.get('template_id')  # 代码模板ID
+                    user_version = request.POST.get('user_version')  # 代码版本号
+                    user_desc = request.POST.get('user_desc')  # 代码描述
+                    user_id = request.POST.get('user_id')
+                    data = {
+                        'appid': appid,
+                        'token': authorizer_access_token,
+                        'template_id': template_id,
+                        'user_version': user_version,
+                        'user_desc': user_desc,
+                        'user_id': user_id,
+                        'id': obj.template_id
+                    }
+                    tripartite_platform_objs.xcx_update_code(data)
+                    code = 200
+                    msg = '上传代码成功'
+
+                else:
+                    code = 301
+                    msg = '请先绑定模板'
+            else:
+                code = 301
+                msg = '小程序异常'
+                if authorization_type in [1, '1']:
+                    msg = '公众号异常'
+
+            response.code = code
+            response.msg = msg
 
         # 绑定微信用户为小程序体验者===================小程序
         elif oper_type == 'bind_weChat_user_small_program_experiencer':
@@ -161,29 +195,12 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 200
                 response.msg = '获取信息完成'
 
-            # 上传小程序代码===========================小程序
-            elif oper_type == 'upload_applet_code':
-                template_id = request.GET.get('template_id')    # 代码模板ID
-                user_version = request.GET.get('user_version')  # 代码版本号
-                user_desc = request.GET.get('user_desc')        # 代码描述
-                user_id = request.GET.get('user_id')
-                data = {
-                    'appid': appid,
-                    'token': authorizer_access_token,
-                    'template_id': template_id,
-                    'user_version': user_version,
-                    'user_desc': user_desc,
-                    'user_id': user_id,
-                    'id': credential_expired_data.get('id')
-                }
-                tripartite_platform_objs.xcx_update_code(data)
-                response.code = 200
-
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
-                path = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+                data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
                 response.code = 200
-                response.data = path
+                response.msg = ''
+                response.data = data.get('path')
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
@@ -207,7 +224,6 @@ def tripartite_platform_oper(request, oper_type):
                 if data.get('errcode') in [0, '0']:
                     code = 200
                 response.code = code
-                response.data = data.get('members')
                 response.msg = data.get('errmsg')
 
             # 获取小程序体验者列表
@@ -249,6 +265,7 @@ def tripartite_platform_oper(request, oper_type):
                 response.data = data.get('members')
                 response.msg = data.get('errmsg')
 
+
             # 查询某个指定版本的审核状态
             elif oper_type == 'query_specified_version_code_audit':
                 auditid = request.GET.get('auditid')
@@ -285,7 +302,7 @@ def tripartite_platform_oper(request, oper_type):
                 if data.get('errcode') in [0, '0']:
                     code = 200
                 response.code = code
-                response.data = data.get('members')
+                response.data = data.get('draft_list')
                 response.msg = data.get('errmsg')
 
             # 将第三方提交的代码包提交审核

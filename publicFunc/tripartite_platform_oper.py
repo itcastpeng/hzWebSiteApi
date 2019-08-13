@@ -339,11 +339,13 @@ class tripartite_platform_oper():
     def xcx_get_experience_qr_code(self, token):
         url = 'https://api.weixin.qq.com/wxa/get_qrcode?access_token={}'.format(token)
         ret = requests.get(url)
+        data = {}
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)
-        path = upload_qiniu(img_path, 800)
-        return path
+        # path = upload_qiniu(img_path, 800)
+        data['path'] = img_path
+        return data
 
     # 获取代码模板库中的所有小程序代码模板
     def xcx_get_code_template(self):
