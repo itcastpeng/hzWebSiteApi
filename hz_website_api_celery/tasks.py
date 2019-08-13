@@ -564,19 +564,22 @@ def asynchronous_synchronous_trans(task_id=None):
         q.add(Q(id=task_id), Q.AND)
     objs = models.XiaohongshuBiji.objects.filter(q, user_id__isnull=False, biji_url__isnull=False)
     api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
-    print('objsobjsobjsobjsobjsobjsobjsobjsobjsobjsobjsobjs------------------------------------> ', objs)
     for obj in objs:
-        print('obj.id--obj.id---obj.id---obj.id-----------obj.id---> obj.id', obj.id)
         data = {
             "id": obj.id,
             "link": obj.biji_url,
             "pubTime": obj.release_time,
             "from_blogger": '1',
         }
-        print('============================开始请求-------------------》', datetime.datetime.today())
         ret = requests.post(url=api_url, data=data)
-        print('============================结束请求-------------------》', datetime.datetime.today())
-        create_xhs_admin_response(1, ret.json(), 1, url=api_url, req_type=2)  # 记录请求日志
+        models.AskLittleRedBook.objects.create(  # 更新日志
+            request_type=2,  # POST请求
+            request_url=api_url,
+            get_request_parameter='',
+            post_request_parameter=json.dumps(data),
+            response_data=json.dumps(ret.json()),
+            status=1
+        )
 
 # 手机号 未使用的低于200 告警
 @app.task
