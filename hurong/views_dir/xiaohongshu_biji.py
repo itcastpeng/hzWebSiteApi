@@ -157,9 +157,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                             )
                             response.msg = "添加成功"
                         response.code = 200
-                        response.data = {
-                            'biji_id': obj.id
-                        }
+                    response.data = {
+                        'biji_id': obj.id
+                    }
                 else:
                     response.code = 0
                     response.msg = "添加失败, 小红书id不存在"

@@ -146,6 +146,10 @@ def xiaohongshu_fugai_update_data():
                         rank=rank,
                         biji_num=total_count
                     )
+
+                else:
+                    pass
+
         # 更新下拉笔记数据
         models.XiaohongshuXiaLaKeywords.objects.filter(keywords=keywords).update(
             biji_num=total_count,
