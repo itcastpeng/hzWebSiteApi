@@ -321,10 +321,10 @@ def template_oper(request, oper_type, o_id):
             data_dict = {}
             if objs:
                 obj = objs[0]
-                data_dict['appid'] = obj.appid
-                data_dict['head_img'] = obj.head_img
-                data_dict['nick_name'] = obj.nick_name
-                data_dict['id'] = obj.id
+                data_dict['xcx_appid'] = obj.appid
+                data_dict['xcx_head_img'] = obj.head_img
+                data_dict['xcx_nick_name'] = obj.nick_name
+                data_dict['xcx_id'] = obj.id
                 code = 200
                 msg = '查询成功'
 
