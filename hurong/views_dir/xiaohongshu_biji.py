@@ -443,6 +443,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'uid': '__contains',
                     'status': '',
                     'user_id__name': '__contains',
+                    'is_delete_old_biji': '',
                     'user_id__phone_id__name': '',
                 }
                 q = conditionCom(request, field_dict)

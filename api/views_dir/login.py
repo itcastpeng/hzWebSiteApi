@@ -51,13 +51,19 @@ def wechat_login(request):
         if objs:
             obj = objs[0]
             response.code = 200
+            role_obj = models.Role.objects.filter(id=obj.role_id)
+            data_list = []
+            for i in role_obj[0].permissions.all():
+                data_list.append(i.name)
+
             response.data = {
                 'token': obj.token,
                 'id': obj.id,
                 'role_id': obj.role_id,
                 'role_name': obj.role.name,
                 'name': base64_encryption.b64decode(obj.name),
-                'head_portrait': obj.head_portrait
+                'head_portrait': obj.head_portrait,
+                'permissions_list': data_list
             }
     else:
         response.code = 402
