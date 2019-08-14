@@ -102,83 +102,75 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 imsi = forms_obj.cleaned_data.get('imsi')
                 img_base64_data = forms_obj.cleaned_data.get('img_base64_data')
                 img_base64_data = img_base64_data.replace(' ', '+')
-                flag = False
-                if timestamp:
-                    if not models.XiaohongshuDirectMessages.objects.filter(
-                            time_stamp__isnull=False,
-                            time_stamp=timestamp
-                    ):
-                        flag = True
 
-                if flag:
-                    objs = models.XiaohongshuUserProfile.objects.filter(
-                        phone_id__iccid=iccid,
-                        phone_id__imsi=imsi
+                objs = models.XiaohongshuUserProfile.objects.filter(
+                    phone_id__iccid=iccid,
+                    phone_id__imsi=imsi
+                )
+                if objs:
+                    imgdata = base64.b64decode(img_base64_data)
+
+                    with open('t.png', 'wb') as f:
+                        f.write(imgdata)
+
+                    redis_obj = get_redis_obj()
+                    upload_token = redis_obj.get('qiniu_upload_token')
+                    if not upload_token:
+                        qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+                        with open(qiniu_data_path, "r", encoding="utf8") as f:
+                            data = json.loads(f.read())
+                            access_key = data.get('access_key')
+                            secret_key = data.get('secret_key')
+                            obj = Auth(access_key, secret_key)
+                            upload_token = obj.upload_token("xcx_wgw_zhangcong")
+
+                    headers = {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+                    }
+
+                    url = 'https://up-z1.qiniup.com/'
+
+                    files = {
+                        'file': imgdata
+                    }
+                    data = {
+                        'token': upload_token,
+                        'key': "xiaohongshu_fabu_" + str(int(time.time() * 1000))
+                    }
+
+                    ret = requests.post(url, data=data, files=files, headers=headers)
+                    # print("ret.text -->", ret.json)
+                    key = ret.json()["key"]
+                    img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
+                    obj = objs[0]
+                    direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
+                        user_id=obj,
+                        img_url=img_url,
+                        name=name
                     )
-                    if objs:
-                        imgdata = base64.b64decode(img_base64_data)
 
-                        with open('t.png', 'wb') as f:
-                            f.write(imgdata)
+                    from_blogger = 0
+                    if request.POST.get('from_blogger'):
+                        from_blogger = 1 # 来自于博主
 
-                        redis_obj = get_redis_obj()
-                        upload_token = redis_obj.get('qiniu_upload_token')
-                        if not upload_token:
-                            qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
-                            with open(qiniu_data_path, "r", encoding="utf8") as f:
-                                data = json.loads(f.read())
-                                access_key = data.get('access_key')
-                                secret_key = data.get('secret_key')
-                                obj = Auth(access_key, secret_key)
-                                upload_token = obj.upload_token("xcx_wgw_zhangcong")
-
-                        headers = {
-                            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
-                        }
-
-                        url = 'https://up-z1.qiniup.com/'
-
-                        files = {
-                            'file': imgdata
-                        }
-                        data = {
-                            'token': upload_token,
-                            'key': "xiaohongshu_fabu_" + str(int(time.time() * 1000))
-                        }
-
-                        ret = requests.post(url, data=data, files=files, headers=headers)
-                        # print("ret.text -->", ret.json)
-                        key = ret.json()["key"]
-                        img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
-                        obj = objs[0]
-                        direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
-                            user_id=obj,
-                            img_url=img_url,
-                            name=name
-                        )
-
-                        from_blogger = 0
-                        if request.POST.get('from_blogger'):
-                            from_blogger = 1 # 来自于博主
-
-                        # 把私信截图发送给小红书后台
-                        for i in range(3):
-                            try:
-                                data = {
-                                    "id": direct_message_obj.id,
-                                    "name": name,
-                                    "img_url": img_url,
-                                    "xiaohongshu_id": obj.xiaohongshu_id,
-                                    "from_blogger": from_blogger,
-                                    "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                                }
-                                api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
-                                ret = requests.post(api_url, data=data)
-                                print("ret.json", ret.json())
-                                create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)
-                                break
-                            except:
-                                pass
+                    # 把私信截图发送给小红书后台
+                    for i in range(3):
+                        try:
+                            data = {
+                                "id": direct_message_obj.id,
+                                "name": name,
+                                "img_url": img_url,
+                                "xiaohongshu_id": obj.xiaohongshu_id,
+                                "from_blogger": from_blogger,
+                                "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                            }
+                            api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
+                            ret = requests.post(api_url, data=data)
+                            print("ret.json", ret.json())
+                            create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)
+                            break
+                        except:
+                            pass
 
                 response.code = 200
                 response.msg = "保存成功"

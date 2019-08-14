@@ -297,7 +297,7 @@ class XiaohongshuDirectMessages(models.Model):
     user_id = models.ForeignKey('XiaohongshuUserProfile', verbose_name="用户id")
     name = models.CharField(verbose_name="私信用户的名称", max_length=256)
     img_url = models.CharField(verbose_name="私信截图", max_length=256)
-    time_stamp = models.CharField(verbose_name='判断是否重复用', max_length=128, null=True)
+    # time_stamp = models.CharField(verbose_name='判断是否重复用', max_length=128, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
