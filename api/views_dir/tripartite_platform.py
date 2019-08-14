@@ -102,14 +102,12 @@ def tripartite_platform_oper(request, oper_type):
         elif oper_type == 'upload_applet_code':
             if credential_expired_data.get('flag'):
                 form_data = {
-                    'code_template_id': request.POST.get('code_template_id'),  # 代码模板ID
-                    'user_version': request.POST.get('user_version'),  # 代码版本号
+                    'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
                     'user_desc': request.POST.get('user_desc'),  # 代码描述
                 }
 
                 form_obj = UploadAppletCode(form_data)
                 if form_obj.is_valid():
-                    code_template_id = form_obj.cleaned_data.get('code_template_id')
                     user_version = form_obj.cleaned_data.get('user_version')
                     user_desc = form_obj.cleaned_data.get('user_desc')
 
@@ -119,7 +117,6 @@ def tripartite_platform_oper(request, oper_type):
                         data = {
                             'appid': appid,
                             'token': authorizer_access_token,
-                            'template_id': code_template_id,
                             'user_version': user_version,
                             'user_desc': user_desc,
                             'user_id': user_id,
@@ -196,7 +193,25 @@ def tripartite_platform_oper(request, oper_type):
             response.data = data.get('members')
             response.msg = data.get('errmsg')
 
+        # 将第三方提交的代码包提交审核
+        elif oper_type == 'code_package_submitted_review':
+            ret_json = tripartite_platform_objs.code_package_submitted_review(
+                authorizer_access_token
+            )
+            auditid = ret_json.get('auditid')
+            response.code = 200
+            response.msg = '提交成功'
+            response.data = ret_json
 
+        # 将草稿箱的草稿选为小程序代码模版
+        elif oper_type == 'select_draft_applet_code_template':
+            draft_id = request.GET.get('draft_id')  # 草稿ID
+            data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+            code = 301
+            if data.get('errcode') in [0, '0']:
+                code = 200
+            response.code = code
+            response.msg = data.get('errmsg')
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
@@ -232,16 +247,6 @@ def tripartite_platform_oper(request, oper_type):
 
                 else:
                     response.msg = response_data.get('errmsg')
-
-            # 将草稿箱的草稿选为小程序代码模版
-            elif oper_type == 'select_draft_applet_code_template':
-                draft_id = request.GET.get('draft_id')  # 草稿ID
-                data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
-                code = 301
-                if data.get('errcode') in [0, '0']:
-                    code = 200
-                response.code = code
-                response.msg = data.get('errmsg')
 
             # 获取小程序体验者列表
             elif oper_type == 'Get_list_experiencers':
@@ -321,16 +326,6 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = code
                 response.data = data.get('draft_list')
                 response.msg = data.get('errmsg')
-
-            # 将第三方提交的代码包提交审核
-            elif oper_type == 'code_package_submitted_review':
-                ret_json = tripartite_platform_objs.code_package_submitted_review(
-                    authorizer_access_token
-                )
-                auditid = ret_json.get('auditid')
-                response.code = 200
-                response.msg = '提交成功'
-                response.data = ret_json
 
             # 查询小程序当前隐私设置（是否可被搜索）
             elif oper_type == 'query_current_privacy_settings':

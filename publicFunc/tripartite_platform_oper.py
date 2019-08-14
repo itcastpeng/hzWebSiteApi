@@ -295,10 +295,15 @@ class tripartite_platform_oper():
 
         """
 
+        template_data = self.xcx_get_code_template()
+        template_list = template_data.get('template_list')
+        template_id = 0
+        if len(template_list) >= 1:
+            template_id = template_list[0].get('template_id') # 版本号
+
         user_version = data.get('user_version')
         user_desc = data.get('user_desc')
         appid = data.get('appid')
-        template_id = data.get('template_id')
         token = data.get('token')
         user_id = data.get('user_id')
         user_token = data.get('user_token')
@@ -442,14 +447,14 @@ class tripartite_platform_oper():
                 "address":configuration_ret.get('page_list')[0],
                 "first_class": category_list[0].get('first_class'),
                 "second_class": category_list[0].get('second_class'),
-                "first_id":287,
-                "second_id":614,
+                "first_id":category_list[0].get('first_id'),
+                "second_id":category_list[0].get('second_id'),
                 "tag":"首页",
                 "title": "首页"
             }
             ],
-                "feedback_info": "blablabla",
-                "feedback_stuff": "xx|yy|zz"
+                "feedback_info": "",
+                "feedback_stuff": ""
         }
 
         ret = requests.post(url, data=json.dumps(data,  ensure_ascii=False).encode('utf8'))
