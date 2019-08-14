@@ -17,7 +17,7 @@ import time, json, datetime, xml.etree.cElementTree as ET, requests
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    template_id = request.GET.get('template_id')  # 模板ID
+    template_id = request.POST.get('template_id')  # 模板ID
 
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
