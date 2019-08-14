@@ -54,10 +54,16 @@ def template(request):
                     template_class_id = obj.template_class_id
                     template_class_name = obj.template_class.name
 
+                is_authorization = False
+                apple_objs = obj.clientapplet_set.all()
+                if apple_objs and apple_objs[0].is_authorization:
+                    is_authorization = True
+
                 # 将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
+                    'is_authorization': is_authorization,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
                     'thumbnail': obj.thumbnail,
@@ -78,6 +84,7 @@ def template(request):
                 'create_datetime': '创建时间',
                 'share_qr_code': '分享二维码',
                 'logo_img': 'logo图片',
+                'is_authorization': '是否授权',
             }
         else:
             response.code = 402
