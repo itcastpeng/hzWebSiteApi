@@ -131,7 +131,10 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 try:
                     for item in keywords_list:
                         print('item -->', item)
-                        keywords, url = item.strip().split()
+                        # keywords, url = item.strip().split()
+                        keywords = item.split('http')[0]
+                        url = 'http' + item.split('http')[1].strip()
+
 
                         # 处理短链接
                         if url.startswith("http://t.cn"):
