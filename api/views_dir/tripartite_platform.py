@@ -205,7 +205,7 @@ def tripartite_platform_oper(request, oper_type):
 
         # 将草稿箱的草稿选为小程序代码模版
         elif oper_type == 'select_draft_applet_code_template':
-            draft_id = request.GET.get('draft_id')  # 草稿ID
+            draft_id = request.POST.get('draft_id')  # 草稿ID
             data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
             code = 301
             if data.get('errcode') in [0, '0']:
