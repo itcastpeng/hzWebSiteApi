@@ -109,9 +109,8 @@ def xiaohongshufugai(request):
 def xiaohongshufugai_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    # print('request.POST -->', request.POST)
     if request.method == "POST":
-        # 添加用户
+        task_type = request.GET.get('task_type', 1) # 如果为2 等于收录任务
         if oper_type == "add":
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
@@ -149,7 +148,8 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                                     create_user_id=create_user_id,
                                     keywords=keywords,
                                     url=url,
-                                    select_type=select_type
+                                    select_type=select_type,
+                                    task_type=task_type,
                                 )
                             )
                             if len(query) > 500:
@@ -311,6 +311,36 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             item = redis_obj1.rpop("xiaohongshu_task_list")
             if item:
                 response.data = json.loads(item.decode('utf8'))
+
+        # 查询收录是否完成
+        elif oper_type == 'query_whether_inclusion_complete':
+            has_been_completed_count = models.XiaohongshuFugai.objects.filter(
+                task_type=2,
+                update_datetime__lte=datetime.date.today()
+            ).count()
+
+            count = models.XiaohongshuFugai.objects.filter(
+                task_type=2,
+            ).count()
+
+
+            is_success = 0
+            if int(has_been_completed_count) > 0:
+                is_success = 1
+
+            data = {
+                'is_success': is_success,
+                'count': count,
+                'has_been_completed_count': has_been_completed_count
+            }
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = data
+            response.note = {
+                'is_success': '是否完成 1未完成 0完成',
+                'count': '任务总数',
+                'has_been_completed_count': '任务未完成总数'
+            }
 
         else:
             response.code = 402
