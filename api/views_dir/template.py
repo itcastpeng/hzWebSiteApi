@@ -334,7 +334,9 @@ def template_oper(request, oper_type, o_id):
 
             response.code = code
             response.msg = msg
-
+            response.data = {
+                'data_dict': data_dict
+            }
         else:
             response.code = 402
             response.msg = "请求异常"

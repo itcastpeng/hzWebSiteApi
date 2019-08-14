@@ -528,7 +528,7 @@ def authorize_callback(request):
     tripartite_platform_objs.get_account_information(authorization_type, appid)  # 获取基本信息入库
     objs.update(is_authorization=1)  # 授权完成
 
-    return redirect('https://xcx.bjhzkq.com//thirdTerrace/smallRoutine?id={}'.format(template_id))
+    return redirect('https://xcx.bjhzkq.com/thirdTerrace/smallRoutine?id={}'.format(template_id))
     # return HttpResponse('success')
 
 
