@@ -16,12 +16,14 @@ import time, json, datetime, xml.etree.cElementTree as ET, requests
 @account.is_token(models.UserProfile)
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
+
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
 
-    user_id = request.GET.get('user_id')
     authorization_way = request.GET.get('authorization_way')  # 授权方式 (1扫码, 2链接)
     authorization_type = request.GET.get('authorization_type')  # 授权类型 (1公众号, 2小程序)
+
 
     tripartite_appid = tripartite_platform_info.get('tripartite_appid') # 三方APPID
     tripartite_appsecret = tripartite_platform_info.get('tripartite_appsecret') #
@@ -361,6 +363,13 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
             objs.update(is_authorization=1) # 授权完成
 
+        template_id = request.GET.get('template_id')  # 模板ID
+        if template_id:
+            models.ClientApplet.objects.filter(
+                appid=appid
+            ).update(
+                template_id=template_id
+            )
 
     return JsonResponse(response.__dict__)
 
