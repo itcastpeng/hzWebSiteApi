@@ -136,6 +136,7 @@ class tripartite_platform_oper():
         authorization_info = ret.json().get('authorization_info')
         if authorization_info:
             authorizer_appid = authorization_info.get('authorizer_appid')
+            print('-----------------开始写入',  auth_type, authorizer_appid)
             authorizer_access_token = authorization_info.get('authorizer_access_token')
             expires_in = int(time.time()) + int(authorization_info.get('expires_in'))
             authorizer_refresh_token = authorization_info.get('authorizer_refresh_token')
