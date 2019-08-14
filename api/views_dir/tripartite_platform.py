@@ -2,7 +2,7 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse, HttpResponse
-from api.forms.tripartite_platform import AuthorizationForm
+from api.forms.tripartite_platform import AuthorizationForm, UploadAppletCode
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
     QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, encodingAESKey, \
     encoding_token, encoding_appid
@@ -101,29 +101,42 @@ def tripartite_platform_oper(request, oper_type):
         # 上传小程序代码===========================小程序
         elif oper_type == 'upload_applet_code':
             if credential_expired_data.get('flag'):
-                obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
-                if obj.template:
+                form_data = {
+                    'code_template_id': request.POST.get('code_template_id'),  # 代码模板ID
+                    'user_version': request.POST.get('user_version'),  # 代码版本号
+                    'user_desc': request.POST.get('user_desc'),  # 代码描述
+                }
 
-                    template_id = request.POST.get('template_id')  # 代码模板ID
-                    user_version = request.POST.get('user_version')  # 代码版本号
-                    user_desc = request.POST.get('user_desc')  # 代码描述
-                    user_id = request.POST.get('user_id')
-                    data = {
-                        'appid': appid,
-                        'token': authorizer_access_token,
-                        'template_id': template_id,
-                        'user_version': user_version,
-                        'user_desc': user_desc,
-                        'user_id': user_id,
-                        'id': obj.template_id
-                    }
-                    tripartite_platform_objs.xcx_update_code(data)
-                    code = 200
-                    msg = '上传代码成功'
+                form_obj = UploadAppletCode(form_data)
+                if form_obj.is_valid():
+                    code_template_id = form_obj.cleaned_data.get('code_template_id')
+                    user_version = form_obj.cleaned_data.get('user_version')
+                    user_desc = form_obj.cleaned_data.get('user_desc')
 
+                    obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+                    if obj.template:
+                        user_obj = models.UserProfile.objects.get(id=user_id)
+                        data = {
+                            'appid': appid,
+                            'token': authorizer_access_token,
+                            'template_id': code_template_id,
+                            'user_version': user_version,
+                            'user_desc': user_desc,
+                            'user_id': user_id,
+                            'user_token': user_obj.token,
+                            'id': obj.template_id,
+                        }
+                        tripartite_platform_objs.xcx_update_code(data)
+                        code = 200
+                        msg = '上传代码成功'
+
+                    else:
+                        code = 301
+                        msg = '请先绑定模板'
                 else:
                     code = 301
-                    msg = '请先绑定模板'
+                    msg = json.loads(form_obj.errors.as_json())
+
             else:
                 code = 301
                 msg = '小程序异常'
