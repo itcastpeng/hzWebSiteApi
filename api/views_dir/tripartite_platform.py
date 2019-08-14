@@ -17,6 +17,7 @@ import time, json, datetime, xml.etree.cElementTree as ET, requests
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
+    template_id = request.GET.get('template_id')  # 模板ID
 
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
@@ -51,10 +52,11 @@ def tripartite_platform_oper(request, oper_type):
                 authorization_way = forms_data.get('authorization_way')
                 authorization_type = forms_data.get('authorization_type')
 
-                redirect_url = 'https://xcx.bjhzkq.com/api/authorize_callback?appid={}&authorization_type={}&authorization_way={}'.format(
+                redirect_url = 'https://xcx.bjhzkq.com/api/authorize_callback?appid={}&authorization_type={}&authorization_way={}&template_id={}'.format(
                     appid,
                     authorization_type,
-                    authorization_way
+                    authorization_way,
+                    template_id
                 )
                 # redirect_url = 'https://xcx.bjhzkq.com/thirdTerrace/thirdTerrace_index'
                 redirect_url = quote(redirect_url)
@@ -363,8 +365,7 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
             objs.update(is_authorization=1) # 授权完成
 
-        template_id = request.GET.get('template_id')  # 模板ID
-        if template_id:
+    if template_id:
             models.ClientApplet.objects.filter(
                 appid=appid
             ).update(
@@ -499,6 +500,7 @@ def authorize_callback(request):
                    auth_code   : GZH/XCX 授权码
                    expires_in  : GZH/XCX 授权码过期时间
                """
+    template_id = request.GET.get('template_id')
     auth_code = request.GET.get('auth_code')
     expires_in = request.GET.get('expires_in')
     authorization_type = request.GET.get('authorization_type')  # 授权类型 (1公众号, 2小程序)
@@ -526,7 +528,7 @@ def authorize_callback(request):
     tripartite_platform_objs.get_account_information(authorization_type, appid)  # 获取基本信息入库
     objs.update(is_authorization=1)  # 授权完成
 
-    return redirect('https://xcx.bjhzkq.com/thirdTerrace/thirdTerrace_index')
+    return redirect('https://xcx.bjhzkq.com//thirdTerrace/smallRoutine?id={}'.format(template_id))
     # return HttpResponse('success')
 
 
