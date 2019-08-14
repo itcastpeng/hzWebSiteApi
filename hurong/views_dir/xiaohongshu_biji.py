@@ -384,12 +384,19 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'id':o_id
                 }
                 ret = requests.post(url, data=data)
-                create_xhs_admin_response(request, ret.json(), 1, url=url, req_type=2)  # 创建请求日志 后台请求小红书
+                models.AskLittleRedBook.objects.create(  # 更新日志
+                    request_type=2,  # POST请求
+                    request_url=url,
+                    get_request_parameter='',
+                    post_request_parameter=data,
+                    response_data=ret.json(),
+                    status=1
+                )
 
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
-
+            create_xhs_admin_response(request, response, 2)
 
         else:
             response.code = 402

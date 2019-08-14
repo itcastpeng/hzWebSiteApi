@@ -64,6 +64,20 @@ class AuthorizationForm(forms.Form):
             self.add_error('authorization_way', '授权方式异常')
 
 
+# 发布代码
+class UploadAppletCode(forms.Form):
+    user_version = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '代码版本号不能为空',
+        }
+    )
 
+    user_desc = forms.CharField(
+        required=False,
+        error_messages={
+            'required': '代码描述不能为空',
+        }
+    )
 
 

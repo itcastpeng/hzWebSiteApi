@@ -2,7 +2,7 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse, HttpResponse
-from api.forms.tripartite_platform import AuthorizationForm
+from api.forms.tripartite_platform import AuthorizationForm, UploadAppletCode
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
     QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, encodingAESKey, \
     encoding_token, encoding_appid
@@ -101,29 +101,39 @@ def tripartite_platform_oper(request, oper_type):
         # 上传小程序代码===========================小程序
         elif oper_type == 'upload_applet_code':
             if credential_expired_data.get('flag'):
-                obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
-                if obj.template:
+                form_data = {
+                    'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
+                    'user_desc': request.POST.get('user_desc'),  # 代码描述
+                }
 
-                    template_id = request.POST.get('template_id')  # 代码模板ID
-                    user_version = request.POST.get('user_version')  # 代码版本号
-                    user_desc = request.POST.get('user_desc')  # 代码描述
-                    user_id = request.POST.get('user_id')
-                    data = {
-                        'appid': appid,
-                        'token': authorizer_access_token,
-                        'template_id': template_id,
-                        'user_version': user_version,
-                        'user_desc': user_desc,
-                        'user_id': user_id,
-                        'id': obj.template_id
-                    }
-                    tripartite_platform_objs.xcx_update_code(data)
-                    code = 200
-                    msg = '上传代码成功'
+                form_obj = UploadAppletCode(form_data)
+                if form_obj.is_valid():
+                    user_version = form_obj.cleaned_data.get('user_version')
+                    user_desc = form_obj.cleaned_data.get('user_desc')
 
+                    obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+                    if obj.template:
+                        user_obj = models.UserProfile.objects.get(id=user_id)
+                        data = {
+                            'appid': appid,
+                            'token': authorizer_access_token,
+                            'user_version': user_version,
+                            'user_desc': user_desc,
+                            'user_id': user_id,
+                            'user_token': user_obj.token,
+                            'id': obj.template_id,
+                        }
+                        tripartite_platform_objs.xcx_update_code(data)
+                        code = 200
+                        msg = '上传代码成功'
+
+                    else:
+                        code = 301
+                        msg = '请先绑定模板'
                 else:
                     code = 301
-                    msg = '请先绑定模板'
+                    msg = json.loads(form_obj.errors.as_json())
+
             else:
                 code = 301
                 msg = '小程序异常'
@@ -183,7 +193,25 @@ def tripartite_platform_oper(request, oper_type):
             response.data = data.get('members')
             response.msg = data.get('errmsg')
 
+        # 将第三方提交的代码包提交审核
+        elif oper_type == 'code_package_submitted_review':
+            ret_json = tripartite_platform_objs.code_package_submitted_review(
+                authorizer_access_token
+            )
+            auditid = ret_json.get('auditid')
+            response.code = 200
+            response.msg = '提交成功'
+            response.data = ret_json
 
+        # 将草稿箱的草稿选为小程序代码模版
+        elif oper_type == 'select_draft_applet_code_template':
+            draft_id = request.GET.get('draft_id')  # 草稿ID
+            data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
+            code = 301
+            if data.get('errcode') in [0, '0']:
+                code = 200
+            response.code = code
+            response.msg = data.get('errmsg')
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
@@ -219,16 +247,6 @@ def tripartite_platform_oper(request, oper_type):
 
                 else:
                     response.msg = response_data.get('errmsg')
-
-            # 将草稿箱的草稿选为小程序代码模版
-            elif oper_type == 'select_draft_applet_code_template':
-                draft_id = request.GET.get('draft_id')  # 草稿ID
-                data = tripartite_platform_objs.xcx_select_draft_applet_code_template(draft_id)
-                code = 301
-                if data.get('errcode') in [0, '0']:
-                    code = 200
-                response.code = code
-                response.msg = data.get('errmsg')
 
             # 获取小程序体验者列表
             elif oper_type == 'Get_list_experiencers':
@@ -308,16 +326,6 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = code
                 response.data = data.get('draft_list')
                 response.msg = data.get('errmsg')
-
-            # 将第三方提交的代码包提交审核
-            elif oper_type == 'code_package_submitted_review':
-                ret_json = tripartite_platform_objs.code_package_submitted_review(
-                    authorizer_access_token
-                )
-                auditid = ret_json.get('auditid')
-                response.code = 200
-                response.msg = '提交成功'
-                response.data = ret_json
 
             # 查询小程序当前隐私设置（是否可被搜索）
             elif oper_type == 'query_current_privacy_settings':
