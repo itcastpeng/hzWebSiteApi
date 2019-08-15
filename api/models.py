@@ -247,6 +247,12 @@ class AppletCodeVersion(models.Model):
     user_desc = models.TextField(verbose_name='备注', null=True)
     user_version = models.CharField(verbose_name='代码版本号', max_length=128, null=True)
     auditid = models.CharField(verbose_name='审核提交代码编号', max_length=128, null=True)
+    choices_status = (
+        (2, '审核中'),
+        (0, '审核成功'),
+        (1, '审核失败')
+    )
+    status = models.SmallIntegerField(verbose_name='审核状态', default=2, choices=choices_status)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 小程序代码审核上线(代小程序上线)
