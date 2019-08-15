@@ -251,7 +251,7 @@ def tripartite_platform_oper(request, oper_type):
                     template_list = response_data.get('template_list')
                     user_version = '1.0.1'
                     if len(template_list) >= 0:
-                        user_version = template_list[0].get('user_version')
+                        user_version = template_list[-1].get('user_version')
                     form_data = {
                         'user_version': user_version,  # 代码版本号
                         'user_desc': request.POST.get('user_desc'),  # 代码描述
