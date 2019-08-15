@@ -112,11 +112,16 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     obj = objs[0]
                     imgdata = base64.b64decode(img_base64_data)
 
-                    message_objs = models.XiaohongshuDirectMessages.objects.filter(
-                        user_id=obj,
-                        time_stamp=timestamp
-                    )
-                    if not message_objs:
+                    flag = True
+                    if timestamp:
+                        message_objs = models.XiaohongshuDirectMessages.objects.filter(
+                            user_id=obj,
+                            time_stamp=timestamp
+                        )
+                        if message_objs:
+                            flag = False
+
+                    if flag:
                         with open('t.png', 'wb') as f:
                             f.write(imgdata)
 

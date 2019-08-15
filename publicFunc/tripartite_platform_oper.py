@@ -353,8 +353,8 @@ class tripartite_platform_oper():
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)
-        # path = upload_qiniu(img_path, 800)
-        data['path'] = img_path
+        path = upload_qiniu(img_path, 800)
+        data['path'] = path
         return data
 
     # 获取代码模板库中的所有小程序代码模板
