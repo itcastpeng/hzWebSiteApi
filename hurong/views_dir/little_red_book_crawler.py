@@ -261,7 +261,8 @@ def little_red_book_crawler(request, oper_type):
             data = {}
             if not flag:# 笔记任务
                 query_q = Q()
-                query_q.add(Q(last_select_time__lt=now) | Q(last_select_time__isnull=True), Q.OR)
+                query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
+                print('query_q----> ', query_q)
                 objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
                 if objs:
                     obj = objs[0]
@@ -278,7 +279,7 @@ def little_red_book_crawler(request, oper_type):
 
             if not flag:# 评论任务
                 comment_q = Q()
-                comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now) | Q(article_comment__isnull=True), Q.AND)
+                comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now_date) | Q(article_comment__isnull=True), Q.AND)
                 objs = models.ArticlesAndComments.objects.filter(comment_q)
                 if objs:
                     type_status = 2
