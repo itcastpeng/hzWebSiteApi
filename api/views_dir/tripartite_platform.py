@@ -247,28 +247,19 @@ def tripartite_platform_oper(request, oper_type):
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
                 if credential_expired_data.get('flag'):
-                    response_data = tripartite_platform_objs.xcx_get_code_template()
-                    template_list = response_data.get('template_list')
-                    user_version = '1.0.1'
-                    if len(template_list) >= 0:
-                        user_version = template_list[-1].get('user_version')
                     form_data = {
-                        'user_version': user_version,  # 代码版本号
                         'user_desc': request.POST.get('user_desc'),  # 代码描述
                     }
 
                     form_obj = UploadAppletCode(form_data)
                     if form_obj.is_valid():
-                        user_version = form_obj.cleaned_data.get('user_version')
                         user_desc = form_obj.cleaned_data.get('user_desc')
-
                         obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
                         if obj.template:
                             user_obj = models.UserProfile.objects.get(id=user_id)
                             data = {
                                 'appid': appid,
                                 'token': authorizer_access_token,
-                                'user_version': user_version,
                                 'user_desc': user_desc,
                                 'user_id': user_id,
                                 'user_token': user_obj.token,

@@ -298,10 +298,10 @@ class tripartite_platform_oper():
         template_data = self.xcx_get_code_template()
         template_list = template_data.get('template_list')
         template_id = 0
+        user_version = ''
         if len(template_list) >= 1:
-            template_id = template_list[0].get('template_id') # 版本号
-
-        user_version = data.get('user_version')
+            template_id = template_list[-1].get('template_id') # 版本号
+            user_version = template_list[-1].get('user_version')
         user_desc = data.get('user_desc')
         appid = data.get('appid')
         token = data.get('token')
