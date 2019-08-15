@@ -110,7 +110,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "POST":
-        task_type = request.GET.get('task_type', 1) # 如果为2 等于收录任务
+        task_type = request.POST.get('task_type', 1) # 如果为2 等于收录任务
         if oper_type == "add":
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
