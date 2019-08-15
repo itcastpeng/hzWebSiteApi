@@ -604,6 +604,10 @@ def tripartite_platform_admin(request, oper_type, o_id):
             response.msg = '查询成功'
             response.data = flag
 
+        # 查询所有小程序
+        elif oper_type == '':
+            pass
+
         else:
             response.code = 402
             response.msg = '请求异常'
