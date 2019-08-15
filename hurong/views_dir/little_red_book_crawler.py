@@ -312,7 +312,7 @@ def little_red_book_crawler(request, oper_type):
                 if objs:
                     obj = objs[0]
                     # 通知小红书 完成数据
-                    url = 'http://zmtxiansuo.bjhzkq.com/api/keyword/update/query-update'
+                    url = 'http://zmtxiansuo.bjhzkq.com/api/keyword/query-update'
                     data = {
                         'time_stamp':now,
                         'id':obj.uid,

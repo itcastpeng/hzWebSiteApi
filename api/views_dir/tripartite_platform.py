@@ -1,8 +1,7 @@
 from api import models
-from publicFunc import Response
-from publicFunc import account
+from publicFunc import Response, account
 from django.http import JsonResponse, HttpResponse
-from api.forms.tripartite_platform import AuthorizationForm, UploadAppletCode
+from api.forms.tripartite_platform import AuthorizationForm, UploadAppletCode, SelectForm
 from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
     QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, encodingAESKey, \
     encoding_token, encoding_appid
@@ -10,6 +9,7 @@ from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 from urllib.parse import unquote, quote
 from publicFunc.public import send_error_msg
 from django.shortcuts import redirect
+from publicFunc.condition_com import conditionCom
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -124,6 +124,19 @@ def tripartite_platform_oper(request, oper_type):
                             'id': obj.template_id,
                         }
                         tripartite_platform_objs.xcx_update_code(data)
+
+                        # 记录上传的版本 模板
+                        page_data = ''
+                        page_objs = models.Page.objects.filter(page_group__template_id=obj.template_id)
+                        if page_objs:
+                            page_data= page_objs[0].data
+                        models.AppletCodeVersion.objects.create(
+                            applet_id=obj.id,
+                            page_data=page_data,
+                            navigation_data=obj.template.tab_bar_data,
+                            user_version=user_version,
+                            user_desc=user_desc,
+                        )
                         code = 200
                         msg = '上传代码成功'
 
@@ -461,6 +474,68 @@ def tripartite_platform_admin(request, oper_type, o_id):
                     'create_datetime':'创建时间',
                 },
             }
+
+        # 查询个人提交的代码
+        elif oper_type == 'query_individual_submitted_code':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', 'create_datetime')
+                field_dict = {
+                    'user_desc': '__contains',
+                    'user_version': '__contains'
+                }
+                q = conditionCom(request, field_dict)
+                print('q -->', q)
+
+                objs = models.AppletCodeVersion.objects.filter(
+                    q,
+                ).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                # 返回的数据
+                ret_data = []
+
+                for obj in objs:
+                    #  将查询出来的数据 加入列表
+                    ret_data.append({
+                        'id': obj.id,
+                        'applet_id': obj.applet.id,
+                        'applet_name': obj.applet.nick_name,
+                        'applet_head_img': obj.applet.head_img,
+                        'navigation_data': obj.navigation_data,
+                        'page_data': obj.page_data,
+                        'user_desc': obj.user_desc,
+                        'user_version': obj.user_version,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+                #  查询成功 返回200 状态码
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'data_count': count
+                }
+                response.note = {
+                    'id': '提交的代码ID',
+                    'applet_id': '小程序ID',
+                    'applet_name': '小程序名称',
+                    'applet_head_img': '小程序头像',
+                    'navigation_data': '导航数据',
+                    'page_data': '页面数据',
+                    'user_desc': '备注',
+                    'user_version': '版本',
+                    'create_datetime': '创建时间',
+                }
+            else:
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
