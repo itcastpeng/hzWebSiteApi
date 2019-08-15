@@ -66,12 +66,6 @@ class AuthorizationForm(forms.Form):
 
 # 发布代码
 class UploadAppletCode(forms.Form):
-    user_version = forms.CharField(
-        required=True,
-        error_messages={
-            'required': '代码版本号不能为空',
-        }
-    )
 
     user_desc = forms.CharField(
         required=False,
