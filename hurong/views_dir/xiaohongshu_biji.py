@@ -183,7 +183,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
                 if "www.xiaohongshu.com" in url:
-                    link = url
+                    link = url.split('?')[0]
                 else:
                     ret = requests.get(url, allow_redirects=False)
                     link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
