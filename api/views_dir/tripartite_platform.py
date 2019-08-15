@@ -247,8 +247,13 @@ def tripartite_platform_oper(request, oper_type):
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
                 if credential_expired_data.get('flag'):
+                    response_data = tripartite_platform_objs.xcx_get_code_template()
+                    template_list = response_data.get('template_list')
+                    user_version = '1.0.1'
+                    if len(template_list) >= 0:
+                        user_version = template_list[0].get('user_version')
                     form_data = {
-                        'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
+                        'user_version': user_version,  # 代码版本号
                         'user_desc': request.POST.get('user_desc'),  # 代码描述
                     }
 
@@ -607,6 +612,17 @@ def tripartite_platform_admin(request, oper_type, o_id):
         # 查询所有小程序
         elif oper_type == '':
             pass
+
+        # 临时 保存任务
+        elif oper_type == 'linshibaocun':
+            keywords = request.GET.get('keywords')
+            comments = request.GET.get('comments')
+
+            models.test.objects.create(
+                comments=comments,
+                keywords=keywords
+            )
+            response.code = 200
 
         else:
             response.code = 402

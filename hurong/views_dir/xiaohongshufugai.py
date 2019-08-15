@@ -314,9 +314,11 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
         # 查询收录是否完成
         elif oper_type == 'query_whether_inclusion_complete':
+            q = Q()
+            q.add(Q(update_datetime__gte=datetime.date.today()) | Q(update_datetime__isnull=False), Q.AND)
             has_been_completed_count = models.XiaohongshuFugai.objects.filter(
-                task_type=2,
-                update_datetime__lte=datetime.date.today()
+                q,
+                task_type=2
             ).count()
 
             count = models.XiaohongshuFugai.objects.filter(
