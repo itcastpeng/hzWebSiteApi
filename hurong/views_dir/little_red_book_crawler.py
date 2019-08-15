@@ -278,7 +278,7 @@ def little_red_book_crawler(request, oper_type):
 
             if not flag:# 评论任务
                 comment_q = Q()
-                comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now), Q.AND)
+                comment_q.add(Q(last_select_time__isnull=True) | Q(last_select_time__lt=now) | Q(article_comment__isnull=True), Q.AND)
                 objs = models.ArticlesAndComments.objects.filter(comment_q)
                 if objs:
                     type_status = 2
