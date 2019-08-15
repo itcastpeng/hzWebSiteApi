@@ -527,7 +527,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
             if forms_obj.is_valid():
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
-                order = request.GET.get('order', 'create_datetime')
+                order = request.GET.get('order', '-create_datetime')
                 field_dict = {
                     'user_desc': '__contains',
                     'user_version': '__contains'
