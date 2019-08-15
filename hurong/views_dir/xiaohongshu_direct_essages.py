@@ -122,9 +122,9 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                             flag = False
 
                     if flag:
-                        with open('t.png', 'wb') as f:
-                            f.write(imgdata)
-
+                        # with open('t.png', 'wb') as f:
+                        #     f.write(imgdata)
+                        # img_url = ''
                         redis_obj = get_redis_obj()
                         upload_token = redis_obj.get('qiniu_upload_token')
                         if not upload_token:
@@ -133,8 +133,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                 data = json.loads(f.read())
                                 access_key = data.get('access_key')
                                 secret_key = data.get('secret_key')
-                                obj = Auth(access_key, secret_key)
-                                upload_token = obj.upload_token("xcx_wgw_zhangcong")
+                                qny_obj = Auth(access_key, secret_key)
+                                upload_token = qny_obj.upload_token("xcx_wgw_zhangcong")
 
                         headers = {
                             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
