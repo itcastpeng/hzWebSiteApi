@@ -59,6 +59,12 @@ def template(request):
                 if apple_objs and apple_objs[0].is_authorization:
                     is_authorization = True
 
+                apple_appid = ''
+                apple_id = ''
+                if apple_objs and apple_objs[0].template:
+                    apple_id = apple_objs[0].id
+                    apple_appid = apple_objs[0].appid
+
                 # 将查询出来的数据 加入列表
                 ret_data.append({
                     'id': obj.id,
@@ -66,6 +72,8 @@ def template(request):
                     'is_authorization': is_authorization,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
+                    'apple_id': apple_id,
+                    'apple_appid': apple_appid,
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
