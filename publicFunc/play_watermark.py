@@ -90,7 +90,7 @@ class watermark():
         return path
 
 if __name__ == '__main__':
-    img_path = '1.png'
+    img_path = '1.jpg'
     set_avator = '2.png'
 
     zhu_title = '峰会主席邀请会'
