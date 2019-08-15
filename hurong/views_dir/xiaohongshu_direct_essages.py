@@ -157,7 +157,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
                             user_id=obj,
                             img_url=img_url,
-                            name=name
+                            name=name,
+                            time_stamp=timestamp,
                         )
 
                         from_blogger = 0
