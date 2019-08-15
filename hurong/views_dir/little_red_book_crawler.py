@@ -298,23 +298,19 @@ def little_red_book_crawler(request, oper_type):
         # 更改完成时间
         elif oper_type == 'update_task_status':
             uid = request.GET.get('uid')
-            comments_count = models.ArticlesAndComments.objects.filter(
-                last_select_time__lte=datetime.date.today(),
-                keyword_id=uid
-            ).count()
-
+            q = Q()
+            q.add(Q(last_select_time__lte=datetime.date.today()) & Q(keyword_id=uid), Q.OR)
+            q.add(Q(article_comment__isnull=True), Q.OR)
+            comments_count = models.ArticlesAndComments.objects.filter(q).count()
             if comments_count <= 0:
                 objs = models.XhsKeywordsList.objects.filter(id=uid)
                 now = datetime.datetime.today()
-
-
                 objs.update(
                     is_success_time=now
                 )
                 response.code = 200
                 if objs:
                     obj = objs[0]
-
                     # 通知小红书 完成数据
                     url = 'http://zmtxiansuo.bjhzkq.com/api/keyword/update/query-update'
                     data = {
