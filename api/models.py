@@ -246,6 +246,7 @@ class AppletCodeVersion(models.Model):
     page_data = models.TextField(verbose_name='页面数据', null=True)
     user_desc = models.TextField(verbose_name='备注', null=True)
     user_version = models.CharField(verbose_name='代码版本号', max_length=128, null=True)
+    auditid = models.CharField(verbose_name='审核提交代码编号', max_length=128, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 小程序代码审核上线(代小程序上线)
