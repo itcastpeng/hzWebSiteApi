@@ -561,6 +561,8 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'page_data': obj.page_data,
                         'user_desc': obj.user_desc,
                         'user_version': obj.user_version,
+                        'status_id': obj.status,
+                        'status': obj.get_status_display(),
                         'auditid': obj.auditid,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
