@@ -244,7 +244,7 @@ def tripartite_platform_oper(request, oper_type):
             elif oper_type == 'get_experience_qr_code':
                 data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
                 response.code = 200
-                response.msg = ''
+                response.msg = '查询成功'
                 response.data = data.get('path')
 
             # 获取代码模板库中的所有小程序代码模板
