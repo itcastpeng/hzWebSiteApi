@@ -354,6 +354,9 @@ def tripartite_platform_oper(request, oper_type):
                     authorizer_access_token,
                     auditid
                 )
+                status = data.get('status')
+
+                models.AppletCodeVersion.objects.filter(auditid=auditid).update(status=status) # 更新审核状态
                 code = 301
                 if data.get('errcode') in [0, '0']:
                     code = 200
@@ -583,6 +586,21 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
+
+        # 判断 是否有代码在审核状态
+        elif oper_type == 'whether_there_code_review_status':
+            appid = request.GET.get('appid')
+            flag = False
+            objs = models.AppletCodeVersion.objects.filter(
+                applet__appid=appid,
+                status=2
+            )
+            if objs:
+                flag = True
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = flag
 
         else:
             response.code = 402
