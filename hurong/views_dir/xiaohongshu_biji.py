@@ -448,6 +448,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'user_id__name': '__contains',
                     'is_delete_old_biji': '',
                     'user_id__phone_id__name': '',
+                    'biji_existing_url': '__contains',
                 }
                 q = conditionCom(request, field_dict)
                 content = request.GET.get('content')
@@ -492,6 +493,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'biji_url': obj.biji_url,
                         'error_msg': obj.error_msg,
                         'biji_type': biji_type,
+                        'biji_existing_url': obj.biji_existing_url,
                         'is_delete_old_biji': obj.is_delete_old_biji,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
