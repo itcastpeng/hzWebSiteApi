@@ -99,62 +99,50 @@ def tripartite_platform_oper(request, oper_type):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         # 上传小程序代码===========================小程序
-        elif oper_type == 'upload_applet_code':
-            if credential_expired_data.get('flag'):
-                form_data = {
-                    'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
-                    'user_desc': request.POST.get('user_desc'),  # 代码描述
-                }
-
-                form_obj = UploadAppletCode(form_data)
-                if form_obj.is_valid():
-                    user_version = form_obj.cleaned_data.get('user_version')
-                    user_desc = form_obj.cleaned_data.get('user_desc')
-
-                    obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
-                    if obj.template:
-                        user_obj = models.UserProfile.objects.get(id=user_id)
-                        data = {
-                            'appid': appid,
-                            'token': authorizer_access_token,
-                            'user_version': user_version,
-                            'user_desc': user_desc,
-                            'user_id': user_id,
-                            'user_token': user_obj.token,
-                            'id': obj.template_id,
-                        }
-                        tripartite_platform_objs.xcx_update_code(data)
-
-                        # 记录上传的版本 模板
-                        page_data = ''
-                        page_objs = models.Page.objects.filter(page_group__template_id=obj.template_id)
-                        if page_objs:
-                            page_data= page_objs[0].data
-                        models.AppletCodeVersion.objects.create(
-                            applet_id=obj.id,
-                            page_data=page_data,
-                            navigation_data=obj.template.tab_bar_data,
-                            user_version=user_version,
-                            user_desc=user_desc,
-                        )
-                        code = 200
-                        msg = '上传代码成功'
-
-                    else:
-                        code = 301
-                        msg = '请先绑定模板'
-                else:
-                    code = 301
-                    msg = json.loads(form_obj.errors.as_json())
-
-            else:
-                code = 301
-                msg = '小程序异常'
-                if authorization_type in [1, '1']:
-                    msg = '公众号异常'
-
-            response.code = code
-            response.msg = msg
+        # elif oper_type == 'upload_applet_code':
+        #     if credential_expired_data.get('flag'):
+        #         form_data = {
+        #             'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
+        #             'user_desc': request.POST.get('user_desc'),  # 代码描述
+        #         }
+        #
+        #         form_obj = UploadAppletCode(form_data)
+        #         if form_obj.is_valid():
+        #             user_version = form_obj.cleaned_data.get('user_version')
+        #             user_desc = form_obj.cleaned_data.get('user_desc')
+        #
+        #             obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+        #             if obj.template:
+        #                 user_obj = models.UserProfile.objects.get(id=user_id)
+        #                 data = {
+        #                     'appid': appid,
+        #                     'token': authorizer_access_token,
+        #                     'user_version': user_version,
+        #                     'user_desc': user_desc,
+        #                     'user_id': user_id,
+        #                     'user_token': user_obj.token,
+        #                     'id': obj.template_id,
+        #                 }
+        #                 tripartite_platform_objs.xcx_update_code(data)
+        #
+        #                 code = 200
+        #                 msg = '上传代码成功'
+        #
+        #             else:
+        #                 code = 301
+        #                 msg = '请先绑定模板'
+        #         else:
+        #             code = 301
+        #             msg = json.loads(form_obj.errors.as_json())
+        #
+        #     else:
+        #         code = 301
+        #         msg = '小程序异常'
+        #         if authorization_type in [1, '1']:
+        #             msg = '公众号异常'
+        #
+        #     response.code = code
+        #     response.msg = msg
 
         # 绑定微信用户为小程序体验者===================小程序
         elif oper_type == 'bind_weChat_user_small_program_experiencer':
@@ -211,10 +199,26 @@ def tripartite_platform_oper(request, oper_type):
             ret_json = tripartite_platform_objs.code_package_submitted_review(
                 authorizer_access_token
             )
-            auditid = ret_json.get('auditid')
             response.code = 200
             response.msg = '提交成功'
             response.data = ret_json
+
+            obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+
+            # 记录上传的版本 模板
+            page_data = ''
+            page_objs = models.Page.objects.filter(page_group__template_id=obj.template_id)
+            if page_objs:
+                page_data = page_objs[0].data
+            models.AppletCodeVersion.objects.create(
+                applet_id=obj.id,
+                page_data=page_data,
+                navigation_data=obj.template.tab_bar_data,
+                user_version='1.10',
+                user_desc='',
+                auditid=ret_json.get('auditid')
+            )
+
 
         # 将草稿箱的草稿选为小程序代码模版
         elif oper_type == 'select_draft_applet_code_template':
@@ -242,10 +246,52 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
-                data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = data.get('path')
+                if credential_expired_data.get('flag'):
+                    form_data = {
+                        'user_version': request.POST.get('user_version', '1.0.1'),  # 代码版本号
+                        'user_desc': request.POST.get('user_desc'),  # 代码描述
+                    }
+
+                    form_obj = UploadAppletCode(form_data)
+                    if form_obj.is_valid():
+                        user_version = form_obj.cleaned_data.get('user_version')
+                        user_desc = form_obj.cleaned_data.get('user_desc')
+
+                        obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+                        if obj.template:
+                            user_obj = models.UserProfile.objects.get(id=user_id)
+                            data = {
+                                'appid': appid,
+                                'token': authorizer_access_token,
+                                'user_version': user_version,
+                                'user_desc': user_desc,
+                                'user_id': user_id,
+                                'user_token': user_obj.token,
+                                'id': obj.template_id,
+                            }
+                            tripartite_platform_objs.xcx_update_code(data)
+
+                            data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+                            code = 200
+                            msg = '查询成功'
+                            response.data = data.get('path')
+
+                        else:
+                            code = 301
+                            msg = '请先绑定模板'
+                    else:
+                        code = 301
+                        msg = json.loads(form_obj.errors.as_json())
+
+                else:
+                    code = 301
+                    msg = '小程序异常'
+                    if authorization_type in [1, '1']:
+                        msg = '公众号异常'
+
+                response.code = code
+                response.msg = msg
+
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
