@@ -358,20 +358,23 @@ def tripartite_platform_oper(request, oper_type):
             # 查询某个指定版本的审核状态
             elif oper_type == 'query_specified_version_code_audit':
                 auditid = request.GET.get('auditid')
-                data = tripartite_platform_objs.query_specified_version_code_audit(
-                    authorizer_access_token,
-                    auditid
-                )
-                status = data.get('status')
+                if auditid:
+                    data = tripartite_platform_objs.query_specified_version_code_audit(
+                        authorizer_access_token,
+                        auditid
+                    )
+                    status = data.get('status')
 
-                models.AppletCodeVersion.objects.filter(auditid=auditid).update(status=status) # 更新审核状态
-                code = 301
-                if data.get('errcode') in [0, '0']:
-                    code = 200
-                response.code = code
-                response.data = data.get('members')
-                response.msg = data.get('errmsg')
-
+                    models.AppletCodeVersion.objects.filter(auditid=auditid).update(status=status) # 更新审核状态
+                    code = 301
+                    if data.get('errcode') in [0, '0']:
+                        code = 200
+                    response.code = code
+                    response.data = data.get('members')
+                    response.msg = data.get('errmsg')
+                else:
+                    response.code = 301
+                    response.msg = '参数缺失'
 
             # 查询最新一次提交的审核状态
             elif oper_type == 'check_status_most_recent_submission':
@@ -402,7 +405,7 @@ def tripartite_platform_oper(request, oper_type):
                         'create_time' : otherStyleTime,
                         'developer' : data.get('developer'),
                         'draft_id' : data.get('draft_id'),
-                        'source_miniprogram' : "data.get('source_miniprogram')",
+                        'source_miniprogram' : data.get('source_miniprogram'),
                         'source_miniprogram_appid' : data.get('source_miniprogram_appid'),
                         'user_desc' : data.get('user_desc'),
                         'user_version' : data.get('user_version'),
