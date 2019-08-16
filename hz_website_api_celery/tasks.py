@@ -101,8 +101,6 @@ def xiaohongshu_fugai_update_data():
                 'update_datetime': datetime.datetime.now(),
             }
             for item in page_id_list:
-                obj.biji_num = total_count
-                obj.update_datetime = datetime.datetime.now()
                 obj.status = 2
                 if item['id'] in obj.url:
                     flag = True
@@ -111,6 +109,8 @@ def xiaohongshu_fugai_update_data():
                     item_data['rank'] = item['rank']
 
                 obj.save()
+            obj.biji_num = total_count
+            obj.update_datetime = datetime.datetime.now()
 
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
