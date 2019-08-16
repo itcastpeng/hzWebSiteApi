@@ -251,6 +251,10 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 select_keywords = request.GET.get('select_keywords')
                 url = request.GET.get('url')
                 if select_keywords and url:
+                    if url and url.startswith("http://t.cn"):
+                        ret = requests.get(url, allow_redirects=False, timeout=10)
+                        url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+
                     q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
                     q.add(Q(**{'keywords__url': url}), Q.AND)
                     q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
