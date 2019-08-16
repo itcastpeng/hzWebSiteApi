@@ -600,9 +600,91 @@ def tripartite_platform_admin(request, oper_type, o_id):
             response.msg = '查询成功'
             response.data = flag
 
-        # 查询所有小程序
-        elif oper_type == '':
-            pass
+        # 查询所有模板
+        elif oper_type == 'query_all_templates':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'user_desc': '__contains',
+                    'user_version': '__contains'
+                }
+                q = conditionCom(request, field_dict)
+                print('q -->', q)
+
+                objs = models.Template.objects.filter(
+                    q,
+                    create_user_id=user_id
+                ).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                # 返回的数据
+                ret_data = []
+                num = 0
+                for obj in objs:
+
+                    is_applet = False
+                    if obj.clientapplet_set.all():
+                        is_applet = True
+
+                    template_class_id = ''
+                    template_class_name = ''
+                    if obj.template_class:
+                        template_class_id = obj.template_class_id
+                        template_class_name = obj.template_class.name
+
+                    #  将查询出来的数据 加入列表
+                    ret_data.append({
+                        'id': obj.id,
+                        'name': obj.name,
+                        'logo_img': obj.logo_img,
+                        'thumbnail': obj.thumbnail,
+                        'share_qr_code': obj.share_qr_code,
+                        'template_class_id': template_class_id,
+                        'template_class_name': template_class_name,
+                        'tab_bar_data': obj.tab_bar_data,
+                        'is_applet': is_applet,
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+
+                    if is_applet:
+                        applet_obj = obj.clientapplet_set.all()[0]
+                        ret_data[num]['is_authorization'] = applet_obj.is_authorization
+                        ret_data[num]['appid'] = applet_obj.appid
+                        ret_data[num]['applet_id'] = applet_obj.id
+
+                    num += 1
+
+                #  查询成功 返回200 状态码
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'data_count': count
+                }
+                response.note = {
+                    'id': '提交的代码ID',
+                    'is_applet': '是否有小程序',
+                    'logo_img': 'logo图片',
+                    'thumbnail': '缩略图',
+                    'share_qr_code': '微信分享二维码',
+                    'template_class_name': '模板分类名称',
+                    'template_class_id': '是否模板分类ID',
+                    'tab_bar_data': '底部导航数据',
+                    'applet_id': '小程序ID',
+                    'appid': '小程序APPID',
+                    'is_authorization': '小程序是否授权',
+                    'create_datetime': '创建时间',
+                }
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         # 临时 保存任务
         elif oper_type == 'linshibaocun':
