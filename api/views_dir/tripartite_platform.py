@@ -396,6 +396,7 @@ def tripartite_platform_oper(request, oper_type):
 
                 data_list = []
                 for data in data.get('draft_list'):
+                    print('-------------- > ', data)
                     otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", data.get('create_time'))
                     data_list.append({
                         'create_time' : otherStyleTime,
