@@ -212,9 +212,8 @@ def xiaohongshu_phone_management(request, oper_type):
                 q = conditionCom(request, field_dict)
 
                 select_id = request.GET.get('id')
-                objs = models.XiaohongshuPhone.objects.filter(
-                    q,
-                ).exclude(is_debug=True).order_by(order)
+                # objs = models.XiaohongshuPhone.objects.filter(q).exclude(is_debug=True).order_by(order)
+                objs = models.XiaohongshuPhone.objects.filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:
