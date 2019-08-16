@@ -525,5 +525,16 @@ class tripartite_platform_oper():
         print('设置小程序隐私设置------> ',  url, ret.text)
         return ret.json()
 
+    # 删除指定小程序代码模版
+    def deletes_specified_applet_code_template(self, template_id):
+        url = 'https://api.weixin.qq.com/wxa/deletetemplate?access_token={}'.format(
+            self.token
+        )
+        post_data = {
+            "template_id": template_id
+        }
+        ret = requests.post(url, data=post_data)
+        return ret.json()
+
 
 

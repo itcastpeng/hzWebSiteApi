@@ -219,7 +219,6 @@ def tripartite_platform_oper(request, oper_type):
                 auditid=ret_json.get('auditid')
             )
 
-
         # 将草稿箱的草稿选为小程序代码模版
         elif oper_type == 'select_draft_applet_code_template':
             draft_id = request.POST.get('draft_id')  # 草稿ID
@@ -229,6 +228,19 @@ def tripartite_platform_oper(request, oper_type):
                 code = 200
             response.code = code
             response.msg = data.get('errmsg')
+
+        # 删除指定小程序代码模版
+        elif oper_type == 'deletes_specified_applet_code_template':
+            template_id = request.POST.get('template_id')
+            data = tripartite_platform_objs.deletes_specified_applet_code_template(template_id)
+            errmsg = data.get('errmsg')
+            code = 301
+            if data.get('errcode') in [0, '0']:
+                code = 200
+                errmsg = '删除成功'
+
+            response.code = code
+            response.msg = errmsg
 
     else:
         appid = request.GET.get('appid') # 传递的APPID
@@ -381,9 +393,23 @@ def tripartite_platform_oper(request, oper_type):
                 code = 301
                 if data.get('errcode') in [0, '0']:
                     code = 200
+
+                data_list = []
+                for data in data.get('draft_list'):
+                    otherStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", data.get('create_time'))
+                    data_list.append({
+                        'create_time' : otherStyleTime,
+                        'developer' : data.get('developer'),
+                        'draft_id' : data.get('draft_id'),
+                        'source_miniprogram' : "data.get('source_miniprogram')",
+                        'source_miniprogram_appid' : data.get('source_miniprogram_appid'),
+                        'user_desc' : data.get('user_desc'),
+                        'user_version' : data.get('user_version'),
+                    })
+
                 response.code = code
-                response.data = data.get('draft_list')
                 response.msg = data.get('errmsg')
+                response.data = data_list
 
             # 查询小程序当前隐私设置（是否可被搜索）
             elif oper_type == 'query_current_privacy_settings':
@@ -658,6 +684,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         ret_data[num]['is_authorization'] = applet_obj.is_authorization
                         ret_data[num]['appid'] = applet_obj.appid
                         ret_data[num]['applet_id'] = applet_obj.id
+                        ret_data[num]['nick_name'] = applet_obj.nick_name
+                        ret_data[num]['qrcode_url'] = applet_obj.qrcode_url
+                        ret_data[num]['head_img'] = applet_obj.head_img
 
                     num += 1
 
@@ -679,6 +708,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                     'tab_bar_data': '底部导航数据',
                     'applet_id': '小程序ID',
                     'appid': '小程序APPID',
+                    'nick_name': '小程序名字',
+                    'head_img': '小程序头像',
+                    'qrcode_url': '小程序二维码',
                     'is_authorization': '小程序是否授权',
                     'create_datetime': '创建时间',
                 }
