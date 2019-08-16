@@ -108,9 +108,9 @@ def xiaohongshu_fugai_update_data():
                     obj.is_shoulu = True
                     item_data['rank'] = item['rank']
 
-                obj.save()
             obj.biji_num = total_count
             obj.update_datetime = datetime.datetime.now()
+            obj.save()
 
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             objs = models.XiaohongshuFugaiDetail.objects.filter(keywords=obj, create_datetime__gt=now_date)
