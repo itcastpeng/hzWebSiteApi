@@ -500,7 +500,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 response.msg = '该小程序不存在'
 
     else:
-
+        print('=================')
         # 查询个人XCX/GZH
         if oper_type == 'select_xcx_gzh_info':
             applet_objs = models.ClientApplet.objects.filter(user_id=user_id)
@@ -724,6 +724,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
         # 临时 保存任务
         elif oper_type == 'linshibaocun':
+            print('---------------------------')
             keywords = request.GET.get('keywords')
             comments = request.GET.get('comments')
 
