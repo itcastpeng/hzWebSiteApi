@@ -536,10 +536,6 @@ class XhsUserId(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-class linshi(models.Model):
-    linshi = models.TextField(verbose_name='临时', null=True)
-
-
 
 
 
