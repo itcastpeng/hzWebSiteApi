@@ -172,7 +172,7 @@ def page_oper(request, oper_type, o_id):
                 name = forms_obj.cleaned_data['name']
                 data = forms_obj.cleaned_data['data']
                 page_group_id = forms_obj.cleaned_data['page_group_id']
-                print('data -->', data)
+                # print('data -->', data)
                 if name:
                     update_data['name'] = name
                 if data:

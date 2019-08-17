@@ -330,7 +330,6 @@ class tripartite_platform_oper():
                 "tabBar":{
                 },
             }
-        print('-----ext_json----ext_json------ext_json----> ', ext_json)
         url = 'https://api.weixin.qq.com/wxa/commit?access_token={}'.format(token)
 
         data = {
