@@ -3,8 +3,7 @@ from django.conf.urls import url
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class
-from api.views_dir.xcx import template as xcx_template
-
+from api.views_dir.xcx import template as xcx_template, form_management
 
 urlpatterns = [
 
@@ -76,6 +75,9 @@ urlpatterns = [
     url(r'^xcx/login$', login.xcx_login),    # 小程序登录
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
 
+    # ------------------------------------ 表单管理 -------------------------------
+    url(r'^xcx/form_management$', form_management.form_management),
+    url(r'^xcx/form_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', form_management.form_management_oper),
 
     # ---------------------------- 微信三方平台管理 -------------------------------
     url(r'^tripartite_platform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', tripartite_platform.tripartite_platform_admin),
