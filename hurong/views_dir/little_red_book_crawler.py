@@ -298,7 +298,7 @@ def little_red_book_crawler(request, oper_type):
         elif oper_type == 'update_task_status':
             uid = request.GET.get('uid')
             q = Q()
-            q.add(Q(keyword_id=uid) & Q(last_select_time=datetime.date.today()) & Q(article_comment__isnull=True), Q.AND)
+            q.add(Q(id=uid) & Q(last_select_time=datetime.date.today()) & Q(article_comment__isnull=True), Q.AND)
             # q.add(Q(last_select_time__lte=datetime.date.today()) & Q(keyword_id=uid) | Q(article_comment__isnull=True), Q.AND)
 
             print('q-------> ', q)
@@ -307,7 +307,8 @@ def little_red_book_crawler(request, oper_type):
             response.code = 200
 
             if comments_count <= 0:
-                objs = models.XhsKeywordsList.objects.filter(id=uid)
+                comment_obj = models.ArticlesAndComments.objects.get(id=uid)
+                objs = models.XhsKeywordsList.objects.filter(id=comment_obj.keyword_id)
                 now = datetime.datetime.today()
                 objs.update(
                     is_success_time=now
