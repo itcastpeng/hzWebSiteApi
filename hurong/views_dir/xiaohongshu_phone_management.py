@@ -229,7 +229,7 @@ def xiaohongshu_phone_management(request, oper_type):
                 for obj in objs:
                     phone_num = obj.phone_num
                     phone_objs = obj.phonenumber_set.all()
-                    if phone_objs:
+                    if not phone_num and phone_objs:
                         phone_obj = phone_objs[0]
                         phone_num = phone_obj.phone_num
 
