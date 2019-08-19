@@ -261,7 +261,7 @@ def little_red_book_crawler(request, oper_type):
             data = {}
             if not flag:# 笔记任务
                 query_q = Q()
-                query_q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
+                query_q.add(Q(last_select_time__lt=now) | Q(last_select_time__isnull=True), Q.AND)
                 print('query_q----> ', query_q)
                 objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
                 if objs:
