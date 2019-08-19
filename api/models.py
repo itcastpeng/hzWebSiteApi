@@ -283,7 +283,11 @@ class ReservationForm(models.Model):
     form_content = models.TextField(verbose_name='表单数据', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-
+# 文章表
+class Article(models.Model):
+    template = models.ForeignKey('Template', verbose_name='对应模板')
+    article_content = models.TextField(verbose_name='文章内容')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
