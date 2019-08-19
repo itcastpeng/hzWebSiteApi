@@ -301,6 +301,7 @@ def little_red_book_crawler(request, oper_type):
             q.add(Q(last_select_time__lte=datetime.date.today()) & Q(keyword_id=uid), Q.OR)
             q.add(Q(article_comment__isnull=True), Q.OR)
             comments_count = models.ArticlesAndComments.objects.filter(q).count()
+            print('comments_count-------------------提交剩余数量=------------》', comments_count)
             if comments_count <= 0:
                 objs = models.XhsKeywordsList.objects.filter(id=uid)
                 now = datetime.datetime.today()
