@@ -266,9 +266,7 @@ def little_red_book_crawler(request, oper_type):
                 objs = models.XhsKeywordsList.objects.filter(query_q).exclude(is_success_time__gte=datetime.date.today())
                 if objs:
                     obj = objs[0]
-                    # comments_count = models.ArticlesAndComments.objects.filter(keyword_id=obj.id).count()
-                    # print('comments_count-------------> ', comments_count, obj.number)
-                    # if comments_count <= obj.number:
+                    models.ArticlesAndComments.objects.filter(keyword_id=obj.id).delete()
                     flag = True
                     obj.last_select_time = deletionTime
                     obj.save()
