@@ -304,13 +304,14 @@ def little_red_book_crawler(request, oper_type):
             print('q-------> ', q)
             comments_count = models.ArticlesAndComments.objects.filter(q).count()
             print('comments_count-------------------提交剩余数量=------------》', comments_count)
+            response.code = 200
+
             if comments_count <= 0:
                 objs = models.XhsKeywordsList.objects.filter(id=uid)
                 now = datetime.datetime.today()
                 objs.update(
                     is_success_time=now
                 )
-                response.code = 200
                 if objs:
                     obj = objs[0]
                     # 通知小红书 完成数据
@@ -320,6 +321,7 @@ def little_red_book_crawler(request, oper_type):
                         'id':obj.uid,
                     }
                     requests.post(url, data=data)
+            response.msg = '未完成数量:{}'.format(comments_count)
 
         # 判断是否有查询 用户ID 任务
         # elif oper_type == 'get_user_id_task':
