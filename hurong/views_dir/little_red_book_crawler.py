@@ -300,7 +300,9 @@ def little_red_book_crawler(request, oper_type):
             q = Q()
 
             comment_obj = models.ArticlesAndComments.objects.get(id=uid)
-            q.add(Q(keyword_id=comment_obj.keyword_id) & Q(last_select_time=datetime.date.today()) & Q(article_comment__isnull=True), Q.AND)
+            q.add(Q(keyword_id=comment_obj.keyword_id), Q.AND)
+            q.add(Q(last_select_time=datetime.date.today()) & Q(article_comment__isnull=True), Q.OR)
+            q.add(Q(last_select_time__isnull=True) | Q(last_select_time=datetime.date.today()) & Q(article_comment__isnull=True), Q.AND)
             # q.add(Q(last_select_time__lte=datetime.date.today()) & Q(keyword_id=uid) | Q(article_comment__isnull=True), Q.AND)
 
             print('q-------> ', q)
