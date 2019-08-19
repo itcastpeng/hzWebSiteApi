@@ -365,7 +365,10 @@ def tripartite_platform_oper(request, oper_type):
                     )
                     status = data.get('status')
 
-                    models.AppletCodeVersion.objects.filter(auditid=auditid).update(status=status) # 更新审核状态
+                    models.AppletCodeVersion.objects.filter(auditid=auditid).update(
+                        status=status,
+                        user_desc=data.get('members')
+                    ) # 更新审核状态
                     code = 301
                     if data.get('errcode') in [0, '0']:
                         code = 200

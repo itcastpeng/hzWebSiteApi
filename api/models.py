@@ -255,19 +255,19 @@ class AppletCodeVersion(models.Model):
     status = models.SmallIntegerField(verbose_name='审核状态', default=2, choices=choices_status)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-# 小程序代码审核上线(代小程序上线)
-class GenerationAppletOnline(models.Model):
-    small_program = models.ForeignKey('ClientApplet', verbose_name='对应小程序')
-    auditid = models.CharField(verbose_name='审核编号', max_length=64)
-
-    status_choices = (
-        (1, '已提交审核'),
-        (2, '审核成功'),
-        (3, '审核失败'),
-    )
-    status = models.SmallIntegerField(verbose_name='审核状态', choices=status_choices, default=1)
-    reason = models.CharField(verbose_name='失败原因', max_length=512, null=True)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+# # 小程序代码审核上线(代小程序上线)
+# class GenerationAppletOnline(models.Model):
+#     small_program = models.ForeignKey('ClientApplet', verbose_name='对应小程序')
+#     auditid = models.CharField(verbose_name='审核编号', max_length=64)
+#
+#     status_choices = (
+#         (1, '已提交审核'),
+#         (2, '审核成功'),
+#         (3, '审核失败'),
+#     )
+#     status = models.SmallIntegerField(verbose_name='审核状态', choices=status_choices, default=1)
+#     reason = models.CharField(verbose_name='失败原因', max_length=512, null=True)
+#     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 # 小程序体验者列表
 class AppletExperiencerList(models.Model):
@@ -276,6 +276,13 @@ class AppletExperiencerList(models.Model):
     wechat_id = models.CharField(verbose_name='体验者微信ID', max_length=256)
     is_delete = models.BooleanField(verbose_name='是否删除', default=0)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 预约表单 表
+class ReservationForm(models.Model):
+    template = models.ForeignKey('Template', verbose_name='对应模板')
+    form_content = models.TextField(verbose_name='表单数据', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
 
 
 
