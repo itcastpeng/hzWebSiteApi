@@ -278,12 +278,6 @@ class AppletExperiencerList(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-# 临时
-class test(models.Model):
-    comments = models.TextField(verbose_name='评论', null=True)
-    keywords = models.CharField(verbose_name='关键词', max_length=128, null=True)
-
-
 
 
 
