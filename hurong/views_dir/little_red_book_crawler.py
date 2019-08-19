@@ -282,7 +282,7 @@ def little_red_book_crawler(request, oper_type):
                 if objs:
                     type_status = 2
                     comment_obj = objs[0]
-                    comment_obj.last_select_time = deletionTime
+                    comment_obj.last_select_time = now_date
                     comment_obj.save()
                     note_id = comment_obj.note_id
                     data['id'] = comment_obj.id
