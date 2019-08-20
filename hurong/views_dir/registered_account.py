@@ -52,6 +52,7 @@ def registered_account(request, oper_type):
                         'remark':obj.remark,
                         'gender':obj.get_gender_display(),
                         'birthday':obj.birthday,
+                        'head_portrait':obj.head_portrait,
                         'is_register':obj.is_register,
                         'register_datetime':register_datetime,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
