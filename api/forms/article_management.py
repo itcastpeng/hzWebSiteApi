@@ -82,7 +82,7 @@ class UpdateForm(forms.Form):
 
     def clean_o_id(self):
         o_id = self.data.get('o_id')
-        objs = models.ReservationForm.objects.filter(id=o_id)
+        objs = models.Article.objects.filter(id=o_id)
         if objs:
             return o_id
         else:
