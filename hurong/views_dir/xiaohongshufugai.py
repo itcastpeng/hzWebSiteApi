@@ -257,7 +257,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
                     q.add(Q(**{'keywords__keywords': select_keywords}), Q.AND)
                     q.add(Q(**{'keywords__url': url}), Q.AND)
-                    q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
+                    # q.add(Q(**{'create_datetime__gt': datetime.datetime.now().strftime('%Y-%m-%d')}), Q.AND)
 
                 else:
                     q.add(Q(**{'keywords_id': o_id}), Q.AND)
