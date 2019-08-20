@@ -532,7 +532,7 @@ class tripartite_platform_oper():
         post_data = {
             "template_id": template_id
         }
-        ret = requests.post(url, data=post_data)
+        ret = requests.post(url, data=json.dumps(post_data))
         print('删除指定小程序代码模版=----------------------', ret.json())
         return ret.json()
 
