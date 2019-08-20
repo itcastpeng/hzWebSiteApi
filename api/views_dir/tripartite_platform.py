@@ -231,8 +231,8 @@ def tripartite_platform_oper(request, oper_type):
 
         # 删除指定小程序代码模版
         elif oper_type == 'deletes_specified_applet_code_template':
-            template_id = request.POST.get('template_id')
-            data = tripartite_platform_objs.deletes_specified_applet_code_template(template_id)
+            applet_template_id = request.POST.get('applet_template_id')
+            data = tripartite_platform_objs.deletes_specified_applet_code_template(applet_template_id)
             errmsg = data.get('errmsg')
             code = 301
             if data.get('errcode') in [0, '0']:
