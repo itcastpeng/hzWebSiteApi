@@ -297,6 +297,7 @@ class tripartite_platform_oper():
 
         template_data = self.xcx_get_code_template()
         template_list = template_data.get('template_list')
+        template_list = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
         template_id = 0
         user_version = ''
         if len(template_list) >= 1:
