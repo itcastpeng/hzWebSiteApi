@@ -310,8 +310,7 @@ def tripartite_platform_oper(request, oper_type):
                     template_list = response_data.get('template_list')
                     response.code = 200
                     response.msg = '查询成功'
-                    response.data = template_list
-
+                    response.data = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
                 else:
                     response.msg = response_data.get('errmsg')
 
