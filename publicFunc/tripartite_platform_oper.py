@@ -9,6 +9,7 @@ encoding_appid = 'wx1f63785f9acaab9c'
 
 # 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
 def QueryWhetherCallingCredentialExpired(appid, auth_type):
+    print('appid-----------------------> ', appid)
     """
 
     :param appid:  公众号/小程序 appid
