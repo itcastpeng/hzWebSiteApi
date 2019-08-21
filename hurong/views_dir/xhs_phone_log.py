@@ -147,7 +147,18 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                         "iccid": iccid
                     }
                     ip = request.META['HTTP_X_FORWARDED_FOR']
+
                     objs = models.XiaohongshuPhone.objects.filter(**data)
+                    request_type = request.GET.get('request_type', None)
+                    if request_type and objs:
+                        response.code = 301
+                        response.msg = '设备已存在, 请联系负责人处理'
+                        response.data = {
+                            'imsi':imsi,
+                            'iccid':iccid,
+                        }
+                        return JsonResponse(response.__dict__)
+
                     if objs:
                         obj = objs[0]
                         obj.ip_addr = ip_addr
