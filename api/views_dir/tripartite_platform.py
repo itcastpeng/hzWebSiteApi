@@ -733,34 +733,39 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
 # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
 def tongzhi(request):
-    try:
-        signature = request.GET.get('signature')
-        timestamp = request.GET.get('timestamp')
-        nonce = request.GET.get('nonce')
-        msg_signature = request.GET.get('msg_signature')
-        user_id = request.GET.get('user_id')
-        postdata = request.body.decode(encoding='UTF-8')
+    # try:
+    signature = request.GET.get('signature')
+    timestamp = request.GET.get('timestamp')
+    nonce = request.GET.get('nonce')
+    msg_signature = request.GET.get('msg_signature')
+    user_id = request.GET.get('user_id')
+    postdata = request.body.decode(encoding='UTF-8')
 
-        xml_tree = ET.fromstring(postdata)
-        appid = xml_tree.find('AppId').text
-        Encrypt = xml_tree.find('Encrypt').text
-        objs = models.TripartitePlatform.objects.filter(
-            appid=appid
+    xml_tree = ET.fromstring(postdata)
+    appid = xml_tree.find('AppId').text
+    Encrypt = xml_tree.find('Encrypt').text
+    objs = models.TripartitePlatform.objects.filter(
+        appid=appid
+    )
+    if objs:
+        objs.update(linshi=postdata)
+        wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
+        ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+        decryp_xml_tree = ET.fromstring(decryp_xml)
+        ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+        objs.update(
+            component_verify_ticket=ComponentVerifyTicket
         )
-        if objs:
-            objs.update(linshi=postdata)
-            wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
-            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-            decryp_xml_tree = ET.fromstring(decryp_xml)
-            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-            objs.update(
-                component_verify_ticket=ComponentVerifyTicket
-            )
-    except Exception as e:
-        content = '{}三方平台后台回调异常:{}'.format(
-            datetime.datetime.today(), e
-        )
-        send_error_msg(content, 5)
+    else:
+        print('request.body--------------------------------------> ', request.body)
+        print('request.body--------------------------------------> ', request.POST)
+        print('request.body--------------------------------------> ', request.GET)
+
+    # except Exception as e:
+    #     content = '{}三方平台后台回调异常:{}'.format(
+    #         datetime.datetime.today(), e
+    #     )
+    #     send_error_msg(content, 5)
 
     return HttpResponse('success')
 
