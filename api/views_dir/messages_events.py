@@ -32,9 +32,10 @@ def messages_events_oper(request, oper_type, appid):
         collection = DOMTree.documentElement
         MsgType = collection.getElementsByTagName("MsgType")[0].childNodes[0].data
 
+        print('Event------------Event-------> ', MsgType)
         if MsgType == 'event': # api消息
             Event = collection.getElementsByTagName("Event")[0].childNodes[0].data
-            print('Event------------Event-------> ', Event)
+            print('=============Event------------Event-------> ', Event)
             ToUserName = collection.getElementsByTagName("ToUserName")[0].childNodes[0].data
             FromUserName = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
             CreateTime = collection.getElementsByTagName("CreateTime")[0].childNodes[0].data

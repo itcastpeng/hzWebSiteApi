@@ -247,13 +247,13 @@ class Prpcrypt(object):
         xml_content = content[ 4: xml_len+4:].decode("utf8")
         from_appid = content[xml_len+4:]
 
-        print('----------pad ------>', pad)
-        print('----------plain_text ------>', plain_text)
-        print('----------content ------>', content)
-        print('----------xml_len ------>', xml_len)
-        print ('------- 解密后xml_content ----->>', xml_content)
-        print ('------- 解密后from_appid ----->>', from_appid)
-        print ('------- 解密后appid ----->>', appid)
+        # print('----------pad ------>', pad)
+        # print('----------plain_text ------>', plain_text)
+        # print('----------content ------>', content)
+        # print('----------xml_len ------>', xml_len)
+        # print ('------- 解密后xml_content ----->>', xml_content)
+        # print ('------- 解密后from_appid ----->>', from_appid)
+        # print ('------- 解密后appid ----->>', appid)
 
         if from_appid.decode("utf8") != appid:
             return ierror.WXBizMsgCrypt_ValidateAppid_Error,None
