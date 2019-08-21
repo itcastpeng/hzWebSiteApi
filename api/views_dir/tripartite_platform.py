@@ -258,9 +258,9 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
-                print('credential_expired_data--------credential_expired_data--------------> ', credential_expired_data)
                 if not credential_expired_data.get('flag'):
-                    credential_expired_data = CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                    appid = 'wx700c48cb72073e61'
+                    credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
                     authorizer_access_token = credential_expired_data.get('authorizer_access_token')
 
                 form_data = {
