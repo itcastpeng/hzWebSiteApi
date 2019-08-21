@@ -733,12 +733,12 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
 # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
 def tongzhi(request):
-    # try:
+
+    user_id = request.GET.get('user_id')
     signature = request.GET.get('signature')
     timestamp = request.GET.get('timestamp')
     nonce = request.GET.get('nonce')
     msg_signature = request.GET.get('msg_signature')
-    user_id = request.GET.get('user_id')
     postdata = request.body.decode(encoding='UTF-8')
 
     xml_tree = ET.fromstring(postdata)
@@ -755,19 +755,22 @@ def tongzhi(request):
     print('=============================', postdata)
     print('=============================',decryp_xml)
     print('=============================', decryp_xml_tree)
-    component_verify_ticket = decryp_xml_tree.find("component_verify_ticket").text
-    if component_verify_ticket: # 获取ticket
+    InfoType = decryp_xml_tree.find("InfoType").text
+    if InfoType == 'unauthorized': # 取消授权通知
+        # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
+        pass
+
+
+
+
+    else: # 获取ticket
         ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
         objs.update(
             component_verify_ticket=ComponentVerifyTicket
         )
 
+
     objs.update(linshi=postdata)
-    # except Exception as e:
-    #     content = '{}三方平台后台回调异常:{}'.format(
-    #         datetime.datetime.today(), e
-    #     )
-    #     send_error_msg(content, 5)
 
     return HttpResponse('success')
 
