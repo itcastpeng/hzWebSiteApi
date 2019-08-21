@@ -31,8 +31,8 @@ def messages_events_oper(request, oper_type, appid):
         DOMTree = xmldom.parseString(decrypted_xml)
         collection = DOMTree.documentElement
         MsgType = collection.getElementsByTagName("MsgType")[0].childNodes[0].data
-        print('MsgType--MsgType-MsgType-MsgType-MsgType-MsgType-MsgType--------> ', MsgType)
-        if MsgType == 'event': # 消息类型
+        print('collection------collection-collection-collection-collection-collection-collection-----> ', collection)
+        if MsgType == 'event': # api消息
             Event = collection.getElementsByTagName("Event")[0].childNodes[0].data
             ToUserName = collection.getElementsByTagName("ToUserName")[0].childNodes[0].data
             FromUserName = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
@@ -47,7 +47,7 @@ def messages_events_oper(request, oper_type, appid):
             else:
                 pass
 
-        else:
+        else: # 文本消息
             pass
 
 
