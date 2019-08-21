@@ -751,6 +751,7 @@ def tongzhi(request):
     wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
     ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
 
+    print('=============================', postdata, decryp_xml)
     decryp_xml_tree = ET.fromstring(decryp_xml)
     component_verify_ticket = decryp_xml_tree.find("component_verify_ticket").text
     if component_verify_ticket: # 获取ticket
@@ -758,8 +759,6 @@ def tongzhi(request):
         objs.update(
             component_verify_ticket=ComponentVerifyTicket
         )
-    else:
-        print('=============================', postdata, decryp_xml)
 
     objs.update(linshi=postdata)
     # except Exception as e:
