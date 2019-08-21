@@ -109,7 +109,7 @@ def abnormal_number_columns(request):
         yidongshebei_num = models.XiaohongshuPhone.objects.filter(
             name__isnull=False,
             status=2
-        ).exclude(id__in=exclude_list).count()
+        ).exclude(id__in=exclude_list, is_debug=True).count()
 
         biji_num = models.XiaohongshuBiji.objects.filter(
             status=3
