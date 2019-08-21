@@ -148,7 +148,7 @@ class IsTodayUpdateReading(forms.Form):
                 return user_objs[0].id
 
             else:
-                self.add_error('imsi', '')
+                self.add_error('imsi', '未绑定用户')
         else:
             self.add_error('imsi', '设备不存在')
 
