@@ -740,6 +740,9 @@ def tongzhi(request):
     msg_signature = request.GET.get('msg_signature')
     user_id = request.GET.get('user_id')
     postdata = request.body.decode(encoding='UTF-8')
+    print('request.body--------------------------------------> ', request.body)
+    print('request.body--------------------------------------> ', request.POST)
+    print('request.body--------------------------------------> ', request.GET)
 
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
@@ -756,10 +759,7 @@ def tongzhi(request):
         objs.update(
             component_verify_ticket=ComponentVerifyTicket
         )
-    else:
-        print('request.body--------------------------------------> ', request.body)
-        print('request.body--------------------------------------> ', request.POST)
-        print('request.body--------------------------------------> ', request.GET)
+
 
     # except Exception as e:
     #     content = '{}三方平台后台回调异常:{}'.format(
