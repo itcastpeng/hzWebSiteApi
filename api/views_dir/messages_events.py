@@ -33,9 +33,11 @@ def messages_events_oper(request, oper_type, appid):
         MsgType = collection.getElementsByTagName("MsgType")[0].childNodes[0].data
 
         print('Event------------Event-------> ', MsgType)
+        Event = collection.getElementsByTagName("Event")[0].childNodes[0].data
+        print('Event-1-> ', DOMTree)
+        print('Event-->2 ', collection)
+        print('Event--3> ', Event)
         if MsgType == 'event': # api消息
-            Event = collection.getElementsByTagName("Event")[0].childNodes[0].data
-            print('=============Event------------Event-------> ', Event)
             ToUserName = collection.getElementsByTagName("ToUserName")[0].childNodes[0].data
             FromUserName = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
             CreateTime = collection.getElementsByTagName("CreateTime")[0].childNodes[0].data
@@ -47,7 +49,8 @@ def messages_events_oper(request, oper_type, appid):
                 pass
 
             else:
-                pass
+                content = collection.getElementsByTagName("Content")[0].childNodes[0].data
+                print('content--------> ', content)
 
         else: # 文本消息
             pass
