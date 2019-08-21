@@ -740,9 +740,6 @@ def tongzhi(request):
     msg_signature = request.GET.get('msg_signature')
     user_id = request.GET.get('user_id')
     postdata = request.body.decode(encoding='UTF-8')
-    print('request.body--------------------------------------> ', request.body)
-    print('request.body--------------------------------------> ', request.POST)
-    print('request.body--------------------------------------> ', request.GET)
 
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
@@ -756,7 +753,9 @@ def tongzhi(request):
             objs.update(linshi=postdata)
             wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
             ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+            print('decryp_xml-------> ', decryp_xml)
             decryp_xml_tree = ET.fromstring(decryp_xml)
+            print('decryp_xml_tree--------decryp_xml_tree-decryp_xml_tree-------> ', decryp_xml_tree)
             ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
             objs.update(
                 component_verify_ticket=ComponentVerifyTicket
