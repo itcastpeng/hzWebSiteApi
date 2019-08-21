@@ -755,10 +755,11 @@ def tongzhi(request):
 
     if oper_type == 'unauthorized': # 取消授权通知
         # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
-        pass
+        print('-------------------取消授权通知-', decryp_xml_tree)
 
     elif oper_type == 'authorized':  # 授权通知
-        pass
+        print('-------------------授权成功通知-', decryp_xml_tree)
+
 
 
     elif oper_type == 'component_verify_ticket': # 获取ticket
