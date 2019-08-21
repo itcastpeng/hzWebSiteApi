@@ -333,7 +333,7 @@ class tripartite_platform_oper():
                 },
             }
         url = 'https://api.weixin.qq.com/wxa/commit?access_token={}'.format(token)
-
+        print('ext_json-----ext_json==========ext_json=============> ', ext_json)
         data = {
             # 代码库中的代码模板ID
             "template_id": template_id,
