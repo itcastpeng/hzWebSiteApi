@@ -20,7 +20,7 @@ def messages_events_oper(request, oper_type, appid):
         postdata = request.body.decode(encoding='UTF-8')
         # xml_tree = ET.fromstring(postdata)
         # encrypt = xml_tree.find("Encrypt").text
-
+        print('==--------121111111111postdata-> ', postdata)
         crypto = WeChatCrypto(encoding_token, encodingAESKey, encoding_appid)
         decrypted_xml = crypto.decrypt_message(
             postdata,
@@ -31,7 +31,7 @@ def messages_events_oper(request, oper_type, appid):
         DOMTree = xmldom.parseString(decrypted_xml)
         collection = DOMTree.documentElement
         MsgType = collection.getElementsByTagName("MsgType")[0].childNodes[0].data
-        print('collection------collection-collection-collection-collection-collection-collection-----> ', collection)
+
         if MsgType == 'event': # api消息
             Event = collection.getElementsByTagName("Event")[0].childNodes[0].data
             ToUserName = collection.getElementsByTagName("ToUserName")[0].childNodes[0].data
