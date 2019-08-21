@@ -747,18 +747,20 @@ def tongzhi(request):
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
     Encrypt = xml_tree.find('Encrypt').text
-    objs = models.TripartitePlatform.objects.filter(
-        appid=appid
-    )
-    if objs:
-        objs.update(linshi=postdata)
-        wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
-        ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-        decryp_xml_tree = ET.fromstring(decryp_xml)
-        ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-        objs.update(
-            component_verify_ticket=ComponentVerifyTicket
+
+    if timestamp and nonce: # 授权回调
+        objs = models.TripartitePlatform.objects.filter(
+            appid=appid
         )
+        if objs:
+            objs.update(linshi=postdata)
+            wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
+            ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+            decryp_xml_tree = ET.fromstring(decryp_xml)
+            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+            objs.update(
+                component_verify_ticket=ComponentVerifyTicket
+            )
 
 
     # except Exception as e:

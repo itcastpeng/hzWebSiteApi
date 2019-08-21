@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^login$', login.login),                  # 账号密码登录
     url(r'^wechat_login$', login.wechat_login),    # 微信扫码登录
     url(r'^qiniu/get_upload_token$', qiniu.get_upload_token),    # 获取七牛云上传token
-    url(r'^messages_events/(?P<oper_type>\w+)/(?P<appid>\d+)$', messages_events.messages_events_oper),      # 三方平台操作 消息接收
+    url(r'^messages_events/(?P<oper_type>\w+)/(?P<appid>\w+)$', messages_events.messages_events_oper),      # 三方平台操作 消息接收
 
 
     # ------------------------ 后台管理 ----------------------
