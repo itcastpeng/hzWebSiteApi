@@ -750,20 +750,18 @@ def tongzhi(request):
     )
     wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
     ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-
     decryp_xml_tree = ET.fromstring(decryp_xml)
-    print('=============================', postdata)
-    print('=============================',decryp_xml)
-    print('=============================', decryp_xml_tree)
-    InfoType = decryp_xml_tree.find("InfoType").text
-    if InfoType == 'unauthorized': # 取消授权通知
+    oper_type = decryp_xml_tree.find("InfoType").text
+
+    if oper_type == 'unauthorized': # 取消授权通知
         # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
         pass
 
+    elif oper_type == 'authorized':  # 授权通知
+        pass
 
 
-
-    else: # 获取ticket
+    elif oper_type == 'component_verify_ticket': # 获取ticket
         ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
         objs.update(
             component_verify_ticket=ComponentVerifyTicket
