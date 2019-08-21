@@ -752,7 +752,7 @@ def tongzhi(request):
     ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
     decryp_xml_tree = ET.fromstring(decryp_xml)
     oper_type = decryp_xml_tree.find("InfoType").text
-
+    print('*******************//////////*******************/////////******************')
     if oper_type == 'unauthorized': # 取消授权通知
         # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
         print('-------------------取消授权通知-', decryp_xml_tree)
@@ -763,6 +763,7 @@ def tongzhi(request):
 
 
     elif oper_type == 'component_verify_ticket': # 获取ticket
+        print('=======================================获取ticket')
         ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
         objs.update(
             component_verify_ticket=ComponentVerifyTicket
