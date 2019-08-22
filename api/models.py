@@ -288,6 +288,8 @@ class ReservationForm(models.Model):
 # 文章表
 class Article(models.Model):
     template = models.ForeignKey('Template', verbose_name='对应模板')
+    article_title = models.CharField(verbose_name='文章标题', max_length=512, null=True)
+    thumbnail = models.CharField(verbose_name='缩略图', max_length=512, null=True)
     article_content = models.TextField(verbose_name='文章内容')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
