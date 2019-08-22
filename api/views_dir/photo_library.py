@@ -29,6 +29,7 @@ def photo_library(request):
                 'group_id': '',
                 'name': '__contains',
                 'create_datetime': '',
+                'template_id': '',
             }
             q = conditionCom(request, field_dict)
             # print('q -->', q)
@@ -93,6 +94,7 @@ def photo_library_oper(request, oper_type, o_id):
                 'create_user_id': user_id,
                 'group_id': request.POST.get('group_id'),
                 'img_url': request.POST.get('img_url'),
+                'template_id': request.POST.get('template_id'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
@@ -110,15 +112,14 @@ def photo_library_oper(request, oper_type, o_id):
             form_data = {
                 'create_user_id': user_id,
                 'update_id_list': request.POST.get('update_id_list'),
-                'group_id': request.POST.get('group_id')
+                'group_id': request.POST.get('group_id'),
             }
             print(request.POST)
             forms_obj = UpdateForm(form_data)
             if forms_obj.is_valid():
-                print("验证通过 -->", forms_obj.cleaned_data)
                 update_id_list = forms_obj.cleaned_data.get('update_id_list')
                 group_id = forms_obj.cleaned_data.get('group_id')
-                print('group_id -->', group_id)
+
                 models.PhotoLibrary.objects.filter(
                     id__in=update_id_list,
                     create_user_id=user_id

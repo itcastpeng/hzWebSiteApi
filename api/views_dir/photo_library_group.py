@@ -17,6 +17,7 @@ def photo_library_group(request):
     if request.method == "GET":
         forms_obj = SelectForm(request.GET)
         if forms_obj.is_valid():
+            template_id = request.GET.get('template_id')
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             get_type = forms_obj.cleaned_data['get_type']
@@ -35,6 +36,7 @@ def photo_library_group(request):
                 q.add(Q(create_user__role_id__in=admin_list), Q.AND)
             elif get_type == "is_me":
                 q.add(Q(**{'create_user_id': user_id}), Q.AND)
+                q.add(Q(**{'template_id': template_id}), Q.AND)
 
             objs = models.PhotoLibraryGroup.objects.filter(q).order_by(order)
             count = objs.count()
@@ -96,6 +98,7 @@ def photo_library_group_oper(request, oper_type, o_id):
                 'create_user_id': user_id,
                 'parent_id': request.POST.get('parent_id'),
                 'name': request.POST.get('name'),
+                'template_id': request.POST.get('template_id'),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
