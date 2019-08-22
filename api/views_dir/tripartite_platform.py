@@ -566,15 +566,17 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
                 order = request.GET.get('order', '-create_datetime')
+                appid = request.GET.get('appid')
                 field_dict = {
                     'user_desc': '__contains',
-                    'user_version': '__contains'
+                    'user_version': '__contains',
                 }
                 q = conditionCom(request, field_dict)
                 print('q -->', q)
 
                 objs = models.AppletCodeVersion.objects.filter(
                     q,
+                    applet__appid=appid
                 ).order_by(order)
                 count = objs.count()
                 if length != 0:
