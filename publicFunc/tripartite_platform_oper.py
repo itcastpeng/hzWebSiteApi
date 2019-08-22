@@ -177,6 +177,7 @@ class tripartite_platform_oper():
                         authorizer_access_token_expires_in=expires_in,
                         authorizer_refresh_token=authorizer_refresh_token
                     )
+            self.get_account_information(auth_type, obj.appid)  # 获取基本信息入库
             return obj.id
 
 

@@ -804,7 +804,6 @@ def authorize_callback(request):
     else:
         obj = models.ClientApplet.objects.get(id=id)
 
-    tripartite_platform_objs.get_account_information(authorization_type, obj.appid)  # 获取基本信息入库
     # ==== 更改 GZH/XCX 授权码 和 过期时间
     obj.auth_code = auth_code
     obj.auth_code_expires_in=int(time.time()) + int(expires_in)
