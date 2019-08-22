@@ -272,9 +272,11 @@ def tripartite_platform_oper(request, oper_type):
                     appid = 'wx700c48cb72073e61'
                     credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
                     authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+                    print('template_id----------template_id---------> ', template_id, appid, authorizer_access_token)
                     data_dict['id'] = template_id
                     data_dict['appid'] = appid
                     data_dict['token'] = authorizer_access_token
+                    print('data_dict-----------> ', data_dict)
                     tripartite_platform_objs.xcx_update_code(data_dict)
                     data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
@@ -286,7 +288,7 @@ def tripartite_platform_oper(request, oper_type):
                 else:
                     obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
                     if obj.template:
-                        data = {
+                        data_dict = {
                             'appid': appid,
                             'token': authorizer_access_token,
                             'user_desc': user_desc,
@@ -294,7 +296,7 @@ def tripartite_platform_oper(request, oper_type):
                             'user_token': user_obj.token,
                             'id': obj.template_id,
                         }
-                        tripartite_platform_objs.xcx_update_code(data)
+                        tripartite_platform_objs.xcx_update_code(data_dict)
                         data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
                         code = 200
@@ -304,7 +306,6 @@ def tripartite_platform_oper(request, oper_type):
                     else:
                         code = 301
                         msg = '请先绑定模板'
-                print('data_dict-----------> ', data_dict)
                 response.code = code
                 response.msg = msg
                 response.data = response_data
