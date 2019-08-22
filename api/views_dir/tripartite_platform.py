@@ -797,7 +797,7 @@ def authorize_callback(request):
 
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     # # 使用授权码 获取调用 GZH/XCX 凭证
-    id = tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code, user_id) # 创建/更新 授权
+    id = tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code, user_id, template_id) # 创建/更新 授权
 
     if authorization_type in [1, '1']:
         obj = models.CustomerOfficialNumber.objects.get(id=id)
