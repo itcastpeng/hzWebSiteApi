@@ -492,6 +492,39 @@ def xhs_bpw_keywords_rsync():
 # 同步小红书霸屏王关键词覆盖数据到redis中
 @app.task
 def xhs_bpw_keywords_fugai_rsync():
+    # ============================================================================
+    objs = models.xhs_bpw_biji_url.objects.filter(create_datetime__isnull=False)
+    for obj in objs:
+        flag = 0
+        biji_url = obj.biji_url
+        print('link====================> ', biji_url)
+        while True:
+            flag += 1
+            if 'www' not in biji_url:
+                if biji_url.startswith("http://t.cn"):
+                    num = 0
+                    while True:
+                        num += 1
+                        try:
+                            ret = requests.get(biji_url, allow_redirects=False)
+                            biji_url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                        except Exception:
+                            pass
+                        if num >= 3:
+                            break
+                else:
+                    try:
+                        biji_url = biji_url.split('?')[0]
+                    except Exception:
+                        pass
+
+            if flag >= 5:
+                break
+
+        obj.biji_url = biji_url
+        obj.save()
+    # ================================================================================
+
     redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
 
     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -607,39 +640,7 @@ def determine_phone_number_ownership():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/determine_phone_number_ownership'
     requests.post(url)
 
-# 笔记链接转为 正常链接
-@app.task
-def note_links_converted_normal_links():
-    objs = models.xhs_bpw_biji_url.objects.filter(create_datetime__isnull=False)
-    for obj in objs:
-        flag = 0
-        biji_url = obj.biji_url
-        print('link====================> ', biji_url)
-        while True:
-            flag += 1
-            if 'www' not in biji_url:
-                if biji_url.startswith("http://t.cn"):
-                    num = 0
-                    while True:
-                        num += 1
-                        try:
-                            ret = requests.get(biji_url, allow_redirects=False)
-                            biji_url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-                        except Exception:
-                            pass
-                        if num >= 3:
-                            break
-                else:
-                    try:
-                        biji_url = biji_url.split('?')[0]
-                    except Exception:
-                        pass
 
-            if flag >= 5:
-                break
-
-        obj.biji_url = biji_url
-        obj.save()
 
 
 

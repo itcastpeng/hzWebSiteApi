@@ -131,11 +131,6 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '*/5', '*', '*', '*'),
     },
 
-    # 笔记链接转为 正常链接 五小时一次
-    'note_links_converted_normal_links': {
-        'task': 'hz_website_api_celery.tasks.note_links_converted_normal_links',
-        'schedule': crontab('0', '*/5', '*', '*', '*'),
-    },
 }
 app.conf.update(
     result_expires=3600,
