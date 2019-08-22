@@ -790,7 +790,7 @@ def authorize_callback(request):
                """
     print('----------========11111111111================.-=------------> ', request.GET)
     print('----------========11111111111================.-=------------> ', request.POST)
-    print('----------========11111111111================.-=------------> ', request.body)
+    print('----------========11111111111================.-=------------> ', request.body.decode(encoding='UTF-8'))
     template_id = request.GET.get('template_id')
     auth_code = request.GET.get('auth_code')
     expires_in = request.GET.get('expires_in')
