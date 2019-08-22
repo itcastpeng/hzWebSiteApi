@@ -29,6 +29,18 @@ class AddForm(forms.Form):
             'required': "登录失败"
         }
     )
+    article_title = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "文章标题不能为空"
+        }
+    )
+    thumbnail = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "文章缩略图不能为空"
+        }
+    )
 
     def clean_template_id(self):
         template_id = self.data.get('template_id')
@@ -69,6 +81,18 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "登录失败"
+        }
+    )
+    article_title = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "文章标题不能为空"
+        }
+    )
+    thumbnail = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "文章缩略图不能为空"
         }
     )
 

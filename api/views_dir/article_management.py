@@ -36,6 +36,8 @@ def article_management(request):
                 ret_data.append({
                     'id': obj.id,
                     'template_id': obj.template_id,
+                    'thumbnail': obj.thumbnail,
+                    'article_title': obj.article_title,
                     'template_name': obj.template.name,
                     'article_content': obj.article_content,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
@@ -64,20 +66,26 @@ def article_management_oper(request, oper_type, o_id):
     form_data = {
         'o_id': o_id,
         'create_user_id': user_id,
-        'article_content': request.POST.get('article_content'),
-        'template_id': request.POST.get('template_id'),
+        'article_content': request.POST.get('article_content'),     # 文章内容
+        'article_title': request.POST.get('article_title'),         # 文章标题
+        'thumbnail': request.POST.get('thumbnail'),                 # 缩略图
+        'template_id': request.POST.get('template_id'),             # 模板ID
     }
     if request.method == "POST":
 
-        # 添加表单数据
+        # 添加文章数据
         if oper_type == "add":
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 template_id = forms_obj.cleaned_data.get('template_id')
                 article_content = forms_obj.cleaned_data.get('article_content')
+                article_title = forms_obj.cleaned_data.get('article_title')
+                thumbnail = forms_obj.cleaned_data.get('thumbnail')
 
                 obj = models.Article.objects.create(
                     article_content=article_content,
+                    article_title=article_title,
+                    thumbnail=thumbnail,
                     template_id=template_id,
                 )
                 response.code = 200
@@ -104,9 +112,15 @@ def article_management_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 o_id = forms_obj.cleaned_data['o_id']
                 article_content = forms_obj.cleaned_data['article_content']
+                article_title = forms_obj.cleaned_data['article_title']
+                thumbnail = forms_obj.cleaned_data['thumbnail']
 
                 # 更新数据
-                models.Article.objects.filter(id=o_id).update(article_content=article_content)
+                models.Article.objects.filter(id=o_id).update(
+                    article_content=article_content,
+                    article_title=article_title,
+                    thumbnail=thumbnail,
+                )
                 response.code = 200
                 response.msg = "修改成功"
 
