@@ -120,7 +120,7 @@ class tripartite_platform_oper():
         return pre_auth_code
 
     # 使用授权码换取公众号或小程序的接口调用凭据和授权信息exchange_calling_credentials
-    def exchange_calling_credentials(self, auth_type, auth_code, user_id=None):
+    def exchange_calling_credentials(self, auth_type, auth_code, user_id=None, template_id=None):
         """
 
         :param auth_type: 类型 1公众号 2小程序
@@ -153,6 +153,7 @@ class tripartite_platform_oper():
                     )
                 else:
                     obj = models.CustomerOfficialNumber.objects.create(
+                        template_id=template_id,
                         appid=authorizer_appid,
                         user_id=user_id,
                         authorizer_access_token=authorizer_access_token,
@@ -171,6 +172,7 @@ class tripartite_platform_oper():
                     )
                 else:
                     obj = models.ClientApplet.objects.create(
+                        template_id=template_id,
                         appid=authorizer_appid,
                         user_id=user_id,
                         authorizer_access_token=authorizer_access_token,
