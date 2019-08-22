@@ -460,7 +460,6 @@ def xhs_bpw_keywords_rsync():
         data = redis_obj.get(key)
         data = json.loads(data)
         links = data["links"]
-        models.linshi.objects.create(linshi=key)
 
         if len(links) > 0:
             keywords = data["keywords"]
