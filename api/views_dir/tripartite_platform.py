@@ -796,30 +796,31 @@ def authorize_callback(request):
     expires_in = request.GET.get('expires_in')
     authorization_type = request.GET.get('authorization_type')  # 授权类型 (1公众号, 2小程序)
     appid = request.GET.get('appid')  # 授权类型 (1公众号, 2小程序)
-    if authorization_type in [1, '1']:
-        objs = models.CustomerOfficialNumber.objects.filter(
-            appid=appid,
-        )
-
-    else:
-        objs = models.ClientApplet.objects.filter(
-            appid=appid,
-        )
-
-    # 使用授权码 获取调用 GZH/XCX 凭证
-    tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
-    tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code)
-
-    # ==== 更改 GZH/XCX 授权码 和 过期时间
-    objs.update(
-        auth_code=auth_code,
-        auth_code_expires_in=int(time.time()) + int(expires_in)
-    )
-
-    tripartite_platform_objs.get_account_information(authorization_type, appid)  # 获取基本信息入库
-    objs.update(is_authorization=1)  # 授权完成
-
-    return redirect('https://xcx.bjhzkq.com/thirdTerrace/smallRoutine?id={}'.format(template_id))
+    # if authorization_type in [1, '1']:
+    #     objs = models.CustomerOfficialNumber.objects.filter(
+    #         appid=appid,
+    #     )
+    #
+    # else:
+    #     objs = models.ClientApplet.objects.filter(
+    #         appid=appid,
+    #     )
+    #
+    #
+    # # 使用授权码 获取调用 GZH/XCX 凭证
+    # tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
+    # tripartite_platform_objs.exchange_calling_credentials(authorization_type, auth_code)
+    #
+    # # ==== 更改 GZH/XCX 授权码 和 过期时间
+    # objs.update(
+    #     auth_code=auth_code,
+    #     auth_code_expires_in=int(time.time()) + int(expires_in)
+    # )
+    #
+    # tripartite_platform_objs.get_account_information(authorization_type, appid)  # 获取基本信息入库
+    # objs.update(is_authorization=1)  # 授权完成
+    #
+    # return redirect('https://xcx.bjhzkq.com/thirdTerrace/smallRoutine?id={}'.format(template_id))
     # return HttpResponse('success')
 
 
