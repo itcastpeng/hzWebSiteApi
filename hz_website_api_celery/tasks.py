@@ -618,8 +618,8 @@ def note_links_converted_normal_links():
         while True:
             flag += 1
             if 'www' not in biji_url:
-                if obj.original_back.startswith("http://t.cn"):
-                    ret = requests.get(obj.original_back, allow_redirects=False)
+                if biji_url.startswith("http://t.cn"):
+                    ret = requests.get(biji_url, allow_redirects=False)
                     biji_url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
                 else:
                     try:
@@ -633,6 +633,6 @@ def note_links_converted_normal_links():
         obj.biji_url = biji_url
         obj.save()
 
-
+from hz_website_api_celery.tasks import note_links_converted_normal_links
 
 
