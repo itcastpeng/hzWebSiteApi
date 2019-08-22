@@ -209,16 +209,18 @@ def template_oper(request, oper_type, o_id):
         # 客户创建模板
         elif oper_type == 'user_add_template':
             form_data = {
-                'template_id':o_id
+                'template_id':o_id,
+                'page_id':request.POST.get('page_id')
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
                 template_id, data = form_obj.cleaned_data.get('template_id')
+                page_id = form_obj.cleaned_data.get('page_id')
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
 
                 page_group_obj = models.PageGroup.objects.get(template_id=template_id)
-                page_obj = models.Page.objects.get(page_group__template_id=template_id)
+                page_obj = models.Page.objects.get(id=page_id)
                 page_group_obj = models.PageGroup.objects.create(
                     name=page_group_obj.name,
                     template_id=obj.id,

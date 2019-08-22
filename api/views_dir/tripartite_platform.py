@@ -258,47 +258,53 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取小程序体验二维码
             elif oper_type == 'get_experience_qr_code':
-                if credential_expired_data.get('flag'):
-                    # appid = 'wx700c48cb72073e61'
-                    # credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
-                    # authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+                user_obj = models.UserProfile.objects.get(id=user_id)
+                user_desc = request.POST.get('user_desc')
+                response_data = ''
+                data_dict = {
+                    'user_desc': user_desc,
+                    'user_id': user_id,
+                    'user_token': user_obj.token,
+                }
 
-                    form_data = {
-                        'user_desc': request.POST.get('user_desc'),  # 代码描述
-                    }
-                    response_data = {}
-                    form_obj = UploadAppletCode(form_data)
-                    if form_obj.is_valid():
-                        user_desc = form_obj.cleaned_data.get('user_desc')
-                        obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
-                        if obj.template:
-                            user_obj = models.UserProfile.objects.get(id=user_id)
+                if not credential_expired_data.get('flag'): #
+                    appid = 'wx700c48cb72073e61'
+                    credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+                    data_dict['id'] = template_id
+                    tripartite_platform_objs.xcx_update_code(data_dict)
+                    data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
-                            data = {
-                                'appid': appid,
-                                'token': authorizer_access_token,
-                                'user_desc': user_desc,
-                                'user_id': user_id,
-                                'user_token': user_obj.token,
-                                'id': obj.template_id,
-                            }
-                            tripartite_platform_objs.xcx_update_code(data)
-                            data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+                    code = 200
+                    msg = '查询成功'
+                    response_data = data.get('path')
 
-                            code = 200
-                            msg = '查询成功'
-                            response_data = data.get('path')
 
-                        else:
-                            code = 301
-                            msg = '请先绑定模板'
+                else:
+                    obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+                    if obj.template:
+                        data = {
+                            'appid': appid,
+                            'token': authorizer_access_token,
+                            'user_desc': user_desc,
+                            'user_id': user_id,
+                            'user_token': user_obj.token,
+                            'id': obj.template_id,
+                        }
+                        tripartite_platform_objs.xcx_update_code(data)
+                        data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
+
+                        code = 200
+                        msg = '查询成功'
+                        response_data = data.get('path')
+
                     else:
                         code = 301
-                        msg = json.loads(form_obj.errors.as_json())
+                        msg = '请先绑定模板'
 
-                    response.code = code
-                    response.msg = msg
-                    response.data = response_data
+                response.code = code
+                response.msg = msg
+                response.data = response_data
 
 
             # 获取代码模板库中的所有小程序代码模板
