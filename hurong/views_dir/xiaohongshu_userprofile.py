@@ -292,16 +292,19 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                     id=imsi
                 )
                 flag = False
-                update_reading_date = obj.update_reading_date
-                if update_reading_date and update_reading_date == datetime.date.today():
-                    if models.XiaohongshuBiji.objects.filter(user_id_id=obj.id, status=2):
+
+                if not models.XiaohongshuBiji.objects.filter(user_id_id=obj.id, status=2):
+                    flag = True
+                else:
+                    update_reading_date = obj.update_reading_date
+                    if update_reading_date and update_reading_date == datetime.date.today():
                         flag = True
+
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
                     "flag": flag
                 }
-
 
             else:
                 response.code = 301
