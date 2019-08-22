@@ -407,6 +407,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 field_dict = {
                     'user_id_id': '',
                     'name': '__contains',
+                    'user_id__name': '__contains',
                 }
 
                 q = conditionCom(request, field_dict)
