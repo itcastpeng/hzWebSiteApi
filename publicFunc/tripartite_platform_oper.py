@@ -147,6 +147,7 @@ class tripartite_platform_oper():
                 if objs:
                     obj = objs[0]
                     objs.update(
+                        template_id=template_id,
                         authorizer_access_token=authorizer_access_token,
                         authorizer_access_token_expires_in=expires_in,
                         authorizer_refresh_token=authorizer_refresh_token
@@ -166,6 +167,7 @@ class tripartite_platform_oper():
                 if objs:
                     obj = objs[0]
                     objs.update(
+                        template_id=template_id,
                         authorizer_access_token=authorizer_access_token,
                         authorizer_access_token_expires_in=expires_in,
                         authorizer_refresh_token=authorizer_refresh_token
