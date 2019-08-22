@@ -291,7 +291,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 obj = models.XiaohongshuUserProfile.objects.get(
                     id=imsi
                 )
-                flag = False
+                flag = False # 更新
 
                 if not models.XiaohongshuBiji.objects.filter(user_id_id=obj.id, status=2):
                     flag = True
