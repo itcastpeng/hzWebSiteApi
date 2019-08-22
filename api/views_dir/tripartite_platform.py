@@ -273,6 +273,8 @@ def tripartite_platform_oper(request, oper_type):
                     credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
                     authorizer_access_token = credential_expired_data.get('authorizer_access_token')
                     data_dict['id'] = template_id
+                    data_dict['appid'] = appid
+                    data_dict['token'] = authorizer_access_token
                     tripartite_platform_objs.xcx_update_code(data_dict)
                     data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
@@ -302,7 +304,7 @@ def tripartite_platform_oper(request, oper_type):
                     else:
                         code = 301
                         msg = '请先绑定模板'
-
+                print('data_dict-----------> ', data_dict)
                 response.code = code
                 response.msg = msg
                 response.data = response_data
