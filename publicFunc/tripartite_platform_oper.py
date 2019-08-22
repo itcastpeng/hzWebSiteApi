@@ -120,7 +120,7 @@ class tripartite_platform_oper():
         return pre_auth_code
 
     # 使用授权码换取公众号或小程序的接口调用凭据和授权信息exchange_calling_credentials
-    def exchange_calling_credentials(self, auth_type, auth_code):
+    def exchange_calling_credentials(self, auth_type, auth_code, user_id=None):
         """
 
         :param auth_type: 类型 1公众号 2小程序
@@ -143,17 +143,42 @@ class tripartite_platform_oper():
             authorizer_refresh_token = authorization_info.get('authorizer_refresh_token')
             # 更新令牌
             if auth_type in [1, '1']: # 公众号
-                models.CustomerOfficialNumber.objects.filter(appid=authorizer_appid).update(
-                    authorizer_access_token=authorizer_access_token,
-                    authorizer_access_token_expires_in=expires_in,
-                    authorizer_refresh_token=authorizer_refresh_token
-                )
+                objs = models.CustomerOfficialNumber.objects.filter(appid=authorizer_appid)
+                if objs:
+                    obj = objs[0]
+                    objs.update(
+                        authorizer_access_token=authorizer_access_token,
+                        authorizer_access_token_expires_in=expires_in,
+                        authorizer_refresh_token=authorizer_refresh_token
+                    )
+                else:
+                    obj = models.CustomerOfficialNumber.objects.create(
+                        appid=authorizer_appid,
+                        user_id=user_id,
+                        authorizer_access_token=authorizer_access_token,
+                        authorizer_access_token_expires_in=expires_in,
+                        authorizer_refresh_token=authorizer_refresh_token
+                    )
+
             else: # 小程序
-                models.ClientApplet.objects.filter(appid=authorizer_appid).update(
-                    authorizer_access_token=authorizer_access_token,
-                    authorizer_access_token_expires_in=expires_in,
-                    authorizer_refresh_token=authorizer_refresh_token
-                )
+                objs = models.ClientApplet.objects.filter(appid=authorizer_appid)
+                if objs:
+                    obj = objs[0]
+                    objs.update(
+                        authorizer_access_token=authorizer_access_token,
+                        authorizer_access_token_expires_in=expires_in,
+                        authorizer_refresh_token=authorizer_refresh_token
+                    )
+                else:
+                    obj = models.ClientApplet.objects.create(
+                        appid=authorizer_appid,
+                        user_id=user_id,
+                        authorizer_access_token=authorizer_access_token,
+                        authorizer_access_token_expires_in=expires_in,
+                        authorizer_refresh_token=authorizer_refresh_token
+                    )
+            return obj.id, authorizer_appid
+
 
     # 获取（刷新）授权公众号或小程序的接口调用凭据（令牌）
     def refresh_exchange_calling_credentials(self, appid, token, auth_type):
