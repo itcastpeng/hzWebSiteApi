@@ -633,6 +633,6 @@ def note_links_converted_normal_links():
         obj.biji_url = biji_url
         obj.save()
 
-from hz_website_api_celery.tasks import note_links_converted_normal_links
+
 
 
