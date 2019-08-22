@@ -619,8 +619,16 @@ def note_links_converted_normal_links():
             flag += 1
             if 'www' not in biji_url:
                 if biji_url.startswith("http://t.cn"):
-                    ret = requests.get(biji_url, allow_redirects=False)
-                    biji_url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                    num = 0
+                    while True:
+                        num += 1
+                        try:
+                            ret = requests.get(biji_url, allow_redirects=False)
+                            biji_url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                        except Exception:
+                            pass
+                        if num >= 3:
+                            break
                 else:
                     try:
                         biji_url = biji_url.split('?')[0]
