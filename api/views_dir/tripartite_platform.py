@@ -52,8 +52,9 @@ def tripartite_platform_oper(request, oper_type):
                 authorization_way = forms_data.get('authorization_way')
                 authorization_type = forms_data.get('authorization_type')
 
-                redirect_url = 'https://xcx.bjhzkq.com/api/authorize_callback?appid={}&authorization_type={}&authorization_way={}&template_id={}'.format(
-                    appid,
+                # redirect_url = 'https://xcx.bjhzkq.com/api/authorize_callback?appid={}&authorization_type={}&authorization_way={}&template_id={}'.format(
+                redirect_url = 'https://xcx.bjhzkq.com/api/authorize_callback?authorization_type={}&authorization_way={}&template_id={}'.format(
+                    # appid,
                     authorization_type,
                     authorization_way,
                     template_id
@@ -787,6 +788,9 @@ def authorize_callback(request):
                    auth_code   : GZH/XCX 授权码
                    expires_in  : GZH/XCX 授权码过期时间
                """
+    print('----------========11111111111================.-=------------> ', request.GET)
+    print('----------========11111111111================.-=------------> ', request.POST)
+    print('----------========11111111111================.-=------------> ', request.body)
     template_id = request.GET.get('template_id')
     auth_code = request.GET.get('auth_code')
     expires_in = request.GET.get('expires_in')
