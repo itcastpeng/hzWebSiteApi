@@ -26,6 +26,12 @@ class AddForm(forms.Form):
             'invalid': "参数数据类型错误"
         }
     )
+    template_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "模板ID不能为空"
+        }
+    )
 
 
 # 更新
