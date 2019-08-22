@@ -78,6 +78,7 @@ def little_red_book_crawler(request, oper_type):
             note_type = request.POST.get('note_type')
             img_list = request.POST.get('img_list')
             desc = request.POST.get('desc')
+            title = request.POST.get('title')
 
             objs = models.XhsKeywordsList.objects.filter(id=id)
             if objs:
@@ -88,6 +89,7 @@ def little_red_book_crawler(request, oper_type):
 
                 models.ArticlesAndComments.objects.create(
                     keyword=obj,
+                    title=title,
                     nick_name=nick_name,
                     desc=desc,
                     note_id=note_id,
@@ -211,6 +213,7 @@ def little_red_book_crawler(request, oper_type):
                         'comments_list_count': obj.comments_list_count,
                         'note_type': obj.note_type,
                         'desc': obj.desc,
+                        'title': obj.title,
                         'note_id': obj.note_id,
                         'video_url': obj.video_url,
                         'img_list': json.loads(obj.img_list),
