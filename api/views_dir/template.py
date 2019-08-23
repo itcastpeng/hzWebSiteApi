@@ -226,13 +226,16 @@ def template_oper(request, oper_type, o_id):
                         template_id=obj.id,
                         create_user_id=user_id,
                     )
+                    print('page_group_obj.id--------------------> ', page_group_obj.id)
                     for page_set in page_group_obj.page_set.all():
+                        print('page_set.name---------------------> ', page_set.name)
                         page_obj = models.Page.objects.get(id=page_set.id)
 
                         models.Page.objects.create(
                             name=page_obj.name,
                             page_group=page_group_obj,
-                            data=page_obj.data
+                            data=page_obj.data,
+                            create_user_id=user_id
                         )
 
                 response.code = 200
