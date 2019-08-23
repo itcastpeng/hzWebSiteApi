@@ -210,12 +210,12 @@ def template_oper(request, oper_type, o_id):
         elif oper_type == 'user_add_template':
             form_data = {
                 'template_id':o_id,
-                'page_id':request.POST.get('page_id')
+                # 'page_id':request.POST.get('page_id')
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
                 template_id, data = form_obj.cleaned_data.get('template_id')
-                page_id = form_obj.cleaned_data.get('page_id')
+                # page_id = form_obj.cleaned_data.get('page_id')
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
 
@@ -226,13 +226,14 @@ def template_oper(request, oper_type, o_id):
                         template_id=obj.id,
                         create_user_id=user_id,
                     )
-                    page_obj = models.Page.objects.get(id=page_id)
+                    for page_set in page_group_obj.page_set.all():
+                        page_obj = models.Page.objects.get(id=page_set.id)
 
-                    models.Page.objects.create(
-                        name=page_obj.name,
-                        page_group=page_group_obj,
-                        data=page_obj.data
-                    )
+                        models.Page.objects.create(
+                            name=page_obj.name,
+                            page_group=page_group_obj,
+                            data=page_obj.data
+                        )
 
                 response.code = 200
                 response.msg = '创建成功'
