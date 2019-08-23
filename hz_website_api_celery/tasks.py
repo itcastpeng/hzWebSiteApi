@@ -498,7 +498,7 @@ def xhs_bpw_keywords_fugai_rsync():
     for obj in objs:
         flag = 0
         biji_url = obj.biji_url
-        print('link====================> ', biji_url)
+        # print('link====================> ', biji_url)
         while True:
             flag += 1
             if 'www' not in biji_url:
