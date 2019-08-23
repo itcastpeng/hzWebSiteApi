@@ -219,19 +219,20 @@ def template_oper(request, oper_type, o_id):
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
 
-                page_group_obj = models.PageGroup.objects.get(template_id=template_id)
-                page_obj = models.Page.objects.get(id=page_id)
-                page_group_obj = models.PageGroup.objects.create(
-                    name=page_group_obj.name,
-                    template_id=obj.id,
-                    create_user_id=user_id,
-                )
+                page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
+                for page_group_obj in page_group_objs:
+                    page_group_obj = models.PageGroup.objects.create(
+                        name=page_group_obj.name,
+                        template_id=obj.id,
+                        create_user_id=user_id,
+                    )
+                    page_obj = models.Page.objects.get(id=page_id)
 
-                models.Page.objects.create(
-                    name=page_obj.name,
-                    page_group=page_group_obj,
-                    data=page_obj.data
-                )
+                    models.Page.objects.create(
+                        name=page_obj.name,
+                        page_group=page_group_obj,
+                        data=page_obj.data
+                    )
 
                 response.code = 200
                 response.msg = '创建成功'
