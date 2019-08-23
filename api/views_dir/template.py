@@ -221,7 +221,7 @@ def template_oper(request, oper_type, o_id):
 
                 page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
                 for page_group_obj in page_group_objs:
-                    page_group_obj = models.PageGroup.objects.create(
+                    PageGroupObj = models.PageGroup.objects.create(
                         name=page_group_obj.name,
                         template_id=obj.id,
                         create_user_id=user_id,
@@ -233,7 +233,7 @@ def template_oper(request, oper_type, o_id):
 
                         models.Page.objects.create(
                             name=page_obj.name,
-                            page_group=page_group_obj,
+                            page_group=PageGroupObj,
                             data=page_obj.data,
                             create_user_id=user_id
                         )
