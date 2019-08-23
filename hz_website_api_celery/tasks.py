@@ -129,7 +129,7 @@ def xiaohongshu_fugai_update_data():
         for obj in objs:
             # obj.update_datetime = datetime.datetime.now()
             # obj.save()
-            print('obj.update_datetime -->', obj.update_datetime, obj.id)
+            # print('obj.update_datetime -->', obj.update_datetime, obj.id)
             for item in page_id_list:
                 biji_url_id = item['id']        # 抓取到的数据只有笔记的id
                 rank = item['rank']             # 当前在第几名
@@ -167,6 +167,7 @@ def xiaohongshu_fugai_update_data():
         objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
         print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
         for obj in objs:
+            print('obj.keywords----------------> ', obj.keywords)
             item = {
                 "keywords": obj.keywords,
                 "count": 1,  # 当前关键词存在几个任务
