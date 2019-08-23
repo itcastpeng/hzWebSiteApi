@@ -160,12 +160,12 @@ def xiaohongshu_fugai_update_data():
     redis_key = "xiaohongshu_task_list"
 
     # 霸屏王查排名
-    print("霸屏王查排名---->", datetime.datetime.now())
     if redis_obj.llen(redis_key) == 0:
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
         print('q -->', q)
         objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
+        print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
         for obj in objs:
             item = {
                 "keywords": obj.keywords,
@@ -174,9 +174,9 @@ def xiaohongshu_fugai_update_data():
             }
             redis_obj.lpush(redis_key, json.dumps(item))
 
-    print("普通关键词查排名---->", datetime.datetime.now())
     if redis_obj.llen(redis_key) == 0:
         objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
+        print("普通关键词查排名---->", datetime.datetime.now(), objs.count())
         for obj in objs:
             now_date = datetime.datetime.now().strftime("%Y-%m-%d")
             # print('obj -->', obj)
