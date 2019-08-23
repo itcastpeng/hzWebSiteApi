@@ -170,12 +170,12 @@ class UserAddTemplateForm(forms.Form):
             'invalid': "参数数据类型错误"
         }
     )
-    page_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': 'page_id不能为空',
-        }
-    )
+    # page_id = forms.IntegerField(
+    #     required=True,
+    #     error_messages={
+    #         'required': 'page_id不能为空',
+    #     }
+    # )
     def clean_template_id(self):
         template_id = self.data.get('template_id')
         objs = models.Template.objects.filter(id=template_id)
