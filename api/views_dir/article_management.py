@@ -37,6 +37,7 @@ def article_management(request):
                     'id': obj.id,
                     'template_id': obj.template_id,
                     'thumbnail': obj.thumbnail,
+                    'article_introduction': obj.article_introduction,
                     'article_title': obj.article_title,
                     'template_name': obj.template.name,
                     'article_content': obj.article_content,
@@ -67,6 +68,7 @@ def article_management_oper(request, oper_type, o_id):
         'o_id': o_id,
         'create_user_id': user_id,
         'article_content': request.POST.get('article_content'),     # 文章内容
+        'article_introduction': request.POST.get('article_introduction'), # 文章简介
         'article_title': request.POST.get('article_title'),         # 文章标题
         'thumbnail': request.POST.get('thumbnail'),                 # 缩略图
         'template_id': request.POST.get('template_id'),             # 模板ID
@@ -81,8 +83,10 @@ def article_management_oper(request, oper_type, o_id):
                 article_content = forms_obj.cleaned_data.get('article_content')
                 article_title = forms_obj.cleaned_data.get('article_title')
                 thumbnail = forms_obj.cleaned_data.get('thumbnail')
+                article_introduction = forms_obj.cleaned_data.get('article_introduction')
 
                 obj = models.Article.objects.create(
+                    article_introduction=article_introduction,
                     article_content=article_content,
                     article_title=article_title,
                     thumbnail=thumbnail,
@@ -114,11 +118,13 @@ def article_management_oper(request, oper_type, o_id):
                 article_content = forms_obj.cleaned_data['article_content']
                 article_title = forms_obj.cleaned_data['article_title']
                 thumbnail = forms_obj.cleaned_data['thumbnail']
+                article_introduction = forms_obj.cleaned_data['article_introduction']
 
                 # 更新数据
                 models.Article.objects.filter(id=o_id).update(
                     article_content=article_content,
                     article_title=article_title,
+                    article_introduction=article_introduction,
                     thumbnail=thumbnail,
                 )
                 response.code = 200
