@@ -265,3 +265,24 @@ class UnbindAppletAndTemplate(forms.Form):
             return appid
 
 
+class UpdateTemplateName(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '要修改的模板ID不能为空',
+        }
+    )
+
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.Template.objects.filter(id=o_id)
+        if objs:
+            return o_id
+        else:
+            self.add_error('o_id', '该模板不存在')
+
+
+
+
+
+

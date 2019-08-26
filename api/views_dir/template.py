@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm, \
-    BindTemplatesAndApplets, UnbindAppletAndTemplate
+    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
@@ -189,6 +189,25 @@ def template_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 修改模板名称
+        elif oper_type == 'update_template_name':
+            form_data = {
+                'o_id': o_id,
+            }
+            form_obj = UpdateTemplateName(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                name = request.POST.get('name')
+                models.Template.objects.filter(id=o_id).update(
+                    name=name
+                )
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
         # 修改模板分类id
         elif oper_type == "update_class":
