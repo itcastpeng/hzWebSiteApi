@@ -154,12 +154,17 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         # print("ret.text -->", ret.json)
                         key = ret.json()["key"]
                         img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
-                        direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
+                        if not models.XiaohongshuDirectMessages.objects.filter(
                             user_id=obj,
-                            img_url=img_url,
-                            name=name,
-                            time_stamp=timestamp,
-                        )
+                            time_stamp=timestamp
+                        ):
+
+                            direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
+                                user_id=obj,
+                                img_url=img_url,
+                                name=name,
+                                time_stamp=timestamp,
+                            )
 
                         from_blogger = 0
                         if request.POST.get('from_blogger'):
