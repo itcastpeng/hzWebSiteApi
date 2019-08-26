@@ -279,7 +279,7 @@ def tripartite_platform_oper(request, oper_type):
                     'user_id': user_id,
                     'user_token': user_obj.token,
                 }
-
+                get_experience_qr_code_template_id = ''
                 if not credential_expired_data.get('flag'): #
                     appid = 'wx700c48cb72073e61'
                     get_experience_qr_code_template_id = request.GET.get('template_id')
@@ -319,7 +319,7 @@ def tripartite_platform_oper(request, oper_type):
                         code = 301
                         msg = '请先绑定模板'
 
-                template_obj = models.Template.objects.get(id=template_id)
+                template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
                 data = {
                     'xcx_code': response_data,
                     'gzh_code': template_obj.qrcode
