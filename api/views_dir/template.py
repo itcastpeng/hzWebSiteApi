@@ -9,6 +9,7 @@ from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataFor
     BindTemplatesAndApplets, UnbindAppletAndTemplate
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
+from publicFunc.public import get_qrcode
 import json
 
 
@@ -73,6 +74,7 @@ def template(request):
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
                     'xcx_id': xcx_id,
+                    'qrcode': obj.qrcode,
                     'xcx_appid': xcx_appid,
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
@@ -123,6 +125,9 @@ def template_oper(request, oper_type, o_id):
                     thumbnail=forms_obj.cleaned_data.get('thumbnail'),
                     template_class_id=forms_obj.cleaned_data.get('template_class_id'),
                 )
+                template_obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(template_obj.id)) # 更新二维码
+                template_obj.save()
+
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
                     template=template_obj
@@ -218,6 +223,8 @@ def template_oper(request, oper_type, o_id):
                 # page_id = form_obj.cleaned_data.get('page_id')
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
+                obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
+                obj.save()
 
                 page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
                 for page_group_obj in page_group_objs:

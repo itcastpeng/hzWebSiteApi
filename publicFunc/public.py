@@ -1,7 +1,7 @@
 from hurong import models
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
-import re, random, requests, json, os
+import re, random, requests, json, os, qrcode, time
 
 pcRequestHeader = [
     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
@@ -177,11 +177,18 @@ def upload_qiniu(img_path, img_size):
         key=ret.json()["key"],
         img_size=img_size
     )
+    if os.path.exists(img_path):
+        os.remove(img_path)  # 删除本地图片
     return key
 
-
-
-
+# 生成二维码
+def get_qrcode(qrcode_path):
+    img = qrcode.make(qrcode_path)
+    time_name = str(int(time.time())) + '.png'
+    with open('{}'.format(time_name), 'wb') as f:
+        img.save(f)
+    path = upload_qiniu(time_name, 800)
+    return path
 
 
 
