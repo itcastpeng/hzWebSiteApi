@@ -299,13 +299,14 @@ def tripartite_platform_oper(request, oper_type):
                 else:
                     obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
                     if obj.template:
+                        template_id = obj.template_id
                         data_dict = {
                             'appid': appid,
                             'token': authorizer_access_token,
                             'user_desc': user_desc,
                             'user_id': user_id,
                             'user_token': user_obj.token,
-                            'id': obj.template_id,
+                            'id': template_id,
                         }
                         tripartite_platform_objs.xcx_update_code(data_dict)
                         data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
@@ -317,9 +318,15 @@ def tripartite_platform_oper(request, oper_type):
                     else:
                         code = 301
                         msg = '请先绑定模板'
+
+                template_obj = models.Template.objects.get(id=template_id)
+                data = {
+                    'xcx_code': response_data,
+                    'gzh_code': template_obj.qrcode
+                }
                 response.code = code
                 response.msg = msg
-                response.data = response_data
+                response.data = data
 
 
             # 获取代码模板库中的所有小程序代码模板
