@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm, \
-    BindTemplatesAndApplets, UnbindAppletAndTemplate
+    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
@@ -190,12 +190,13 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 修改模板分类id
+        # 修改模板分类id/name
         elif oper_type == "update_class":
             # 获取需要修改的信息
             form_data = {
                 'o_id': o_id,
                 'class_id': request.POST.get('class_id'),
+                'name': request.POST.get('name'),
             }
 
             forms_obj = UpdateClassForm(form_data)
@@ -203,10 +204,14 @@ def template_oper(request, oper_type, o_id):
                 # print("验证通过")
                 # print(forms_obj.cleaned_data)
                 o_id = forms_obj.cleaned_data['o_id']
+                name = forms_obj.cleaned_data['name']
                 class_id = forms_obj.cleaned_data['class_id']
 
                 # 更新数据
-                models.Template.objects.filter(id=o_id).update(template_class_id=class_id)
+                models.Template.objects.filter(id=o_id).update(
+                    template_class_id=class_id,
+                    name=name
+                )
 
                 response.code = 200
                 response.msg = "修改成功"

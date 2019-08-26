@@ -106,7 +106,12 @@ class UpdateClassForm(forms.Form):
             'invalid': "参数数据类型错误"
         }
     )
-
+    name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '模板名称不能为空',
+        }
+    )
     # 判断模板分类id是否存在
     def clean_class_id(self):
         # o_id = self.data['o_id']
@@ -263,5 +268,26 @@ class UnbindAppletAndTemplate(forms.Form):
 
         else:
             return appid
+
+
+class UpdateTemplateName(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '要修改的模板ID不能为空',
+        }
+    )
+
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.Template.objects.filter(id=o_id)
+        if objs:
+            return o_id
+        else:
+            self.add_error('o_id', '该模板不存在')
+
+
+
+
 
 
