@@ -283,11 +283,11 @@ def tripartite_platform_oper(request, oper_type):
                 if not credential_expired_data.get('flag'): #
                     appid = 'wx700c48cb72073e61'
                     template_id = request.GET.get('template_id')
-                    credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
-                    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
-                    data_dict['id'] = template_id
-                    data_dict['appid'] = appid
-                    data_dict['token'] = authorizer_access_token
+                    # credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                    # authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+                    # data_dict['id'] = template_id
+                    # data_dict['appid'] = appid
+                    # data_dict['token'] = authorizer_access_token
                     # tripartite_platform_objs.xcx_update_code(data_dict)
                     # data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
