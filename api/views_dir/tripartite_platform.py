@@ -10,6 +10,7 @@ from urllib.parse import unquote, quote
 from publicFunc.public import send_error_msg
 from django.shortcuts import redirect
 from publicFunc.condition_com import conditionCom
+from publicFunc.public import get_qrcode
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -745,6 +746,15 @@ def tripartite_platform_admin(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 获取二维码
+        elif oper_type == 'get_qrcode':
+            path = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(o_id))
+            response.code = 200
+            response.msg = '获取成功'
+            response.data = {
+                'path': path
+            }
 
 
         else:
