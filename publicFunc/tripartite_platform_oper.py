@@ -497,8 +497,9 @@ class tripartite_platform_oper():
         url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
             self.token
         )
-        ret = requests.post(url)
-        print('_--------发布已通过审核的小程序------> ', ret.text)
+        ret = requests.post(url, data={})
+        print('_--------发布已通过审核的小程序------> ', ret.url, ret.text)
+        return ret.json()
 
     # 获取体验者列表
     def Get_list_experiencers(self, token):
