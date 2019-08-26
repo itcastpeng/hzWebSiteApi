@@ -106,7 +106,12 @@ class UpdateClassForm(forms.Form):
             'invalid': "参数数据类型错误"
         }
     )
-
+    name = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '模板名称不能为空',
+        }
+    )
     # 判断模板分类id是否存在
     def clean_class_id(self):
         # o_id = self.data['o_id']

@@ -190,31 +190,13 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 修改模板名称
-        elif oper_type == 'update_template_name':
-            form_data = {
-                'o_id': o_id,
-            }
-            form_obj = UpdateTemplateName(form_data)
-            if form_obj.is_valid():
-                o_id = form_obj.cleaned_data.get('o_id')
-                name = request.POST.get('name')
-                models.Template.objects.filter(id=o_id).update(
-                    name=name
-                )
-                response.code = 200
-                response.msg = '修改成功'
-
-            else:
-                response.code = 301
-                response.msg = json.loads(form_obj.errors.as_json())
-
-        # 修改模板分类id
+        # 修改模板分类id/name
         elif oper_type == "update_class":
             # 获取需要修改的信息
             form_data = {
                 'o_id': o_id,
                 'class_id': request.POST.get('class_id'),
+                'name': request.POST.get('name'),
             }
 
             forms_obj = UpdateClassForm(form_data)
@@ -222,10 +204,14 @@ def template_oper(request, oper_type, o_id):
                 # print("验证通过")
                 # print(forms_obj.cleaned_data)
                 o_id = forms_obj.cleaned_data['o_id']
+                name = forms_obj.cleaned_data['name']
                 class_id = forms_obj.cleaned_data['class_id']
 
                 # 更新数据
-                models.Template.objects.filter(id=o_id).update(template_class_id=class_id)
+                models.Template.objects.filter(id=o_id).update(
+                    template_class_id=class_id,
+                    name=name
+                )
 
                 response.code = 200
                 response.msg = "修改成功"
