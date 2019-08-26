@@ -243,6 +243,17 @@ def tripartite_platform_oper(request, oper_type):
             response.code = code
             response.msg = errmsg
 
+        # 发布小程序
+        elif oper_type == 'publish_approved_applets':
+            data = tripartite_platform_objs.publish_approved_applets()
+            code = 301
+            errmsg = data.get('errmsg')
+            if data.get('errcode') in [0, '0']:
+                code = 200
+                errmsg = '发布完成'
+
+            response.code = code
+            response.msg = errmsg
     else:
         appid = request.GET.get('appid') # 传递的APPID
         if oper_type != 'authorize_callback':
