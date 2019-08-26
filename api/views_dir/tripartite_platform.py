@@ -749,12 +749,22 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
         # 获取二维码
         elif oper_type == 'get_qrcode':
-            path = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(o_id))
-            response.code = 200
-            response.msg = '获取成功'
-            response.data = {
-                'path': path
-            }
+            objs = models.Template.objects.filter(id=o_id)
+
+            data = {'path': ''}
+            if objs:
+                path = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(o_id))
+                code = 200
+                msg = '获取成功'
+                data['path'] = path
+
+            else:
+                code = 301
+                msg = '获取失败'
+
+            response.code = code
+            response.msg = msg
+            response.data = data
 
 
         else:
