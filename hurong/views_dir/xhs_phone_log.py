@@ -1,6 +1,5 @@
 from hurong import models
-from publicFunc import Response
-from publicFunc import account
+from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from hurong.forms.xhs_phone_log import CheckForbiddenTextForm, SelectForm, AddForm, IsSelectedRankForm, DeleteForm
