@@ -569,5 +569,15 @@ class tripartite_platform_oper():
         print('删除指定小程序代码模版=----------------------', ret.json())
         return ret.json()
 
-
-
+    # 解绑小程序
+    def delete_applet(self, appid):
+        url = 'https://api.weixin.qq.com/cgi-bin/open/unbind?access_token={}'.format(
+            self.token
+        )
+        post_data = {
+            "appid": appid,
+            "open_appid": self.tripartite_platform_appid,
+        }
+        ret = requests.post(url, data=post_data)
+        print('解绑小程序ret.json()--------------> ', ret.json())
+        return ret.json()

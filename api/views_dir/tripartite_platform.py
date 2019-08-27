@@ -255,6 +255,20 @@ def tripartite_platform_oper(request, oper_type):
 
             response.code = code
             response.msg = errmsg
+
+        # 删除小程序
+        elif oper_type == 'delete_applet':
+            data = tripartite_platform_objs.delete_applet(appid)
+            errcode = data.get('errcode')
+            errmsg = data.get('errmsg')
+            code = 301
+            msg = '解绑失败: {}'.format(errmsg)
+            if errcode in [0, '0']:
+                code = 200
+                msg = '解绑成功'
+            response.code = code
+            response.msg = msg
+
     else:
         appid = request.GET.get('appid') # 传递的APPID
         if oper_type != 'authorize_callback':

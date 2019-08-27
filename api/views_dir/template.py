@@ -109,6 +109,8 @@ def template_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
 
     if request.method == "POST":
+
+        # 创建模板
         if oper_type == "add":
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
@@ -116,7 +118,6 @@ def template_oper(request, oper_type, o_id):
                 'thumbnail': request.POST.get('thumbnail'), # 缩略图
                 'template_class_id': request.POST.get('template_class_id'), # 缩略图
             }
-            #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 template_obj = models.Template.objects.create(
@@ -146,18 +147,24 @@ def template_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 删除 模板
         elif oper_type == "delete":
-            # 删除 ID
-            objs = models.Template.objects.filter(id=o_id)
-            if objs:
-                objs.delete()
-                response.code = 200
-                response.msg = "删除成功"
+            if not models.ClientApplet.objects.filter(template_id=o_id):
+                objs = models.Template.objects.filter(id=o_id)
+                if objs:
+                    objs.delete()
+                    response.code = 200
+                    response.msg = "删除成功"
+                else:
+                    response.code = 302
+                    response.msg = '删除ID不存在'
             else:
-                response.code = 302
-                response.msg = '删除ID不存在'
+                response.code = 301
+                response.msg = '请先解绑小程序'
+
+        # 更改模板
         elif oper_type == "update":
-            # 获取需要修改的信息
             form_data = {
                 'o_id': o_id,
                 'name': request.POST.get('name'),
