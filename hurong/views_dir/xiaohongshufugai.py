@@ -319,7 +319,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
         # 查询收录是否完成
         elif oper_type == 'query_whether_inclusion_complete':
             q = Q()
-            q.add(Q(update_datetime__lte=datetime.date.today()) | Q(update_datetime__isnull=False), Q.AND)
+            q.add(Q(update_datetime__gte=datetime.date.today()), Q.AND)
             has_been_completed_count = models.XiaohongshuFugai.objects.filter(
                 q,
                 task_type=2
@@ -330,9 +330,9 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             ).count()
 
 
-            is_success = 0
-            if int(has_been_completed_count) > 0:
-                is_success = 1
+            is_success = 1
+            if int(has_been_completed_count) == int(count):
+                is_success = 0
 
             data = {
                 'is_success': is_success,
