@@ -497,7 +497,7 @@ class tripartite_platform_oper():
         url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
             self.token
         )
-        ret = requests.post(url, data={})
+        ret = requests.post(url, data=json.dumps({}))
         print('_--------发布已通过审核的小程序------> ', ret.url, ret.text)
         return ret.json()
 
@@ -571,13 +571,11 @@ class tripartite_platform_oper():
 
     # 解绑小程序
     def delete_applet(self, appid):
-        url = 'https://api.weixin.qq.com/cgi-bin/open/unbind?access_token={}'.format(
-            self.token
-        )
+        url = 'https://api.weixin.qq.com/cgi-bin/open/unbind?access_token={}'.format(self.token)
         post_data = {
             "appid": appid,
             "open_appid": self.tripartite_platform_appid,
         }
-        ret = requests.post(url, data=post_data)
+        ret = requests.post(url, data=json.dumps(post_data))
         print('解绑小程序ret.json()--------------> ', ret.json())
         return ret.json()
