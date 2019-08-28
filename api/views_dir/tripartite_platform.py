@@ -258,7 +258,7 @@ def tripartite_platform_oper(request, oper_type):
 
         # 删除小程序
         elif oper_type == 'delete_applet':
-            data = tripartite_platform_objs.delete_applet(appid)
+            data = tripartite_platform_objs.delete_applet(appid, authorizer_access_token)
             errcode = data.get('errcode')
             errmsg = data.get('errmsg')
             code = 301
