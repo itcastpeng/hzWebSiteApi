@@ -246,7 +246,7 @@ def tripartite_platform_oper(request, oper_type):
 
         # 发布小程序
         elif oper_type == 'publish_approved_applets':
-            data = tripartite_platform_objs.publish_approved_applets()
+            data = tripartite_platform_objs.publish_approved_applets(authorizer_access_token)
             code = 301
             errmsg = data.get('errmsg')
             if data.get('errcode') in [0, '0']:

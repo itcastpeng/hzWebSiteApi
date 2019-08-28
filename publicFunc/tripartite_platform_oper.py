@@ -493,9 +493,9 @@ class tripartite_platform_oper():
         return ret.json()
 
     # 发布已通过审核的小程序
-    def publish_approved_applets(self):
+    def publish_approved_applets(self, authorizer_access_token):
         url = 'https://api.weixin.qq.com/wxa/release?access_token={}'.format(
-            self.token
+            authorizer_access_token
         )
         ret = requests.post(url, data=json.dumps({}))
         print('_--------发布已通过审核的小程序------> ', ret.url, ret.text)
