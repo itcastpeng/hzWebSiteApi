@@ -514,6 +514,7 @@ class ArticlesAndComments(models.Model):
     heading = models.CharField(verbose_name='头像', max_length=512)
     desc = models.TextField(verbose_name='文章描述', null=True)
     title = models.TextField(verbose_name='标题', null=True)
+    liked_count = models.IntegerField(verbose_name='点赞数量', null=True)
     article_content = models.TextField(verbose_name='文章内容')
     article_comment = models.CharField(verbose_name='文章评论', max_length=128, null=True) # 保存redis KEY + _ num num=条数 20叠加
     one_comments_list_count = models.IntegerField(verbose_name='一级评论总数', default=0)
