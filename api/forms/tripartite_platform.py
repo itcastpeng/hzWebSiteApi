@@ -30,6 +30,14 @@ class AuthorizationForm(forms.Form):
         }
     )
 
+    def clean_user_id(self):
+        user_id = self.data.get('user_id')
+        applet_num = models.ClientApplet.objects.filter(user_id=user_id).count() + 1
+        obj = models.UserProfile.objects.get(id=user_id)
+        if int(obj.small_program_number) >= applet_num:
+            return user_id
+        self.add_error('user_id', '小程序绑定达到上限')
+
     def clean_authorization_type(self):
         authorization_type = self.data.get('authorization_type')
         user_id = self.data.get('user_id')

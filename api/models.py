@@ -44,18 +44,20 @@ class UserProfile(models.Model):
     country = models.CharField(verbose_name="国家", max_length=128, null=True, blank=True)
     province = models.CharField(verbose_name="省份", max_length=128, null=True, blank=True)
     city = models.CharField(verbose_name="城市", max_length=128, null=True, blank=True)
+    subscribe = models.BooleanField(verbose_name="是否关注公众号", default=False)
+    openid = models.CharField(verbose_name="微信公众号openid", max_length=64, null=True, blank=True)
+    login_timestamp = models.CharField(verbose_name="登录时间戳", max_length=64, null=True, blank=True)
+
     inviter = models.ForeignKey(
         'self',
-        verbose_name="邀请人",
+        verbose_name="父账户",
         related_name="userprofile_inviter",
         null=True,
         blank=True,
         default=None
     )
-    subscribe = models.BooleanField(verbose_name="是否关注公众号", default=False)
-    openid = models.CharField(verbose_name="微信公众号openid", max_length=64, null=True, blank=True)
-    login_timestamp = models.CharField(verbose_name="登录时间戳", max_length=64, null=True, blank=True)
-
+    # number_child_users = models.IntegerField(verbose_name='可以创建几个子用户', default=1)
+    small_program_number = models.IntegerField(verbose_name='可以创建几个小程序', default=1)
 
 # 公众号或小程序用户表
 class ClientUserProfile(models.Model):
