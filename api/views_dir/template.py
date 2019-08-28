@@ -223,6 +223,10 @@ def template_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = "修改成功"
 
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
         # 客户创建模板
         elif oper_type == 'user_add_template':
             form_data = {

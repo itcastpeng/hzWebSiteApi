@@ -100,10 +100,9 @@ class UpdateClassForm(forms.Form):
         }
     )
     class_id = forms.IntegerField(
-        required=True,
+        required=False,
         error_messages={
             'required': '模板分类id不能为空',
-            'invalid': "参数数据类型错误"
         }
     )
     name = forms.CharField(
@@ -114,15 +113,15 @@ class UpdateClassForm(forms.Form):
     )
     # 判断模板分类id是否存在
     def clean_class_id(self):
-        # o_id = self.data['o_id']
-        class_id = self.data['class_id']
-        objs = models.TemplateClass.objects.filter(
-            id=class_id
-        )
-        if objs:
-            return class_id
-        else:
-            self.add_error('class_id', '模板分类不存在')
+        class_id = self.data.get('class_id')
+        if class_id:
+            objs = models.TemplateClass.objects.filter(
+                id=class_id
+            )
+            if objs:
+                return class_id
+            else:
+                self.add_error('class_id', '模板分类不存在')
 
 
 # 判断是否是数字
