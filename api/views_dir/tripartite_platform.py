@@ -10,7 +10,7 @@ from urllib.parse import unquote, quote
 from publicFunc.public import send_error_msg
 from django.shortcuts import redirect
 from publicFunc.condition_com import conditionCom
-from publicFunc.public import get_qrcode
+from publicFunc.public import get_qrcode, upload_qiniu
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -488,8 +488,14 @@ def tripartite_platform_oper(request, oper_type):
                     'width': 430
                 }
                 ret = requests.post(url, data=json.dumps(data))
-                print('ret.text------------------------> ', ret.text)
-                print('ret.json()----------------> ', ret.json())
+
+                img_path = str(int(time.time())) + '.png'
+                with open(img_path, 'wb') as f:
+                    f.write(ret.content)
+                path = upload_qiniu(img_path, 800)
+                response.code = 200
+                response.data = path
+
 
 
         # authorize_callback
