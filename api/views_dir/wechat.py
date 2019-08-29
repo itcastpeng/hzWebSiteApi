@@ -147,22 +147,36 @@ def wechat(request):
                 if event == "subscribe":
                     event_key = event_key.split("qrscene_")[-1]
                 event_key = json.loads(event_key)
-                print('event_key -->', event_key)
                 timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
                 new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
-                print('event_key-----------event_key--------------> ', event_key)
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
+                    weichat_api_obj = WeChatApi()
                     url = 'https://xcx.bjhzkq.com/wx/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
                         transfer_user_id,
                         new_user_id,
                         token
                     )
                     print('url======. ', url)
-                    return redirect(url)
+                    post_data = {
+                        "touser": openid,
+                        "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                        "news": {
+                            "articles": [
+                                {
+                                    "title": '建站数据转接',
+                                    "description": '数据转接',
+                                    "url": url,
+                                    "picurl": ''
+                                }
+                            ]
+                        }
+                    }
+                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                    weichat_api_obj.news_service(post_data)
 
             # 取消关注
             elif event == "unsubscribe":
