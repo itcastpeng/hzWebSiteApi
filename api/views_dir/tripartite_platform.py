@@ -473,6 +473,24 @@ def tripartite_platform_oper(request, oper_type):
                     "errmsg": "ok",
                 }
 
+            # 获取预览二维码
+            elif oper_type == 'get_preview_qr_code':
+                # request_url = 'https://xcx.bjhzkq.com/api?token={}&user_id={}&template_id={}'.format(
+                request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
+                    'be56e057f20f883ee10adc3949ba59ab', 1, 79
+                )
+                # path = get_qrcode(url)
+                # print('path------------------> ', path)
+
+                url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'
+                data = {
+                    'path': request_url,
+                    'width': 430
+                }
+                ret = requests.post(url, data=json.dumps(data))
+                print('ret.text------------------------> ', ret.text)
+                print('ret.json()----------------> ', ret.json())
+
 
         # authorize_callback
         else:
@@ -788,13 +806,19 @@ def tripartite_platform_admin(request, oper_type, o_id):
             response.msg = msg
             response.data = data
 
+        # 获取预览二维码
+        elif oper_type == 'get_preview_qr_code':
 
+            url = 'https://xcx.bjhzkq.com/api?token={}&user_id={}&template_id={}'.format(
+                'be56e057f20f883ee10adc3949ba59ab', 1, 79
+            )
+            path = get_qrcode(url)
+            print('path------------------> ', path)
         else:
             response.code = 402
             response.msg = '请求异常'
 
     return JsonResponse(response.__dict__)
-
 
 # 授权事件接收  （微信后台10分钟一次回调该接口 传递component_verify_ticket）
 def tongzhi(request):

@@ -11,6 +11,7 @@ from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
 from publicFunc import Response
 from publicFunc import account
 from publicFunc import base64_encryption
+from django.shortcuts import redirect
 import json, datetime, xml.dom.minidom, time
 
 
@@ -152,8 +153,14 @@ def wechat(request):
                 new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
+                token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
-                    print('-------------------转接====================')
+                    url = 'https://xcx.bjhzkq.com/wx/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
+                        transfer_user_id,
+                        new_user_id,
+                        token
+                    )
+                    return redirect(url)
 
             # 取消关注
             elif event == "unsubscribe":
@@ -194,10 +201,12 @@ def wechat_oper(request, oper_type):
         # 获取转接 二维码(当前用户转接给别的用户)
         elif oper_type == 'transfer_all_user_information':
             user_id = request.GET.get('user_id')
+            obj = models.UserProfile.objects.get(id=user_id)
             timestamp = str(int(time.time() * 1000))
             qc_code_url = weichat_api_obj.generate_qrcode({
                 'timestamp': timestamp,
                 'transfer_user_id': user_id,
+                'token': obj.token,
             })
             response.code = 200
             response.msg = '生成成功'
