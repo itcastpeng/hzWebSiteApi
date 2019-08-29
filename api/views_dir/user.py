@@ -2,7 +2,7 @@ from api import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from api.forms.user import SelectForm, UpdateRoleForm
+from api.forms.user import SelectForm, UpdateRoleForm, OpenSubAccount, TransferAllUserInformation
 import datetime, re, json
 from publicFunc import base64_encryption
 
@@ -93,6 +93,50 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+
+        # 开设子账户
+        elif oper_type == 'open_sub_account':
+            form_data = {
+                'user_id': user_id,
+                'user_list': request.POST.get('user_list', "[]")
+            }
+            form_obj = OpenSubAccount(form_data)
+            if form_obj.is_valid():
+                pass
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
+
+        # 转接 用户所有信息
+        elif oper_type == 'transfer_all_user_information':
+            form_data = {
+                'user_id':user_id,
+                'o_id': o_id,
+            }
+            form_obj = TransferAllUserInformation(form_data)
+            if form_obj.is_valid():
+                o_id = form_obj.cleaned_data.get('o_id')
+                user_id = form_obj.cleaned_data.get('user_id')
+
+                models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)
+                models.ClientApplet.objects.filter(user_id=user_id).update(user_id=o_id)
+                response.code = 200
+                response.msg = '转接成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
+
 
     else:
         response.code = 402
