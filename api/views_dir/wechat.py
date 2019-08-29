@@ -155,7 +155,7 @@ def wechat(request):
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
                     weichat_api_obj = WeChatApi()
-                    url = 'https://xcx.bjhzkq.com/wx/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
+                    url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
                         transfer_user_id,
                         new_user_id,
                         token
