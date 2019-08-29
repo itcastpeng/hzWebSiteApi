@@ -475,12 +475,9 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取预览二维码
             elif oper_type == 'get_preview_qr_code':
-                # request_url = 'https://xcx.bjhzkq.com/api?token={}&user_id={}&template_id={}'.format(
                 request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
                     'be56e057f20f883ee10adc3949ba59ab', 1, 79
                 )
-                # path = get_qrcode(url)
-                # print('path------------------> ', path)
 
                 url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
                 data = {
@@ -812,14 +809,6 @@ def tripartite_platform_admin(request, oper_type, o_id):
             response.msg = msg
             response.data = data
 
-        # 获取预览二维码
-        elif oper_type == 'get_preview_qr_code':
-
-            url = 'https://xcx.bjhzkq.com/api?token={}&user_id={}&template_id={}'.format(
-                'be56e057f20f883ee10adc3949ba59ab', 1, 79
-            )
-            path = get_qrcode(url)
-            print('path------------------> ', path)
         else:
             response.code = 402
             response.msg = '请求异常'

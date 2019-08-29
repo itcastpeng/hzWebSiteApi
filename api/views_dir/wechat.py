@@ -152,6 +152,7 @@ def wechat(request):
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
                 new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
+                print('event_key-----------event_key--------------> ', event_key)
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
@@ -160,6 +161,7 @@ def wechat(request):
                         new_user_id,
                         token
                     )
+                    print('url======. ', url)
                     return redirect(url)
 
             # 取消关注
