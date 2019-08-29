@@ -482,7 +482,7 @@ def tripartite_platform_oper(request, oper_type):
                 # path = get_qrcode(url)
                 # print('path------------------> ', path)
 
-                url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'
+                url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
                 data = {
                     'path': request_url,
                     'width': 430
