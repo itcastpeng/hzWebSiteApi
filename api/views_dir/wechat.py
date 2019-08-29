@@ -98,7 +98,7 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
         print("user_data --->", user_data)
         user_obj = models.UserProfile.objects.create(**user_data)
         user_id = user_obj.id
-    return user_id
+    return user_id, ret_obj['nickname']
 
 
 # 微信服务器调用的接口
@@ -149,7 +149,7 @@ def wechat(request):
                 event_key = json.loads(event_key)
                 timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
-                new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+                new_user_id, nick_name = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
@@ -160,14 +160,14 @@ def wechat(request):
                         new_user_id,
                         token
                     )
-                    print('url======. ', url)
+                    print('url======>' , url)
                     post_data = {
                         "touser": openid,
                         "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
                         "news": {
                             "articles": [
                                 {
-                                    "title": '建站数据转接',
+                                    "title": '{}请求将建站数据转接给您'.format(nick_name),
                                     "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
                                     "url": url,
                                     "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
