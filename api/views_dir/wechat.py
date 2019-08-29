@@ -168,9 +168,9 @@ def wechat(request):
                             "articles": [
                                 {
                                     "title": '建站数据转接',
-                                    "description": '数据转接',
+                                    "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
                                     "url": url,
-                                    "picurl": ''
+                                    "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
                                 }
                             ]
                         }
