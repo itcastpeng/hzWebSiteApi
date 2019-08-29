@@ -56,7 +56,7 @@ class UserProfile(models.Model):
         blank=True,
         default=None
     )
-    # number_child_users = models.IntegerField(verbose_name='可以创建几个子用户', default=1)
+    number_child_users = models.IntegerField(verbose_name='可以创建几个子用户', default=1)
     small_program_number = models.IntegerField(verbose_name='可以创建几个小程序', default=1)
 
 # 公众号或小程序用户表

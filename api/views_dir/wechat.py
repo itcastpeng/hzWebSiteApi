@@ -149,7 +149,11 @@ def wechat(request):
                 print('event_key -->', event_key)
                 timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
-                update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+                new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+
+                transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
+                if transfer_user_id:
+                    print('-------------------转接====================')
 
             # 取消关注
             elif event == "unsubscribe":
@@ -186,6 +190,21 @@ def wechat_oper(request, oper_type):
                 'expire_date': expire_date,
                 'timestamp': timestamp,
             }
+
+        # 获取转接 二维码(当前用户转接给别的用户)
+        elif oper_type == 'transfer_all_user_information':
+            user_id = request.GET.get('user_id')
+            timestamp = str(int(time.time() * 1000))
+            qc_code_url = weichat_api_obj.generate_qrcode({
+                'timestamp': timestamp,
+                'transfer_user_id': user_id,
+            })
+            response.code = 200
+            response.msg = '生成成功'
+            response.data = {
+                'qc_code_url': qc_code_url
+            }
+
 
 
     return JsonResponse(response.__dict__)
