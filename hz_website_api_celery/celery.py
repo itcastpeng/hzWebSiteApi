@@ -131,6 +131,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('0', '*/5', '*', '*', '*'),
     },
 
+    # 定时刷新转接 时间是否过期
+    'time_refresh_switch': {
+        'task': 'hz_website_api_celery.tasks.time_refresh_switch',
+        'schedule': 10                                   # 单独设置  秒
+    },
+
 }
 app.conf.update(
     result_expires=3600,
