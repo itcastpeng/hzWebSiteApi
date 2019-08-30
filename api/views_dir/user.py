@@ -111,6 +111,7 @@ def user_oper(request, oper_type, o_id):
 
         # 转接 用户所有信息
         elif oper_type == 'transfer_all_user_information':
+            cancel_transfer = request.POST.get('cancel_transfer') # 拒绝交接
             form_data = {
                 'user_id':user_id,
                 'o_id': o_id,
@@ -120,29 +121,34 @@ def user_oper(request, oper_type, o_id):
                 by_connecting_people_id=o_id
             ).order_by('-create_datetime')
 
-            form_obj = TransferAllUserInformation(form_data)
-            if form_obj.is_valid():
-                o_id = form_obj.cleaned_data.get('o_id')
-                user_id = form_obj.cleaned_data.get('user_id')
-
-                models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)
-                models.ClientApplet.objects.filter(user_id=user_id).update(user_id=o_id)
-                response.code = 200
-                response.msg = '转接成功'
-
-                transfer_objs.update(whether_transfer_successful=4)
-            else:
+            if cancel_transfer:
                 transfer_objs.update(whether_transfer_successful=5)
-                response.code = 301
-                response.msg = json.loads(form_obj.errors.as_json())
+                response.code = 200
+                response.msg = '已拒绝交接'
+
+            else:
+                form_obj = TransferAllUserInformation(form_data)
+                if form_obj.is_valid():
+                    o_id = form_obj.cleaned_data.get('o_id')
+                    user_id = form_obj.cleaned_data.get('user_id')
+
+                    models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                    models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)
+                    models.ClientApplet.objects.filter(user_id=user_id).update(user_id=o_id)
+                    response.code = 200
+                    response.msg = '转接成功'
+
+                    transfer_objs.update(whether_transfer_successful=4)
+                else:
+                    response.code = 301
+                    response.msg = json.loads(form_obj.errors.as_json())
 
 
     else:
