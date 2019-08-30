@@ -98,7 +98,7 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
         print("user_data --->", user_data)
         user_obj = models.UserProfile.objects.create(**user_data)
         user_id = user_obj.id
-    return user_id, ret_obj['nickname']
+    return user_id
 
 
 # 微信服务器调用的接口
@@ -149,12 +149,13 @@ def wechat(request):
                 event_key = json.loads(event_key)
                 timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
-                new_user_id, nick_name = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+                new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
-                    transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=timestamp)
+                    time_stamp = event_key.get('time_stamp')
+                    transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
                     if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
                         transfer_objs.update(
                             by_connecting_people_id=new_user_id,
@@ -173,7 +174,7 @@ def wechat(request):
                             "news": {
                                 "articles": [
                                     {
-                                        "title": '{}请求将建站数据转接给您'.format(nick_name),
+                                        "title": '{}请求将建站数据转接给您'.format(transfer_objs[0].speak_to_people.name),
                                         "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
                                         "url": url,
                                         "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
@@ -181,13 +182,22 @@ def wechat(request):
                                 ]
                             }
                         }
-                        post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
-                        weichat_api_obj.news_service(post_data)
                     else:
                         if transfer_objs:
-                            print('二维码已过期')
+                            content = '二维码异常, 请刷新'
+
                         else:
-                            print('二维码异常')
+                            content = '二维码已过期, 请刷新'
+
+                        post_data = {
+                            "touser": openid,
+                            "msgtype": "text",
+                            "text": {
+                                "content": content
+                            }
+                        }
+                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                    weichat_api_obj.news_service(post_data)
 
 
             # 取消关注
@@ -234,6 +244,7 @@ def wechat_oper(request, oper_type):
             timestamp = str(int(time.time() * 1000))
             qc_code_url = weichat_api_obj.generate_qrcode({
                 'timestamp': timestamp,
+                'time_stamp': timestamp,
                 'transfer_user_id': user_id,
                 'token': obj.token,
             })
@@ -245,7 +256,7 @@ def wechat_oper(request, oper_type):
             response.msg = '生成成功'
             response.data = {
                 'qc_code_url': qc_code_url,
-                'timestamp': timestamp  # 判断是否扫码
+                'time_stamp': timestamp  # 判断是否扫码
             }
 
         # 查询被转接人是否扫码

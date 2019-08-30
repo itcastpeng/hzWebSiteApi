@@ -1,5 +1,5 @@
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class, article_management
@@ -7,7 +7,7 @@ from api.views_dir.xcx import template as xcx_template, form_management
 
 urlpatterns = [
 
-
+    url(r'^celery/', include('api.celery_url')),     # celery
     # --------------------------- 公共 ----------------------------
     url(r'^upload_img$', upload_img.upload_img),   # 上传图片
     url(r'^login$', login.login),                  # 账号密码登录
