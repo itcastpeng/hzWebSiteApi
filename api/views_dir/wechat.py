@@ -261,7 +261,7 @@ def wechat_oper(request, oper_type):
 
         # 查询被转接人是否扫码
         elif oper_type == 'check_whether_code_scanned_transferee':
-            timestamp = request.GET.get('timestamp')
+            timestamp = request.GET.get('time_stamp')
             code = 301
             msg = ''
 
