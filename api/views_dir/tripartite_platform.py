@@ -12,7 +12,7 @@ from django.shortcuts import redirect
 from publicFunc.condition_com import conditionCom
 from publicFunc.public import get_qrcode, upload_qiniu
 from publicFunc.base64_encryption import b64decode
-from django.db.models import Q
+from django.db.models import Q, Count
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -854,14 +854,22 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
                 user_objs = models.ClientApplet.objects.filter(
                     user__isnull=False
-                ).exclude(user__role_id__in=admin_list)
+                ).select_related('user').values(
+                    'user_id',
+                    'user__name'
+                ).annotate(
+                    Count('id')
+                ).exclude(
+                    user__role_id__in=admin_list
+                ).distinct()
                 user_count = user_objs.count()
                 user_list = []
                 for user_obj in user_objs:
                     user_list.append({
-                        'id':user_obj.user_id,
-                        'name': b64decode(user_obj.user.name)
+                        'id':user_obj.get('user_id'),
+                        'name': b64decode(user_obj.get('user__name'))
                     })
+
 
                 #  查询成功 返回200 状态码
                 response.code = 200

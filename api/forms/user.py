@@ -114,6 +114,9 @@ class TransferAllUserInformation(forms.Form):
 
     def clean_o_id(self):
         o_id = self.data.get('o_id')
+        user_id = self.data.get('user_id')
+        if o_id == user_id:
+            self.add_error('o_id', '不可转接给自己')
         objs = models.UserProfile.objects.filter(id=o_id)
         if objs:
             obj = objs[0]
