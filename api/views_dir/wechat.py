@@ -251,11 +251,12 @@ def wechat_oper(request, oper_type):
                 speak_to_people_id=user_id,
                 timestamp=timestamp,
             )
-            data = {
-                'log_type':'',
-                'msg':'',
-                'user_id':''
-            }
+            # data = {
+            #     'log_type':1,
+            #     'msg':'',
+            #     'user_id':''
+            # }
+            # create_error_log(data)
             response.code = 200
             response.msg = '生成成功'
             response.data = {
@@ -273,7 +274,6 @@ def wechat_oper(request, oper_type):
                     timestamp=timestamp
                 )
                 if objs:
-                    print('=============================')
                     obj = objs[0]
                     if obj.whether_transfer_successful in [2, '2']:
                         msg = '已经扫码'
@@ -284,7 +284,11 @@ def wechat_oper(request, oper_type):
                     elif obj.whether_transfer_successful in [5, '5']:
                         code = 501
                         msg = '已拒绝交接'
+                    else:
+                        code = 301
+                        msg = '未扫码'
                 else:
+                    code = 301
                     msg = '未查询到转接记录'
                 response.code = code
                 response.msg = msg
