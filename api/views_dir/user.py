@@ -115,6 +115,11 @@ def user_oper(request, oper_type, o_id):
                 'user_id':user_id,
                 'o_id': o_id,
             }
+            transfer_objs = models.Transfer.objects.filter(
+                speak_to_people_id=user_id,
+                by_connecting_people_id=o_id
+            ).order_by('-create_datetime')
+
             form_obj = TransferAllUserInformation(form_data)
             if form_obj.is_valid():
                 o_id = form_obj.cleaned_data.get('o_id')
@@ -133,7 +138,9 @@ def user_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = '转接成功'
 
+                transfer_objs.update(whether_transfer_successful=4)
             else:
+                transfer_objs.update(whether_transfer_successful=5)
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
 

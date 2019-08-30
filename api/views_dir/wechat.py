@@ -8,10 +8,8 @@ from django.http import JsonResponse
 from api import models
 from publicFunc.account import get_token
 from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
-from publicFunc import Response
-from publicFunc import account
-from publicFunc import base64_encryption
-from django.shortcuts import redirect
+from publicFunc import Response, account, base64_encryption
+from publicFunc.role_choice import admin_list
 import json, datetime, xml.dom.minidom, time
 
 
@@ -167,17 +165,17 @@ def wechat(request):
                             new_user_id,
                             token
                         )
-                        print('url======>' , url)
                         post_data = {
                             "touser": openid,
                             "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
                             "news": {
                                 "articles": [
                                     {
-                                        "title": '{}请求将建站数据转接给您'.format(transfer_objs[0].speak_to_people.name),
+                                        "title": '{}请求将建站数据转接给您'.format(base64_encryption.b64decode(transfer_objs[0].speak_to_people.name)),
                                         "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
                                         "url": url,
-                                        "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
+                                        # "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
+                                        "picurl": transfer_objs[0].speak_to_people.head_portrait
                                     }
                                 ]
                             }
@@ -264,20 +262,28 @@ def wechat_oper(request, oper_type):
             timestamp = request.GET.get('time_stamp')
             code = 301
             msg = ''
-
-            objs = models.Transfer.objects.filter(
-                speak_to_people_id=user_id,
-                timestamp=timestamp
-            )
-            if objs:
-                obj = objs[0]
-                if obj.whether_transfer_successful in [2, '2']:
-                    msg = '已经扫码'
-                    code = 200
+            user_obj = models.UserProfile.objects.get(id=user_id)
+            if user_obj.role_id not in admin_list and not user_obj.inviter:
+                objs = models.Transfer.objects.filter(
+                    speak_to_people_id=user_id,
+                    timestamp=timestamp
+                )
+                if objs:
+                    obj = objs[0]
+                    if obj.whether_transfer_successful in [2, '2']:
+                        msg = '已经扫码'
+                        code = 200
+                else:
+                    msg = '未查询到转接记录'
+                response.code = code
+                response.msg = msg
             else:
-                msg = '未查询到转接记录'
-            response.code = code
-            response.msg = msg
+                response.code = 301
+                if user_obj.inviter:
+                    msg = '子级用户不能转接'
+                else:
+                    msg = '管理员不能转接'
+                response.msg = msg
 
     return JsonResponse(response.__dict__)
 
