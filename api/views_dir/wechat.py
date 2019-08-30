@@ -251,12 +251,12 @@ def wechat_oper(request, oper_type):
                 speak_to_people_id=user_id,
                 timestamp=timestamp,
             )
-            # data = {
-            #     'log_type':1,
-            #     'msg':'',
-            #     'user_id':''
-            # }
-            # create_error_log(data)
+            data = {
+                'log_type':1,
+                'msg':'您获取了转接二维码',
+                'user_id':user_id
+            }
+            create_error_log(data) # 创建日志
             response.code = 200
             response.msg = '生成成功'
             response.data = {
