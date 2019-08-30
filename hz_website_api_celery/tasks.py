@@ -641,8 +641,11 @@ def determine_phone_number_ownership():
     url = 'https://xcx.bjhzkq.com/api_hurong/celery/determine_phone_number_ownership'
     requests.post(url)
 
-
-
+# 定时刷新转接 时间是否过期
+@app.task
+def time_refresh_switch():
+    url = 'https://xcx.bjhzkq.com/api/celery/time_refresh_switch'
+    requests.get(url)
 
 
 
