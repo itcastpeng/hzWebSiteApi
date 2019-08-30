@@ -10,6 +10,7 @@ from publicFunc.account import get_token
 from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
 from publicFunc import Response, account, base64_encryption
 from publicFunc.role_choice import admin_list
+from publicFunc.api_public import create_error_log
 import json, datetime, xml.dom.minidom, time
 
 
@@ -250,6 +251,11 @@ def wechat_oper(request, oper_type):
                 speak_to_people_id=user_id,
                 timestamp=timestamp,
             )
+            data = {
+                'log_type':'',
+                'msg':'',
+                'user_id':''
+            }
             response.code = 200
             response.msg = '生成成功'
             response.data = {
@@ -260,8 +266,6 @@ def wechat_oper(request, oper_type):
         # 查询被转接人是否扫码
         elif oper_type == 'check_whether_code_scanned_transferee':
             timestamp = request.GET.get('time_stamp')
-            code = 301
-            msg = ''
             user_obj = models.UserProfile.objects.get(id=user_id)
             if user_obj.role_id not in admin_list and not user_obj.inviter:
                 objs = models.Transfer.objects.filter(
@@ -269,6 +273,7 @@ def wechat_oper(request, oper_type):
                     timestamp=timestamp
                 )
                 if objs:
+                    print('=============================')
                     obj = objs[0]
                     if obj.whether_transfer_successful in [2, '2']:
                         msg = '已经扫码'

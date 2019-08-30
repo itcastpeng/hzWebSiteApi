@@ -285,7 +285,7 @@ class Article(models.Model):
 
 
 # 转接表(用户--转接--用户)
-class Transfer(models.Model):
+class Transfer(models.Model): # 可定时删除
     speak_to_people = models.ForeignKey('UserProfile', verbose_name='转接人', related_name='speak_to_people_name')
     by_connecting_people = models.ForeignKey('UserProfile', verbose_name='被转接人', related_name='by_connecting_people_name', null=True)
     timestamp = models.CharField(verbose_name='时间戳', max_length=128)
@@ -298,6 +298,28 @@ class Transfer(models.Model):
     )
     whether_transfer_successful = models.SmallIntegerField(verbose_name='是否转接成功', choices=whether_transfer_successful_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+class ErrorLog(models.Model):
+    log_type_choices = (
+        (1, '转接日志'),
+        (2, '被转接日志'),
+    )
+    log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, )
+    msg = models.TextField(verbose_name='日志', null=True)
+    user = models.ForeignKey('UserProfile', verbose_name='归属人')
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
