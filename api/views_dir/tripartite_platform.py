@@ -477,8 +477,9 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取预览二维码
             elif oper_type == 'get_preview_qr_code':
+                user_obj = models.UserProfile.objects.get(id=user_id)
                 request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
-                    'be56e057f20f883ee10adc3949ba59ab', 1, 79
+                    user_obj.token, user_id, template_id
                 )
 
                 url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
@@ -492,9 +493,14 @@ def tripartite_platform_oper(request, oper_type):
                 with open(img_path, 'wb') as f:
                     f.write(ret.content)
                 path = upload_qiniu(img_path, 800)
-                response.code = 200
-                response.data = path
+                template_obj = models.Template.objects.get(id=template_id)
 
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'xcx_code': path,
+                    'gzh_code': template_obj.qrcode
+                }
 
 
         # authorize_callback
@@ -528,12 +534,12 @@ def tripartite_platform_oper(request, oper_type):
             tripartite_platform_objs.get_account_information(authorization_type, appid) # 获取基本信息入库
             objs.update(is_authorization=1) # 授权完成
 
-    if template_id:
-            models.ClientApplet.objects.filter(
-                appid=appid
-            ).update(
-                template_id=template_id
-            )
+    if template_id and oper_type not in ['get_preview_qr_code']:
+        models.ClientApplet.objects.filter(
+            appid=appid
+        ).update(
+            template_id=template_id
+        )
 
     return JsonResponse(response.__dict__)
 
@@ -791,7 +797,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 获取二维码
+        # 获取模板二维码
         elif oper_type == 'get_qrcode':
             objs = models.Template.objects.filter(id=o_id)
 

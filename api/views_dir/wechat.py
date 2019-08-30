@@ -10,7 +10,6 @@ from publicFunc.account import get_token
 from publicFunc.weixin.weixin_gongzhonghao_api import WeChatApi
 from publicFunc import Response, account, base64_encryption
 from publicFunc.role_choice import admin_list
-from publicFunc.api_public import create_error_log
 import json, datetime, xml.dom.minidom, time
 
 
@@ -251,12 +250,6 @@ def wechat_oper(request, oper_type):
                 speak_to_people_id=user_id,
                 timestamp=timestamp,
             )
-            data = {
-                'log_type':1,
-                'msg':'您获取了转接二维码',
-                'user_id':user_id
-            }
-            create_error_log(data) # 创建日志
             response.code = 200
             response.msg = '生成成功'
             response.data = {
