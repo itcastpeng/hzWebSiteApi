@@ -7,10 +7,12 @@ from publicFunc.tripartite_platform_oper import tripartite_platform_oper as trip
     encoding_token, encoding_appid
 from publicFunc.crypto_.WXBizMsgCrypt import WXBizMsgCrypt
 from urllib.parse import unquote, quote
-from publicFunc.public import send_error_msg
+from publicFunc.role_choice import admin_list
 from django.shortcuts import redirect
 from publicFunc.condition_com import conditionCom
 from publicFunc.public import get_qrcode, upload_qiniu
+from publicFunc.base64_encryption import b64decode
+from django.db.models import Q
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -808,6 +810,76 @@ def tripartite_platform_admin(request, oper_type, o_id):
             response.code = code
             response.msg = msg
             response.data = data
+
+        # 查询所有小程序
+        elif oper_type == 'query_all_applets':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_datetime')
+                field_dict = {
+                    'id':'',
+                }
+                q = conditionCom(request, field_dict)
+                user_id_id = request.GET.get('user_id_id')
+                if user_id_id:
+                    q.add(Q(user_id=user_id_id), Q.AND)
+                objs = models.ClientApplet.objects.filter(
+                    q,
+                ).order_by(order)
+                count = objs.count()
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+
+                    user_id = ''
+                    username = ''
+                    if obj.user:
+                        user_id = obj.user_id
+                        username = obj.user.name
+                    ret_data.append({
+                        'id': obj.id,
+                        'appid': obj.appid,
+                        'nick_name': obj.nick_name,
+                        'head_img': obj.head_img,
+                        'user_id': user_id,
+                        'username': b64decode(username),
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    })
+
+                user_objs = models.ClientApplet.objects.filter(
+                    user__isnull=False
+                ).exclude(user__role_id__in=admin_list)
+                user_count = user_objs.count()
+                user_list = []
+                for user_obj in user_objs:
+                    user_list.append({
+                        'id':user_obj.user_id,
+                        'name': b64decode(user_obj.user.name)
+                    })
+
+                #  查询成功 返回200 状态码
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'ret_data': ret_data,
+                    'data_count': count,
+                    'user_count': user_count,
+                    'user_list': user_list,
+                }
+                response.note = {
+                    'id': '提交的代码ID',
+                    'create_datetime': '创建时间',
+                }
+            else:
+                response.code = 402
+                response.msg = "请求异常"
+                response.data = json.loads(forms_obj.errors.as_json())
 
         else:
             response.code = 402
