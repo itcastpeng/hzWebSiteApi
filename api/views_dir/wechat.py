@@ -256,7 +256,6 @@ def wechat_oper(request, oper_type):
                 'msg':'',
                 'user_id':''
             }
-            create_error_log()
             response.code = 200
             response.msg = '生成成功'
             response.data = {
