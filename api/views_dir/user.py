@@ -126,7 +126,7 @@ def user_oper(request, oper_type, o_id):
                 transfer_objs.update(whether_transfer_successful=5)
                 code = 200
                 msg = '已拒绝交接'
-                log_msg = '您拒绝了{}的交接'
+
             else:
                 form_obj = TransferAllUserInformation(form_data)
                 if form_obj.is_valid():
@@ -147,22 +147,13 @@ def user_oper(request, oper_type, o_id):
                     code = 200
                     msg = '转接成功'
                     transfer_objs.update(whether_transfer_successful=4)
-                    log_msg = '您接受了{}的交接'
 
                 else:
                     code = 301
                     msg = json.loads(form_obj.errors.as_json())
-                    log_msg = '账号异常未能完成{}的交接任务, 原因：%s' % msg
 
             response.code = code
             response.msg = msg
-            user_obj = models.UserProfile.objects.get(id=user_id)
-            data = {
-                'log_type': 2,
-                'msg': log_msg.format(base64_encryption.b64decode(user_obj.name)),
-                'user_id': user_id
-            }
-            create_error_log(data)
 
     else:
         response.code = 402

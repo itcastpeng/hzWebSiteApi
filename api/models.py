@@ -300,15 +300,15 @@ class Transfer(models.Model): # 可定时删除
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-class ErrorLog(models.Model):
-    log_type_choices = (
-        (1, '转接日志'),
-        (2, '被转接日志'),
-    )
-    log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, )
-    msg = models.TextField(verbose_name='日志', null=True)
-    user = models.ForeignKey('UserProfile', verbose_name='归属人')
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+# class ErrorLog(models.Model):
+#     log_type_choices = (
+#         (1, '转接日志'),
+#         (2, '被转接日志'),
+#     )
+#     log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, )
+#     msg = models.TextField(verbose_name='日志', null=True)
+#     user = models.ForeignKey('UserProfile', verbose_name='归属人')
+#     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
