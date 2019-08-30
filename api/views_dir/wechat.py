@@ -154,29 +154,41 @@ def wechat(request):
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id:
-                    weichat_api_obj = WeChatApi()
-                    url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
-                        transfer_user_id,
-                        new_user_id,
-                        token
-                    )
-                    print('url======>' , url)
-                    post_data = {
-                        "touser": openid,
-                        "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
-                        "news": {
-                            "articles": [
-                                {
-                                    "title": '{}请求将建站数据转接给您'.format(nick_name),
-                                    "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
-                                    "url": url,
-                                    "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
-                                }
-                            ]
+                    transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=timestamp)
+                    if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
+                        transfer_objs.update(
+                            by_connecting_people_id=new_user_id,
+                            whether_transfer_successful=2
+                        )
+                        weichat_api_obj = WeChatApi()
+                        url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
+                            transfer_user_id,
+                            new_user_id,
+                            token
+                        )
+                        print('url======>' , url)
+                        post_data = {
+                            "touser": openid,
+                            "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                            "news": {
+                                "articles": [
+                                    {
+                                        "title": '{}请求将建站数据转接给您'.format(nick_name),
+                                        "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
+                                        "url": url,
+                                        "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
+                                    }
+                                ]
+                            }
                         }
-                    }
-                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
-                    weichat_api_obj.news_service(post_data)
+                        post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                        weichat_api_obj.news_service(post_data)
+                    else:
+                        if transfer_objs:
+                            print('二维码已过期')
+                        else:
+                            print('二维码异常')
+
 
             # 取消关注
             elif event == "unsubscribe":
@@ -193,13 +205,14 @@ def wechat(request):
 @account.is_token(models.UserProfile)
 def wechat_oper(request, oper_type):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
     if request.method == "POST":
         pass
 
     else:
         # 获取用于登录的微信二维码
-        weichat_api_obj = WeChatApi()
         if oper_type == "login_qrcode":
+            weichat_api_obj = WeChatApi()
             timestamp = str(int(time.time() * 1000))
             qc_code_url = weichat_api_obj.generate_qrcode({
                 'timestamp': timestamp,
@@ -216,7 +229,7 @@ def wechat_oper(request, oper_type):
 
         # 获取转接 二维码(当前用户转接给别的用户)
         elif oper_type == 'transfer_all_user_information':
-            user_id = request.GET.get('user_id')
+            weichat_api_obj = WeChatApi()
             obj = models.UserProfile.objects.get(id=user_id)
             timestamp = str(int(time.time() * 1000))
             qc_code_url = weichat_api_obj.generate_qrcode({
@@ -224,13 +237,36 @@ def wechat_oper(request, oper_type):
                 'transfer_user_id': user_id,
                 'token': obj.token,
             })
+            models.Transfer.objects.create(
+                speak_to_people_id=user_id,
+                timestamp=timestamp,
+            )
             response.code = 200
             response.msg = '生成成功'
             response.data = {
-                'qc_code_url': qc_code_url
+                'qc_code_url': qc_code_url,
+                'timestamp': timestamp  # 判断是否扫码
             }
 
+        # 查询被转接人是否扫码
+        elif oper_type == 'check_whether_code_scanned_transferee':
+            timestamp = request.GET.get('timestamp')
+            code = 301
+            msg = ''
 
+            objs = models.Transfer.objects.filter(
+                speak_to_people_id=user_id,
+                timestamp=timestamp
+            )
+            if objs:
+                obj = objs[0]
+                if obj.whether_transfer_successful in [2, '2']:
+                    msg = '已经扫码'
+                    code = 200
+            else:
+                msg = '未查询到转接记录'
+            response.code = code
+            response.msg = msg
 
     return JsonResponse(response.__dict__)
 

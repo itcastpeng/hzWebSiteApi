@@ -284,7 +284,20 @@ class Article(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
-
+# 转接表(用户--转接--用户)
+class Transfer(models.Model):
+    speak_to_people = models.ForeignKey('UserProfile', verbose_name='转接人', related_name='speak_to_people_name')
+    by_connecting_people = models.ForeignKey('UserProfile', verbose_name='被转接人', related_name='by_connecting_people_name', null=True)
+    timestamp = models.CharField(verbose_name='时间戳', max_length=128)
+    whether_transfer_successful_choices = (
+        (1, '未扫码'),
+        (2, '已扫码'),
+        (3, '已过期'),
+        (4, '已完成'),
+        (5, '已拒绝'),
+    )
+    whether_transfer_successful = models.SmallIntegerField(verbose_name='是否转接成功', choices=whether_transfer_successful_choices, default=1)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
