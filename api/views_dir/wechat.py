@@ -273,6 +273,12 @@ def wechat_oper(request, oper_type):
                     if obj.whether_transfer_successful in [2, '2']:
                         msg = '已经扫码'
                         code = 200
+                    elif obj.whether_transfer_successful in [4, '4']:
+                        msg = '已完成交接'
+                        code = 401
+                    elif obj.whether_transfer_successful in [5, '5']:
+                        code = 501
+                        msg = '已拒绝交接'
                 else:
                     msg = '未查询到转接记录'
                 response.code = code
