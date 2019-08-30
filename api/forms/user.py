@@ -132,7 +132,10 @@ class TransferAllUserInformation(forms.Form):
         user_id = self.data.get('user_id')
         objs = models.UserProfile.objects.filter(id=user_id)
         if objs and objs[0].role_id not in admin_list:
-            return user_id
+            if objs[0].inviter:
+                self.add_error('user_id', '转接失败')
+            else:
+                return user_id
         else:
             self.add_error('user_id', '管理员不可转接')
 
