@@ -68,7 +68,9 @@ def DMS_screenshots(request, oper_type):
 
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
 
-
+                md5_obj = hashlib.md5()
+                md5_obj.update(img_base64_data.encode('utf8'))
+                img_base64_data = md5_obj.hexdigest()
                 if judge_key_objs:
                     data_list = json.loads(judge_key_objs)
                     data_list.append({'key': key, 'img_base64_data': img_base64_data})
