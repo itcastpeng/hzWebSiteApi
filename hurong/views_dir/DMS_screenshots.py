@@ -13,6 +13,7 @@ def DMS_screenshots(request, oper_type):
 
     # 截图
     if oper_type == "save_screenshots":
+        start_time = request.POST.get('timestamp')
         form_data = {
             'img_base64_data': request.POST.get('img_base64_data'),
             'iccid': request.POST.get('iccid'),
@@ -38,6 +39,7 @@ def DMS_screenshots(request, oper_type):
                         img_flag = True
                         key = i['key']
                         break
+            print("1111 -->", time.time() - start_time)
             print("key -->", key)
             if not img_flag:
                 print("没有保存过，提交七牛云获取url")
@@ -66,7 +68,7 @@ def DMS_screenshots(request, oper_type):
                 }
                 ret = requests.post(url, data=data, files=files, headers=headers)
                 print("七牛云返回数据 -->", ret.json())
-
+                print("222 -->", time.time() - start_time)
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
 
 
@@ -90,7 +92,7 @@ def DMS_screenshots(request, oper_type):
                     redis_obj.lpop('xhs_screenshots')
                 if num >= 10:
                     break
-
+            print("333 -->", time.time() - start_time)
             response.code = 200
             response.msg = "提交成功"
             response.data = {
@@ -100,7 +102,10 @@ def DMS_screenshots(request, oper_type):
         else:
             response.code = 301
             response.msg = json.loads(form_obj.errors.as_json())
+
+        print("444 -->", time.time() - start_time)
         create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
+        print("555 -->", time.time() - start_time)
         print("response.data -->", response.data, response.code, response.code)
     else:
 

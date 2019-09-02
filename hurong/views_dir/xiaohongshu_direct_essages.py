@@ -86,7 +86,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
         start_time = time.time()
         # 保存私信截图
         if oper_type == "save_screenshots":
-            timestamp = request.POST.get('timestamp')
             form_data = {
                 'name': request.POST.get('name'),
                 'iccid': request.POST.get('iccid'),
@@ -121,7 +120,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         )
                         if message_objs:
                             flag = False
-                    print("timestamp -----------111 -->", time.time() - start_time)
                     if flag:
                         # with open('t.png', 'wb') as f:
                         #     f.write(imgdata)
@@ -152,7 +150,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         }
 
                         ret = requests.post(url, data=data, files=files, headers=headers)
-                        print("timestamp -----------2222 -->", (time.time() - start_time))
                         # print("ret.text -->", ret.json)
                         key = ret.json()["key"]
                         img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
@@ -176,7 +173,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         if request.POST.get('from_blogger'):
                             from_blogger = 1 # 来自于博主
 
-                        print("timestamp -----------333 -->", (time.time() - start_time))
                         # 把私信截图发送给小红书后台
                         for i in range(3):
                             try:
@@ -195,7 +191,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                 break
                             except:
                                 pass
-                        print("timestamp -----------444 -->", (time.time() - start_time))
                 response.code = 200
                 response.msg = "保存成功"
 
