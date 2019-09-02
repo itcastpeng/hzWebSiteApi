@@ -24,7 +24,8 @@ def DMS_screenshots(request, oper_type):
             forms_data = form_obj.cleaned_data
             imgdata = forms_data.get('img_base64_data')
             img_base64_data = request.POST.get('img_base64_data')
-            md5_obj = hashlib.md5().update(img_base64_data.encode('utf8'))
+            md5_obj = hashlib.md5()
+            md5_obj.update(img_base64_data.encode('utf8'))
             img_base64_data = md5_obj.hexdigest()
 
             judge_key = "dms_screenshots_" + forms_data.get('iccid') + forms_data.get('imsi')
@@ -68,9 +69,7 @@ def DMS_screenshots(request, oper_type):
 
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
 
-                md5_obj = hashlib.md5()
-                md5_obj.update(img_base64_data.encode('utf8'))
-                img_base64_data = md5_obj.hexdigest()
+
                 if judge_key_objs:
                     data_list = json.loads(judge_key_objs)
                     data_list.append({'key': key, 'img_base64_data': img_base64_data})
