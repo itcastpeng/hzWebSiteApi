@@ -134,6 +134,10 @@ def wechat(request):
             # 用户的 openid
             openid = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
 
+            user_is_exists = False
+            if models.UserProfile.objects.filter(openid=openid):
+                user_is_exists = True
+
             # 扫描带参数的二维码
             if event in ["subscribe", "SCAN"]:
                 # subscribe = 首次关注
@@ -149,9 +153,10 @@ def wechat(request):
                 inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
                 new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
 
+                # ========================转接=================================
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
-                if transfer_user_id:
+                if transfer_user_id and token:
                     time_stamp = event_key.get('time_stamp')
                     transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
                     if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
@@ -197,7 +202,46 @@ def wechat(request):
                     post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
                     weichat_api_obj.news_service(post_data)
 
+                # =========================创建子级=================
+                parent_id = event_key.get('parent_id')  # 父级ID
+                if parent_id:
+                    parent_user_obj = models.UserProfile.objects.get(id=parent_id)
+                    chil_user_count = models.UserProfile.objects.filter(
+                        inviter_user_id=parent_id
+                    ).count()
+                    if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
+                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}'.format(
+                            parent_id,
+                            new_user_id,
+                            user_is_exists
+                        )
+                        post_data = {
+                            "touser": openid,
+                            "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                            "news": {
+                                "articles": [
+                                    {
+                                        "title": '我是{} 加入我的团队吧'.format(
+                                            base64_encryption.b64decode(parent_user_obj.name),
+                                        ),
+                                        "description": '加入团队将看到邀请人所有数据',
+                                        "url": url,
+                                        "picurl": parent_user_obj.head_portrait
+                                    }
+                                ]
+                            }
+                        }
 
+                    else:
+                        post_data = {
+                            "touser": openid,
+                            "msgtype": "text",
+                            "text": {
+                                "content": '邀请人子级用户达到上限'
+                            }
+                        }
+                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                    weichat_api_obj.news_service(post_data)
             # 取消关注
             elif event == "unsubscribe":
                 models.UserProfile.objects.filter(openid=openid).update(openid=None)
@@ -292,6 +336,53 @@ def wechat_oper(request, oper_type):
                 else:
                     msg = '管理员不能转接'
                 response.msg = msg
+
+        # 获取 创建子级二维码
+        elif oper_type == 'get_create_sub_qr_code':
+            weichat_api_obj = WeChatApi()
+            timestamp = str(int(time.time() * 1000))
+            obj = models.UserProfile.objects.get(id=user_id)
+            chil_user_count = models.UserProfile.objects.filter(
+                inviter_user_id=user_id
+            ).count()
+            if obj.number_child_users > chil_user_count:
+                qc_code_url = weichat_api_obj.generate_qrcode({
+                    'timestamp': timestamp,
+                    'parent_id': user_id,
+                })
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'qc_code_url': qc_code_url,
+                    'timestamp': timestamp
+                }
+            else:
+                response.code = 301
+                response.msg = '您的子级用户已达到上限'
+
+        # 查询创建子级是否扫码
+        elif oper_type == 'query_sub_esau_code':
+            timestamp = request.GET.get('timestamp')
+            objs = models.InviteTheChild.objects.filter(timestamp=timestamp, parent_id=user_id)
+            if objs:
+                obj = objs[0]
+                if obj.whether_transfer_successful in [2, '2']:
+                    msg = '已经扫码'
+                    code = 200
+                elif obj.whether_transfer_successful in [4, '4']:
+                    msg = '已完成交接'
+                    code = 401
+                elif obj.whether_transfer_successful in [5, '5']:
+                    code = 501
+                    msg = '已拒绝交接'
+                else:
+                    code = 502
+                    msg = '未扫码'
+            else:
+                code = 301
+                msg = '未查询到二维码信息'
+            response.code = code
+            response.msg = msg
 
     return JsonResponse(response.__dict__)
 

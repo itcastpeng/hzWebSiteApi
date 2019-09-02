@@ -299,7 +299,21 @@ class Transfer(models.Model): # 可定时删除
     whether_transfer_successful = models.SmallIntegerField(verbose_name='是否转接成功', choices=whether_transfer_successful_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-
+# 邀请子级记录表
+class InviteTheChild(models.Model):
+    parent = models.ForeignKey('UserProfile', verbose_name='父级', related_name='parent_name')
+    child = models.ForeignKey('UserProfile', verbose_name='子级', related_name='child_name', null=True)
+    timestamp = models.CharField(verbose_name='时间戳', max_length=128)
+    whether_transfer_successful_choices = (
+        (1, '未扫码'),
+        (2, '已扫码'),
+        (3, '已过期'),
+        (4, '已完成'),
+        (5, '已拒绝'),
+    )
+    whether_transfer_successful = models.SmallIntegerField(verbose_name='是否邀请完成',
+        choices=whether_transfer_successful_choices, default=1)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
