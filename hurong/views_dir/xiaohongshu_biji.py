@@ -188,20 +188,20 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     ret = requests.get(url, allow_redirects=False)
                     link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-
+                completion_time = datetime.datetime.today()
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
                 biji_objs.update(
                     biji_existing_url=link,
                     biji_url=url,
                     status=2,
-                    completion_time=datetime.datetime.today()
+                    completion_time=completion_time
                 )
 
                 api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
                 data = {
                     "id": task_id,
                     "link": url,
-                    "pubTime": biji_objs[0].release_time,
+                    "pubTime": completion_time,
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
                 ret = requests.post(url=api_url, data=data)
@@ -278,7 +278,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(form_obj.errors.as_json())
             create_xhs_admin_response(request, response, 3)
 
-        # 发布中的笔记 可以改为发布异常(小红书后台)
+        # 发布中的笔记 可以改为发布异常(后台)
         elif oper_type == 'instead_abnormal_release_notes':
             form_data = {
                 'o_id': o_id,
@@ -347,7 +347,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 已发布的笔记 改为重新发布(小红书后台)
+        # 已发布的笔记 改为重新发布(小红书后台) 404
         elif oper_type == 'republish_instead':
             form_data = {
                 'o_id':o_id,
@@ -366,7 +366,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(form_obj.errors.as_json())
             create_xhs_admin_response(request, response, 2)
 
-        # 重新发布的笔记 改为待审核
+        # 重新发布的笔记 改为待审核(后台)
         elif oper_type == 'change_pending_review':
             form_data = {
                 'o_id': o_id
