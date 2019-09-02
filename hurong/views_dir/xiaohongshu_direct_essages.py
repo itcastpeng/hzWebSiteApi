@@ -86,6 +86,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
         start_time = time.time()
         # 保存私信截图
         if oper_type == "save_screenshots":
+            timestamp = request.POST.get('timestamp')
             form_data = {
                 'name': request.POST.get('name'),
                 'iccid': request.POST.get('iccid'),
