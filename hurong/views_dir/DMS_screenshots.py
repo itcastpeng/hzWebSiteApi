@@ -4,8 +4,8 @@ from publicFunc.qiniu.auth import Auth
 from publicFunc import Response
 from django.http import JsonResponse
 from hurong.forms.DMS_screenshots import Screenshots
-import json, requests, base64, time, os, random
 from publicFunc.public import create_xhs_admin_response
+import json, requests, base64, time, os, random, hashlib
 
 def DMS_screenshots(request, oper_type):
     response = Response.ResponseObj()
@@ -22,11 +22,10 @@ def DMS_screenshots(request, oper_type):
         form_obj = Screenshots(form_data)
         if form_obj.is_valid():
             forms_data = form_obj.cleaned_data
-            # print("forms_data -->", forms_data)
             imgdata = forms_data.get('img_base64_data')
             img_base64_data = request.POST.get('img_base64_data')
 
-            judge_key = "screenshots_" + forms_data.get('iccid') + forms_data.get('imsi')
+            judge_key = "dms_screenshots_" + forms_data.get('iccid') + forms_data.get('imsi')
             judge_key_objs = redis_obj.get(judge_key)
             img_flag = False
             key = ''
@@ -66,6 +65,9 @@ def DMS_screenshots(request, oper_type):
                 print("七牛云返回数据 -->", ret.json())
 
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
+
+                md5_obj = hashlib.md5().update(img_base64_data.encode('utf8'))
+                img_base64_data = md5_obj.hexdigest()
                 if judge_key_objs:
                     data_list = json.loads(judge_key_objs)
                     data_list.append({'key': key, 'img_base64_data': img_base64_data})
