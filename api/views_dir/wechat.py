@@ -207,7 +207,7 @@ def wechat(request):
                 if parent_id:
                     parent_user_obj = models.UserProfile.objects.get(id=parent_id)
                     chil_user_count = models.UserProfile.objects.filter(
-                        inviter_user_id=parent_id
+                        inviter_id=parent_id
                     ).count()
                     if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
                         user_obj = models.UserProfile.objects.get(id=new_user_id)
