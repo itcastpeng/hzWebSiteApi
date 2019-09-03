@@ -235,6 +235,11 @@ def wechat(request):
                             }
                         }
 
+                        models.InviteTheChild.objects.create(
+                            parent_id=parent_id,
+                            child_id=new_user_id,
+                            timestamp=timestamp,
+                        )
                     else:
                         post_data = {
                             "touser": openid,
