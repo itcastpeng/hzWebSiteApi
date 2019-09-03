@@ -106,7 +106,37 @@ class TransferAllUserInformation(forms.Form):
         else:
             self.add_error('user_id', '管理员不可转接')
 
+# 删除团队成员
+class DeleteTeamMembers(forms.Form):
+    user_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "登录异常"
+        }
+    )
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "请选择要删除的成员"
+        }
+    )
 
+    def clean_user_id(self):
+        user_id = self.data.get('user_id')
+        o_id= self.data.get('o_id')
+
+        objs = models.UserProfile.objects.filter(id=o_id)
+        if objs:
+            obj = objs[0]
+            if obj.inviter and obj.inviter_id == int(user_id):
+                return user_id
+            else:
+                if not obj.inviter:
+                    self.add_error('user_id', '该成员未加入团队')
+                else:
+                    self.add_error('user_id', '权限不足')
+        else:
+            self.add_error('user_id', '删除成员不存在')
 
 
 
