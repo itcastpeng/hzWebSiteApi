@@ -205,7 +205,12 @@ def wechat(request):
                 # =========================创建子级=================
                 parent_id = event_key.get('parent_id')  # 父级ID
                 if parent_id:
-                    InviteTheChildObjs = models.InviteTheChild.objects.filter(timestamp=timestamp).update(whether_transfer_successful=2)
+                    InviteTheChildObjs = models.InviteTheChild.objects.filter(
+                        timestamp=timestamp
+                    ).update(
+                        whether_transfer_successful=2,
+                        child_id=new_user_id
+                    )
                     if InviteTheChildObjs:
                         parent_user_obj = models.UserProfile.objects.get(id=parent_id)
                         chil_user_count = models.UserProfile.objects.filter(
