@@ -648,19 +648,3 @@ def time_refresh_switch():
     requests.get(url)
 
 
-@app.task
-def test():
-    objs = models.XiaohongshuBiji.objects.all()
-    for obj in objs:
-        print('------------------> ', obj.id)
-        try:
-            content = json.loads(obj.content)
-            biji_type = 1
-            if content.get('type') and content.get('type') != 'images':
-                biji_type = 2
-
-            obj.biji_type = biji_type
-            obj.save()
-        except Exception:
-            pass
-

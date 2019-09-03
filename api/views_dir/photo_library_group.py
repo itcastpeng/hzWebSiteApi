@@ -15,6 +15,9 @@ def photo_library_group(request):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "GET":
+        user_obj = models.UserProfile.objects.get(id=user_id)
+        if user_obj.inviter:
+            user_id = user_obj.inviter_id
         forms_obj = SelectForm(request.GET)
         if forms_obj.is_valid():
             template_id = request.GET.get('template_id')
@@ -90,6 +93,9 @@ def photo_library_group(request):
 def photo_library_group_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
+    user_obj = models.UserProfile.objects.get(id=user_id)
+    if user_obj.inviter:
+        user_id = user_obj.inviter_id
     if request.method == "POST":
 
         # 添加页面分组
