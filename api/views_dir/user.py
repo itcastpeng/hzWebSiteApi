@@ -195,9 +195,7 @@ def user_oper(request, oper_type, o_id):
                 }
 
                 q = conditionCom(request, field_dict)
-
-                print('q -->', q)
-                objs = models.UserProfile.objects.filter(q, openid__isnull=False).order_by(order)
+                objs = models.UserProfile.objects.filter(q).order_by(order)
                 count = objs.count()
 
                 if length != 0:
