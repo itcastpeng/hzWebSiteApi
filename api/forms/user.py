@@ -65,39 +65,6 @@ class UpdateRoleForm(forms.Form):
             self.add_error('role_id', '角色ID不存在')
 
 
-# 创建子账户
-class OpenSubAccount(forms.Form):
-    user_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "登录异常"
-        }
-    )
-    user_list = forms.CharField(
-        required=True,
-        error_messages={
-            'required': "请选择子账户"
-        }
-    )
-
-    def clean_user_id(self):
-        user_id = self.data.get('user_id')
-        user_list = self.data.get('user_list')
-        user_list = json.loads(user_list)
-        len_user_list = len(user_list)
-        inviter_user_objs = models.UserProfile.objects.filter(inviter_id=user_id)
-        total_owned = int(inviter_user_objs.count()) + int(len_user_list)
-
-        user_obj = models.UserProfile.objects.get(id=user_id)
-
-        if int(user_obj.number_child_users) >= int(total_owned): # 后台总子账户数量 大于等于 已经在子账户 + 要添加的子账户 数量
-            pass
-
-
-        else:
-            self.add_error('user_id', '您的子账户已达到上限')
-
-
 class TransferAllUserInformation(forms.Form):
     user_id = forms.IntegerField(
         required=True,

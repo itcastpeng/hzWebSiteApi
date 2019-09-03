@@ -210,10 +210,11 @@ def wechat(request):
                         inviter_user_id=parent_id
                     ).count()
                     if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
-                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}'.format(
+                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}'.format(
                             parent_id,
                             new_user_id,
-                            user_is_exists
+                            user_is_exists,
+                            timestamp
                         )
                         post_data = {
                             "touser": openid,
@@ -362,7 +363,7 @@ def wechat_oper(request, oper_type):
 
         # 查询创建子级是否扫码
         elif oper_type == 'query_sub_esau_code':
-            timestamp = request.GET.get('timestamp')
+            timestamp = request.GET.get('time_stamp')
             objs = models.InviteTheChild.objects.filter(timestamp=timestamp, parent_id=user_id)
             if objs:
                 obj = objs[0]
@@ -370,11 +371,11 @@ def wechat_oper(request, oper_type):
                     msg = '已经扫码'
                     code = 200
                 elif obj.whether_transfer_successful in [4, '4']:
-                    msg = '已完成交接'
+                    msg = '已完成加入'
                     code = 401
                 elif obj.whether_transfer_successful in [5, '5']:
                     code = 501
-                    msg = '已拒绝交接'
+                    msg = '已拒绝加入'
                 else:
                     code = 502
                     msg = '未扫码'
