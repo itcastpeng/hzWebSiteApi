@@ -177,7 +177,8 @@ def user_oper(request, oper_type, o_id):
                     models.CompomentLibraryClass.objects.filter(create_user_id=new_user_id).delete()
                 msg = '已接受'
                 code = 200
-
+                obj.whether_transfer_successful = 4
+            obj.save()
             response.code = code
             response.msg = msg
 
