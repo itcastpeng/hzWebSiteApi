@@ -357,6 +357,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 o_id = form_obj.cleaned_data.get('o_id')
                 models.XiaohongshuBiji.objects.filter(id=o_id).update(
                     status=5,
+                    is_delete_old_biji=False
                 )
                 response.code = 200
                 response.msg = '修改成功'
