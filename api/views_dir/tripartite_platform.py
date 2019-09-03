@@ -549,7 +549,9 @@ def tripartite_platform_oper(request, oper_type):
 def tripartite_platform_admin(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-
+    user_obj = models.UserProfile.objects.get(id=user_id)
+    if user_obj.inviter:
+        user_id = user_obj.inviter_id
     if request.method == "POST":
 
         # 保存小程序页面数据

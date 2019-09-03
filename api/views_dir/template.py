@@ -24,6 +24,9 @@ def template(request):
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             is_all = request.GET.get('is_all') #
             user_id = request.GET.get('user_id')
+            user_obj = models.UserProfile.objects.get(id=user_id)
+            if user_obj.inviter:
+                user_id = user_obj.inviter_id
             obj = models.UserProfile.objects.get(id=user_id)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
