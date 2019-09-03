@@ -283,6 +283,11 @@ class XiaohongshuBiji(models.Model):
     reading_num = models.IntegerField(verbose_name="阅读量", default=0)
     update_reding_num_time = models.DateTimeField(verbose_name='更新阅读量时间', null=True)
     error_msg = models.TextField(verbose_name='异常日志', null=True)
+    biji_type_choices = (
+        (1, 'img'),
+        (2, 'video'),
+    )
+    biji_type = models.SmallIntegerField(verbose_name='笔记类型', choices=biji_type_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

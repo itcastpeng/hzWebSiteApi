@@ -125,7 +125,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
 
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
-                title, content = forms_obj.cleaned_data.get('content')
+                title, content, biji_type = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
 
                 xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
@@ -136,7 +136,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     if biji_id:
                         biji_objs = models.XiaohongshuBiji.objects.filter(id=biji_id)
                         obj = biji_objs[0]
-                        biji_objs.update(status=3, content=content, release_time=release_time, title=title)
+                        biji_objs.update(status=3, content=content, release_time=release_time, title=title, biji_type=biji_type)
                         response.code = 200
                         response.msg = "更新成功"
 
@@ -153,7 +153,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                                 user_id=xiaohongshu_user_obj,
                                 content=content,
                                 release_time=release_time,
-                                title=title
+                                title=title,
+                                biji_type=biji_type
                             )
                             response.msg = "添加成功"
                         response.code = 200
@@ -450,6 +451,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     'id': '',
                     'uid': '__contains',
                     'status': '',
+                    'biji_type': '',
                     'user_id__name': '__contains',
                     'is_delete_old_biji': '',
                     'user_id__phone_id__name': '',
@@ -468,13 +470,10 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     stop_line = start_line + length
                     objs = objs[start_line: stop_line]
                 ret_data = []
-                select_id = request.GET.get('id')
                 for obj in objs:
-
-                    biji_type = 'img'
-                    if json.loads(obj.content).get('type') and json.loads(obj.content).get('type') != 'images':
-                        biji_type = 'video'
-
+                    # biji_type = 'img'
+                    # if json.loads(obj.content).get('type') and json.loads(obj.content).get('type') != 'images':
+                    #     biji_type = 'video'
                     release_time = obj.release_time
                     if release_time:
                         release_time = obj.release_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -497,12 +496,12 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'completion_time': completion_time,
                         'biji_url': obj.biji_url,
                         'error_msg': obj.error_msg,
-                        'biji_type': biji_type,
+                        'biji_type_id': obj.biji_type,
+                        'biji_type': obj.get_biji_type_display(),
                         'biji_existing_url': obj.biji_existing_url,
                         'is_delete_old_biji': obj.is_delete_old_biji,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
-                    # if select_id:
                     result_data['content'] = json.loads(obj.content)
                     ret_data.append(result_data)
                 response.code = 200
@@ -510,7 +509,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.data = {
                     'ret_data': ret_data,
                     'count': count,
-                    'status_choices': [{'id':i[0], 'name':i[1]} for i in models.XiaohongshuBiji.status_choices]
+                    'status_choices': [{'id':i[0], 'name':i[1]} for i in models.XiaohongshuBiji.status_choices],
+                    'biji_type_choices': [{'id':i[0], 'name':i[1]} for i in models.XiaohongshuBiji.biji_type_choices]
                 }
             else:
                 response.code = 301
