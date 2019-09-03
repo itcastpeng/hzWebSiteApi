@@ -526,13 +526,13 @@ def comment_management(request, oper_type):
                     'comment_id': '',
                     'comment_type': '',
                     'comment_response': '',
-                    'comment_completion_time': '__isnull',
-                    'comment__xhs_user__name': '__isnull',
-                    'comment__xhs_user__phone_id__name': '__isnull',
+                    'comment_completion_time': '__contains',
+                    'comment__xhs_user__name': '__contains',
+                    'comment__xhs_user__phone_id__name': '__contains',
                 }
 
                 q = conditionCom(request, field_dict)
-
+                print('q-----------> ', q)
                 objs = models.commentResponseForm.objects.filter(q).order_by(order)
 
                 count = objs.count()
