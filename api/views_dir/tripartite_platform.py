@@ -481,6 +481,9 @@ def tripartite_platform_oper(request, oper_type):
                 request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
                     user_obj.token, user_id, template_id
                 )
+                if not appid:
+                    credential_expired_data = CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
 
                 url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
                 data = {
