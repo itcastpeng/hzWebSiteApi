@@ -23,12 +23,18 @@ def login(request):
             objs = models.UserProfile.objects.filter(**forms_obj.cleaned_data)
             if objs:
                 obj = objs[0]
+
+                inviter = 0
+                if obj.inviter:
+                    inviter = 1
+
                 response.code = 200
                 response.data = {
                     'token': obj.token,
                     'id': obj.id,
                     'username': obj.username,
-                    'head_portrait': obj.head_portrait
+                    'head_portrait': obj.head_portrait,
+                    'inviter': inviter
                 }
             else:
                 response.code = 402
