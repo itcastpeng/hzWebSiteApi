@@ -104,40 +104,44 @@ def user_oper(request, oper_type, o_id):
             }
             transfer_objs = models.Transfer.objects.filter(
                 speak_to_people_id=user_id,
-                by_connecting_people_id=o_id
+                by_connecting_people_id=o_id,
+                whether_transfer_successful=3
             ).order_by('-create_datetime')
-
-            transfer_obj = transfer_objs[0]
-            if cancel_transfer:
-                transfer_obj.whether_transfer_successful = 5
-                code = 200
-                msg = '已拒绝交接'
-
-            else:
-                form_obj = TransferAllUserInformation(form_data)
-                if form_obj.is_valid():
-                    o_id = form_obj.cleaned_data.get('o_id')
-                    user_id = form_obj.cleaned_data.get('user_id')
-
-                    models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
-                    models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)
-                    models.ClientApplet.objects.filter(user_id=user_id).update(user_id=o_id)
-
+            if transfer_objs:
+                transfer_obj = transfer_objs[0]
+                if cancel_transfer:
+                    transfer_obj.whether_transfer_successful = 5
                     code = 200
-                    msg = '转接成功'
-                    transfer_obj.whether_transfer_successful=4
+                    msg = '已拒绝交接'
 
                 else:
-                    code = 301
-                    msg = json.loads(form_obj.errors.as_json())
-            transfer_obj.save()
+                    form_obj = TransferAllUserInformation(form_data)
+                    if form_obj.is_valid():
+                        o_id = form_obj.cleaned_data.get('o_id')
+                        user_id = form_obj.cleaned_data.get('user_id')
+
+                        models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)
+                        models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)
+                        models.ClientApplet.objects.filter(user_id=user_id).update(user_id=o_id)
+
+                        code = 200
+                        msg = '转接成功'
+                        transfer_obj.whether_transfer_successful=4
+
+                    else:
+                        code = 301
+                        msg = json.loads(form_obj.errors.as_json())
+                transfer_obj.save()
+            else:
+                code = 301
+                msg = '已过期, 请重新获取二维码'
             response.code = code
             response.msg = msg
 
@@ -154,31 +158,36 @@ def user_oper(request, oper_type, o_id):
                 timestamp=timestamp
             ).order_by('-create_datetime')
             obj = objs[0]
-            if refused_invite:
-                obj.whether_transfer_successful = 5 # 拒绝
-                msg = '已拒绝'
+            if objs:
+                if refused_invite:
+                    obj.whether_transfer_successful = 5 # 拒绝
+                    msg = '已拒绝'
 
+                else:
+                    user_is_exists = request.POST.get('user_is_exists') # 是否已有用户 如果有 则删除所有数据
+
+                    models.UserProfile.objects.filter(id=new_user_id).update(inviter_id=parent_id)
+
+                    if user_is_exists: # 删除所有数据
+                        models.CustomerOfficialNumber.objects.filter(user_id=new_user_id).delete()
+                        models.ClientApplet.objects.filter(user_id=new_user_id).delete()
+                        models.PhotoLibrary.objects.filter(create_user_id=new_user_id).delete()
+                        models.PhotoLibraryGroup.objects.filter(create_user_id=new_user_id).delete()
+                        models.Page.objects.filter(create_user_id=new_user_id).delete()
+                        models.PageGroup.objects.filter(create_user_id=new_user_id).delete()
+                        models.Template.objects.filter(create_user_id=new_user_id).delete()
+                        models.TemplateClass.objects.filter(create_user_id=new_user_id).delete()
+                        models.CompomentLibrary.objects.filter(create_user_id=new_user_id).delete()
+                        models.CompomentLibraryClass.objects.filter(create_user_id=new_user_id).delete()
+                    msg = '已接受'
+                    obj.whether_transfer_successful = 4
+
+                obj.save()
+                code = 200
             else:
-                user_is_exists = request.POST.get('user_is_exists') # 是否已有用户 如果有 则删除所有数据
+                code = 301
+                msg = '已过期, 请重新扫描二维码'
 
-                models.UserProfile.objects.filter(id=new_user_id).update(inviter_id=parent_id)
-
-                if user_is_exists: # 删除所有数据
-                    models.CustomerOfficialNumber.objects.filter(user_id=new_user_id).delete()
-                    models.ClientApplet.objects.filter(user_id=new_user_id).delete()
-                    models.PhotoLibrary.objects.filter(create_user_id=new_user_id).delete()
-                    models.PhotoLibraryGroup.objects.filter(create_user_id=new_user_id).delete()
-                    models.Page.objects.filter(create_user_id=new_user_id).delete()
-                    models.PageGroup.objects.filter(create_user_id=new_user_id).delete()
-                    models.Template.objects.filter(create_user_id=new_user_id).delete()
-                    models.TemplateClass.objects.filter(create_user_id=new_user_id).delete()
-                    models.CompomentLibrary.objects.filter(create_user_id=new_user_id).delete()
-                    models.CompomentLibraryClass.objects.filter(create_user_id=new_user_id).delete()
-                msg = '已接受'
-                obj.whether_transfer_successful = 4
-
-            obj.save()
-            code = 200
             response.code = code
             response.msg = msg
 
