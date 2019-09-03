@@ -157,48 +157,58 @@ def wechat(request):
                 transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
                 token = event_key.get('token')  # 转接人token
                 if transfer_user_id and token:
-                    time_stamp = event_key.get('time_stamp')
-                    transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
-                    if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
-                        transfer_objs.update(
-                            by_connecting_people_id=new_user_id,
-                            whether_transfer_successful=2
-                        )
-                        weichat_api_obj = WeChatApi()
-                        url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
-                            transfer_user_id,
-                            new_user_id,
-                            token
-                        )
-                        post_data = {
-                            "touser": openid,
-                            "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
-                            "news": {
-                                "articles": [
-                                    {
-                                        "title": '{}请求将建站数据转接给您'.format(base64_encryption.b64decode(transfer_objs[0].speak_to_people.name)),
-                                        "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
-                                        "url": url,
-                                        # "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
-                                        "picurl": transfer_objs[0].speak_to_people.head_portrait
-                                    }
-                                ]
-                            }
-                        }
-                    else:
-                        if transfer_objs:
-                            content = '二维码异常, 请刷新'
-
-                        else:
-                            content = '二维码已过期, 请刷新'
-
+                    user_obj = models.UserProfile.objects.get(id=new_user_id)
+                    if user_obj.inviter:
                         post_data = {
                             "touser": openid,
                             "msgtype": "text",
                             "text": {
-                                "content": content
+                                "content": '您无权接受他人账号'
                             }
                         }
+                    else:
+                        time_stamp = event_key.get('time_stamp')
+                        transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
+                        if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
+                            transfer_objs.update(
+                                by_connecting_people_id=new_user_id,
+                                whether_transfer_successful=2
+                            )
+                            weichat_api_obj = WeChatApi()
+                            url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}'.format(
+                                transfer_user_id,
+                                new_user_id,
+                                token
+                            )
+                            post_data = {
+                                "touser": openid,
+                                "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                                "news": {
+                                    "articles": [
+                                        {
+                                            "title": '{}请求将建站数据转接给您'.format(base64_encryption.b64decode(transfer_objs[0].speak_to_people.name)),
+                                            "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
+                                            "url": url,
+                                            # "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
+                                            "picurl": transfer_objs[0].speak_to_people.head_portrait
+                                        }
+                                    ]
+                                }
+                            }
+                        else:
+                            if transfer_objs:
+                                content = '二维码异常, 请刷新'
+
+                            else:
+                                content = '二维码已过期, 请刷新'
+
+                            post_data = {
+                                "touser": openid,
+                                "msgtype": "text",
+                                "text": {
+                                    "content": content
+                                }
+                            }
                     post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
                     weichat_api_obj.news_service(post_data)
 

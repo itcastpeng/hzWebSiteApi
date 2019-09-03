@@ -291,3 +291,5 @@ def get_userinfo(request):
         response.code = 402
         response.msg = "请求异常"
     return JsonResponse(response.__dict__)
+while True:
+    continue
