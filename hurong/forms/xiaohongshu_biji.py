@@ -72,8 +72,14 @@ class AddForm(forms.Form):
     def clean_content(self):
         content_objs = self.data.get('content')
         content = json.loads(content_objs)
+        biji_type = 1
+        try:
+            if content.get('type') and content.get('type') != 'images':
+                biji_type = 2
+        except Exception:
+            pass
         title = content.get('title')
-        return b64encode(title), content_objs
+        return b64encode(title), content_objs, biji_type
 
 # 获取发布任务
 class GetReleaseTaskForm(forms.Form):
