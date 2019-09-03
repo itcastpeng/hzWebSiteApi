@@ -110,7 +110,9 @@ def template(request):
 def template_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-
+    user_obj = models.UserProfile.objects.get(id=user_id)
+    if user_obj.inviter:
+        user_id = user_obj.inviter_id
     if request.method == "POST":
 
         # 创建模板
