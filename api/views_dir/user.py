@@ -2,7 +2,7 @@ from api import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from api.forms.user import SelectForm, UpdateRoleForm, TransferAllUserInformation
+from api.forms.user import SelectForm, UpdateRoleForm, TransferAllUserInformation, DeleteTeamMembers
 import datetime, re, json
 from publicFunc.api_public import create_error_log
 from publicFunc import base64_encryption
@@ -157,7 +157,6 @@ def user_oper(request, oper_type, o_id):
             if refused_invite:
                 obj.whether_transfer_successful = 5 # 拒绝
                 msg = '已拒绝'
-                code = 301
 
             else:
                 user_is_exists = request.POST.get('user_is_exists') # 是否已有用户 如果有 则删除所有数据
@@ -176,11 +175,33 @@ def user_oper(request, oper_type, o_id):
                     models.CompomentLibrary.objects.filter(create_user_id=new_user_id).delete()
                     models.CompomentLibraryClass.objects.filter(create_user_id=new_user_id).delete()
                 msg = '已接受'
-                code = 200
                 obj.whether_transfer_successful = 4
+
             obj.save()
+            code = 200
             response.code = code
             response.msg = msg
+
+        # 删除团队成员
+        elif oper_type == 'delete_team_members':
+            form_data = {
+                'o_id': o_id,
+                'user_id': user_id
+            }
+            form_obj = DeleteTeamMembers(form_data)
+            if form_obj.is_valid():
+                user_id = form_obj.cleaned_data.get('user_id')
+                o_id = form_obj.cleaned_data.get('o_id')
+
+                models.UserProfile.objects.filter(id=o_id).update(
+                    inviter_id=None
+                )
+                response.code = 200
+                response.msg = '删除成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_obj.errors.as_json())
 
     else:
 
@@ -193,10 +214,11 @@ def user_oper(request, oper_type, o_id):
                 order = request.GET.get('order', '-create_datetime')
                 field_dict = {
                     'id': '',
+                    'name': '__contains',
                 }
 
                 q = conditionCom(request, field_dict)
-                objs = models.UserProfile.objects.filter(q).order_by(order)
+                objs = models.UserProfile.objects.filter(q, inviter_id=user_id).order_by(order)
                 count = objs.count()
 
                 if length != 0:
@@ -225,10 +247,10 @@ def user_oper(request, oper_type, o_id):
                     'data_count': count,
                 }
 
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
-        #
-        elif oper_type == '':
-            pass
 
         else:
             response.code = 402
