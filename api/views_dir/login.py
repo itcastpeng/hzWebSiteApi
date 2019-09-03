@@ -23,18 +23,12 @@ def login(request):
             objs = models.UserProfile.objects.filter(**forms_obj.cleaned_data)
             if objs:
                 obj = objs[0]
-
-                inviter = 0
-                if obj.inviter:
-                    inviter = 1
-
                 response.code = 200
                 response.data = {
                     'token': obj.token,
                     'id': obj.id,
                     'username': obj.username,
                     'head_portrait': obj.head_portrait,
-                    'inviter': inviter
                 }
             else:
                 response.code = 402
@@ -56,6 +50,9 @@ def wechat_login(request):
         objs = models.UserProfile.objects.filter(login_timestamp=login_timestamp)
         if objs:
             obj = objs[0]
+            inviter = 0
+            if obj.inviter:
+                inviter = 1
             response.code = 200
             role_obj = models.Role.objects.filter(id=obj.role_id)
             data_list = []
@@ -69,7 +66,8 @@ def wechat_login(request):
                 'role_name': obj.role.name,
                 'name': base64_encryption.b64decode(obj.name),
                 'head_portrait': obj.head_portrait,
-                'permissions_list': data_list
+                'permissions_list': data_list,
+                'inviter': inviter
             }
     else:
         response.code = 402
