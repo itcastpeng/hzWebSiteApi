@@ -17,4 +17,7 @@ urlpatterns = [
 
     # 查询手机号平台 判断设备 手机号是自己的还是客户的
     url(r'^determine_phone_number_ownership$', celery_management.determine_phone_number_ownership),
+
+    #异步上传手机抓取的评论
+    url(r'^error_asynchronous_transfer_data$', celery_management.error_asynchronous_transfer_data),
 ]
