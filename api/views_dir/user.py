@@ -145,7 +145,7 @@ def user_oper(request, oper_type, o_id):
         elif oper_type == 'accept_team_invitationss':
             new_user_id = request.POST.get('new_user_id') # 受邀请人ID
             parent_id = request.POST.get('parent_id') # 父级用户ID
-            timestamp = request.POST.get('timestamp') # 时间戳
+            timestamp = request.POST.get('time_stamp') # 时间戳
             refused_invite = request.POST.get('refused_invite') # 拒绝邀请
 
             objs = models.InviteTheChild.objects.filter(
