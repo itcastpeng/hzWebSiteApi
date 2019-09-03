@@ -532,7 +532,6 @@ def comment_management(request, oper_type):
                 }
 
                 q = conditionCom(request, field_dict)
-                print('q-----------> ', q)
                 objs = models.commentResponseForm.objects.filter(q).order_by(order)
 
                 count = objs.count()
