@@ -210,11 +210,13 @@ def wechat(request):
                         inviter_user_id=parent_id
                     ).count()
                     if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
-                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}'.format(
+                        user_obj = models.UserProfile.objects.get(id=new_user_id)
+                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}&token={}'.format(
                             parent_id,
                             new_user_id,
                             user_is_exists,
-                            timestamp
+                            timestamp,
+                            user_obj.token
                         )
                         post_data = {
                             "touser": openid,
@@ -344,7 +346,7 @@ def wechat_oper(request, oper_type):
             timestamp = str(int(time.time() * 1000))
             obj = models.UserProfile.objects.get(id=user_id)
             chil_user_count = models.UserProfile.objects.filter(
-                inviter_user_id=user_id
+                inviter_id=user_id
             ).count()
             if obj.number_child_users > chil_user_count:
                 qc_code_url = weichat_api_obj.generate_qrcode({
