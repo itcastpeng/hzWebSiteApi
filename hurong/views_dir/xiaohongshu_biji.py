@@ -371,29 +371,33 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
         # 重新发布的笔记 改为待审核(后台)
         elif oper_type == 'change_pending_review':
             form_data = {
-                'o_id': o_id
+                'biji_id_list': request.POST.get('biji_id_list')
             }
             form_obj = ChangePendingReview(form_data)
             if form_obj.is_valid():
-                o_id = form_obj.cleaned_data.get('o_id')
-                models.XiaohongshuBiji.objects.filter(id=o_id).update(
+                biji_id_list = form_obj.cleaned_data.get('biji_id_list')
+                objs = models.XiaohongshuBiji.objects.filter(
+                    id__in=biji_id_list
+                )
+                objs.update(
                     is_delete_old_biji=True
                 )
+                for obj in objs:
+                    url = 'https://www.ppxhs.com/api/v1/sync/screen-notfound'
+                    data = {
+                        'id':obj.id
+                    }
+                    ret = requests.post(url, data=data)
+                    models.AskLittleRedBook.objects.create(  # 更新日志
+                        request_type=2,  # POST请求
+                        request_url=url,
+                        get_request_parameter='',
+                        post_request_parameter=data,
+                        response_data=ret.json(),
+                        status=1
+                    )
                 response.code = 200
                 response.msg = '删除成功'
-                url = 'https://www.ppxhs.com/api/v1/sync/screen-notfound'
-                data = {
-                    'id':o_id
-                }
-                ret = requests.post(url, data=data)
-                models.AskLittleRedBook.objects.create(  # 更新日志
-                    request_type=2,  # POST请求
-                    request_url=url,
-                    get_request_parameter='',
-                    post_request_parameter=data,
-                    response_data=ret.json(),
-                    status=1
-                )
 
             else:
                 response.code = 301

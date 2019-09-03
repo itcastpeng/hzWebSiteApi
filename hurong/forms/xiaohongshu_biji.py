@@ -247,23 +247,16 @@ class RepublishInsteadForm(forms.Form):
 
 
 class ChangePendingReview(forms.Form):
-    o_id = forms.IntegerField(
+    biji_id_list = forms.CharField(
         required=True,
         error_messages={
-            'required': "笔记ID不能为空"
+            'required': "发布的笔记ID不能为空"
         }
     )
 
-    def clean_o_id(self):
-        o_id = self.data.get('o_id')
-        objs = models.XiaohongshuBiji.objects.filter(id=o_id)
-        if objs and objs[0].status in [5, '5']:
-            return o_id
-        else:
-            if objs:
-                self.add_error('o_id', '该笔记不能改为待审核')
-            else:
-                self.add_error('o_id', '该笔记不存在')
+    def clean_biji_id_list(self):
+        biji_id_list = self.data.get('biji_id_list')
+        return json.loads(biji_id_list)
 
 
 
