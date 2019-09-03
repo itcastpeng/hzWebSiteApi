@@ -478,6 +478,7 @@ def tripartite_platform_oper(request, oper_type):
             # 获取预览二维码
             elif oper_type == 'get_preview_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
+                template_id = request.GET.get('template_id')
                 request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
                     user_obj.token, user_id, template_id
                 )
