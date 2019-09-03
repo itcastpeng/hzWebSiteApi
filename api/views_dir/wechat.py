@@ -205,47 +205,52 @@ def wechat(request):
                 # =========================创建子级=================
                 parent_id = event_key.get('parent_id')  # 父级ID
                 if parent_id:
-                    parent_user_obj = models.UserProfile.objects.get(id=parent_id)
-                    chil_user_count = models.UserProfile.objects.filter(
-                        inviter_id=parent_id
-                    ).count()
-                    if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
-                        user_obj = models.UserProfile.objects.get(id=new_user_id)
-                        url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}&token={}'.format(
-                            parent_id,
-                            new_user_id,
-                            user_is_exists,
-                            timestamp,
-                            user_obj.token
-                        )
-                        post_data = {
-                            "touser": openid,
-                            "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
-                            "news": {
-                                "articles": [
-                                    {
-                                        "title": '我是{} 加入我的团队吧'.format(
-                                            base64_encryption.b64decode(parent_user_obj.name),
-                                        ),
-                                        "description": '加入团队将看到邀请人所有数据',
-                                        "url": url,
-                                        "picurl": parent_user_obj.head_portrait
-                                    }
-                                ]
+                    InviteTheChildObjs = models.InviteTheChild.objects.filter(timestamp=timestamp).update(whether_transfer_successful=2)
+                    if InviteTheChildObjs:
+                        parent_user_obj = models.UserProfile.objects.get(id=parent_id)
+                        chil_user_count = models.UserProfile.objects.filter(
+                            inviter_id=parent_id
+                        ).count()
+                        if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
+                            user_obj = models.UserProfile.objects.get(id=new_user_id)
+                            url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}&token={}'.format(
+                                parent_id,
+                                new_user_id,
+                                user_is_exists,
+                                timestamp,
+                                user_obj.token
+                            )
+                            post_data = {
+                                "touser": openid,
+                                "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                                "news": {
+                                    "articles": [
+                                        {
+                                            "title": '我是{} 加入我的团队吧'.format(
+                                                base64_encryption.b64decode(parent_user_obj.name),
+                                            ),
+                                            "description": '加入团队将看到邀请人所有数据',
+                                            "url": url,
+                                            "picurl": parent_user_obj.head_portrait
+                                        }
+                                    ]
+                                }
                             }
-                        }
 
-                        models.InviteTheChild.objects.create(
-                            parent_id=parent_id,
-                            child_id=new_user_id,
-                            timestamp=timestamp,
-                        )
+                        else:
+                            post_data = {
+                                "touser": openid,
+                                "msgtype": "text",
+                                "text": {
+                                    "content": '邀请人子级用户达到上限'
+                                }
+                            }
                     else:
                         post_data = {
                             "touser": openid,
                             "msgtype": "text",
                             "text": {
-                                "content": '邀请人子级用户达到上限'
+                                "content": '未找到二维码信息'
                             }
                         }
                     post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
@@ -358,6 +363,11 @@ def wechat_oper(request, oper_type):
                     'timestamp': timestamp,
                     'parent_id': user_id,
                 })
+                models.InviteTheChild.objects.create(
+                    parent_id=user_id,
+                    # child_id=new_user_id,
+                    timestamp=timestamp,
+                )
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
