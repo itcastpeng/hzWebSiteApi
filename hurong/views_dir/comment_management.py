@@ -124,6 +124,7 @@ def comment_management(request, oper_type):
                 comment_id, objs = form_obj.cleaned_data.get('comment_id')
                 delete = 2
                 if objs[0].comments_content in ['该评论已被删除', '该评论违规']:
+                    models.commentResponseForm.objects.filter(comment=objs).delete()
                     delete = 3
                     msg = '删除成功'
                     code = 0
