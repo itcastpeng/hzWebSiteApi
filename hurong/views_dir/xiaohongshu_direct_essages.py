@@ -83,6 +83,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     # print('request.POST -->', request.POST)
     if request.method == "POST":
+        start_time = time.time()
         # 保存私信截图
         if oper_type == "save_screenshots":
             timestamp = request.POST.get('timestamp')
@@ -120,7 +121,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         )
                         if message_objs:
                             flag = False
-
                     if flag:
                         # with open('t.png', 'wb') as f:
                         #     f.write(imgdata)
@@ -154,10 +154,12 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         # print("ret.text -->", ret.json)
                         key = ret.json()["key"]
                         img_url = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=key)
-                        if not models.XiaohongshuDirectMessages.objects.filter(
+
+                        direct_message_objs = models.XiaohongshuDirectMessages.objects.filter(
                             user_id=obj,
                             time_stamp=timestamp
-                        ):
+                        )
+                        if not direct_message_objs:
 
                             direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
                                 user_id=obj,
@@ -165,6 +167,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                 name=name,
                                 time_stamp=timestamp,
                             )
+                        else:
+                            direct_message_obj = direct_message_objs[0]
 
                         from_blogger = 0
                         if request.POST.get('from_blogger'):
@@ -188,7 +192,6 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                 break
                             except:
                                 pass
-
                 response.code = 200
                 response.msg = "保存成功"
 

@@ -189,7 +189,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     ret = requests.get(url, allow_redirects=False)
                     link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-                completion_time = datetime.datetime.today()
+                completion_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
                 biji_objs.update(
                     biji_existing_url=link,

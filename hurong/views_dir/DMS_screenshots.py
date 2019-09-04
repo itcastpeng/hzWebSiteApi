@@ -7,31 +7,13 @@ from hurong.forms.DMS_screenshots import Screenshots
 from publicFunc.public import create_xhs_admin_response
 import json, requests, base64, time, os, random, hashlib
 
-
-
-
-
-def get_qiniu_token():
-    redis_obj = get_redis_obj()
-    upload_token = redis_obj.get('qiniu_upload_token')
-    if not upload_token:
-        qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
-        with open(qiniu_data_path, "r", encoding="utf8") as f:
-            data = json.loads(f.read())
-            access_key = data.get('access_key')
-            secret_key = data.get('secret_key')
-            obj = Auth(access_key, secret_key)
-            upload_token = obj.upload_token("xcx_wgw_zhangcong")
-    return upload_token
-
-
-
 def DMS_screenshots(request, oper_type):
     response = Response.ResponseObj()
     redis_obj = get_redis_obj()
 
     # 截图
     if oper_type == "save_screenshots":
+        start_time = time.time()
         form_data = {
             'img_base64_data': request.POST.get('img_base64_data'),
             'iccid': request.POST.get('iccid'),
@@ -57,10 +39,19 @@ def DMS_screenshots(request, oper_type):
                         img_flag = True
                         key = i['key']
                         break
+            print("1111 -->", time.time() - start_time)
             print("key -->", key)
             if not img_flag:
                 print("没有保存过，提交七牛云获取url")
-                upload_token = get_qiniu_token()
+                upload_token = redis_obj.get('qiniu_upload_token')
+                if not upload_token:
+                    qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+                    with open(qiniu_data_path, "r", encoding="utf8") as f:
+                        data = json.loads(f.read())
+                        access_key = data.get('access_key')
+                        secret_key = data.get('secret_key')
+                        obj = Auth(access_key, secret_key)
+                        upload_token = obj.upload_token("xcx_wgw_zhangcong")
 
                 headers = {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
@@ -77,7 +68,7 @@ def DMS_screenshots(request, oper_type):
                 }
                 ret = requests.post(url, data=data, files=files, headers=headers)
                 print("七牛云返回数据 -->", ret.json())
-
+                print("222 -->", time.time() - start_time)
                 key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
 
 
@@ -101,7 +92,7 @@ def DMS_screenshots(request, oper_type):
                     redis_obj.lpop('xhs_screenshots')
                 if num >= 10:
                     break
-
+            print("333 -->", time.time() - start_time)
             response.code = 200
             response.msg = "提交成功"
             response.data = {
@@ -112,35 +103,10 @@ def DMS_screenshots(request, oper_type):
             response.code = 301
             response.msg = json.loads(form_obj.errors.as_json())
 
-    # 上传图片
-    elif oper_type == 'upload_img':
-        img_base64_data = request.POST.get('img_base64_data')
-        imgdata = base64.b64decode(img_base64_data)
-        upload_token = get_qiniu_token()
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
-        }
-
-        url = 'https://up-z1.qiniup.com/'
-
-        files = {
-            'file': imgdata
-        }
-
-        data = {
-            'token': upload_token,
-        }
-        ret = requests.post(url, data=data, files=files, headers=headers)
-        print("七牛云返回数据 -->", ret.json())
-
-        key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/400".format(key=ret.json()["key"])
-        response.code = 200
-        response.msg = '上传成功'
-        response.data = {
-            'key': key
-        }
-
-
+        print("444 -->", time.time() - start_time)
+        create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
+        print("555 -->", time.time() - start_time)
+        print("response.data -->", response.data, response.code, response.code)
     else:
 
         # 查询截图
