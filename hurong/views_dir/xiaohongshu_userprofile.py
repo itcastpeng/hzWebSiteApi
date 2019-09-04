@@ -281,34 +281,41 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
 
         # 查询今天是否更新阅读量
         elif oper_type == 'check_updated_today':
-            form_data = {
-                'imsi': request.GET.get('imsi'),
-                'iccid': request.GET.get('iccid')
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                "flag": True
             }
-            form_obj = IsTodayUpdateReading(form_data)
-            if form_obj.is_valid():
-                imsi = form_obj.cleaned_data.get('imsi')
-                obj = models.XiaohongshuUserProfile.objects.get(
-                    id=imsi
-                )
-                flag = False # 更新
 
-                if not models.XiaohongshuBiji.objects.filter(user_id_id=obj.id, status=2):
-                    flag = True
-                else:
-                    update_reading_date = obj.update_reading_date
-                    if update_reading_date and update_reading_date == datetime.date.today():
-                        flag = True
-
-                response.code = 200
-                response.msg = '查询成功'
-                response.data = {
-                    "flag": flag
-                }
-
-            else:
-                response.code = 301
-                response.msg = json.loads(form_obj.errors.as_json())
+            # form_data = {
+            #     'imsi': request.GET.get('imsi'),
+            #     'iccid': request.GET.get('iccid')
+            # }
+            # form_obj = IsTodayUpdateReading(form_data)
+            # if form_obj.is_valid():
+            #     imsi = form_obj.cleaned_data.get('imsi')
+            #     obj = models.XiaohongshuUserProfile.objects.get(
+            #         id=imsi
+            #     )
+            #     flag = False # 更新
+            #
+            #     if not models.XiaohongshuBiji.objects.filter(user_id_id=obj.id, status=2):
+            #         flag = True
+            #     else:
+            #         update_reading_date = obj.update_reading_date
+            #         if update_reading_date and update_reading_date == datetime.date.today():
+            #             flag = True
+            #
+            #     response.code = 200
+            #     response.msg = '查询成功'
+            #     response.data = {
+            #         "flag": flag
+            #     }
+            #
+            # else:
+            #     response.code = 301
+            #     response.msg = json.loads(form_obj.errors.as_json())
 
         else:
             response.code = 402
