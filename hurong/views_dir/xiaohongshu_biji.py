@@ -321,7 +321,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 obj.save()
                 response.code = 200
                 response.msg = '修改反链成功'
-                asynchronous_synchronous_trans.delay(o_id) # 异步更改小红书后台回链
+                asynchronous_synchronous_trans.delay(task_id=o_id) # 异步更改小红书后台回链
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
