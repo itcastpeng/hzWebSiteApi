@@ -592,11 +592,13 @@ def error_asynchronous_transfer_data():
 # 异步 同步 日记反链
 @app.task
 def asynchronous_synchronous_trans(task_id):
-    print('----------------------------------------------------------------', task_id)
     q = Q()
     if task_id:
         q.add(Q(id=task_id), Q.AND)
-    objs = models.XiaohongshuBiji.objects.filter(q, status=1, user_id__isnull=False, biji_url__isnull=False)
+    else:
+        q.add(Q(status=1), Q.AND)
+
+    objs = models.XiaohongshuBiji.objects.filter(q,user_id__isnull=False, biji_url__isnull=False)
     api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
     for obj in objs:
         data = {
