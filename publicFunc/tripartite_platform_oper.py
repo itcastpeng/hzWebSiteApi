@@ -592,7 +592,7 @@ class tripartite_platform_oper():
         }
         ret = requests.post(url, data=json.dumps(data))
         print('ret.json()--授权 合法域名-----------> ', ret.json())
-        return ret.json()
+
 
 
 

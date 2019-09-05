@@ -52,6 +52,7 @@ class phone_management():
     def query_verification_code(self, phone_number):
         zh_data = self.login()
         verification_code = 0
+        yzm_time = ''
         for data in zh_data:
             login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
             self.requests_obj.post(url=login_url, headers=self.headers, data=data)
@@ -80,13 +81,12 @@ class phone_management():
                             if_yzm_text = if_yzm_text.split('[From')[0]
                             yzm = re.search('\d{6}', if_yzm_text)
                             verification_code = yzm.group()
-
             if not verification_code:
                 continue
             else:
                 break
 
-        return verification_code
+        return verification_code, yzm_time
 
     # 获取当天所有短信
     def get_all_information_day(self):

@@ -138,12 +138,13 @@ def xiaohongshu_phone_management(request, oper_type):
                 phone_number = form_obj.cleaned_data.get('phone_number')
                 phone_management_objs = phone_management()
                 phone_management_objs.login()
-                verification_code = phone_management_objs.query_verification_code(phone_number)
+                verification_code, yzm_time = phone_management_objs.query_verification_code(phone_number)
                 if verification_code:
                     response.code = 200
                     response.msg = '查询成功'
                     response.data = {
-                        'verification_code': verification_code
+                        'verification_code': verification_code,
+                        'yzm_time': yzm_time
                     }
                 else:
                     response.code = 301
