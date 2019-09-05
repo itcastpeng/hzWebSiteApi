@@ -443,7 +443,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 402
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
-
+            create_xhs_admin_response(request, response, 3)
         # 查询 小红书笔记
         elif oper_type == 'get_xhs_notes':
             forms_obj = select_form(request.GET)
