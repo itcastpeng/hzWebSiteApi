@@ -72,7 +72,7 @@ class phone_management():
             for yzm_obj in form_obj:
                 if '验证码' in yzm_obj.get_text():
                     now = datetime.datetime.today()
-                    deletionTime = (now - datetime.timedelta(minutes=5))
+                    deletionTime = (now - datetime.timedelta(minutes=1))
                     yzm_time = yzm_obj.find_all('td')[2].get_text()
                     yzm_time = datetime.datetime.strptime(yzm_time, '%Y-%m-%d %H:%M:%S')
                     if yzm_time >= deletionTime:
