@@ -507,6 +507,14 @@ def tripartite_platform_oper(request, oper_type):
                     'gzh_code': template_obj.qrcode
                 }
 
+            # 临时授权域名
+            elif oper_type == 'temporary_authorized_domain_name':
+                data = tripartite_platform_objs.authorized_domain_name(authorizer_access_token)
+
+                response.code = 200
+                response.msg = '授权成功'
+                response.data = data
+
 
         # authorize_callback
         else:
@@ -972,6 +980,9 @@ def authorize_callback(request):
         obj = models.CustomerOfficialNumber.objects.get(id=id)
     else:
         obj = models.ClientApplet.objects.get(id=id)
+
+        # 授权 开发域名
+
 
     # ==== 更改 GZH/XCX 授权码 和 过期时间
     obj.auth_code = auth_code

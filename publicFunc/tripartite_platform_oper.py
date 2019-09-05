@@ -577,3 +577,28 @@ class tripartite_platform_oper():
         ret = requests.post(url, data=json.dumps(post_data))
         print('解绑小程序ret.json()--------------> ', ret.json())
         return ret.json()
+
+    # 授权 合法域名
+    def authorized_domain_name(self, token):
+        url = 'https://api.weixin.qq.com/wxa/modify_domain?access_token={}'.format(token)
+        authorized_domain = 'https://xcx.bjhzkq.com'
+        socket_authorized_domain = 'wss://xcx.bjhzkq.com'
+        data = {
+            "action": "add",
+            "requestdomain": [authorized_domain],
+            "wsrequestdomain": [socket_authorized_domain],
+            "uploaddomain": [authorized_domain],
+            "downloaddomain": [authorized_domain],
+        }
+        ret = requests.post(url, data=json.dumps(data))
+        print('ret.json()--授权 合法域名-----------> ', ret.json())
+        return ret.json()
+
+
+
+
+
+
+
+
+
