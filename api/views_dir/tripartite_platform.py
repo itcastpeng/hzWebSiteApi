@@ -980,9 +980,10 @@ def authorize_callback(request):
         obj = models.CustomerOfficialNumber.objects.get(id=id)
     else:
         obj = models.ClientApplet.objects.get(id=id)
-
         # 授权 开发域名
-
+        credential_expired_data = CredentialExpired(obj.appid, authorization_type)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+        authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+        tripartite_platform_objs.authorized_domain_name(authorizer_access_token)
 
     # ==== 更改 GZH/XCX 授权码 和 过期时间
     obj.auth_code = auth_code
