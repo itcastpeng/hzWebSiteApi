@@ -130,7 +130,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 if macaddr:
                     data = {'macaddr': macaddr}
                 else:
-                    data = {'imsi':imsi}
+                    data = {'imsi':imsi, 'iccid':iccid}
                 objs = models.XiaohongshuPhone.objects.filter(**data)
                 objs.update(phone_num=phone_num, is_debug=False)
                 # print("objs --->", objs)
