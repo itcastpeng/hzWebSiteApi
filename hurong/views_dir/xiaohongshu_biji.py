@@ -220,7 +220,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = json.loads(forms_obj.errors.as_json())
             create_xhs_admin_response(request, response, 3)
 
-        # 发布笔记
+        # 发布笔记(后台)
         elif oper_type == 'published_articles':
             now = datetime.datetime.today()
             flag = False
@@ -248,7 +248,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = '当前时间不在发布时间段'
             create_xhs_admin_response(request, response, 3)  # 创建请求日志(手机端)
 
-        # 阅读量更改
+        # 阅读量更改(后台)
         elif oper_type == 'update_reding':
             """
             o_id: 笔记ID
@@ -452,7 +452,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
             create_xhs_admin_response(request, response, 3)
-        # 查询 小红书笔记(后天)
+        # 查询 小红书笔记(后台)
         elif oper_type == 'get_xhs_notes':
             forms_obj = select_form(request.GET)
             if forms_obj.is_valid():

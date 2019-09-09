@@ -211,7 +211,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 修改阅读量更新时间
+        # 修改阅读量更新时间(手机)
         elif oper_type == 'update_reading_update_time':
             form_data = {
                 'imsi': request.POST.get('imsi'),

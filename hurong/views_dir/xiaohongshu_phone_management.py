@@ -182,6 +182,7 @@ def xiaohongshu_phone_management(request, oper_type):
                             'head_portrait': obj.head_portrait,
                             'birthday': obj.birthday,
                             'name': obj.name,
+                            'platform': obj.platform,
                         })
                     response.code = 200
                     msg = '查询成功'
