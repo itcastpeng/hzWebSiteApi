@@ -71,7 +71,12 @@ class UpdateUserinfoForm(forms.Form):
             'required': "mac地址类型错误"
         }
     )
-
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台类型错误"
+        }
+    )
 
 class RegistreForm(forms.Form):
     uid = forms.IntegerField(
@@ -117,6 +122,12 @@ class RegistreForm(forms.Form):
         required=False,
         error_messages={
             'invalid': "类型错误"
+        }
+    )
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台类型错误"
         }
     )
 
