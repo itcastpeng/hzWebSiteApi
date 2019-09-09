@@ -70,6 +70,7 @@ def comment_management(request, oper_type):
                             form_data['comment_id'] = obj.id
                             form_data['id'] = forms_data.get('article_notes_id')
                             form_data['transfer_type'] = 1  # 传递到小红书后台
+                            form_data['platform'] = obj.xhs_user.platform
                             asynchronous_transfer_data.delay(form_data)
                             response.msg = '创建成功'
 
@@ -184,6 +185,7 @@ def comment_management(request, oper_type):
 
                 # 异步传递给小红书后台
                 form_data['transfer_type'] = 2
+                form_data['platform'] = objs[0].comment.xhs_user.platform
                 asynchronous_transfer_data.delay(form_data)
 
             else:
@@ -375,6 +377,7 @@ def comment_management(request, oper_type):
                         'article_picture_address': obj.comment.article_picture_address,
                         'screenshots_address': obj.comment.screenshots_address,
                         'id': obj.id,
+                        'platform': obj.comment.xhs_user.platform,
                         'comment_response': comment_response,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
@@ -424,6 +427,7 @@ def comment_management(request, oper_type):
                         'screenshots_address':obj.screenshots_address,
                         'phone_name':obj.xhs_user.phone_id.name,
                         'user_name':obj.nick_name,
+                        'platform':obj.xhs_user.platform,
                     }
 
                 else:

@@ -606,6 +606,7 @@ def asynchronous_synchronous_trans(task_id):
             "link": obj.biji_url,
             "pubTime": obj.release_time,
             "from_blogger": '1',
+            "platform": obj.user_id.platform,
         }
         ret = requests.post(url=api_url, data=data)
         models.AskLittleRedBook.objects.create(  # 更新日志

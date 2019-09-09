@@ -84,7 +84,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
     # print('request.POST -->', request.POST)
     if request.method == "POST":
         start_time = time.time()
-        # 保存私信截图
+        # 保存私信截图(手机)
         if oper_type == "save_screenshots":
             timestamp = request.POST.get('timestamp')
             form_data = {
@@ -183,6 +183,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                                     "img_url": img_url,
                                     "xiaohongshu_id": obj.xiaohongshu_id,
                                     "from_blogger": from_blogger,
+                                    "platform": direct_message_obj.user_id.platform,
                                     "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                                 }
                                 api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
@@ -200,7 +201,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
 
-        # 回复私信
+        # 回复私信(小红书后台)
         elif oper_type == "reply":
             form_data = {
                 'xiaohongshu_id': request.POST.get('xiaohongshu_id'),
@@ -257,7 +258,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             )
 
             post_data = {
-                "id": objs[0].id
+                "id": objs[0].id,
+                "platform": objs[0].user_id.platform
             }
             api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat-log'
             ret = requests.post(api_url, data=post_data)
@@ -293,7 +295,8 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     response.data = {
                         "id": obj.id,
                         "name": obj.name,
-                        "msg": obj.msg
+                        "msg": obj.msg,
+                        "platform": obj.user_id.platform
                     }
                 else:
                     response.msg = "当前无任务"

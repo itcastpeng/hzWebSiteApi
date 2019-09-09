@@ -161,7 +161,7 @@ def check_forbidden_text(request):
     response = Response.ResponseObj()
     if request.method == "POST":
         forms_obj = CheckForbiddenTextForm(request.POST)
-        platform = request.POST.get('platform')
+        platform = request.POST.get('platform', 1)
         now = datetime.date.today()
         # 如果有平台,则自增1
         if platform:

@@ -205,6 +205,7 @@ class XiaohongshuUserProfile(models.Model):
     package_version = models.CharField(max_length=64, verbose_name='安装包版本号', null=True)
     update_reading_date = models.DateField(verbose_name='阅读量更新时间', null=True)
     add_map_not = models.BooleanField(verbose_name='是否开启地图', default=False)
+    platform = models.IntegerField(verbose_name='平台', default=1) # 数字类型
 
 # 小红书账号注册
 class XiaohongshuUserProfileRegister(models.Model):
@@ -222,6 +223,7 @@ class XiaohongshuUserProfileRegister(models.Model):
     register_datetime = models.DateTimeField(verbose_name="注册时间", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     remark = models.CharField(verbose_name='备注', max_length=128, null=True)
+    platform = models.IntegerField(verbose_name='平台', default=1) # 数字类型
 
 # 小红书笔记
 class XiaohongshuBiji(models.Model):

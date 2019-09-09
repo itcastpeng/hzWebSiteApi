@@ -114,6 +114,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 'xiaohongshu_id': request.POST.get('xiaohongshu_id'),
                 'home_url': request.POST.get('home_url'),
                 'macaddr': request.POST.get('macaddr'),
+                'platform': request.POST.get('platform', 1),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = UpdateUserinfoForm(form_data)
@@ -126,6 +127,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 home_url = forms_obj.cleaned_data.get('home_url')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
+                platform = forms_obj.cleaned_data.get('platform')
 
                 if macaddr:
                     data = {'macaddr': macaddr}
@@ -141,12 +143,14 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
                             name=name,
                             xiaohongshu_id=xiaohongshu_id,
-                            home_url=home_url
+                            home_url=home_url,
+                            platform=platform
                         )
                     else:
                         xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
                             phone_id=obj
                         )
+                        xiaohongshu_userprofile_obj.platform = platform
                         xiaohongshu_userprofile_obj.name = name
                         xiaohongshu_userprofile_obj.xiaohongshu_id = xiaohongshu_id
                         xiaohongshu_userprofile_obj.home_url = home_url
@@ -167,6 +171,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                             "xhs_id": xiaohongshu_id,
                             "link": home_url,
                             "mobile": phone_num,
+                            "platform": platform,
                         }
                         ret = requests.post(api_url, data=data)
                         # print("ret.json() -->", ret.json())
@@ -192,7 +197,8 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 'head_portrait': request.POST.get('head_portrait'),
                 'gender': request.POST.get('gender'),
                 'birthday': request.POST.get('birthday'),
-                'remark': request.POST.get('remark')
+                'remark': request.POST.get('remark'),
+                'platform': request.POST.get('platform', 1)
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = RegistreForm(form_data)
@@ -271,7 +277,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
-                    "is_update": is_update
+                    "is_update": is_update,
                 }
             else:
                 # print("forms_obj.errors -->", forms_obj.errors)

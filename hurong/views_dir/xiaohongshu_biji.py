@@ -127,8 +127,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 xiaohongshu_id = forms_obj.cleaned_data.get('xiaohongshu_id')
                 title, content, biji_type = forms_obj.cleaned_data.get('content')
                 release_time = forms_obj.cleaned_data.get('release_time')
-
-                xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id)
+                platform = request.POST.get('platform', 1)
+                xiaohongshu_user_objs = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id, platform=platform)
                 if xiaohongshu_user_objs:
                     xiaohongshu_user_obj = xiaohongshu_user_objs[0]
 
@@ -141,8 +141,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         response.msg = "更新成功"
 
                     else:
-                        objs = models.XiaohongshuBiji.objects.filter(title=title,
-                            user_id_id=xiaohongshu_user_obj.id)
+                        objs = models.XiaohongshuBiji.objects.filter(
+                            title=title,
+                            user_id_id=xiaohongshu_user_obj.id,
+                            user_id__platform=platform
+                        )
                         if objs:
                             response.code = 301
                             response.msg = '笔记已存在, 请勿重复添加'
@@ -202,6 +205,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 data = {
                     "id": task_id,
                     "link": url,
+                    "platform": biji_objs[0].user_id.platform,
                     "pubTime": completion_time,
                     "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
                 }
@@ -261,15 +265,17 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 reading_num = int(form_obj.cleaned_data.get('reading_num'))
                 if reading_num > 0:
 
-                    models.XiaohongshuBiji.objects.filter(
+                    objs = models.XiaohongshuBiji.objects.filter(
                         id=o_id
-                    ).update(
+                    )
+                    objs.update(
                         reading_num=reading_num,
                         update_reding_num_time=datetime.datetime.today()
                     )
                     form_data['num'] = reading_num
                     form_data['transfer_type'] = 3
                     form_data['id'] = o_id
+                    form_data['platform'] = objs[0].user_id.platform
                     asynchronous_transfer_data.delay(form_data) # 传递到小红书后台
                 response.code = 200
                 response.msg = '阅读量更新完成'
@@ -385,7 +391,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 for obj in objs:
                     url = 'https://www.ppxhs.com/api/v1/sync/screen-notfound'
                     data = {
-                        'id':obj.id
+                        'id':obj.id,
+                        'platform':obj.user_id.platform
                     }
                     ret = requests.post(url, data=data)
                     models.AskLittleRedBook.objects.create(  # 更新日志
@@ -432,7 +439,8 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                     response.data = {
                         "id": obj.id,
-                        "content": obj.content
+                        "content": obj.content,
+                        "platform": obj.user_id.platform,
                     }
                 else:
                     response.msg = "当前无任务"
@@ -444,7 +452,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.msg = "请求异常"
                 response.data = json.loads(forms_obj.errors.as_json())
             create_xhs_admin_response(request, response, 3)
-        # 查询 小红书笔记
+        # 查询 小红书笔记(后天)
         elif oper_type == 'get_xhs_notes':
             forms_obj = select_form(request.GET)
             if forms_obj.is_valid():
@@ -504,6 +512,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'biji_type': obj.get_biji_type_display(),
                         'biji_existing_url': obj.biji_existing_url,
                         'is_delete_old_biji': obj.is_delete_old_biji,
+                        'platform': obj.user_id.platform,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     result_data['content'] = json.loads(obj.content)
