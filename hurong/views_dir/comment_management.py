@@ -95,8 +95,8 @@ def comment_management(request, oper_type):
                 comment_type = forms_obj.cleaned_data.get('comment_type')
 
                 is_perform = True
-                if comment_type in [2, '2']:
-                    is_perform = False
+                # if comment_type in [2, '2']:
+                #     is_perform = False
 
                 data = {
                     'comment_id': forms_obj.cleaned_data.get('comment_id'),

@@ -176,6 +176,10 @@ def xiaohongshu_phone_management(request, oper_type):
                 else:
                     data_list = []
                     for obj in objs[0: get_info_number]:
+
+                        platform_name = '小红书'
+                        if obj.platform in [2, '2']:
+                            platform_name = '美图秀秀'
                         data_list.append({
                             'gender_id': obj.gender,
                             'gender': obj.get_gender_display(),
@@ -183,6 +187,7 @@ def xiaohongshu_phone_management(request, oper_type):
                             'birthday': obj.birthday,
                             'name': obj.name,
                             'platform': obj.platform,
+                            'platform_name': platform_name,
                         })
                     response.code = 200
                     msg = '查询成功'
