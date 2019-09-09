@@ -410,13 +410,13 @@ def tripartite_platform_oper(request, oper_type):
 
                     models.AppletCodeVersion.objects.filter(auditid=auditid).update(
                         status=status,
-                        user_desc=data.get('members')
+                        user_desc=data.get('reason')
                     ) # 更新审核状态
                     code = 301
                     if data.get('errcode') in [0, '0']:
                         code = 200
                     response.code = code
-                    response.data = data.get('members')
+                    response.data = data.get('reason')
                     response.msg = data.get('errmsg')
                 else:
                     response.code = 301
