@@ -96,6 +96,12 @@ class GetReleaseTaskForm(forms.Form):
             'required': "设备IMSI号不能为空"
         }
     )
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台类型错误"
+        }
+    )
 
 
 # 提交反链

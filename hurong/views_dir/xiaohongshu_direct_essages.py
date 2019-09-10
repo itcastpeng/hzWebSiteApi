@@ -278,16 +278,19 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             form_data = {
                 'imsi': request.GET.get('imsi'),
                 'iccid': request.GET.get('iccid'),
+                'platform': request.GET.get('platform', 1),
             }
             forms_obj = GetReplyForm(form_data)
             if forms_obj.is_valid():
                 iccid = forms_obj.cleaned_data['iccid']
                 imsi = forms_obj.cleaned_data['imsi']
+                platform = forms_obj.cleaned_data['platform']
 
                 objs = models.XiaohongshuDirectMessagesReply.objects.filter(
                     user_id__phone_id__iccid=iccid,
                     user_id__phone_id__imsi=imsi,
-                    status=1
+                    status=1,
+                    user_id__platform=platform
                 )
 
                 if objs:

@@ -352,10 +352,12 @@ def comment_management(request, oper_type):
             form_data = {
                 'imsi': request.GET.get('imsi'),
                 'iccid': request.GET.get('iccid'),
+                'platform': request.GET.get('platform', 1),
             }
             form_obj = QueryReplyTask(form_data)
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
+                platform = form_obj.cleaned_data.get('platform')
 
                 objs = models.commentResponseForm.objects.select_related('comment').filter(
                     comment__xhs_user__phone_id_id=iccid,
@@ -363,7 +365,8 @@ def comment_management(request, oper_type):
                     comment__isnull=False,
                     comment_response__isnull=False,
                     is_perform=True,
-                    is_error=False
+                    is_error=False,
+                    comment__xhs_user__platform=platform
                 ).order_by('create_datetime')
 
                 if objs:
@@ -408,15 +411,18 @@ def comment_management(request, oper_type):
             form_data = {
                 'imsi': request.GET.get('imsi'),
                 'iccid': request.GET.get('iccid'),
+                'platform': request.GET.get('platform'),
             }
             form_obj = QueryDeleteComment(form_data)
             if form_obj.is_valid():
                 iccid = form_obj.cleaned_data.get('iccid')
+                platform = form_obj.cleaned_data.get('platform')
 
                 objs = models.littleRedBookReviewForm.objects.filter(
                     xhs_user__phone_id_id=iccid,
                     delete=2,
-                    is_error=False
+                    is_error=False,
+                    xhs_user__platform=platform
                 )
                 data = {}
                 if objs:

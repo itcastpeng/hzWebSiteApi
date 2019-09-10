@@ -28,6 +28,13 @@ class AddForm(forms.Form):
             'required': "非法用户"
         }
     )
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台类型错误"
+        }
+    )
+
     def clean_package_type(self):
         package_type = self.data.get('package_type')
         data_list = [i[0] for i in models.InstallationPackage.package_type_choices]
@@ -97,10 +104,18 @@ class UpdateForm(forms.Form):
             'required': "安装包下载地址不能为空"
         }
     )
+
     package_name = forms.CharField(
         required=True,
         error_messages={
             'required': "安装包名称不能为空"
+        }
+    )
+
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台类型错误"
         }
     )
     def clean_o_id(self):

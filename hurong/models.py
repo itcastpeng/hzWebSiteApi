@@ -385,6 +385,7 @@ class InstallationPackage(models.Model):
     package_path = models.CharField(verbose_name='安装包地址', max_length=1024)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     oper_user = models.ForeignKey('UserProfile', verbose_name="操作人")
+    platform = models.IntegerField(verbose_name='平台', default=1)
     is_delete = models.BooleanField(verbose_name="是否删除", default=0)
 
 # 手机流量信息表
