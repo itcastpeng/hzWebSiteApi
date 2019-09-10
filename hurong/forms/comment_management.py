@@ -244,6 +244,12 @@ class QueryReplyTask(forms.Form):
             'required': "ICCID不能为空"
         }
     )
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台不能为空"
+        }
+    )
 
     def clean_iccid(self):
         iccid = self.data.get('iccid')
@@ -286,6 +292,12 @@ class QueryDeleteComment(forms.Form):
         required=True,
         error_messages={
             'required': "ICCID不能为空"
+        }
+    )
+    platform = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': "平台不能为空"
         }
     )
 

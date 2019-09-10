@@ -22,6 +22,7 @@ def package_management(request):
                 'package_type':'',
                 'package_name':'__contains',
                 'package_path':'__contains',
+                'platform':'',
                 'is_delete':'',
             }
 
@@ -43,6 +44,7 @@ def package_management(request):
                     'package_type_id': obj.package_type,
                     'package_path': obj.package_path,
                     'package_name': obj.package_name,
+                    'platform': obj.platform,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -74,6 +76,7 @@ def package_management_oper(request, oper_type, o_id):
             'package_type': request.POST.get('package_type'),
             'package_path': request.POST.get('package_path'),
             'package_name': request.POST.get('package_name'),
+            'platform': request.POST.get('platform', 1),
         }
 
         # 添加
@@ -101,6 +104,7 @@ def package_management_oper(request, oper_type, o_id):
                 objs.update(**{
                     'package_type':cleaned_data.get('package_type'),
                     'package_name':cleaned_data.get('package_name'),
+                    'platform':cleaned_data.get('platform'),
                     'package_path':cleaned_data.get('package_path'),
                     'oper_user_id':user_id,
                 })
@@ -132,10 +136,12 @@ def package_management_oper(request, oper_type, o_id):
         # 获取安装包 最高的版本
         if oper_type == 'get_highest_version':
             package_type = request.GET.get('package_type', 1)
+            platform = request.GET.get('platform', 1)
 
             objs = models.InstallationPackage.objects.filter(
                 is_delete=0,
-                package_type=package_type
+                package_type=package_type,
+                platform=platform
             ).order_by('-id')
             if objs:
                 obj = objs[0]
@@ -146,6 +152,7 @@ def package_management_oper(request, oper_type, o_id):
                     'package_type':obj.package_type,
                     'package_name':obj.package_name,
                     'package_path':obj.package_path,
+                    'platform':obj.platform,
                 }
             else:
                 response.code = 301
