@@ -188,6 +188,10 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 url = forms_obj.cleaned_data.get('url')
                 if "www.xiaohongshu.com" in url:
                     link = url.split('?')[0]
+
+                elif 'show.meitu.com' in url: # 美图
+                    link = url
+
                 else:
                     ret = requests.get(url, allow_redirects=False)
                     link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
