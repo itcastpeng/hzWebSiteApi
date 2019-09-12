@@ -308,6 +308,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 form_data['transfer_type'] = 5
                 form_data['id'] = o_id
+                form_data['platform'] = obj.user_id.platform
                 form_data['content'] = error_msg
                 asynchronous_transfer_data.delay(form_data)  # 传递到小红书后台
             else:
