@@ -136,7 +136,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     if biji_id:
                         biji_objs = models.XiaohongshuBiji.objects.filter(id=biji_id)
                         obj = biji_objs[0]
-                        biji_objs.update(status=3, content=content, release_time=release_time, title=title, biji_type=biji_type)
+                        biji_objs.update(status=3, content=content, release_time=release_time, title=title, biji_type=biji_type, user_id_id=xiaohongshu_user_obj.id)
                         response.code = 200
                         response.msg = "更新成功"
 
