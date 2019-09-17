@@ -54,27 +54,29 @@ def comment_management(request, oper_type):
 
                         nick_name = forms_data.get('nick_name')
                         comments_content = forms_data.get('comments_content')
-
-                        objs = models.littleRedBookReviewForm.objects.filter(
-                                    xhs_user_id=xhs_user_id,
-                                    nick_name=nick_name,
-                                    comments_content=comments_content
-                                )
-                        if not objs and forms_data.get('comments_content') != "该评论已被删除":
-                            obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
-                            # 异步传递给小红书后台
-                            form_data['link'] = forms_data.get('screenshots_address')
-                            form_data['name'] = forms_data.get('nick_name')
-                            form_data['content'] = forms_data.get('comments_content')
-                            form_data['head_portrait'] = forms_data.get('head_portrait')
-                            form_data['comment_id'] = obj.id
-                            form_data['id'] = forms_data.get('article_notes_id')
-                            form_data['transfer_type'] = 1  # 传递到小红书后台
-                            form_data['platform'] = obj.xhs_user.platform
-                            asynchronous_transfer_data.delay(form_data)
-                            response.msg = '创建成功'
-
                         response.code = 200
+                        if '通知消息' not in comments_content:
+                            objs = models.littleRedBookReviewForm.objects.filter(
+                                        xhs_user_id=xhs_user_id,
+                                        nick_name=nick_name,
+                                        comments_content=comments_content
+                                    )
+                            if not objs and forms_data.get('comments_content') != "该评论已被删除":
+                                obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
+                                # 异步传递给小红书后台
+                                form_data['link'] = forms_data.get('screenshots_address')
+                                form_data['name'] = forms_data.get('nick_name')
+                                form_data['content'] = forms_data.get('comments_content')
+                                form_data['head_portrait'] = forms_data.get('head_portrait')
+                                form_data['comment_id'] = obj.id
+                                form_data['id'] = forms_data.get('article_notes_id')
+                                form_data['transfer_type'] = 1  # 传递到小红书后台
+                                form_data['platform'] = obj.xhs_user.platform
+                                asynchronous_transfer_data.delay(form_data)
+                                response.msg = '创建成功'
+                        else:
+                            response.msg = '通知消息, 未收录'
+
 
                     else:
                         response.code = 301
