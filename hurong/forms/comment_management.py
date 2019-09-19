@@ -222,6 +222,7 @@ class AssociatedScreenshots(forms.Form):
         else:
             print("notes_url -->", notes_url)
             ret = requests.get(notes_url, allow_redirects=False)
+            print(ret.text)
             link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
