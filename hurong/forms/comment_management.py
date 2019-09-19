@@ -223,11 +223,13 @@ class AssociatedScreenshots(forms.Form):
             link = notes_url
 
         else:
-            print("notes_url -->", notes_url)
-            ret = requests.get(notes_url, allow_redirects=False)
-            print("ret.text -->", ret.text)
-            link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-
+            try:
+                print("notes_url -->", notes_url)
+                ret = requests.get(notes_url, allow_redirects=False)
+                print("ret.text -->", ret.text)
+                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+            except Exception:
+                pass
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
         if biji_objs:
             biji_obj = biji_objs[0]
