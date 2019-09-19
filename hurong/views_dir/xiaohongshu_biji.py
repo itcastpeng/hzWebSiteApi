@@ -503,6 +503,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     if completion_time:
                         completion_time = obj.completion_time.strftime('%Y-%m-%d %H:%M:%S')
 
+                    update_reding_num_time = ''
+                    if obj.update_reding_num_time:
+                        update_reding_num_time = obj.update_reding_num_time.strftime('%Y-%m-%d %H:%M:%S')
                     result_data = {
                         'id': obj.id,
                         'user_id': obj.user_id_id,
@@ -521,7 +524,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'biji_type': obj.get_biji_type_display(),
                         'biji_existing_url': obj.biji_existing_url,
                         'is_delete_old_biji': obj.is_delete_old_biji,
-                        'update_reding_num_time': obj.update_reding_num_time.strftime('%Y-%m-%d %H:%M:%S'),
+                        'update_reding_num_time': update_reding_num_time,
                         'platform': obj.user_id.platform,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
