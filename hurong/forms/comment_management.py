@@ -219,6 +219,9 @@ class AssociatedScreenshots(forms.Form):
         if 'www.xiaohongshu.com' in notes_url:
             link = notes_url.split('?')[0]
 
+        elif 'show.meitu.com' in notes_url:  # 美图
+            link = notes_url
+
         else:
             print("notes_url -->", notes_url)
             ret = requests.get(notes_url, allow_redirects=False)
