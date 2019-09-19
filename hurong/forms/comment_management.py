@@ -220,6 +220,7 @@ class AssociatedScreenshots(forms.Form):
             link = notes_url.split('?')[0]
 
         else:
+            print("notes_url -->", notes_url)
             ret = requests.get(notes_url, allow_redirects=False)
             link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
