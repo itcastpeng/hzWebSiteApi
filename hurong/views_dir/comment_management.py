@@ -201,6 +201,7 @@ def comment_management(request, oper_type):
                 'notes_url': request.POST.get('notes_url'),  # 笔记回链
                 'screenshots': request.POST.get('screenshots')  # 文章截图
             }
+            print('form_data-----------> ', form_data)
             code = 301
             form_obj = AssociatedScreenshots(form_data)
             if form_obj.is_valid():
