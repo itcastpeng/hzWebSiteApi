@@ -224,7 +224,8 @@ class AssociatedScreenshots(forms.Form):
         else:
             try:
                 print("notes_url -->", notes_url)
-                ret = requests.get(notes_url, allow_redirects=False)
+                # ret = requests.get(notes_url, allow_redirects=False)
+                ret = requests.get(notes_url)
                 print("ret.text -->", ret.text)
                 link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
             except Exception:
