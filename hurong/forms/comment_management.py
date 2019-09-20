@@ -216,20 +216,21 @@ class AssociatedScreenshots(forms.Form):
     def clean_notes_url(self):
         notes_url = self.data.get('notes_url')
 
+        link = notes_url
         if 'www.xiaohongshu.com' in notes_url:
             link = notes_url.split('?')[0]
 
-        elif 'show.meitu.com' in notes_url:  # 美图
-            link = notes_url
 
         else:
             try:
                 print("notes_url -->", notes_url)
-                ret = requests.get(notes_url, allow_redirects=False)
+                # ret = requests.get(notes_url, allow_redirects=False)
+                ret = requests.get(notes_url)
                 print("ret.text -->", ret.text)
                 link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
             except Exception:
                 pass
+
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
         if biji_objs:
             biji_obj = biji_objs[0]
