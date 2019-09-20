@@ -90,7 +90,8 @@ class mobilePhoneReviews(forms.Form):
             '评论',
             '收藏',
             '新增关注',
-            '评记'
+            '评记',
+            '该评论违规'
         ]
         for rule_out in rule_out_data:
             if rule_out in nick_name:
