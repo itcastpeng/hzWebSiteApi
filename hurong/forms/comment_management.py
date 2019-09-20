@@ -83,15 +83,19 @@ class mobilePhoneReviews(forms.Form):
     def clean_nick_name(self):
         nick_name = self.data.get('nick_name')
 
-        if '评论了你的笔记' in nick_name:
-            nick_name = nick_name.replace('评论了你的笔记', '')
-        # elif '回复了你的评论' in nick_name:
-        #     nick_name = nick_name.replace('回复了你的评论', '')
-        elif '回复' in nick_name:
-            nick_name = nick_name.split('回复')[0]
-
-        elif '评论' in nick_name:
-            nick_name = nick_name.split('评论')[0]
+        rule_out_data = ['评论了你的笔记', '回复', '评论', '收藏', '新增关注', '评记']
+        for rule_out in rule_out_data:
+            if rule_out in nick_name:
+                nick_name = nick_name.replace(rule_out, '')
+        # if '评论了你的笔记' in nick_name:
+        #     nick_name = nick_name.replace('评论了你的笔记', '')
+        # # elif '回复了你的评论' in nick_name:
+        # #     nick_name = nick_name.replace('回复了你的评论', '')
+        # elif '回复' in nick_name:
+        #     nick_name = nick_name.split('回复')[0]
+        #
+        # elif '评论' in nick_name:
+        #     nick_name = nick_name.split('评论')[0]
 
         return nick_name
 
