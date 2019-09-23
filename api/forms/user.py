@@ -64,7 +64,7 @@ class UpdateRoleForm(forms.Form):
         else:
             self.add_error('role_id', '角色ID不存在')
 
-
+# 转接验证
 class TransferAllUserInformation(forms.Form):
     user_id = forms.IntegerField(
         required=True,
@@ -78,7 +78,12 @@ class TransferAllUserInformation(forms.Form):
             'required': "转接人不能为空"
         }
     )
-
+    xcx_id = forms.IntegerField(
+        required=False,
+        error_messages={
+            'required': '小程序ID类型错误'
+        }
+    )
     def clean_o_id(self):
         o_id = self.data.get('o_id')
         user_id = self.data.get('user_id')
@@ -105,6 +110,16 @@ class TransferAllUserInformation(forms.Form):
                 return user_id
         else:
             self.add_error('user_id', '管理员不可转接')
+
+    def clean_xcx_id(self):
+        xcx_id = self.data.get('xcx_id')
+        if xcx_id:
+            objs = models.ClientApplet.objects.filter(id=xcx_id)
+            if objs:
+                return xcx_id
+            else:
+                self.add_error('xcx_id', '转接小程序不存在')
+
 
 # 删除团队成员
 class DeleteTeamMembers(forms.Form):
