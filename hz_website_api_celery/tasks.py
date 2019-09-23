@@ -160,38 +160,38 @@ def xiaohongshu_fugai_update_data():
     redis_key = "xiaohongshu_task_list"
 
     # 霸屏王查排名
-    if redis_obj.llen(redis_key) == 0:
-        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-        q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
-        print('q -->', q)
-        objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
-        print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
-        for obj in objs:
-            print('obj.keywords----------------> ', obj.keywords)
-            item = {
-                "keywords": obj.keywords,
-                "count": 1,  # 当前关键词存在几个任务
-                "task_type": "xiaohongshu_fugai_bpw"
-            }
-            redis_obj.lpush(redis_key, json.dumps(item))
-
-    if redis_obj.llen(redis_key) == 0:
-        objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
-        print("普通关键词查排名---->", datetime.datetime.now(), objs.count())
-        for obj in objs:
-            now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-            # print('obj -->', obj)
-            detail_objs = models.XiaohongshuFugaiDetail.objects.filter(keywords__keywords=obj['keywords'], create_datetime__gt=now_date)[:200]
-            # 将今天未查询的任务放入redis队列中
-            if not detail_objs:
-                item = {
-                    "keywords": obj['keywords'],
-                    # "url": obj.url,
-                    "count": obj['id__count'],      # 当前关键词存在几个任务
-                    # "select_type": obj.select_type,
-                    "task_type": "xiaohongshu_fugai"
-                }
-                redis_obj.lpush(redis_key, json.dumps(item))
+    # if redis_obj.llen(redis_key) == 0:
+    #     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    #     q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+    #     print('q -->', q)
+    #     objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
+    #     print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
+    #     for obj in objs:
+    #         print('obj.keywords----------------> ', obj.keywords)
+    #         item = {
+    #             "keywords": obj.keywords,
+    #             "count": 1,  # 当前关键词存在几个任务
+    #             "task_type": "xiaohongshu_fugai_bpw"
+    #         }
+    #         redis_obj.lpush(redis_key, json.dumps(item))
+    #
+    # if redis_obj.llen(redis_key) == 0:
+    #     objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
+    #     print("普通关键词查排名---->", datetime.datetime.now(), objs.count())
+    #     for obj in objs:
+    #         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+    #         # print('obj -->', obj)
+    #         detail_objs = models.XiaohongshuFugaiDetail.objects.filter(keywords__keywords=obj['keywords'], create_datetime__gt=now_date)[:200]
+    #         # 将今天未查询的任务放入redis队列中
+    #         if not detail_objs:
+    #             item = {
+    #                 "keywords": obj['keywords'],
+    #                 # "url": obj.url,
+    #                 "count": obj['id__count'],      # 当前关键词存在几个任务
+    #                 # "select_type": obj.select_type,
+    #                 "task_type": "xiaohongshu_fugai"
+    #             }
+    #             redis_obj.lpush(redis_key, json.dumps(item))
 
     # 相同关键词,不同链接,白天新添加的词单独跑
     print("相同关键词,不同链接,白天新添加的词单独跑---->", datetime.datetime.now())
