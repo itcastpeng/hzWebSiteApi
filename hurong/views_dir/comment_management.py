@@ -56,11 +56,14 @@ def comment_management(request, oper_type):
                         comments_content = forms_data.get('comments_content')
                         response.code = 200
 
+
+
                         rule_not_message_flag = True # 是否创建
-                        rule_not_message = ['通知消息', '已被删除', '违规']
+                        rule_not_message = ['通知消息', '已被删除', '违规', '收藏', '新增关注', '评记']
                         for i in rule_not_message:
                             if i in comments_content:
                                 rule_not_message_flag = False
+                                break
 
                         if rule_not_message_flag:
                             objs = models.littleRedBookReviewForm.objects.filter(
