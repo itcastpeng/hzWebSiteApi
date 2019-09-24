@@ -160,20 +160,20 @@ def xiaohongshu_fugai_update_data():
     redis_key = "xiaohongshu_task_list"
 
     # 霸屏王查排名
-    # if redis_obj.llen(redis_key) == 0:
-    #     now_date = datetime.datetime.now().strftime("%Y-%m-%d")
-    #     q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
-    #     print('q -->', q)
-    #     objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
-    #     print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
-    #     for obj in objs:
-    #         print('obj.keywords----------------> ', obj.keywords)
-    #         item = {
-    #             "keywords": obj.keywords,
-    #             "count": 1,  # 当前关键词存在几个任务
-    #             "task_type": "xiaohongshu_fugai_bpw"
-    #         }
-    #         redis_obj.lpush(redis_key, json.dumps(item))
+    if redis_obj.llen(redis_key) == 0:
+        now_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
+        print('q -->', q)
+        objs = models.xhs_bpw_keywords.objects.filter(q)[:200]
+        print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
+        for obj in objs:
+            print('obj.keywords----------------> ', obj.keywords)
+            item = {
+                "keywords": obj.keywords,
+                "count": 1,  # 当前关键词存在几个任务
+                "task_type": "xiaohongshu_fugai_bpw"
+            }
+            redis_obj.lpush(redis_key, json.dumps(item))
     #
     if redis_obj.llen(redis_key) == 0:
         # objs = models.XiaohongshuFugai.objects.all().values('keywords').annotate(Count('id'))
