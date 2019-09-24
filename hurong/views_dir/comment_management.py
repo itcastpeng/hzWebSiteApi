@@ -57,7 +57,7 @@ def comment_management(request, oper_type):
                         response.code = 200
 
                         rule_not_message_flag = True # 是否创建
-                        rule_not_message = ['通知消息', '该评论已被删除', '违规']
+                        rule_not_message = ['通知消息', '已被删除', '违规']
                         for i in rule_not_message:
                             if i in comments_content:
                                 rule_not_message_flag = False
