@@ -78,19 +78,15 @@ class mobilePhoneReviews(forms.Form):
         if '我的评论:' in comments_content:
             comments_content = comments_content.split('我的评论:')[0]
 
-        # 排除 关键词
-        rule_out_data = [
-            '评论了你的笔记',
-            '回复',
-            '评论',
-            '收藏',
-            '新增关注',
-            '评记',
-            '该评论违规'
-        ]
-        for rule_out in rule_out_data:
-            if rule_out in comments_content:
-                comments_content = comments_content.replace(rule_out, '')
+        # # 排除 关键词
+        # rule_out_data = [
+        #     '评论了你的笔记',
+        #     '回复',
+        #     '评论',
+        # ]
+        # for rule_out in rule_out_data:
+        #     if rule_out in comments_content:
+        #         comments_content = comments_content.replace(rule_out, '')
 
         return comments_content
 
