@@ -104,6 +104,8 @@ class mobilePhoneReviews(forms.Form):
         elif '评论' in nick_name:
             nick_name = nick_name.split('评论')[0]
 
+        if not nick_name:
+            nick_name = '表情'
         return nick_name
 
     def clean_screenshots_address(self):
