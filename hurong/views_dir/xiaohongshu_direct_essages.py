@@ -7,6 +7,7 @@ from django.db.models import Q
 from publicFunc.redisOper import get_redis_obj
 from publicFunc.qiniu.auth import Auth
 from publicFunc.public import create_xhs_admin_response
+from hz_website_api_celery.tasks import asynchronous_transfer_data
 import base64, time, os, datetime, json, requests
 
 @account.is_token(models.UserProfile)
@@ -267,6 +268,82 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
             response.code = 200
             response.msg = "操作完成"
+
+
+        # 回复评论私信 / 回复私信 手动操作完成
+        elif oper_type == 'manual_operation_completed':
+            direct_messages_types = request.POST.get('direct_messages_types') # 私信类型 回复评论私信1 / 私信2
+            direct_messages_id = request.POST.get('direct_messages_id') # 私信ID
+            direct_messages_screenshots = request.POST.get('direct_messages_screenshots') # 私信截图
+
+            now = datetime.datetime.today()
+            code = 301
+            msg = '未找到该评论'
+
+            # 回复评论私信
+            if direct_messages_types in [1, '1']:
+                objs = models.XiaohongshuDirectMessagesReply.objects.filter(id=direct_messages_id)
+                if objs:
+                    objs.update(
+                        status=2,
+                        update_datetime=now
+                    )
+                    post_data = {
+                        "id": objs[0].id,
+                        "platform": objs[0].user_id.platform
+                    }
+                    api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat-log'
+                    ret = requests.post(api_url, data=post_data)
+                    create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)  # 记录请求日志
+                    uid = objs[0].user_id
+                    name = objs[0].name
+                    code = 200
+                    msg = '完成'
+
+            # 私信
+            else:
+                objs = models.commentResponseForm.objects.filter(comment_type=2, id=direct_messages_id)
+                if objs:
+                    objs.update(comment_completion_time=now)
+                    form_data = {
+                        'id': direct_messages_id,  # 回复的消息ID
+                        'comment_completion_time': now,  # 完成时间
+                        'transfer_type': 2,
+                        'platform': objs[0].comment.xhs_user.platform
+                    }
+                    asynchronous_transfer_data.delay(form_data)
+                    uid = objs[0].comment.xhs_user_id
+                    name = objs[0].comment.nick_name
+                    code = 200
+                    msg = '完成'
+
+            from_blogger = 0
+            if request.POST.get('from_blogger'):
+                from_blogger = 1  # 来自于博主
+
+            if code == 200:
+                direct_message_obj = models.XiaohongshuDirectMessages.objects.create(
+                    user_id=uid,
+                    img_url=direct_messages_screenshots,
+                    name=name,
+                    # time_stamp=timestamp,
+                )
+                data = {
+                    "id": direct_message_obj.id,
+                    "name": name,
+                    "img_url": direct_messages_screenshots,
+                    "xiaohongshu_id": uid,
+                    "from_blogger": from_blogger,
+                    "platform": direct_message_obj.user_id.platform,
+                    "create_datetime": direct_message_obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                }
+                api_url = 'https://www.ppxhs.com/api/v1/sync/sync-chat'
+                ret = requests.post(api_url, data=data)
+                print("ret.json", ret.json())
+                create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2)
+
+            response.code = code
+            response.msg = msg
 
         else:
             response.code = 402
