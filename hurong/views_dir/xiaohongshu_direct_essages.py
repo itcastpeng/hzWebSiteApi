@@ -463,6 +463,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                         update_datetime = update_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
                     ret_data.append({
+                        'id': obj.id,
                         'user_id': obj.user_id_id,
                         'user_name': obj.user_id.name,
                         'phone_name': obj.user_id.phone_id.name,
