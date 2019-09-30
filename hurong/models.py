@@ -545,6 +545,23 @@ class XhsUserId(models.Model):
     success_time = models.DateTimeField(verbose_name='完成时间', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 小红书登录数据
+class XhsLoginData(models.Model):
+    phone_num = models.CharField(verbose_name='手机号', max_length=128)
+    login_data = models.TextField(verbose_name='登录数据', null=True)
+    update_time = models.DateTimeField(verbose_name='最近一次使用时间', null=True)
+    create_data = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

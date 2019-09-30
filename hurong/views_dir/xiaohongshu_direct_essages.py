@@ -447,6 +447,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
 
                 q = conditionCom(request, field_dict)
 
+
                 objs = models.XiaohongshuDirectMessagesReply.objects.select_related('user_id').filter(q).order_by(order)
                 count = objs.count()
 

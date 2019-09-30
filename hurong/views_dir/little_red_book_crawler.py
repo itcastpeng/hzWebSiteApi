@@ -144,18 +144,22 @@ def little_red_book_crawler(request, oper_type):
                     ))
             models.XhsUserId.objects.bulk_create(querysetlist)
 
-        # 提交用户ID是否查询完成
-        # elif oper_type == 'update_xhs_user_id':
-        #     info = request.POST.get('info')
-        #     xhs_user_id = request.POST.get('xhs_user_id')
-        #
-        #     models.XhsUserId.objects.filter(xhs_user_id=xhs_user_id).update(
-        #         success_time=datetime.datetime.today()
-        #     )
-        #     redis_name = 'xhs_user_id_name'
-        #
-        #     redis_obj.hset(redis_name, xhs_user_id, info)
-
+        # 创建 小红书登录数据
+        elif oper_type == 'create_xhs_login_data':
+            login_data = request.POST.get('login_data')
+            phone_num = request.POST.get('phone_num')
+            objs = models.XhsLoginData.objects.filter(phone_num=phone_num)
+            if objs:
+                objs.update(
+                    login_data=login_data
+                )
+            else:
+                models.XhsLoginData.objects.create(
+                    login_data=login_data,
+                    phone_num=phone_num
+                )
+            response.code = 200
+            response.msg = '更新成功'
 
     else:
         now = datetime.date.today()
@@ -333,35 +337,28 @@ def little_red_book_crawler(request, oper_type):
                     requests.post(url, data=data)
             response.msg = '未完成数量:{}'.format(comments_count)
 
-        # 判断是否有查询 用户ID 任务
-        # elif oper_type == 'get_user_id_task':
-        #     deletionTime = (now_date + datetime.timedelta(minutes=5))
-        #     q = Q()
-        #     q.add(Q(success_time__isnull=True), Q.AND)
-        #     q.add(Q(last_select_time__lt=now_date) | Q(last_select_time__isnull=True), Q.AND)
-        #     objs = models.XhsUserId.objects.filter(q)
-        #     data_list = []
-        #     if objs:
-        #         obj = objs[0]
-        #         data_list.append(obj.xhs_user_id)
-        #         obj.last_select_time = deletionTime
-        #         obj.save()
-        #         response.code = 200
-        #         response.data = data_list
-        #
-        #     else:
-        #         response.code = 301
+        # 查询是否有可用 小红书登录数据
+        elif oper_type == 'query_whether_login_data_available':
+            deletionTime = (now - datetime.timedelta(hours=2))  # 当前时间减去两小时
+            q = Q()
+            q.add(Q(update_time__isnull=True) | Q(update_time__lte=deletionTime), Q.AND)
+            print('q-----> ', q)
+            objs = models.XhsLoginData.objects.filter(q)
+            flag = False
+            login_data = {}
+            if objs:
+                flag = True
+                obj = objs[0]
+                login_data = json.loads(obj.login_data)
+                obj.update_time = datetime.datetime.today()
+                obj.save()
 
-        # # 查询是否有任务(VPS)
-        # elif oper_type == 'query_whether_task':
-        #     xhskeywordslist_q = Q().add(Q(is_success_time__lt=now_date) | Q(is_success_time__isnull=True), Q.AND)
-        #     objs = models.XhsKeywordsList.objects.filter(xhskeywordslist_q)
-        #     flag = False
-        #     if objs:
-        #         flag = True
-        #     response.code = 200
-        #     response.msg = '查询成功'
-        #     response.data = flag
+            response.code = 200
+            response.data = {
+                'flag': flag,
+                'login_data': login_data
+            }
+
         else:
             response.code = 402
             response.msg = '请求异常'
