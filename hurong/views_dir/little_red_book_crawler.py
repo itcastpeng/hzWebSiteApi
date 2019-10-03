@@ -341,7 +341,7 @@ def little_red_book_crawler(request, oper_type):
         elif oper_type == 'query_whether_login_data_available':
             deletionTime = (now - datetime.timedelta(hours=2))  # 当前时间减去两小时
             q = Q()
-            q.add(Q(update_time__isnull=True) | Q(update_time__lte=deletionTime), Q.AND)
+            q.add(Q(update_time__isnull=True) | Q(update_time__gte=deletionTime), Q.AND)
             print('q-----> ', q)
             objs = models.XhsLoginData.objects.filter(q)
             flag = False
