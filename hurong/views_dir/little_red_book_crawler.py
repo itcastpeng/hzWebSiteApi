@@ -339,9 +339,9 @@ def little_red_book_crawler(request, oper_type):
 
         # 查询是否有可用 小红书登录数据
         elif oper_type == 'query_whether_login_data_available':
-            deletionTime = (now - datetime.timedelta(hours=2))  # 当前时间减去两小时
+            deletionTime = (now + datetime.timedelta(hours=2))  # 当前时间减去两小时
             q = Q()
-            q.add(Q(update_time__isnull=True) | Q(update_time__gte=deletionTime), Q.AND)
+            q.add(Q(update_time__isnull=True) | Q(update_time__lte=datetime.datetime.today()), Q.AND)
             print('q-----> ', q)
             objs = models.XhsLoginData.objects.filter(q)
             flag = False
@@ -350,7 +350,7 @@ def little_red_book_crawler(request, oper_type):
                 flag = True
                 obj = objs[0]
                 login_data = json.loads(obj.login_data)
-                obj.update_time = datetime.datetime.today()
+                obj.update_time = deletionTime
                 obj.save()
 
             response.code = 200
