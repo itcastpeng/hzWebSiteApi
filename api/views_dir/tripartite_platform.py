@@ -489,11 +489,10 @@ def tripartite_platform_oper(request, oper_type):
 
                 url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
                 data = {
-                    'path': request_url,
+                    'path': '',
                     'width': 430
                 }
-                # ret = requests.post(url, data=json.dumps(data))
-                ret = requests.post(url, data=data)
+                ret = requests.post(url, data=json.dumps(data))
 
                 img_path = str(int(time.time())) + '.png'
                 with open(img_path, 'wb') as f:
