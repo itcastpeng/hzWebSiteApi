@@ -489,7 +489,7 @@ def tripartite_platform_oper(request, oper_type):
 
                 url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
                 data = {
-                    'path': '',
+                    'path': request_url,
                     'width': 430
                 }
                 ret = requests.post(url, data=json.dumps(data))
