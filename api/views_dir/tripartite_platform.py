@@ -492,7 +492,8 @@ def tripartite_platform_oper(request, oper_type):
                     'path': request_url,
                     'width': 430
                 }
-                ret = requests.post(url, data=json.dumps(data))
+                # ret = requests.post(url, data=json.dumps(data))
+                ret = requests.post(url, data=data)
 
                 img_path = str(int(time.time())) + '.png'
                 with open(img_path, 'wb') as f:
