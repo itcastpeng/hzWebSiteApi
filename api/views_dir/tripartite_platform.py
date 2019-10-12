@@ -479,26 +479,37 @@ def tripartite_platform_oper(request, oper_type):
             elif oper_type == 'get_preview_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
                 template_id = request.GET.get('template_id')
-                request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
-                    user_obj.token, user_id, template_id
-                )
-                print('request_url----------.', request_url)
-                if not appid:
-                    credential_expired_data = CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
-                    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
-
-                url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
-                data = {
-                    'path': request_url,
-                    'width': 430
-                }
-                ret = requests.post(url, data=json.dumps(data))
-
-                img_path = str(int(time.time())) + '.png'
-                with open(img_path, 'wb') as f:
-                    f.write(ret.content)
-                path = upload_qiniu(img_path, 800)
+                whether_regenerate = request.GET.get('whether_regenerate', 0) # 重新生成
                 template_obj = models.Template.objects.get(id=template_id)
+                path = template_obj.xcx_qrcode
+
+                is_whether_regenerate = False # 是否重新生成
+
+                if whether_regenerate or not path:
+                    is_whether_regenerate = True
+
+                if is_whether_regenerate: # 重新生成
+                    request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
+                        user_obj.token, user_id, template_id
+                    )
+                    if not appid:
+                        credential_expired_data = CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                        authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+
+                    url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
+                    data = {
+                        'path': request_url,
+                        'width': 430
+                    }
+                    ret = requests.post(url, data=json.dumps(data))
+
+                    img_path = str(int(time.time())) + '.png'
+                    with open(img_path, 'wb') as f:
+                        f.write(ret.content)
+                    path = upload_qiniu(img_path, 800)
+
+                    template_obj.xcx_qrcode = path
+                    template_obj.save()
 
                 response.code = 200
                 response.msg = '查询成功'
