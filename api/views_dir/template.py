@@ -9,7 +9,7 @@ from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataFor
     BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
-from publicFunc.public import get_qrcode
+from publicFunc.public import get_qrcode, get_xcx_qrcode
 import json
 
 
@@ -78,6 +78,7 @@ def template(request):
                     'logo_img': obj.logo_img,
                     'xcx_id': xcx_id,
                     'qrcode': obj.qrcode,
+                    'xcx_qrcode': obj.xcx_qrcode,
                     'xcx_appid': xcx_appid,
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
@@ -132,6 +133,9 @@ def template_oper(request, oper_type, o_id):
                     template_class_id=forms_obj.cleaned_data.get('template_class_id'),
                 )
                 template_obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(template_obj.id)) # 更新二维码
+                if not template_obj.xcx_qrcode:
+                    template_obj.xcx_qrcode = get_xcx_qrcode(template_obj.id, user_id, user_obj.token)
+
                 template_obj.save()
 
                 page_group_obj = models.PageGroup.objects.create(
