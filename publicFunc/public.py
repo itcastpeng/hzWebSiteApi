@@ -2,7 +2,7 @@ from hurong import models
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
 import re, random, requests, json, os, qrcode, time
-from publicFunc import tripartite_platform_oper
+from publicFunc.tripartite_platform_oper import QueryWhetherCallingCredentialExpired
 pcRequestHeader = [
     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
@@ -195,7 +195,7 @@ def get_xcx_qrcode(template_id, user_id, token):
     request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
         token, user_id, template_id
     )
-    credential_expired_data = tripartite_platform_oper.CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+    credential_expired_data = QueryWhetherCallingCredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
     authorizer_access_token = credential_expired_data.get('authorizer_access_token')
 
     url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
