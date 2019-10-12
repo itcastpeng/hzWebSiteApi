@@ -1,7 +1,8 @@
 from api import models
 from publicFunc import Response, account
 import requests, json, time, os
-from publicFunc.public import upload_qiniu
+from publicFunc.qiniu.auth import Auth
+from publicFunc.redisOper import get_redis_obj
 
 encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
 encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
@@ -596,7 +597,41 @@ class tripartite_platform_oper():
 
 
 
+# 上传七牛云
+def upload_qiniu(img_path, img_size):
+    redis_obj = get_redis_obj()
+    url = 'https://up-z1.qiniup.com/'
+    upload_token = redis_obj.get('qiniu_upload_token')
+    if not upload_token:
+        qiniu_data_path = os.path.join(os.getcwd(), "publicFunc", "qiniu", "qiniu_data.json")
+        with open(qiniu_data_path, "r", encoding="utf8") as f:
+            data = json.loads(f.read())
+            access_key = data.get('access_key')
+            secret_key = data.get('secret_key')
+            obj = Auth(access_key, secret_key)
+            upload_token = obj.upload_token("xcx_wgw_zhangcong")
 
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:2.0b13pre) Gecko/20110307 Firefox/4.0b13'
+    }
+    with open(img_path, 'rb') as f:
+        imgdata = f.read()
+
+    files = {
+        'file': imgdata
+    }
+
+    data = {
+        'token': upload_token,
+    }
+    ret = requests.post(url, data=data, files=files, headers=headers)
+    key = "http://qiniu.bjhzkq.com/{key}?imageView2/0/h/{img_size}".format(
+        key=ret.json()["key"],
+        img_size=img_size
+    )
+    if os.path.exists(img_path):
+        os.remove(img_path)  # 删除本地图片
+    return key
 
 
 
