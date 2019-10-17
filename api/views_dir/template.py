@@ -136,7 +136,6 @@ def template_oper(request, oper_type, o_id):
                 if not template_obj.xcx_qrcode:
                     template_obj.xcx_qrcode = get_xcx_qrcode(template_obj.id, user_id, user_obj.token)
 
-                template_obj.save()
 
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
@@ -144,11 +143,40 @@ def template_oper(request, oper_type, o_id):
                 )
 
                 print('page_base_data -->', page_base_data)
-                models.Page.objects.create(
+                page_obj = models.Page.objects.create(
                     name="首页",
                     page_group=page_group_obj,
                     data=json.dumps(page_base_data)
                 )
+
+                tab_bar_base_data = {
+                    "type": "tab_bar",
+                    "txt": "底部导航",
+                    "style": {
+                        'borderStyle': 'solid',  # 顶部边框 solid->实线  dotted->点线  dashed->虚线
+                        'borderColor': '#d8d8d8',  # 顶部边框颜色
+                        'borderWidth': 1,  # 顶部边框粗细
+                        'backgroundColor': '#ffffff',  # 背景颜色
+                        'color': '#515a6e',  # 文字颜色-未选中
+                        'selectedColor': '#1296db'  # 文字颜色-选中
+                    },
+                    "data": [
+                        {
+                            "page_id": page_obj.id,
+                            "text": '导航1',
+                            "icon_path": '/statics/admin_imgs/tabbar/homepage.png',
+                            "selected_icon_path": '/statics/admin_imgs/tabbar/homepage_selected.png'
+                        },
+                        {
+                            "page_id": page_obj.id,
+                            "text": '导航2',
+                            "icon_path": '/statics/admin_imgs/tabbar/people.png',
+                            "selected_icon_path": '/statics/admin_imgs/tabbar/people_selected.png'
+                        }
+                    ]
+                }
+                template_obj.tab_bar_data = tab_bar_base_data
+                template_obj.save()
                 response.code = 200
                 response.msg = "添加成功"
                 response.data = {'testCase': template_obj.id}

@@ -106,33 +106,8 @@ class Template(models.Model):
         max_length=256,
         default="/statics/admin_imgs/logo_70_70.png"
     )
-    tab_bar_base_data = {
-        "type": "tab_bar",
-        "txt": "底部导航",
-        "style": {
-            'borderStyle': 'solid',         # 顶部边框 solid->实线  dotted->点线  dashed->虚线
-            'borderColor': '#d8d8d8',       # 顶部边框颜色
-            'borderWidth': 1,               # 顶部边框粗细
-            'backgroundColor': '#ffffff',   # 背景颜色
-            'color': '#515a6e',             # 文字颜色-未选中
-            'selectedColor': '#1296db'       # 文字颜色-选中
-        },
-        "data": [
-            {
-                "page_id": None,
-                "text": '导航1',
-                "icon_path": '/statics/admin_imgs/tabbar/homepage.png',
-                "selected_icon_path": '/statics/admin_imgs/tabbar/homepage_selected.png'
-            },
-            {
-                "page_id": None,
-                "text": '导航2',
-                "icon_path": '/statics/admin_imgs/tabbar/people.png',
-                "selected_icon_path": '/statics/admin_imgs/tabbar/people_selected.png'
-            }
-        ]
-    }
-    tab_bar_data = models.TextField(verbose_name="底部导航数据", default=json.dumps(tab_bar_base_data))
+
+    tab_bar_data = models.TextField(verbose_name="底部导航数据", null=True)
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     thumbnail = models.CharField(verbose_name='缩略图', max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
