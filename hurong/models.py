@@ -182,7 +182,7 @@ class XiaohongshuPhone(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     last_sign_in_time = models.DateTimeField(verbose_name='最后一次签到时间', null=True)
     request_ip_addr = models.CharField(verbose_name="真实请求ip地址", max_length=256, null=True)
-
+    recharge_card_number = models.CharField(verbose_name='流量充值卡号', max_length=64, null=True)
 
 # 小红书手机日志记录
 class XiaohongshuPhoneLog(models.Model):
