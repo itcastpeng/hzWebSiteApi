@@ -19,6 +19,7 @@ import django, re, json, redis, time
 django.setup()
 from openpyxl import Workbook
 from hurong import models
+from api import models as api_models
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from publicFunc.public import send_error_msg, create_xhs_admin_response
@@ -673,5 +674,5 @@ def get_xcx_qrcode(template_id, user_id, token):
     with open(img_path, 'wb') as f:
         f.write(ret.content)
     path = upload_qiniu(img_path, 800)
-    return path
+    api_models.Template.objects.filter(id=template_id).update(xcx_qrcode=path)
 

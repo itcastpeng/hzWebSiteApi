@@ -135,7 +135,7 @@ def template_oper(request, oper_type, o_id):
                 )
                 template_obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(template_obj.id)) # 更新二维码
                 if not template_obj.xcx_qrcode:
-                    template_obj.xcx_qrcode = get_xcx_qrcode.delay(template_obj.id, user_id, user_obj.token)
+                    get_xcx_qrcode.delay(template_obj.id, user_id, user_obj.token)
 
 
                 page_group_obj = models.PageGroup.objects.create(
