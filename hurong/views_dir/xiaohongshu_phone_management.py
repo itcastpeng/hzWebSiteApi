@@ -253,6 +253,7 @@ def xiaohongshu_phone_management(request, oper_type):
                         'phone_type': obj.get_phone_type_display(),
                         'is_debug': obj.is_debug,
                         'macaddr': obj.macaddr,
+                        'recharge_card_number': obj.recharge_card_number,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     if select_id:
