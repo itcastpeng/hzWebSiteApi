@@ -2,7 +2,7 @@ from hurong import models
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
 import re, random, requests, json, os, qrcode, time
-from publicFunc.tripartite_platform_oper import QueryWhetherCallingCredentialExpired
+
 pcRequestHeader = [
     'Mozilla/5.0 (Windows NT 5.1; rv:6.0.2) Gecko/20100101 Firefox/6.0.2',
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_5) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17',
@@ -188,27 +188,6 @@ def get_qrcode(qrcode_path):
     with open('{}'.format(time_name), 'wb') as f:
         img.save(f)
     path = upload_qiniu(time_name, 800)
-    return path
-
-# 初始化模板 生成小程序二维码
-def get_xcx_qrcode(template_id, user_id, token):
-    request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
-        token, user_id, template_id
-    )
-    credential_expired_data = QueryWhetherCallingCredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
-    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
-
-    url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
-    data = {
-        'path': request_url,
-        'width': 430
-    }
-    ret = requests.post(url, data=json.dumps(data))
-
-    img_path = str(int(time.time())) + '.png'
-    with open(img_path, 'wb') as f:
-        f.write(ret.content)
-    path = upload_qiniu(img_path, 800)
     return path
 
 

@@ -10,19 +10,20 @@ from bs4 import BeautifulSoup
 import datetime
 import os
 import sys
-
 # HOST = 'http://127.0.0.1:8001'
 # HOST = 'http://xmgl.zhugeyingxiao.com'
 project_dir = os.path.dirname(os.getcwd())
 sys.path.append(project_dir)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'hzWebSiteApi.settings'
-import django, re, json, redis
+import django, re, json, redis, time
 django.setup()
 from openpyxl import Workbook
 from hurong import models
 from django.db.models.aggregates import Count
 from django.db.models import Q
 from publicFunc.public import send_error_msg, create_xhs_admin_response
+from publicFunc.tripartite_platform_oper import QueryWhetherCallingCredentialExpired
+from publicFunc.public import upload_qiniu
 
 # 更新小红书下拉数据
 @app.task
@@ -652,4 +653,25 @@ def time_refresh_switch():
     url = 'https://xcx.bjhzkq.com/api/celery/time_refresh_switch'
     requests.get(url)
 
+# 初始化模板 生成小程序二维码
+@app.task
+def get_xcx_qrcode(template_id, user_id, token):
+    request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
+        token, user_id, template_id
+    )
+    credential_expired_data = QueryWhetherCallingCredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+    authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+
+    url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
+    data = {
+        'path': request_url,
+        'width': 430
+    }
+    ret = requests.post(url, data=json.dumps(data))
+
+    img_path = str(int(time.time())) + '.png'
+    with open(img_path, 'wb') as f:
+        f.write(ret.content)
+    path = upload_qiniu(img_path, 800)
+    return path
 

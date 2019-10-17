@@ -9,7 +9,8 @@ from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataFor
     BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
-from publicFunc.public import get_qrcode, get_xcx_qrcode
+from publicFunc.public import get_qrcode
+from hz_website_api_celery.tasks import get_xcx_qrcode
 import json
 
 
@@ -134,7 +135,7 @@ def template_oper(request, oper_type, o_id):
                 )
                 template_obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(template_obj.id)) # 更新二维码
                 if not template_obj.xcx_qrcode:
-                    template_obj.xcx_qrcode = get_xcx_qrcode(template_obj.id, user_id, user_obj.token)
+                    template_obj.xcx_qrcode = get_xcx_qrcode.delay(template_obj.id, user_id, user_obj.token)
 
 
                 page_group_obj = models.PageGroup.objects.create(
@@ -175,7 +176,7 @@ def template_oper(request, oper_type, o_id):
                         }
                     ]
                 }
-                template_obj.tab_bar_data = tab_bar_base_data
+                template_obj.tab_bar_data = json.dumps(tab_bar_base_data)
                 template_obj.save()
                 response.code = 200
                 response.msg = "添加成功"
