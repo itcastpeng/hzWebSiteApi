@@ -298,6 +298,10 @@ class InviteTheChild(models.Model):
         choices=whether_transfer_successful_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 外部登录 记录
+class external_login_record(models.Model):
+
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
