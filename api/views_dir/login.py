@@ -105,3 +105,52 @@ def xcx_login(request):
         response.msg = "请求异常"
     return JsonResponse(response.__dict__)
 
+# 外部登录
+def external_login(request):
+    response = Response.ResponseObj()
+
+    external_token = request.GET.get('token')   # 平台token
+    source = request.GET.get('source')          # 来自哪个平台
+
+    login_type = 2
+
+    is_login_flag = True
+    if source == 'dingdong': # 叮咚营销宝
+        pass
+
+    else:
+        is_login_flag = False
+        response.code = 404
+        response.msg = '请求错误'
+
+
+    if is_login_flag:
+        user_data = {
+            'role': 7,  # 默认普通用户
+            'token': external_token,
+            'login_type': login_type,
+        }
+        objs = models.UserProfile.objects.filter(token=external_token)
+        if objs:
+            obj = objs[0]
+        else:
+            obj = models.UserProfile.objects.create(**user_data)
+
+        response.code = 200
+        response.msg = '登录成功'
+        response.data = {
+            'username': obj.username,
+            'token': obj.token,
+            'id': obj.id,
+            'role_id': obj.role_id,
+            'role_name': obj.role.name,
+            'head_portrait': obj.head_portrait,
+        }
+
+    return JsonResponse(response.__dict__)
+
+
+
+
+
+
