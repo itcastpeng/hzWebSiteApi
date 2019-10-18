@@ -111,7 +111,7 @@ def external_login(request):
 
     external_token = request.GET.get('token')   # 平台token
     source = request.GET.get('source')          # 来自哪个平台
-    user_id = request.GET.get('user_id')          # 来自哪个平台
+    userId = request.GET.get('userId')          # 来自哪个平台
 
     login_type = 2
 
@@ -130,7 +130,7 @@ def external_login(request):
             'role_id': 7,  # 默认普通用户
             'token': external_token,
             'login_type': login_type,
-            'ding_dong_marketing_treasure_user_id': user_id,
+            'ding_dong_marketing_treasure_user_id': userId,
         }
         objs = models.UserProfile.objects.filter(token=external_token)
         if objs:
@@ -139,7 +139,7 @@ def external_login(request):
         else:
             obj = models.UserProfile.objects.create(**user_data)
             get_user_info_url = 'https://www.lanwenzi.com/dingdong_api/user/info/{}?token={}&user_id={}'.format(
-                user_id, external_token, user_id
+                userId, external_token, userId
             )
             ret = requests.get(get_user_info_url)
             info_data = ret.json().get('data')
