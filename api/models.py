@@ -58,6 +58,11 @@ class UserProfile(models.Model):
     )
     number_child_users = models.IntegerField(verbose_name='可以创建几个子用户', default=1)
     small_program_number = models.IntegerField(verbose_name='可以创建几个小程序', default=1)
+    login_type_choices = (
+        (1, '微信扫码登录'),
+        (2, '叮咚营销宝'),
+    )
+    login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
 
 # 公众号或小程序用户表
 class ClientUserProfile(models.Model):
