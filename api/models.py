@@ -63,6 +63,8 @@ class UserProfile(models.Model):
         (2, '叮咚营销宝'),
     )
     login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
+    ding_dong_marketing_treasure_user_id = models.IntegerField(verbose_name='叮咚营销宝', null=True)
+
 
 # 公众号或小程序用户表
 class ClientUserProfile(models.Model):
