@@ -121,11 +121,11 @@ def external_login(request):
 
     else:
         is_login_flag = False
-        response.code = 404
+        response.code = 402
         response.msg = '请求错误'
 
 
-    if is_login_flag:
+    if is_login_flag: # 验证通过
         user_data = {
             'role_id': 7,  # 默认普通用户
             'token': external_token,
