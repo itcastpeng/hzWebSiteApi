@@ -5,10 +5,10 @@ from api import models
 from publicFunc import Response
 from publicFunc import account
 from django.http import JsonResponse
-import json
 from publicFunc import base64_encryption
 from api.forms.login import LoginForm
 from publicFunc.weixin import weixin_xcx_api
+import json, requests
 
 
 # 账号密码登录
@@ -111,6 +111,7 @@ def external_login(request):
 
     external_token = request.GET.get('token')   # 平台token
     source = request.GET.get('source')          # 来自哪个平台
+    user_id = request.GET.get('user_id')          # 来自哪个平台
 
     login_type = 2
 
@@ -126,15 +127,25 @@ def external_login(request):
 
     if is_login_flag:
         user_data = {
-            'role': 7,  # 默认普通用户
+            'role_id': 7,  # 默认普通用户
             'token': external_token,
             'login_type': login_type,
+            'ding_dong_marketing_treasure_user_id': user_id,
         }
         objs = models.UserProfile.objects.filter(token=external_token)
         if objs:
             obj = objs[0]
+
         else:
             obj = models.UserProfile.objects.create(**user_data)
+            get_user_info_url = 'https://www.lanwenzi.com/dingdong_api/user/info/{}?token={}&user_id={}'.format(
+                user_id, external_token, user_id
+            )
+            ret = requests.get(get_user_info_url)
+            info_data = ret.json().get('data')
+            obj.username = info_data.get('username')
+            obj.head_portrait = info_data.get('head_portrait')
+            obj.save()
 
         response.code = 200
         response.msg = '登录成功'
