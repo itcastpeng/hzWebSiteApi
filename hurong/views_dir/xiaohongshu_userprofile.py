@@ -134,12 +134,13 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 else:
                     data = {'imsi':imsi, 'iccid':iccid}
                 objs = models.XiaohongshuPhone.objects.filter(**data)
-                objs.update(phone_num=phone_num, is_debug=False)
+
                 # print("objs --->", objs)
                 if objs:
                     obj = objs[0]
                     # print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
                     if not obj.xiaohongshuuserprofile_set.all():
+                        objs.update(phone_num=phone_num, is_debug=False)
                         xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
                             name=name,
                             xiaohongshu_id=xiaohongshu_id,
@@ -147,14 +148,19 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                             platform=platform
                         )
                     else:
-                        xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
-                            phone_id=obj
-                        )
-                        xiaohongshu_userprofile_obj.platform = platform
-                        xiaohongshu_userprofile_obj.name = name
-                        xiaohongshu_userprofile_obj.xiaohongshu_id = xiaohongshu_id
-                        xiaohongshu_userprofile_obj.home_url = home_url
-                        xiaohongshu_userprofile_obj.save()
+                        # 第二次更新数据
+                        response.code = 0
+                        response.msg = "更新异常，不能重复提交注册信息，请联系管理员"
+                        return JsonResponse(response.__dict__)
+                    # else:
+                    #     xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
+                    #         phone_id=obj
+                    #     )
+                    #     xiaohongshu_userprofile_obj.platform = platform
+                    #     xiaohongshu_userprofile_obj.name = name
+                    #     xiaohongshu_userprofile_obj.xiaohongshu_id = xiaohongshu_id
+                    #     xiaohongshu_userprofile_obj.home_url = home_url
+                    #     xiaohongshu_userprofile_obj.save()
 
                     # 如果小红书博主注册表中有未注册的,则将信息提交给小红书后台
                     xhs_userprofile_register_objs = models.XiaohongshuUserProfileRegister.objects.filter(
