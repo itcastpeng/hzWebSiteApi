@@ -147,6 +147,14 @@ def external_login(request):
             obj.head_portrait = info_data.get('head_portrait')
             obj.save()
 
+        role_obj = models.Role.objects.filter(id=obj.role_id)
+        data_list = []
+        for i in role_obj[0].permissions.all():
+            data_list.append(i.name)
+
+        inviter = 0
+        if obj.inviter:
+            inviter = 1
         response.code = 200
         response.msg = '登录成功'
         response.data = {
@@ -156,6 +164,8 @@ def external_login(request):
             'role_id': obj.role_id,
             'role_name': obj.role.name,
             'head_portrait': obj.head_portrait,
+            'permissions_list': data_list,
+            'inviter': inviter,
         }
 
     return JsonResponse(response.__dict__)
