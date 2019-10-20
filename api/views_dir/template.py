@@ -274,14 +274,14 @@ def template_oper(request, oper_type, o_id):
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
                 template_id, data = form_obj.cleaned_data.get('template_id')
-                # page_id = form_obj.cleaned_data.get('page_id')
                 data['create_user_id'] = user_id
                 obj = models.Template.objects.create(**data)
-                obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
-                if not obj.xcx_qrcode:
-                    get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
+                tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
-                obj.save()
+                # obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
+                # if not obj.xcx_qrcode:
+                #     get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
+
                 page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
                 for page_group_obj in page_group_objs:
                     PageGroupObj = models.PageGroup.objects.create(
@@ -290,44 +290,23 @@ def template_oper(request, oper_type, o_id):
                         create_user_id=user_id,
                     )
                     print('page_group_obj.id--------------------> ', page_group_obj.id)
-                    for page_set in page_group_obj.page_set.all():
-                        print('page_set.name---------------------> ', page_set.name)
 
+                    for page_set in page_group_obj.page_set.all():
+                        print('page_set.id------> ', page_set.id)
                         page_obj = models.Page.objects.get(id=page_set.id)
-                        tab_bar_base_data = {
-                            "type": "tab_bar",
-                            "txt": "底部导航",
-                            "style": {
-                                'borderStyle': 'solid',  # 顶部边框 solid->实线  dotted->点线  dashed->虚线
-                                'borderColor': '#d8d8d8',  # 顶部边框颜色
-                                'borderWidth': 1,  # 顶部边框粗细
-                                'backgroundColor': '#ffffff',  # 背景颜色
-                                'color': '#515a6e',  # 文字颜色-未选中
-                                'selectedColor': '#1296db'  # 文字颜色-选中
-                            },
-                            "data": [
-                                {
-                                    "page_id": page_obj.id,
-                                    "text": '导航1',
-                                    "icon_path": '/statics/admin_imgs/tabbar/homepage.png',
-                                    "selected_icon_path": '/statics/admin_imgs/tabbar/homepage_selected.png'
-                                },
-                                {
-                                    "page_id": page_obj.id,
-                                    "text": '导航2',
-                                    "icon_path": '/statics/admin_imgs/tabbar/people.png',
-                                    "selected_icon_path": '/statics/admin_imgs/tabbar/people_selected.png'
-                                }
-                            ]
-                        }
-                        obj.tab_bar_data = json.dumps(tab_bar_base_data)
-                        obj.save()
-                        models.Page.objects.create(
+                        page_obj = models.Page.objects.create(
                             name=page_obj.name,
                             page_group=PageGroupObj,
                             data=page_obj.data,
                             create_user_id=user_id
                         )
+                        for tab_data in tab_bar_data.get('data'):
+                            print(page_obj.id, tab_data.get('page_id'))
+                            if str(page_set.id) == tab_data.get('page_id'):
+                                tab_data['page_id'] = page_obj.id
+
+                obj.tab_bar_data = json.dumps(tab_bar_data)
+                obj.save()
 
                 response.code = 200
                 response.msg = '创建成功'
@@ -336,7 +315,7 @@ def template_oper(request, oper_type, o_id):
                 }
             else:
                 response.code = 301
-                response.msg = json.load(form_obj.errors.as_json())
+                response.msg = json.loads(form_obj.errors.as_json())
 
         # 绑定模板和小程序
         elif oper_type == 'bind_templates_and_applets':
