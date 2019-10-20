@@ -278,9 +278,9 @@ def template_oper(request, oper_type, o_id):
                 obj = models.Template.objects.create(**data)
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
-                # obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
-                # if not obj.xcx_qrcode:
-                #     get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
+                obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
+                if not obj.xcx_qrcode:
+                    get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
 
                 page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
                 for page_group_obj in page_group_objs:
@@ -289,10 +289,8 @@ def template_oper(request, oper_type, o_id):
                         template_id=obj.id,
                         create_user_id=user_id,
                     )
-                    print('page_group_obj.id--------------------> ', page_group_obj.id)
 
                     for page_set in page_group_obj.page_set.all():
-                        print('page_set.id------> ', page_set.id)
                         page_obj = models.Page.objects.get(id=page_set.id)
                         page_obj = models.Page.objects.create(
                             name=page_obj.name,
@@ -301,7 +299,6 @@ def template_oper(request, oper_type, o_id):
                             create_user_id=user_id
                         )
                         for tab_data in tab_bar_data.get('data'):
-                            print(page_obj.id, tab_data.get('page_id'))
                             if str(page_set.id) == tab_data.get('page_id'):
                                 tab_data['page_id'] = page_obj.id
 
