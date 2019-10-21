@@ -266,15 +266,29 @@ def template_oper(request, oper_type, o_id):
                 response.msg = json.loads(forms_obj.errors.as_json())
 
         # 客户创建模板
-        elif oper_type == 'user_add_template':
+        elif oper_type == 'user_add_template': # 新建新模板  和 更换模板(需要传递旧模板ID 删除数据)
+            template_id = request.POST.get('template_id')
             form_data = {
                 'template_id':o_id,
                 # 'page_id':request.POST.get('page_id')
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
+
+                if template_id: # 如果有旧模板ID 则删掉
+                    template_obj = models.Template.objects.get(id=template_id)
+                    page_group_objs = models.PageGroup.objects.filter(template_id=template_obj.id)
+                    for page_group_obj in page_group_objs:
+                        models.Page.objects.filter(page_group_id=page_group_obj.id).delete()
+                    page_group_objs.delete()
+                    template_obj.delete()
+
+
                 template_id, data = form_obj.cleaned_data.get('template_id')
                 data['create_user_id'] = user_id
+                if template_id:
+                    data['id'] = template_id # 原ID
+
                 obj = models.Template.objects.create(**data)
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
