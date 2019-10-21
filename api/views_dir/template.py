@@ -267,7 +267,7 @@ def template_oper(request, oper_type, o_id):
 
         # 客户创建模板
         elif oper_type == 'user_add_template': # 新建新模板  和 更换模板(需要传递旧模板ID 删除数据)
-            template_id = request.POST.get('template_id')
+            old_template_id = request.POST.get('template_id')
             form_data = {
                 'template_id':o_id,
                 # 'page_id':request.POST.get('page_id')
@@ -276,8 +276,8 @@ def template_oper(request, oper_type, o_id):
             if form_obj.is_valid():
                 template_id, data = form_obj.cleaned_data.get('template_id')
 
-                if template_id: # 如果有旧模板ID 则删掉
-                    template_objs = models.Template.objects.filter(id=template_id)
+                if old_template_id : # 如果有旧模板ID 则删掉
+                    template_objs = models.Template.objects.filter(id=old_template_id )
                     page_group_objs = models.PageGroup.objects.filter(template_id=template_objs[0].id)
                     for page_group_obj in page_group_objs:
                         models.Page.objects.filter(page_group_id=page_group_obj.id).delete()
@@ -286,8 +286,8 @@ def template_oper(request, oper_type, o_id):
                     obj = template_objs[0]
                 else:
                     data['create_user_id'] = user_id
-                    if template_id:
-                        data['id'] = template_id # 原ID
+                    if old_template_id :
+                        data['id'] = old_template_id  # 原ID
 
                     obj = models.Template.objects.create(**data)
 
