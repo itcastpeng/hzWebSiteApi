@@ -274,22 +274,23 @@ def template_oper(request, oper_type, o_id):
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
+                template_id, data = form_obj.cleaned_data.get('template_id')
 
                 if template_id: # 如果有旧模板ID 则删掉
-                    template_obj = models.Template.objects.get(id=template_id)
-                    page_group_objs = models.PageGroup.objects.filter(template_id=template_obj.id)
+                    template_objs = models.Template.objects.filter(id=template_id)
+                    page_group_objs = models.PageGroup.objects.filter(template_id=template_objs[0].id)
                     for page_group_obj in page_group_objs:
                         models.Page.objects.filter(page_group_id=page_group_obj.id).delete()
                     page_group_objs.delete()
-                    template_obj.delete()
+                    template_objs.update(**data)
+                    obj = template_objs[0]
+                else:
+                    data['create_user_id'] = user_id
+                    if template_id:
+                        data['id'] = template_id # 原ID
 
+                    obj = models.Template.objects.create(**data)
 
-                template_id, data = form_obj.cleaned_data.get('template_id')
-                data['create_user_id'] = user_id
-                if template_id:
-                    data['id'] = template_id # 原ID
-
-                obj = models.Template.objects.create(**data)
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
                 obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
