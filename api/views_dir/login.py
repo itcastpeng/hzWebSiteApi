@@ -138,7 +138,7 @@ def external_login(request):
 
         else:
             obj = models.UserProfile.objects.create(**user_data)
-            get_user_info_url = 'https://www.lanwenzi.com/dingdong_api/user/info/{}?token={}&user_id={}'.format(
+            get_user_info_url = 'http://a.yingxiaobao.org.cn/api/user/info/{}?token={}&user_id={}'.format(
                 userId, external_token, userId
             )
             ret = requests.get(get_user_info_url)
