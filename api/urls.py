@@ -2,7 +2,7 @@
 from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
-    role, template_class, article_management
+    role, template_class, article_management, baidu_tripartite_platform_management
 from api.views_dir.xcx import template as xcx_template, form_management
 
 urlpatterns = [
@@ -89,5 +89,10 @@ urlpatterns = [
     url(r'^tripartite_platform/(?P<oper_type>\w+)$', tripartite_platform.tripartite_platform_oper),
     url(r'^tripartite_platform$', tripartite_platform.tongzhi),  # 微信通知
     url(r'^authorize_callback$', tripartite_platform.authorize_callback),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
+
+    # ---------------------------- 百度三方平台管理 -------------------------------
+    url(r'^baidu_platform_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', baidu_tripartite_platform_management.tripartite_platform_oper),
+    url(r'^baidu_platform_management$', baidu_tripartite_platform_management.baidu_tongzhi), # 百度通知
+
 
 ]
