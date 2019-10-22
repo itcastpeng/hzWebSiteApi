@@ -128,7 +128,6 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 home_url = forms_obj.cleaned_data.get('home_url')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 platform = forms_obj.cleaned_data.get('platform')
-
                 if macaddr:
                     data = {'macaddr': macaddr}
                 else:
@@ -138,7 +137,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 # print("objs --->", objs)
                 if objs:
                     obj = objs[0]
-                    # print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
+                    print('obj.id-----> ', obj.id)
                     if not obj.xiaohongshuuserprofile_set.all():
                         objs.update(phone_num=phone_num, is_debug=False)
                         xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
@@ -168,6 +167,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         is_register=False,
                     )
                     if xhs_userprofile_register_objs:
+                        print('--------------------------')
                         xhs_userprofile_register_obj = xhs_userprofile_register_objs[0]
                         # print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
                         # 将注册成功的小红书账号推送到小红书后台
@@ -179,9 +179,9 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                             "mobile": phone_num,
                             "platform": platform,
                         }
-                        ret = requests.post(api_url, data=data)
+                        # ret = requests.post(api_url, data=data)
                         # print("ret.json() -->", ret.json())
-                        create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
+                        # create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
                         xhs_userprofile_register_objs.update(
                             is_register=True,
                             register_datetime=datetime.datetime.now()
