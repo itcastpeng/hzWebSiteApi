@@ -108,7 +108,7 @@ def xcx_login(request):
 # 外部登录
 def external_login(request):
     response = Response.ResponseObj()
-
+    print('----------------------------------------------------外部登录', request.GET)
     external_token = request.GET.get('token')   # 平台token
     source = request.GET.get('source')          # 来自哪个平台
     userId = request.GET.get('userId')          # 来自哪个平台
@@ -126,6 +126,7 @@ def external_login(request):
 
 
     if is_login_flag: # 验证通过
+        print('---------------创建用户')
         user_data = {
             'role_id': 7,  # 默认普通用户
             'token': external_token,
