@@ -22,13 +22,19 @@ def tripartite_platform_oper(request, oper_type):
     if oper_type == 'get_access_token':
         BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False)
         ticket = BaiduTripartitePlatformObjs[0].ticket
-        url = 'https://openapi.baidu.com/public/2.0/smartapp/auth/tp/token?client_id=OdxUiUVpVxH2Ai7G02cIjXGnnnMEUntD&ticket=8e329bc7e5fc432740d2e7e76a39c0e3'
+        url = 'https://openapi.baidu.com/public/2.0/smartapp/auth/tp/token'
         params = {
             'client_id': baidu_tripartite_platform_key,
             'ticket': ticket
         }
         ret = requests.get(url, params=params)
         print('ret.json()--------> ', ret.json())
+        ret_data = ret.json()
+        access_token = ret_data.get('access_token')     # access_token
+        expires_in = ret_data.get('expires_in')         # 有效时长
+        scope = ret_data.get('scope')                   # 权限说明
+
+        print(access_token, expires_in, scope)
 
     return JsonResponse(response.__dict__)
 
