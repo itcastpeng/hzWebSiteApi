@@ -284,7 +284,6 @@ def template_oper(request, oper_type, o_id):
                     page_group_objs.delete()
                     template_objs.update(**data)
                     obj = template_objs[0]
-                    template_id = old_template_id
 
                 else: # 生成新模板
                     data['create_user_id'] = user_id
