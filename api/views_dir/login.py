@@ -126,7 +126,6 @@ def external_login(request):
 
 
     if is_login_flag: # 验证通过
-        print('---------------创建用户')
         user_data = {
             'role_id': 7,  # 默认普通用户
             'token': external_token,
@@ -143,9 +142,8 @@ def external_login(request):
             )
             ret = requests.get(get_user_info_url)
             info_data = ret.json().get('data')
-            user_data['username'] = info_data.get('username')
+            user_data['username'] = base64_encryption.b64encode(info_data.get('username'))
             user_data['head_portrait'] = info_data.get('head_portrait')
-            print('user_data---------> ', user_data)
             obj = models.UserProfile.objects.create(**user_data)
 
         role_obj = models.Role.objects.filter(id=obj.role_id)
