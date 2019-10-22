@@ -275,7 +275,7 @@ def template_oper(request, oper_type, o_id):
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
                 template_id, data = form_obj.cleaned_data.get('template_id')
-
+                print('======1=111111111111==================> ', template_id)
                 if old_template_id : # 如果有旧模板ID 则删掉
                     template_objs = models.Template.objects.filter(id=old_template_id )
                     page_group_objs = models.PageGroup.objects.filter(template_id=template_objs[0].id)
@@ -294,7 +294,8 @@ def template_oper(request, oper_type, o_id):
 
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
-                page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
+                page_group_objs = models.PageGroup.objects.filter(template_id=o_id)
+                print('page_group_objs.count()---------------> ', page_group_objs.count())
                 for page_group_obj in page_group_objs:
                     PageGroupObj = models.PageGroup.objects.create(
                         name=page_group_obj.name,
@@ -302,6 +303,7 @@ def template_oper(request, oper_type, o_id):
                         create_user_id=user_id,
                     )
 
+                    print('page_group_obj.page_set.all()-------------------> ', page_group_obj.page_set.all())
                     for page_set in page_group_obj.page_set.all():
                         page_obj = models.Page.objects.get(id=page_set.id)
                         page_obj = models.Page.objects.create(
