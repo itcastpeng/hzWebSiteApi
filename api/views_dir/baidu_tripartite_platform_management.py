@@ -28,13 +28,15 @@ def tripartite_platform_oper(request, oper_type):
             'ticket': ticket
         }
         ret = requests.get(url, params=params)
-        print('ret.json()--------> ', ret.json())
-        ret_data = ret.json()
+        ret_data = ret.json().get('data')
         access_token = ret_data.get('access_token')     # access_token
         expires_in = ret_data.get('expires_in')         # 有效时长
         scope = ret_data.get('scope')                   # 权限说明
-
-        print(access_token, expires_in, scope)
+        print('access_token, expires_in, scope------------> ', access_token, expires_in, scope)
+        BaiduTripartitePlatformObjs.update(
+            access_token=access_token,
+            access_token_time=expires_in
+        )
 
     return JsonResponse(response.__dict__)
 
