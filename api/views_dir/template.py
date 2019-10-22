@@ -188,18 +188,17 @@ def template_oper(request, oper_type, o_id):
 
         # 删除 模板
         elif oper_type == "delete":
-            if not models.ClientApplet.objects.filter(template_id=o_id):
-                objs = models.Template.objects.filter(id=o_id)
-                if objs:
-                    objs.delete()
-                    response.code = 200
-                    response.msg = "删除成功"
-                else:
-                    response.code = 302
-                    response.msg = '删除ID不存在'
+            objs = models.Template.objects.filter(id=o_id)
+            if objs:
+                models.ClientApplet.objects.filter(template_id=o_id).delete()
+
+                objs.delete()
+                response.code = 200
+                response.msg = "删除成功"
             else:
-                response.code = 301
-                response.msg = '请先解绑小程序'
+                response.code = 302
+                response.msg = '删除ID不存在'
+
 
         # 更改模板
         elif oper_type == "update":
