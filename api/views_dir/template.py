@@ -10,7 +10,7 @@ from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataFor
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
-from hz_website_api_celery.tasks import get_xcx_qrcode
+from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode
 import json
 
 
@@ -133,17 +133,24 @@ def template_oper(request, oper_type, o_id):
                     thumbnail=forms_obj.cleaned_data.get('thumbnail'),
                     template_class_id=forms_obj.cleaned_data.get('template_class_id'),
                 )
-                template_obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(template_obj.id)) # 更新二维码
+                get_gzh_qrcode.delay(
+                    template_obj.id,
+                    'https://xcx.bjhzkq.com/wx/?id={}'.format(
+                        template_obj.id
+                    )
+                ) # 生成公众号二维码
                 if not template_obj.xcx_qrcode:
-                    get_xcx_qrcode.delay(template_obj.id, user_id, user_obj.token)
-
+                    get_xcx_qrcode.delay(
+                        template_obj.id,
+                        user_id,
+                        user_obj.token
+                    ) # 生成小程序二维码
 
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
                     template=template_obj
                 )
 
-                print('page_base_data -->', page_base_data)
                 page_obj = models.Page.objects.create(
                     name="首页",
                     page_group=page_group_obj,
@@ -269,7 +276,6 @@ def template_oper(request, oper_type, o_id):
             old_template_id = request.POST.get('template_id')
             form_data = {
                 'template_id':o_id,
-                # 'page_id':request.POST.get('page_id')
             }
             form_obj = UserAddTemplateForm(form_data)
             if form_obj.is_valid():
@@ -286,9 +292,9 @@ def template_oper(request, oper_type, o_id):
                 else: # 生成新模板
                     data['create_user_id'] = user_id
                     obj = models.Template.objects.create(**data)
-                    obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
+                    get_gzh_qrcode.delay(obj.id, 'https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id)) # 生成公众号二维码
                     if not obj.xcx_qrcode:
-                        get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
+                        get_xcx_qrcode.delay(obj.id, user_id, user_obj.token) # 生成小程序二维码
 
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 

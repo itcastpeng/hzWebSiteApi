@@ -7,9 +7,7 @@ from __future__ import absolute_import, unicode_literals
 from .celery import app
 import requests
 from bs4 import BeautifulSoup
-import datetime
-import os
-import sys
+import sys, qrcode, os, datetime
 # HOST = 'http://127.0.0.1:8001'
 # HOST = 'http://xmgl.zhugeyingxiao.com'
 project_dir = os.path.dirname(os.getcwd())
@@ -676,3 +674,12 @@ def get_xcx_qrcode(template_id, user_id, token):
     path = upload_qiniu(img_path, 800)
     api_models.Template.objects.filter(id=template_id).update(xcx_qrcode=path)
 
+# 初始化模板 生成小程序二维码
+@app.task
+def get_gzh_qrcode(template_id, qrcode_path):
+    img = qrcode.make(qrcode_path)
+    time_name = str(int(time.time())) + '.png'
+    with open('{}'.format(time_name), 'wb') as f:
+        img.save(f)
+    path = upload_qiniu(time_name, 800)
+    api_models.Template.objects.filter(id=template_id).update(get_gzh_qrcode=path)

@@ -108,7 +108,6 @@ def xcx_login(request):
 # 外部登录
 def external_login(request):
     response = Response.ResponseObj()
-    print('----------------------------------------------------外部登录', datetime.datetime.today())
     external_token = request.GET.get('token')   # 平台token
     source = request.GET.get('source')          # 来自哪个平台
     userId = request.GET.get('userId')          # 来自哪个平台
@@ -124,7 +123,6 @@ def external_login(request):
         response.code = 402
         response.msg = '请求错误'
 
-    print('------------开始创建=======> ', datetime.datetime.today())
     if is_login_flag: # 验证通过
         user_data = {
             'role_id': 7,  # 默认普通用户
@@ -137,12 +135,10 @@ def external_login(request):
             obj = objs[0]
 
         else:
-            print('---------------开始请求接口--------------> ', datetime.datetime.today())
             get_user_info_url = 'http://a.yingxiaobao.org.cn/api/user/info/{}?token={}&user_id={}'.format(
                 userId, external_token, userId
             )
             ret = requests.get(get_user_info_url)
-            print('-------------------请求接口结束------------>', datetime.datetime.today())
             info_data = ret.json().get('data')
             user_data['username'] = base64_encryption.b64encode(info_data.get('username'))
             user_data['head_portrait'] = info_data.get('head_portrait')
