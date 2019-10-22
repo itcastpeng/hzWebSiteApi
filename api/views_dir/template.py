@@ -310,7 +310,8 @@ def template_oper(request, oper_type, o_id):
                         )
                         for tab_data in tab_bar_data.get('data'):
                             print('page_obj.id--------------------------------> ', page_set.id, tab_data.get('page_id'))
-                            if str(page_set.id) == tab_data.get('page_id'):
+                            if str(page_set.id) == str(tab_data.get('page_id')):
+                                print('===============> ')
                                 tab_data['page_id'] = page_obj.id
 
                 if old_template_id:
