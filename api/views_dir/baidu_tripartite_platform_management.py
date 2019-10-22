@@ -27,13 +27,14 @@ def tripartite_platform_oper(request, oper_type):
 
 
 def baidu_tongzhi(request):
-    postdata = request.body.decode(encoding='UTF-8')
+    postdata = json.loads(request.body.decode(encoding='UTF-8'))
+
+    print('postdata------> ', type(postdata), postdata)
 
     Nonce = postdata.get('Nonce')
     TimeStamp = postdata.get('TimeStamp')
     Encrypt = postdata.get('Encrypt')
     MsgSignature = postdata.get('MsgSignature')
-
     print('Nonce, TimeStamp=======================> ', Nonce, TimeStamp)
     print('Encrypt, MsgSignature--------------> ', Encrypt)
     print('Encrypt, MsgSignature--------------> ', MsgSignature)
