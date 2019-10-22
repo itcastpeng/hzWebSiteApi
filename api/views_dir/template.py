@@ -312,15 +312,19 @@ def template_oper(request, oper_type, o_id):
                         )
                         for tab_data in tab_bar_data.get('data'):
                             if str(page_set.id) == tab_data.get('page_id'):
+                                print('page_obj.id--------------------------------> ', page_obj.id)
                                 tab_data['page_id'] = page_obj.id
 
-                obj.tab_bar_data = json.dumps(tab_bar_data)
-                obj.save()
+                if old_template_id:
+                    template_objs.update(tab_bar_data=json.dumps(tab_bar_data))
+                else:
+                    obj.tab_bar_data = json.dumps(tab_bar_data)
+                    obj.save()
 
                 response.code = 200
                 response.msg = '创建成功'
                 response.data = {
-                    'id': obj.id
+                    'id': obj.id,
                 }
             else:
                 response.code = 301
