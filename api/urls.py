@@ -91,7 +91,7 @@ urlpatterns = [
     url(r'^authorize_callback$', tripartite_platform.authorize_callback),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
 
     # ---------------------------- 百度三方平台管理 -------------------------------
-    url(r'^baidu_platform_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', baidu_tripartite_platform_management.tripartite_platform_oper),
+    url(r'^baidu_platform_management/(?P<oper_type>\w+)$', baidu_tripartite_platform_management.tripartite_platform_oper),
     url(r'^baidu_platform_management$', baidu_tripartite_platform_management.baidu_tongzhi), # 百度通知
 
 
