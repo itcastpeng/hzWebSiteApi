@@ -1,7 +1,7 @@
 
 
 from publicFunc.baidu_tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
-    QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, encodingAESKey
+    QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo
 
 from api.forms.baidu_tripartite_platform import AuthorizationForm, UploadAppletCode, SelectForm
 from api import models
