@@ -4,9 +4,8 @@ import requests, json, time, os
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
 
-encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
-encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
-encoding_appid = 'wx1f63785f9acaab9c'
+
+baidu_tripartite_platform_key = 'PCwOy1gDSz0cAixIMIli4hBIzHaz4Kib' # 第三方平台Key
 
 # 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
 def QueryWhetherCallingCredentialExpired(appid, auth_type):

@@ -10,6 +10,8 @@ from django.http import JsonResponse, HttpResponse
 from urllib.parse import unquote, quote
 import time, json, datetime, requests
 
+
+
 # 三方平台操作
 @account.is_token(models.UserProfile)
 def tripartite_platform_oper(request, oper_type):
@@ -38,7 +40,7 @@ def baidu_tongzhi(request):
         'encrypted':Encrypt,
         'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
     }
-    get_ticket_ret = requests.post(get_ticket_url, post=get_ticket_data)
+    get_ticket_ret = requests.post(get_ticket_url, data=get_ticket_data)
     print('vget_ticket_ret------> ', get_ticket_ret.json())
     get_ticket_ret_json = get_ticket_ret.json()
     data = get_ticket_ret_json.get('data')
