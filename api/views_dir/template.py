@@ -295,15 +295,14 @@ def template_oper(request, oper_type, o_id):
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
                 page_group_objs = models.PageGroup.objects.filter(template_id=o_id)
-                print('page_group_objs.count()---------------> ', page_group_objs.count())
                 for page_group_obj in page_group_objs:
                     PageGroupObj = models.PageGroup.objects.create(
                         name=page_group_obj.name,
                         template_id=obj.id,
                         create_user_id=user_id,
                     )
+                    print('page_group_objs.count()---------------> ', PageGroupObj.id)
 
-                    print('page_group_obj.page_set.all()-------------------> ', page_group_obj.page_set.all())
                     for page_set in page_group_obj.page_set.all():
                         page_obj = models.Page.objects.get(id=page_set.id)
                         page_obj = models.Page.objects.create(
@@ -312,6 +311,8 @@ def template_oper(request, oper_type, o_id):
                             data=page_obj.data,
                             create_user_id=user_id
                         )
+                        print('page_group_obj.page_set.all()-------------------> ', page_obj.id)
+                        print("tab_bar_data.get('data')------> ", type(tab_bar_data.get('data')))
                         for tab_data in tab_bar_data.get('data'):
                             if str(page_set.id) == tab_data.get('page_id'):
                                 print('page_obj.id--------------------------------> ', page_obj.id)
