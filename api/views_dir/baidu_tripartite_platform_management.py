@@ -1,7 +1,7 @@
 
 
 from publicFunc.baidu_tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
-    QueryWhetherCallingCredentialExpired as CredentialExpired, GetTripartitePlatformInfo, baidu_tripartite_platform_key
+    QueryWhetherCallingCredentialExpired as CredentialExpired, baidu_tripartite_platform_key
 
 from api.forms.baidu_tripartite_platform import AuthorizationForm, UploadAppletCode, SelectForm
 from api import models
@@ -17,26 +17,11 @@ import time, json, datetime, requests
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
+    tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
     # 获取第三方平台access_token
     if oper_type == 'get_access_token':
-        BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False)
-        ticket = BaiduTripartitePlatformObjs[0].ticket
-        url = 'https://openapi.baidu.com/public/2.0/smartapp/auth/tp/token'
-        params = {
-            'client_id': baidu_tripartite_platform_key,
-            'ticket': ticket
-        }
-        ret = requests.get(url, params=params)
-        ret_data = ret.json().get('data')
-        access_token = ret_data.get('access_token')     # access_token
-        expires_in = ret_data.get('expires_in')         # 有效时长
-        scope = ret_data.get('scope')                   # 权限说明
-        print('access_token, expires_in, scope------------> ', access_token, expires_in, scope)
-        BaiduTripartitePlatformObjs.update(
-            access_token=access_token,
-            access_token_time=expires_in
-        )
+        pass
 
     return JsonResponse(response.__dict__)
 
