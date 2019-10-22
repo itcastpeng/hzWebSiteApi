@@ -284,18 +284,16 @@ def template_oper(request, oper_type, o_id):
                     page_group_objs.delete()
                     template_objs.update(**data)
                     obj = template_objs[0]
-                else:
-                    data['create_user_id'] = user_id
-                    if old_template_id :
-                        data['id'] = old_template_id  # 原ID
+                    template_id = old_template_id
 
+                else: # 生成新模板
+                    data['create_user_id'] = user_id
                     obj = models.Template.objects.create(**data)
+                    obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
+                    if not obj.xcx_qrcode:
+                        get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
 
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
-
-                obj.qrcode = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id))  # 更新二维码
-                if not obj.xcx_qrcode:
-                    get_xcx_qrcode.delay(obj.id, user_id, user_obj.token)
 
                 page_group_objs = models.PageGroup.objects.filter(template_id=template_id)
                 for page_group_obj in page_group_objs:
