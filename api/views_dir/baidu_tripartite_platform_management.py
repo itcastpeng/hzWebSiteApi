@@ -28,22 +28,35 @@ def tripartite_platform_oper(request, oper_type):
 
 def baidu_tongzhi(request):
     postdata = json.loads(request.body.decode(encoding='UTF-8'))
-
-    print('postdata------> ', type(postdata), postdata)
-
     Nonce = postdata.get('Nonce')
     TimeStamp = postdata.get('TimeStamp')
     Encrypt = postdata.get('Encrypt')
     MsgSignature = postdata.get('MsgSignature')
-    print('Nonce, TimeStamp=======================> ', Nonce, TimeStamp)
-    print('Encrypt, MsgSignature--------------> ', Encrypt)
-    print('Encrypt, MsgSignature--------------> ', MsgSignature)
 
-    objs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False)
-    objs.update(
+    get_ticket_url = 'http://a.yingxiaobao.org.cn/api/baidu-openssl-decrypt/decrypt'
+    get_ticket_data = {
+        'encrypted':Encrypt,
+        'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
+    }
+    get_ticket_ret = requests.post(get_ticket_url, post=get_ticket_data)
+    print('vget_ticket_ret------> ', get_ticket_ret.json())
+    get_ticket_ret_json = get_ticket_ret.json()
+    data = get_ticket_ret_json.get('data')
+    Ticket = data.get('Ticket')
+    FromUserName = data.get('FromUserName')
+    CreateTime = data.get('CreateTime')
+    MsgType = data.get('MsgType')
+    Event = data.get('Event')
 
-    )
-
+    print('Ticket--------> ', Ticket)
+    print('FromUserName----------> ', FromUserName)
+    print('CreateTime --------> ', CreateTime)
+    print('MsgType---------> ', MsgType)
+    print('Event------> ', Event)
+    # objs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False)
+    # objs.update(
+    #
+    # )
 
 
     return HttpResponse('success')
