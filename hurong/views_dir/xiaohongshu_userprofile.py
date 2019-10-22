@@ -128,7 +128,6 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 home_url = forms_obj.cleaned_data.get('home_url')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 platform = forms_obj.cleaned_data.get('platform')
-
                 if macaddr:
                     data = {'macaddr': macaddr}
                 else:
@@ -138,7 +137,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 # print("objs --->", objs)
                 if objs:
                     obj = objs[0]
-                    # print('obj.xiaohongshuuserprofile_set -->', obj.xiaohongshuuserprofile_set)
+                    print('obj.id-----> ', obj.id)
                     if not obj.xiaohongshuuserprofile_set.all():
                         objs.update(phone_num=phone_num, is_debug=False)
                         xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(

@@ -78,6 +78,11 @@ class UpdateUserinfoForm(forms.Form):
         }
     )
 
+    def clean_name(self):
+        name = self.data.get('name')
+        name = name.strip()
+        return name
+
 class RegistreForm(forms.Form):
     uid = forms.IntegerField(
         required=True,
