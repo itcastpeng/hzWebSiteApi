@@ -157,7 +157,7 @@ def external_login(request):
         response.code = 200
         response.msg = '登录成功'
         response.data = {
-            'username': obj.username,
+            'username': base64_encryption.b64decode(obj.username),
             'token': obj.token,
             'id': obj.id,
             'role_id': obj.role_id,
