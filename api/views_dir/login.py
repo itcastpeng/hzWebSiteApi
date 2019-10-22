@@ -138,16 +138,15 @@ def external_login(request):
             obj = objs[0]
 
         else:
-            print('user_data---------> ', user_data)
-            obj = models.UserProfile.objects.create(**user_data)
             get_user_info_url = 'http://a.yingxiaobao.org.cn/api/user/info/{}?token={}&user_id={}'.format(
                 userId, external_token, userId
             )
             ret = requests.get(get_user_info_url)
             info_data = ret.json().get('data')
-            obj.username = info_data.get('username')
-            obj.head_portrait = info_data.get('head_portrait')
-            obj.save()
+            user_data['username'] = info_data.get('username')
+            user_data['head_portrait'] = info_data.get('head_portrait')
+            print('user_data---------> ', user_data)
+            obj = models.UserProfile.objects.create(**user_data)
 
         role_obj = models.Role.objects.filter(id=obj.role_id)
         data_list = []
