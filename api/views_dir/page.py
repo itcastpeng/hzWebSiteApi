@@ -10,7 +10,7 @@ import json
 page_base_data = {
     'topData': {
         'type': 'pageTop',
-        'title': '顶部标题名称',
+        'title': '首页',
         'style': {
             'backgroundColor': '#ffffff',
             'color': '#000000'
