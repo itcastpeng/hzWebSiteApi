@@ -526,7 +526,8 @@ def tripartite_platform_oper(request, oper_type):
 def baidu_tongzhi(request):
     print('----------> ', request.GET)
     print('----------> ', request.POST)
-
+    postdata = request.body.decode(encoding='UTF-8')
+    print('postdata---------> ', postdata)
 
     return HttpResponse('success')
 
