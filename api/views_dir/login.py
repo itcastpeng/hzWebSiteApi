@@ -138,6 +138,7 @@ def external_login(request):
             obj = objs[0]
 
         else:
+            print('user_data---------> ', user_data)
             obj = models.UserProfile.objects.create(**user_data)
             get_user_info_url = 'http://a.yingxiaobao.org.cn/api/user/info/{}?token={}&user_id={}'.format(
                 userId, external_token, userId
