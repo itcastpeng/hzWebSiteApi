@@ -65,8 +65,12 @@ class UserProfile(models.Model):
     login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
     ding_dong_marketing_treasure_user_id = models.IntegerField(verbose_name='叮咚营销宝', null=True)
 
+    # ----------------------------------名片数据---------------------------------------
+    enterprise_name = models.CharField(verbose_name='企业名称', max_length=64, null=True)
 
-# 公众号或小程序用户表
+
+
+# 公众号或小程序用户表(没用到)
 class ClientUserProfile(models.Model):
     openid = models.CharField(verbose_name="微信公众号openid", max_length=64)
     session_key = models.CharField(verbose_name="微信公众号openid", max_length=64)
@@ -173,83 +177,7 @@ class CompomentLibrary(models.Model):
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
 
-# 微信三方平台管理
-class TripartitePlatform(models.Model):
-    appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
-    appsecret = models.CharField(verbose_name='三方平台appsecret', max_length=128)
-    component_verify_ticket = models.TextField(verbose_name='component_verify_ticket协议')
-    component_access_token = models.TextField(verbose_name='component_access_token')
-    access_token_time = models.IntegerField(verbose_name='access_token 过期时间')
-    linshi = models.TextField(verbose_name='临时', null=True)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
-
-
-# 客户公众号授权 信息
-class CustomerOfficialNumber(models.Model):
-    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
-    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
-
-    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
-    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
-
-
-    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
-    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
-    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
-
-    nick_name = models.CharField(verbose_name='授权方昵称', max_length=32, null=True)
-    head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
-    original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
-    qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
-    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
-
-# 客户小程序授权 信息
-class ClientApplet(models.Model):
-    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
-    appid = models.CharField(verbose_name='小程序APPID', max_length=64)
-
-    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
-    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
-
-    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
-    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
-    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
-
-    nick_name = models.CharField(verbose_name='授权方昵称', max_length=32, null=True)
-    head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
-    original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
-    qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
-    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-    template = models.ForeignKey('Template', verbose_name='对应模板', null=True)
-
-
-# 小程序保存代码版本页面数据 （预览用）
-class AppletCodeVersion(models.Model):
-    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
-    navigation_data = models.TextField(verbose_name='导航数据', null=True)
-    page_data = models.TextField(verbose_name='页面数据', null=True)
-    user_desc = models.TextField(verbose_name='备注', null=True)
-    user_version = models.CharField(verbose_name='代码版本号', max_length=128, null=True)
-    auditid = models.CharField(verbose_name='审核提交代码编号', max_length=128, null=True)
-    choices_status = (
-        (2, '审核中'),
-        (0, '审核成功'),
-        (1, '审核失败')
-    )
-    status = models.SmallIntegerField(verbose_name='审核状态', default=2, choices=choices_status)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
-
-
-# 小程序体验者列表
-class AppletExperiencerList(models.Model):
-    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
-    userstr = models.CharField(verbose_name='体验者微信userstr', max_length=256)
-    wechat_id = models.CharField(verbose_name='体验者微信ID', max_length=256)
-    is_delete = models.BooleanField(verbose_name='是否删除', default=0)
-    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+""" 建站表单 数据表 """
 
 # 预约表单 表
 class ReservationForm(models.Model):
@@ -266,6 +194,40 @@ class Article(models.Model):
     article_content = models.TextField(verbose_name='文章内容')
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+# 名片 表
+class BusinessCard(models.Model):
+    name = models.CharField(verbose_name='姓名', max_length=64, null=True)
+    phone = models.CharField(verbose_name='电话', max_length=64, null=True)
+    jobs = models.CharField(verbose_name='岗位', max_length=128, null=True)
+    email = models.CharField(verbose_name='邮箱', max_length=128, null=True)
+    wechat_num = models.CharField(verbose_name='微信号', max_length=128, null=True)
+    address = models.CharField(verbose_name='地址', max_length=128, null=True)
+    heading = models.CharField(verbose_name='头像', max_length=256, null=True)
+    about_me = models.TextField(verbose_name='关于我', null=True)
+    create_user = models.ForeignKey('UserProfile', verbose_name='创建人', null=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 服务 表
+class ServiceTable(models.Model):
+    name = models.CharField(verbose_name='名称', max_length=64, null=True)
+    abstract = models.CharField(verbose_name='摘要', max_length=128, null=True)
+    main_figure = models.CharField(verbose_name='主图', max_length=256, null=True)
+    service_classification = models.CharField(verbose_name='服务分类', max_length=128, null=True)
+    price_type_choices = (
+        (1, '默认'),
+        (2, '免费'),
+        (3, '面议'),
+    )
+    price_type = models.SmallIntegerField(verbose_name='价格类型', choices=price_type_choices, default=1)
+    price = models.CharField(verbose_name='价格', max_length=128, null=True)
+    promotion_price = models.CharField(verbose_name='促销价格', max_length=128, null=True)
+    limit_amount = models.IntegerField(verbose_name='限制总量', default=0)
+    virtual_order_volume = models.IntegerField(verbose_name='虚拟订单量', default=0)
+    create_user = models.ForeignKey('UserProfile', verbose_name='创建人', null=True)
+    create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
+""" 转接 数据表 """
 
 # 转接表(用户--转接--用户)
 class Transfer(models.Model): # 可定时删除
@@ -299,6 +261,18 @@ class InviteTheChild(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+""" 三方平台 数据表 """
+
+# 微信三方平台管理
+class TripartitePlatform(models.Model):
+    appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
+    appsecret = models.CharField(verbose_name='三方平台appsecret', max_length=128)
+    component_verify_ticket = models.TextField(verbose_name='component_verify_ticket协议')
+    component_access_token = models.TextField(verbose_name='component_access_token')
+    access_token_time = models.IntegerField(verbose_name='access_token 过期时间')
+    linshi = models.TextField(verbose_name='临时', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
+
 # 百度三方平台管理
 class BaiduTripartitePlatformManagement(models.Model):
     appid = models.CharField(verbose_name='三方平台APPID', max_length=64)
@@ -310,10 +284,79 @@ class BaiduTripartitePlatformManagement(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
 
 
+""" 客户平台 授权表 """
+
+# 客户公众号授权 信息
+class CustomerOfficialNumber(models.Model):
+    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    appid = models.CharField(verbose_name='公众号APPID', max_length=64)
+
+    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
+    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
+
+
+    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
+    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
+    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
+
+    nick_name = models.CharField(verbose_name='授权方昵称', max_length=32, null=True)
+    head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
+    original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
+    qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 客户小程序授权 信息
+class ClientApplet(models.Model):
+    is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
+    appid = models.CharField(verbose_name='小程序APPID', max_length=64)
+
+    auth_code = models.CharField(verbose_name='授权码', max_length=512, null=True)
+    auth_code_expires_in = models.IntegerField(verbose_name='授权码 过期时间', null=True)
+
+    authorizer_access_token = models.CharField(verbose_name='接口凭证 (令牌)', max_length=512, null=True)
+    authorizer_access_token_expires_in = models.IntegerField(verbose_name='令牌过期时间', null=True)
+    authorizer_refresh_token = models.CharField(verbose_name='接口调用刷新凭证', max_length=512, null=True)
+
+    nick_name = models.CharField(verbose_name='授权方昵称', max_length=32, null=True)
+    head_img = models.CharField(verbose_name='授权方头像', max_length=256, null=True)
+    original_id = models.CharField(verbose_name="原始ID", max_length=64, null=True)
+    qrcode_url = models.CharField(verbose_name='二维码', max_length=256, null=True)
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    template = models.ForeignKey('Template', verbose_name='对应模板', null=True)
+
+# 百度小程序管理
+class BaiduSmallProgramManagement(models.Model):
+    appid = models.CharField(verbose_name='小程序APPID', max_length=64)
 
 
 
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
 
+# 小程序保存代码版本页面数据 （预览用）
+class AppletCodeVersion(models.Model):
+    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
+    navigation_data = models.TextField(verbose_name='导航数据', null=True)
+    page_data = models.TextField(verbose_name='页面数据', null=True)
+    user_desc = models.TextField(verbose_name='备注', null=True)
+    user_version = models.CharField(verbose_name='代码版本号', max_length=128, null=True)
+    auditid = models.CharField(verbose_name='审核提交代码编号', max_length=128, null=True)
+    choices_status = (
+        (2, '审核中'),
+        (0, '审核成功'),
+        (1, '审核失败')
+    )
+    status = models.SmallIntegerField(verbose_name='审核状态', default=2, choices=choices_status)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+# 小程序体验者列表
+class AppletExperiencerList(models.Model):
+    applet = models.ForeignKey('ClientApplet', verbose_name='关联小程序')
+    userstr = models.CharField(verbose_name='体验者微信userstr', max_length=256)
+    wechat_id = models.CharField(verbose_name='体验者微信ID', max_length=256)
+    is_delete = models.BooleanField(verbose_name='是否删除', default=0)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 
