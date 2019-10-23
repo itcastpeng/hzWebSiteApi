@@ -20,8 +20,8 @@ def tripartite_platform_oper(request, oper_type):
     BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
     BaiduTripartitePlatformObj = BaiduTripartitePlatformObjs[0]
 
-    # 获取预授权码pre_auth_code
-    if oper_type == 'get_access_token':
+    # 引导小程序管理员授权
+    if oper_type == 'boot_small_program_administrator_authorization':
         redirect_url = 'https://xcx.bjhzkq.com/api/baidu_authorize_callback?user_id={}'.format(
             user_id
         )
@@ -64,10 +64,19 @@ def baidu_tongzhi(request):
     MsgType = data.get('MsgType')
     Event = data.get('Event')
 
-    objs = models.BaiduTripartitePlatformManagement.objects.filter(id=1) # 更新ticket
-    objs.update(
-        ticket=Ticket,
-    )
+    if Event == 'UNAUTHORIZED': # 取消授权通知
+        pass
+
+    elif Event == 'AUTHORIZED': # 授权成功通知
+        pass
+
+    elif Event == 'UPDATE_AUTHORIZED': # 授权更新通知
+        pass
+    else:
+        objs = models.BaiduTripartitePlatformManagement.objects.filter(id=1) # 更新ticket
+        objs.update(
+            ticket=Ticket,
+        )
 
     return HttpResponse('success')
 
@@ -77,16 +86,16 @@ def baidu_tongzhi(request):
 # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
 def authorize_callback(request):
     """
-                   auth_code   : GZH/XCX 授权码
+                   authorization_code   : GZH/XCX 授权码
                    expires_in  : GZH/XCX 授权码过期时间
                """
-    auth_code = request.GET.get('auth_code')
+    authorization_code = request.GET.get('authorization_code')
     expires_in = request.GET.get('expires_in')
 
     user_id = request.GET.get('user_id')
     template_id = request.GET.get('template_id')
 
-    print('=================================================授权-------------> ', auth_code, expires_in)
+    print('=================================================授权-------------> ', authorization_code, expires_in)
 
 
 

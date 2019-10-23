@@ -329,9 +329,13 @@ class ClientApplet(models.Model):
 # 百度小程序管理
 class BaiduSmallProgramManagement(models.Model):
     appid = models.CharField(verbose_name='小程序APPID', max_length=64)
-
-
-
+    program_name = models.CharField(verbose_name='小程序名称', max_length=64, null=True)
+    app_key = models.CharField(verbose_name='小程序的key', max_length=128, null=True)
+    app_desc = models.CharField(verbose_name='小程序的介绍内容', max_length=128, null=True)
+    photo_addr = models.CharField(verbose_name='小程序图标', max_length=256, null=True)
+    access_token = models.TextField(verbose_name='access_token', null=True)
+    refresh_token = models.TextField(verbose_name='refresh_token', null=True) # 接口调用凭据刷新令牌，有效期10年，使用后失效
+    access_token_time = models.IntegerField(verbose_name='access_token 过期时间', default=0)  # 默认一个月
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
 
 # 小程序保存代码版本页面数据 （预览用）
