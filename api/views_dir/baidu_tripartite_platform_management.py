@@ -1,13 +1,11 @@
 
 
 from publicFunc.baidu_tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, \
-    QueryWhetherCallingCredentialExpired as CredentialExpired, baidu_tripartite_platform_key
-
+    baidu_tripartite_platform_key
 from api.forms.baidu_tripartite_platform import AuthorizationForm, UploadAppletCode, SelectForm
 from api import models
 from publicFunc import Response, account
 from django.http import JsonResponse, HttpResponse
-from urllib.parse import unquote, quote
 import time, json, datetime, requests
 
 
@@ -19,10 +17,9 @@ def tripartite_platform_oper(request, oper_type):
     user_id = request.GET.get('user_id')
     tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
-    # 获取第三方平台access_token
+    # 获取预授权码pre_auth_code
     if oper_type == 'get_access_token':
-        pass
-
+        print('----------------------------------')
     return JsonResponse(response.__dict__)
 
 
