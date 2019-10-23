@@ -17,7 +17,7 @@ class tripartite_platform_oper():
     # ========================================公共函数==========================================
 
     def __init__(self):
-        BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False)
+        BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
         BaiduTripartitePlatformObj = BaiduTripartitePlatformObjs[0]
         ticket = BaiduTripartitePlatformObj.ticket
         access_token_time = BaiduTripartitePlatformObj.access_token_time

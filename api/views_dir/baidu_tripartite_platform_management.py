@@ -6,9 +6,9 @@ from api.forms.baidu_tripartite_platform import AuthorizationForm, UploadAppletC
 from api import models
 from publicFunc import Response, account
 from django.http import JsonResponse, HttpResponse
+from urllib.parse import unquote, quote
+from django.shortcuts import redirect
 import time, json, datetime, requests
-
-
 
 # 三方平台操作
 @account.is_token(models.UserProfile)
@@ -17,9 +17,27 @@ def tripartite_platform_oper(request, oper_type):
     user_id = request.GET.get('user_id')
     tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
+    BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
+    BaiduTripartitePlatformObj = BaiduTripartitePlatformObjs[0]
+
     # 获取预授权码pre_auth_code
     if oper_type == 'get_access_token':
-        print('----------------------------------')
+        redirect_url = 'https://xcx.bjhzkq.com/api/baidu_authorize_callback?user_id={}'.format(
+            user_id
+        )
+        redirect_url = quote(redirect_url)
+
+        url = 'https://smartprogram.baidu.com/mappconsole/tp/authorization?client_id={}&redirect_uri={}&pre_auth_code={}'.format(
+            baidu_tripartite_platform_key,
+            redirect_url,
+            BaiduTripartitePlatformObj.pre_auth_code
+        )
+        response.code = 200
+        response.msg = '生成链接成功'
+        response.data = {
+            'url': url.strip()
+        }
+
     return JsonResponse(response.__dict__)
 
 
@@ -46,13 +64,34 @@ def baidu_tongzhi(request):
     MsgType = data.get('MsgType')
     Event = data.get('Event')
 
-    objs = models.BaiduTripartitePlatformManagement.objects.filter(appid__isnull=False) # 更新ticket
+    objs = models.BaiduTripartitePlatformManagement.objects.filter(id=1) # 更新ticket
     objs.update(
         ticket=Ticket,
     )
 
     return HttpResponse('success')
 
+
+
+
+# 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
+def authorize_callback(request):
+    """
+                   auth_code   : GZH/XCX 授权码
+                   expires_in  : GZH/XCX 授权码过期时间
+               """
+    auth_code = request.GET.get('auth_code')
+    expires_in = request.GET.get('expires_in')
+
+    user_id = request.GET.get('user_id')
+    template_id = request.GET.get('template_id')
+
+    print('=================================================授权-------------> ', auth_code, expires_in)
+
+
+
+    return redirect('https://xcx.bjhzkq.com')
+    # return redirect('https://xcx.bjhzkq.com/thirdTerrace/smallRoutine?id={}'.format(template_id))
 
 
 
