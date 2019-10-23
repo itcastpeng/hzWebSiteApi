@@ -2,7 +2,7 @@
 from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
-    role, template_class, article_management, baidu_tripartite_platform_management
+    role, template_class, article_management, baidu_tripartite_platform_management, business_card_management, service_management
 from api.views_dir.xcx import template as xcx_template, form_management
 
 urlpatterns = [
@@ -83,6 +83,14 @@ urlpatterns = [
     # ------------------------------------ 文章管理 -------------------------------
     url(r'^article_management/(?P<oper_type>\w+)/(?P<o_id>\d+)', article_management.article_management_oper),
     url(r'^article_management$', article_management.article_management),
+
+    # ------------------------------------ 名片管理 -------------------------------
+    url(r'^business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)', business_card_management.business_card_management_oper),
+    url(r'^business_card_management$', business_card_management.business_card_management),
+
+    # ------------------------------------ 服务管理 -------------------------------
+    url(r'^service_management/(?P<oper_type>\w+)/(?P<o_id>\d+)', service_management.service_management_oper),
+    url(r'^service_management$', service_management.service_management),
 
     # ---------------------------- 微信三方平台管理 -------------------------------
     url(r'^tripartite_platform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', tripartite_platform.tripartite_platform_admin),
