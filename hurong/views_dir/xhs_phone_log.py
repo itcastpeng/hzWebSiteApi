@@ -166,6 +166,10 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     else:
                         obj = models.XiaohongshuPhone.objects.create(**data)
 
+                if log_msg == '已查询完评论信息': # 记录 创建评论日志 最后一次更新时间
+                    obj.comment_last_updated = datetime.datetime.today()
+                    obj.save()
+
                 redis_obj = get_redis_obj()
                 redis_key = str(iccid + imsi)
                 if not redis_obj.get(redis_key):
