@@ -609,22 +609,33 @@ def comment_management(request, oper_type):
                     'comment_type_choices': [{'id':i[0], 'name':i[1]} for i in models.commentResponseForm.comment_type_choices]
                 }
 
-        # # test
-        # elif oper_type == 'test':
-        #     objs = models.XiaohongshuBiji.objects.filter(create_datetime__isnull=False)
-        #     data = []
-        #     for obj in objs:
-        #         if obj.biji_url:
-        #             ret = requests.get(obj.biji_url)
-        #             print(ret.status_code, obj.biji_url)
-        #             if ret.status_code in [404, '404']:
-        #                 print('obj.biji_url-------------------------------------------404')
-        #                 data.append({
-        #                     'name': obj.user_id.phone_id.name,
-        #                     'biji_url':obj.biji_url
-        #                 })
-        #
-        #     print('data-> ,', data)
+        # 查询评论最后一次更新时间
+        elif oper_type == 'query_when_comments_were_last_updated':
+            form_data = {
+                'iccid':request.GET.get('iccid'),
+                'imsi': request.GET.get('imsi')
+            }
+            objs = models.XiaohongshuPhone.objects.filter(**form_data)
+            if objs:
+                obj = objs[0]
+                comment_last_updated = obj.comment_last_updated
+                deletionTime = (datetime.datetime.today() - datetime.timedelta(hours=12))  # 当前时间减去12小时
+                more_than_12_hours = False
+                if comment_last_updated:
+                    comment_last_updated = comment_last_updated.strftime('%Y-%m-%d %H:%M:%S')
+                    if deletionTime > obj.comment_last_updated:
+                        more_than_12_hours = True
+
+                response.data = {
+                    'comment_last_updated': comment_last_updated,
+                    'more_than_12_hours': more_than_12_hours,
+                }
+                response.note = {
+                    'comment_last_updated': '最后一次提交评论时间',
+                    'more_than_12_hours': '最后一次提交评论时间 是否超过12小时 True已超过 False未超过',
+                }
+            response.code = 200
+
         else:
             response.code = 402
             response.msg = '请求异常'
