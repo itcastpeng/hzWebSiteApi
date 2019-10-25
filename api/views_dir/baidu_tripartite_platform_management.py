@@ -15,6 +15,8 @@ import time, json, datetime, requests
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
+    template_id = request.GET.get('template_id')        # 模板ID
+
     tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
     BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
@@ -84,9 +86,6 @@ def tripartite_platform_oper(request, oper_type):
             package_id = request.POST.get('package_id')
             response = tripartite_platform_oper.small_procedure_review_withdrawal(package_id)
 
-
-
-
     else:
 
         # 查询所有模板
@@ -112,6 +111,17 @@ def tripartite_platform_oper(request, oper_type):
             package_id = request.GET.get('package_id')
             package_type = request.GET.get('package_type')
             response = tripartite_platform_oper.get_details_authorization_package(package_id, package_type)
+
+        # 获取二维码
+        elif oper_type == 'get_qr_code':
+            width = request.GET.get('width') #
+            package_id = request.GET.get('package_id') #
+            path = tripartite_platform_oper.get_qr_code(package_id, width)
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = {
+                'path': path
+            }
 
     return JsonResponse(response.__dict__)
 
