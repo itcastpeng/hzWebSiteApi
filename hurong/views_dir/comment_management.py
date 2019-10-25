@@ -625,6 +625,8 @@ def comment_management(request, oper_type):
                     comment_last_updated = comment_last_updated.strftime('%Y-%m-%d %H:%M:%S')
                     if deletionTime > obj.comment_last_updated:
                         more_than_12_hours = True
+                else:
+                    more_than_12_hours = True
 
                 response.data = {
                     'comment_last_updated': comment_last_updated,
