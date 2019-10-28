@@ -215,6 +215,7 @@ def xiaohongshu_phone_management(request, oper_type):
                     'name': '__contains',
                     'status': '',
                     'phone_num': '__contains',
+                    'recharge_card_number': '__contains',
                 }
                 q = conditionCom(request, field_dict)
 
