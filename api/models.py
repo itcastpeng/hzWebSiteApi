@@ -115,7 +115,7 @@ class Template(models.Model):
     logo_img = models.CharField(
         verbose_name="logo图片",
         max_length=256,
-        default="/statics/admin_imgs/logo_70_70.png"
+        default="/statics/admin_imgs/logo_img.png"
     )
 
     tab_bar_data = models.TextField(verbose_name="底部导航数据", null=True)
