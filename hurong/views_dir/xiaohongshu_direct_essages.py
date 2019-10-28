@@ -302,7 +302,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
 
             # 私信
             else:
-                objs = models.commentResponseForm.objects.filter(comment_type=2, id=direct_messages_id)
+                objs = models.XiaohongshuDirectMessagesReply.objects.filter(comment_type=2, id=direct_messages_id)
                 if objs:
                     objs.update(comment_completion_time=now)
                     form_data = {
