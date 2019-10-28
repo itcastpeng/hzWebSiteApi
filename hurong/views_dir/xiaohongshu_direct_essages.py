@@ -280,7 +280,7 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
             code = 301
             msg = '未找到该评论'
 
-            # 回复评论私信
+            # 私信
             if direct_messages_types in [1, '1']:
                 objs = models.XiaohongshuDirectMessagesReply.objects.filter(id=direct_messages_id)
                 if objs:
@@ -300,9 +300,9 @@ def xiaohongshu_direct_essages_oper(request, oper_type, o_id):
                     code = 200
                     msg = '完成'
 
-            # 私信
+            # 回复评论私信
             else:
-                objs = models.XiaohongshuDirectMessagesReply.objects.filter(comment_type=2, id=direct_messages_id)
+                objs = models.commentResponseForm.objects.filter(comment_type=2, id=direct_messages_id)
                 if objs:
                     objs.update(comment_completion_time=now)
                     form_data = {
