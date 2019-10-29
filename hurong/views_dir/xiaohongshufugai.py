@@ -320,6 +320,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
             # 查询博主任务
             if not response.data:
+                print("查询博主主页信息任务")
                 item = redis_obj1.rpop("xiaohongshu_userprofileid_list")
                 if item:
                     response.data = {
