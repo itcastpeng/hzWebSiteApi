@@ -312,9 +312,23 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 db=13,
                 password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
             )
+
+            # 小红书查覆盖任务
             item = redis_obj1.rpop("xiaohongshu_task_list")
             if item:
                 response.data = json.loads(item.decode('utf8'))
+
+            # 查询博主任务
+            item = redis_obj1.rpop("xiaohongshu_userprofileid_list")
+            if item:
+                response.data = {
+                    "url": item.decode('utf8'),
+                    "task_type": "xiaohongshu_search_bozhu"
+                }
+                # {"url": "\u60e0\u5dde\u57cb\u7ebf\u53cc\u773c\u76ae", "task_type": "xiaohongshu_search_bozhu"}
+
+
+
 
         # 查询收录是否完成
         elif oper_type == 'query_whether_inclusion_complete':
