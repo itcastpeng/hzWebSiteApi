@@ -319,12 +319,13 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                 response.data = json.loads(item.decode('utf8'))
 
             # 查询博主任务
-            item = redis_obj1.rpop("xiaohongshu_userprofileid_list")
-            if item:
-                response.data = {
-                    "url": item.decode('utf8'),
-                    "task_type": "xiaohongshu_search_bozhu"
-                }
+            if not response.data:
+                item = redis_obj1.rpop("xiaohongshu_userprofileid_list")
+                if item:
+                    response.data = {
+                        "url": item.decode('utf8'),
+                        "task_type": "xiaohongshu_search_bozhu"
+                    }
                 # {"url": "\u60e0\u5dde\u57cb\u7ebf\u53cc\u773c\u76ae", "task_type": "xiaohongshu_search_bozhu"}
 
 
