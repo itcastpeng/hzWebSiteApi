@@ -336,12 +336,16 @@ def comment_management(request, oper_type):
         if oper_type == 'determine_correlation':
 
             flag = False
+            iccid = request.GET.get('iccid')
+            imsi = request.GET.get('imsi')
             screenshots = request.GET.get('screenshots') # 文章截图
             # notes_url = request.GET.get('notes_url') # 笔记回链
             biji_id = ''
             if screenshots:
                 objs = models.noteAssociationScreenshot.objects.filter(
                     screenshots=screenshots,
+                    notes__user_id__phone_id__iccid=iccid,
+                    notes__user_id__phone_id__imsi=imsi,
                 )
                 if objs:
                     obj = objs[0]
