@@ -347,14 +347,18 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
+                current_page = request.GET.get('current_page', 1)
+                length = request.GET.get('length', 10)
                 response_data = tripartite_platform_objs.xcx_get_code_template()
-
                 response.code = 301
                 if response_data.get('errcode') in [0, '0']:
                     template_list = response_data.get('template_list')
+                    template_list = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
+
                     response.code = 200
                     response.msg = '查询成功'
-                    response.data = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
+                    response.data = template_list[current_page: length]
+
                 else:
                     response.msg = response_data.get('errmsg')
 

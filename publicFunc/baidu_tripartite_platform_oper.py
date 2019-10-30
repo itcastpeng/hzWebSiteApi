@@ -57,7 +57,7 @@ class tripartite_platform_oper():
             }
             ret = requests.get(url, params=params)
             ret_data = ret.json().get('data')
-            self.pre_auth_code = ret_data.get('pre_auth_code')  # access_token
+            self.pre_auth_code = ret_data.get('pre_auth_code')
             pre_auth_code_time = int(time.time()) + int(ret_data.get('expires_in'))  # 有效时长
 
             BaiduTripartitePlatformObjs.update(
@@ -302,14 +302,35 @@ class tripartite_platform_oper():
         path = upload_qiniu(img_path, 800)
         return path
 
+    # web化开关
+    def web_the_switch(self, web_status):
+        # web_status 1:开启 2:关闭
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/modifywebstatus?access_token={}'.format(self.access_token)
+        post_data = {
+            'web_status': web_status,
+        }
+        ret = requests.post(url, data=post_data)
+        response = baidu_applet_return_data(ret.json(), '操作')
+        return response
 
+    # 小程序熊掌ID绑定
+    def small_procedures_bear_paw_ID_binding(self):
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/promotion/bind/xzh?access_token={}'.format(self.access_token)
+        ret = requests.post(url)
+        response = baidu_applet_return_data(ret.json(), '操作')
+        return response
 
-
-
-
-
-
-
+    # 提交sitemap
+    def submit_sitemap(self, type, url_list):
+        # type 上传级别 0：周级别，一周左右生效；1：天级别，2~3天生效
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/access/submit/sitemap?access_token={}'.format(self.access_token)
+        post_data = {
+            'url_list': url_list,
+            'type': type,
+        }
+        ret = requests.post(url, data=post_data)
+        response = baidu_applet_return_data(ret.json(), '操作')
+        return response
 
 
 # 上传七牛云
@@ -347,5 +368,19 @@ def upload_qiniu(img_path, img_size):
     if os.path.exists(img_path):
         os.remove(img_path)  # 删除本地图片
     return key
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
