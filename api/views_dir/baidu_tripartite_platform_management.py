@@ -86,6 +86,22 @@ def tripartite_platform_oper(request, oper_type):
             package_id = request.POST.get('package_id')
             response = tripartite_platform_oper.small_procedure_review_withdrawal(package_id)
 
+        # web化开关
+        elif oper_type == 'web_the_switch':
+            # web_status 1:开启 2:关闭
+            web_status = request.POST.get('web_status')
+            response = tripartite_platform_oper.web_the_switch(web_status)
+
+        # 小程序熊掌ID绑定
+        elif oper_type == 'small_procedures_bear_paw_ID_binding':
+            response = tripartite_platform_oper.small_procedures_bear_paw_ID_binding()
+
+        # 提交sitemap
+        elif oper_type == 'submit_sitemap':
+            higher_level = request.POST.get('higher_level')
+            url_list = request.POST.get('url_list')
+            response = tripartite_platform_oper.submit_sitemap(higher_level, url_list)
+
     else:
 
         # 查询所有模板
