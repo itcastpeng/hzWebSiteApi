@@ -347,8 +347,8 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
-                current_page = request.GET.get('current_page', 1)
-                length = request.GET.get('length', 10)
+                current_page = int(request.GET.get('current_page', 1))
+                length = int(request.GET.get('length', 10))
                 response_data = tripartite_platform_objs.xcx_get_code_template()
                 response.code = 301
                 if response_data.get('errcode') in [0, '0']:
