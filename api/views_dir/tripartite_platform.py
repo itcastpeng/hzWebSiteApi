@@ -357,7 +357,9 @@ def tripartite_platform_oper(request, oper_type):
 
                     response.code = 200
                     response.msg = '查询成功'
-                    response.data = template_list[current_page: length]
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    response.data = template_list[start_line: stop_line]
 
                 else:
                     response.msg = response_data.get('errmsg')
