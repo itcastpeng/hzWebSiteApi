@@ -359,7 +359,10 @@ def tripartite_platform_oper(request, oper_type):
                     response.msg = '查询成功'
                     start_line = (current_page - 1) * length
                     stop_line = start_line + length
-                    response.data = template_list[start_line: stop_line]
+                    response.data = {
+                        'ret_data': template_list[start_line: stop_line],
+                        'count': len(template_list),
+                    }
 
                 else:
                     response.msg = response_data.get('errmsg')
