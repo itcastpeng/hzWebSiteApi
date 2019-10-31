@@ -185,11 +185,11 @@ class UserAddTemplateForm(forms.Form):
         objs = models.Template.objects.filter(id=template_id)
         if objs:
             obj = objs[0]
-            template_class_id = None
-            if obj.template_class:
-                template_class_id = obj.template_class_id
+            # template_class_id = None
+            # if obj.template_class:
+            #     template_class_id = obj.template_class_id
             data = {
-                'template_class_id': template_class_id,
+                # 'template_class_id': template_class_id,
                 'name': obj.name,
                 'share_qr_code': obj.share_qr_code,
                 'logo_img': obj.logo_img,
