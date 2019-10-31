@@ -71,6 +71,8 @@ def comment_management(request, oper_type):
                                         nick_name=nick_name,
                                         comments_content=comments_content
                                     )
+                            print("**forms_obj.cleaned_data -->", forms_obj.cleaned_data)
+
                             if not objs and forms_data.get('comments_content') != "该评论已被删除":
                                 obj = models.littleRedBookReviewForm.objects.create(**forms_obj.cleaned_data)
                                 # 异步传递给小红书后台
