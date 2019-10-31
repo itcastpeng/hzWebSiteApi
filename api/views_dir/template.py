@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm, \
-    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName
+    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName, AddModifyCommonComponents
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
@@ -71,7 +71,7 @@ def template(request):
                     xcx_appid = apple_objs[0].appid
 
                 # 将查询出来的数据 加入列表
-                ret_data.append({
+                dict_data = {
                     'id': obj.id,
                     'name': obj.name,
                     'is_authorization': is_authorization,
@@ -85,7 +85,12 @@ def template(request):
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                })
+                }
+                if request.GET.get('id'):
+                    dict_data['common_components'] = obj.common_components
+
+                ret_data.append(dict_data)
+
             #  查询成功 返回200 状态码
             response.code = 200
             response.msg = '查询成功'
@@ -377,6 +382,24 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
 
+        # 公用组件 添加/修改
+        elif oper_type == 'add_modify_common_components':
+            form_data = {
+                'common_components':request.POST.get('common_components'),
+                'o_id': o_id,
+            }
+            form_objs = AddModifyCommonComponents(form_data)
+            if form_objs.is_valid():
+                o_id, objs = form_objs.cleaned_data.get('o_id')
+                common_components = form_objs.cleaned_data.get('common_components')
+                objs.update(common_components=common_components)
+                response.code = 200
+                response.msg = '操作成功'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(form_objs.errors.as_json())
+
     else:
         # 获取底部导航数据
         if oper_type == "get_tab_bar_data":
@@ -444,6 +467,7 @@ def template_oper(request, oper_type, o_id):
             response.data = {
                 'data_dict': data_dict
             }
+
         else:
             response.code = 402
             response.msg = "请求异常"

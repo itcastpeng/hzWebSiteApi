@@ -286,7 +286,25 @@ class UpdateTemplateName(forms.Form):
             self.add_error('o_id', '该模板不存在')
 
 
-
-
+class AddModifyCommonComponents(forms.Form):
+    common_components = forms.CharField(
+        required=True,
+        error_messages={
+            'required': '组件信息不能为空',
+        }
+    )
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '模板ID不能为空',
+        }
+    )
+    def clean_o_id(self):
+        o_id = self.data.get('o_id')
+        objs = models.Template.objects.filter(id=o_id)
+        if objs:
+            return o_id, objs
+        else:
+            self.add_error('o_id', '要操作的模板不存在')
 
 
