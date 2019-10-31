@@ -44,7 +44,7 @@ def template(request):
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 
-            if length != 0:
+            if length != 0 and not request.GET.get('id'):
                 start_line = (current_page - 1) * length
                 stop_line = start_line + length
                 objs = objs[start_line: stop_line]
