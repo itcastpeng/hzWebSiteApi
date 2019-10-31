@@ -347,14 +347,24 @@ def tripartite_platform_oper(request, oper_type):
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
-                response_data = tripartite_platform_objs.xcx_get_code_template()
+                current_page = int(request.GET.get('current_page', 1))
+                length = int(request.GET.get('length', 10))
+                start_line = (current_page - 1) * length
+                stop_line = start_line + length
 
+                response_data = tripartite_platform_objs.xcx_get_code_template()
                 response.code = 301
                 if response_data.get('errcode') in [0, '0']:
                     template_list = response_data.get('template_list')
+                    template_list = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
+
                     response.code = 200
                     response.msg = '查询成功'
-                    response.data = sorted(template_list, key=lambda x: x['create_time'], reverse=True)
+                    response.data = {
+                        'ret_data': template_list[start_line: stop_line],
+                        'count': len(template_list),
+                    }
+
                 else:
                     response.msg = response_data.get('errmsg')
 
@@ -442,6 +452,10 @@ def tripartite_platform_oper(request, oper_type):
                 code = 301
                 if data.get('errcode') in [0, '0']:
                     code = 200
+                current_page = int(request.GET.get('current_page', 1))
+                length = int(request.GET.get('length', 10))
+                start_line = (current_page - 1) * length
+                stop_line = start_line + length
 
                 data_list = []
                 for data in data.get('draft_list'):
@@ -456,10 +470,13 @@ def tripartite_platform_oper(request, oper_type):
                         'user_desc' : data.get('user_desc'),
                         'user_version' : data.get('user_version'),
                     })
-
+                data_list = data_list[start_line: stop_line]
                 response.code = code
                 response.msg = data.get('errmsg')
-                response.data = data_list
+                response.data = {
+                    'ret_data': data_list,
+                    'count': len(data_list)
+                }
 
             # 查询小程序当前隐私设置（是否可被搜索）
             elif oper_type == 'query_current_privacy_settings':

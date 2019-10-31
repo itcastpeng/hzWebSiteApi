@@ -241,6 +241,11 @@ def xiaohongshu_phone_management(request, oper_type):
                         phone_obj = phone_objs[0]
                         phone_num = phone_obj.phone_num
 
+                    try:
+                        comment_last_updated = obj.comment_last_updated.strftime('%Y-%m-%d %H:%M:%S')
+                    except Exception:
+                        comment_last_updated = obj.comment_last_updated
+
                     result_data = {
                         'id': obj.id,
                         'name': obj.name,
@@ -255,6 +260,7 @@ def xiaohongshu_phone_management(request, oper_type):
                         'is_debug': obj.is_debug,
                         'macaddr': obj.macaddr,
                         'recharge_card_number': obj.recharge_card_number,
+                        'comment_last_updated': comment_last_updated,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     if select_id:
