@@ -111,6 +111,13 @@ class UpdateClassForm(forms.Form):
             'required': '模板名称不能为空',
         }
     )
+    thumbnail = forms.CharField(
+        required=False,
+        error_messages={
+            'required': '缩略图类型错误',
+        }
+    )
+
     # 判断模板分类id是否存在
     def clean_class_id(self):
         class_id = self.data.get('class_id')

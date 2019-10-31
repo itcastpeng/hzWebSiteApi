@@ -124,7 +124,7 @@ class Template(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     qrcode = models.CharField(verbose_name='体验二维码H5页面', max_length=512, null=True)
     xcx_qrcode = models.CharField(verbose_name='体验二维码小程序', max_length=512, null=True)
-    common_components = models.TextField(verbose_name='公用组件', null=True)
+    common_components = models.TextField(verbose_name='公用组件', default='')
 
 # 页面分组表
 class PageGroup(models.Model):

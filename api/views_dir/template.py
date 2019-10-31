@@ -253,6 +253,7 @@ def template_oper(request, oper_type, o_id):
                 'o_id': o_id,
                 'class_id': request.POST.get('class_id'),
                 'name': request.POST.get('name'),
+                'thumbnail': request.POST.get('thumbnail'),
             }
 
             forms_obj = UpdateClassForm(form_data)
@@ -262,11 +263,13 @@ def template_oper(request, oper_type, o_id):
                 o_id = forms_obj.cleaned_data['o_id']
                 name = forms_obj.cleaned_data['name']
                 class_id = forms_obj.cleaned_data['class_id']
+                thumbnail = forms_obj.cleaned_data['thumbnail']
 
                 # 更新数据
                 models.Template.objects.filter(id=o_id).update(
                     template_class_id=class_id,
-                    name=name
+                    name=name,
+                    thumbnail=thumbnail,
                 )
 
                 response.code = 200
