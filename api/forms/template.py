@@ -111,6 +111,13 @@ class UpdateClassForm(forms.Form):
             'required': '模板名称不能为空',
         }
     )
+    thumbnail = forms.CharField(
+        required=False,
+        error_messages={
+            'required': '缩略图类型错误',
+        }
+    )
+
     # 判断模板分类id是否存在
     def clean_class_id(self):
         class_id = self.data.get('class_id')
@@ -185,11 +192,11 @@ class UserAddTemplateForm(forms.Form):
         objs = models.Template.objects.filter(id=template_id)
         if objs:
             obj = objs[0]
-            template_class_id = None
-            if obj.template_class:
-                template_class_id = obj.template_class_id
+            # template_class_id = None
+            # if obj.template_class:
+            #     template_class_id = obj.template_class_id
             data = {
-                'template_class_id': template_class_id,
+                # 'template_class_id': template_class_id,
                 'name': obj.name,
                 'share_qr_code': obj.share_qr_code,
                 'logo_img': obj.logo_img,

@@ -64,11 +64,12 @@ def comment_management(request, oper_type):
                             if i in comments_content:
                                 rule_not_message_flag = False
                                 break
-
+                        article_notes_id = forms_data.get('article_notes_id')
                         if rule_not_message_flag:
                             objs = models.littleRedBookReviewForm.objects.filter(
                                         xhs_user_id=xhs_user_id,
                                         nick_name=nick_name,
+                                        article_notes_id=article_notes_id,
                                         comments_content=comments_content
                                     )
                             print("**forms_obj.cleaned_data -->", forms_obj.cleaned_data)
@@ -81,7 +82,7 @@ def comment_management(request, oper_type):
                                 form_data['content'] = forms_data.get('comments_content')
                                 form_data['head_portrait'] = forms_data.get('head_portrait')
                                 form_data['comment_id'] = obj.id
-                                form_data['id'] = forms_data.get('article_notes_id')
+                                form_data['id'] = article_notes_id
                                 form_data['transfer_type'] = 1  # 传递到小红书后台
                                 form_data['platform'] = obj.xhs_user.platform
                                 asynchronous_transfer_data.delay(form_data)
