@@ -683,3 +683,21 @@ def get_gzh_qrcode(template_id, qrcode_path):
         img.save(f)
     path = upload_qiniu(time_name, 800)
     api_models.Template.objects.filter(id=template_id).update(get_gzh_qrcode=path)
+
+# 定时删除收录
+@app.task
+def timed_deletion():
+    models.XiaohongshuFugai.objects.filter(task_type=2).delete()
+
+
+
+
+
+
+
+
+
+
+
+
+

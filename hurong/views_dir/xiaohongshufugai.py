@@ -121,12 +121,13 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 print("验证通过")
-
                 keywords_list = forms_obj.cleaned_data.get('keywords_list')
                 create_user_id = forms_obj.cleaned_data.get('create_user_id')
                 select_type = forms_obj.cleaned_data.get('select_type')
+                print('keywords_list------> ', keywords_list, type(keywords_list))
 
                 query = []
+                is_keywords_list = []
                 try:
                     for item in keywords_list:
                         print('item -->', item)
@@ -141,8 +142,15 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
 
                             url = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
-                        print(keywords, url)
-                        if keywords and not models.XiaohongshuFugai.objects.filter(keywords=keywords, url=url, select_type=select_type):
+                        print(keywords, url, select_type)
+                        is_objs = models.XiaohongshuFugai.objects.filter(
+                            keywords=keywords,
+                            url=url,
+                            select_type=select_type
+                            )
+
+                        if keywords and not is_objs and keywords not in is_keywords_list:
+                            is_keywords_list.append(keywords)
                             query.append(
                                 models.XiaohongshuFugai(
                                     create_user_id=create_user_id,
