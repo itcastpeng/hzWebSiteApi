@@ -164,7 +164,7 @@ def xiaohongshu_fugai_update_data():
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
         print('q -->', q)
-        objs = models.xhs_bpw_keywords.objects.filter(q).order_by('?')[:200]
+        objs = models.xhs_bpw_keywords.objects.filter(q).order_by('?')[:2000]
         print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
         for obj in objs:
             print('obj.keywords----------------> ', obj.keywords)
