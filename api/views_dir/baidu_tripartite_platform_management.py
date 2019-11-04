@@ -15,7 +15,7 @@ import time, json, datetime, requests
 def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
-    template_id = request.GET.get('template_id')        # 模板ID
+    template_id = request.POST.get('template_id')        # 模板ID
 
     tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
