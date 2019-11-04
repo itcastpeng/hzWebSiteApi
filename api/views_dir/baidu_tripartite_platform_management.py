@@ -197,12 +197,13 @@ def authorize_callback(request):
                    authorization_code   : GZH/XCX 授权码
                    expires_in  : GZH/XCX 授权码过期时间
                """
+    tripartite_platform_obj = tripartite_platform()
     authorization_code = request.GET.get('authorization_code')
     expires_in = request.GET.get('expires_in')
 
     user_id = request.GET.get('user_id')
     template_id = request.GET.get('template_id')
-    tripartite_platform_oper.get_get_small_program_authorization_credentials(authorization_code)
+    tripartite_platform_obj.get_get_small_program_authorization_credentials(authorization_code)
 
     print('=================================================授权-------------> ', authorization_code, expires_in)
 
