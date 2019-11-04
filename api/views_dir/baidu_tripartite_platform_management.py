@@ -203,7 +203,7 @@ def authorize_callback(request):
 
     user_id = request.GET.get('user_id')
     template_id = request.GET.get('template_id')
-    tripartite_platform_obj.get_get_small_program_authorization_credentials(authorization_code, template_id)
+    tripartite_platform_obj.get_get_small_program_authorization_credentials(authorization_code, template_id, user_id)
 
     print('=================================================授权-------------> ', authorization_code, expires_in)
 

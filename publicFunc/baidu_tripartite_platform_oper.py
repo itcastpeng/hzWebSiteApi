@@ -66,7 +66,7 @@ class tripartite_platform_oper():
             )
 
     # 使用 授权码 调用 小程序凭证
-    def get_get_small_program_authorization_credentials(self, auth_code, template_id):
+    def get_get_small_program_authorization_credentials(self, auth_code, template_id, user_id):
         url = 'https://openapi.baidu.com/rest/2.0/oauth/token'
         params = {
             'access_token': self.access_token,
@@ -91,6 +91,7 @@ class tripartite_platform_oper():
             'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
             'photo_addr': json.loads(ret_json.get('photo_addr'))[0].get('cover'), # 小程序图标
             'template_id': template_id,
+            'user_id': user_id,
         }
         print('small_data----------> ', small_data)
         # qualification = ret_json.get('qualification')   # 小程序账号对应的主体信息
