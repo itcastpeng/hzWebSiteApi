@@ -132,7 +132,7 @@ def xiaohongshufugai_oper(request, oper_type, o_id):
                     for item in keywords_list:
                         print('item -->', item)
                         # keywords, url = item.strip().split()
-                        keywords = item.split('http')[0]
+                        keywords = item.split('http')[0].strip()
                         url = 'http' + item.split('http')[1].strip()
 
 
