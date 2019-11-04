@@ -202,13 +202,12 @@ def authorize_callback(request):
 
     user_id = request.GET.get('user_id')
     template_id = request.GET.get('template_id')
+    tripartite_platform_oper.get_get_small_program_authorization_credentials(authorization_code)
 
     print('=================================================授权-------------> ', authorization_code, expires_in)
 
 
-
-    return redirect('https://xcx.bjhzkq.com')
-    # return redirect('https://xcx.bjhzkq.com/thirdTerrace/smallRoutine?id={}'.format(template_id))
+    return redirect('https://xcx.bjhzkq.com/thirdTerrace/baiduRoutine?id={}'.format(template_id))
 
 
 
