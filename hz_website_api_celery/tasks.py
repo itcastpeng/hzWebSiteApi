@@ -467,6 +467,7 @@ def xhs_bpw_keywords_rsync():
             keywords = data["keywords"]
             query_list = []
             for keyword in keywords:
+                keyword = keyword.strip()
                 if not models.xhs_bpw_keywords.objects.filter(uid=uid, keywords=keyword):
                     query_list.append(models.xhs_bpw_keywords(uid=uid, keywords=keyword))
             models.xhs_bpw_keywords.objects.bulk_create(query_list)
