@@ -682,7 +682,7 @@ def get_gzh_qrcode(template_id, qrcode_path):
     with open('{}'.format(time_name), 'wb') as f:
         img.save(f)
     path = upload_qiniu(time_name, 800)
-    api_models.Template.objects.filter(id=template_id).update(get_gzh_qrcode=path)
+    api_models.Template.objects.filter(id=template_id).update(qrcode=path)
 
 # 定时删除收录
 @app.task

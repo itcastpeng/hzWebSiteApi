@@ -89,7 +89,7 @@ class tripartite_platform_oper():
             'program_name': ret_json.get('app_name'),     # 小程序的名称
             'app_key': ret_json.get('app_key'),       # 小程序的key
             'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
-            'photo_addr': ret_json.get('photo_addr'), # 小程序图标
+            'photo_addr': ret_json.get('photo_addr').get('cover'), # 小程序图标
             'template_id': template_id,
         }
 
