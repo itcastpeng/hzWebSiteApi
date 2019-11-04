@@ -364,6 +364,30 @@ class AppletExperiencerList(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
+# 客户登录信息
+class Customer(models.Model):
+    head_portrait = models.CharField(verbose_name='头像', max_length=256, null=True)
+    sex_choices = (
+        (1, "男"),
+        (2, "女"),
+    )
+    sex = models.SmallIntegerField(verbose_name="性别", choices=sex_choices, null=True, blank=True)
+    country = models.CharField(verbose_name="国家", max_length=128, null=True, blank=True)
+    province = models.CharField(verbose_name="省份", max_length=128, null=True, blank=True)
+    city = models.CharField(verbose_name="城市", max_length=128, null=True, blank=True)
+    subscribe = models.BooleanField(verbose_name="是否关注公众号", default=False)
+    openid = models.CharField(verbose_name="微信公众号openid", max_length=64, null=True, blank=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    token = models.CharField(verbose_name="token值", max_length=128, null=True)
+    phone = models.CharField(verbose_name='手机号', max_length=20, blank=True, null=True)
+
+
+# 查看小程序信息
+class ViewCustomerSmallApplet(models.Model):
+    customer = models.ForeignKey('Customer', verbose_name='客户', null=True)
+    client_applet = models.ForeignKey('ClientApplet', verbose_name='查看的小程序', null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
 
 
 
