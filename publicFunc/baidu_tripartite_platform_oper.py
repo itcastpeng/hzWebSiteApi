@@ -74,20 +74,18 @@ class tripartite_platform_oper():
             'grant_type': 'app_to_tp_authorization_code',
         }
         ret = requests.get(url, params=params)
-        print('ret.json()-----------------------> ', ret.json())
-        ret_json = ret.json()
-        access_token = ret_json.get('access_token')
+        ret_json_credentials = ret.json()
+        access_token = ret_json_credentials.get('access_token')
 
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/info?access_token={}'.format(access_token)
         ret = requests.get(url)
         ret_json = ret.json().get('data')
-        print('使用 授权码 调用 小程序凭证=-=================> ', ret_json)
         app_id = ret_json.get('app_id')
         small_data = {
             'appid':app_id,
             'access_token':access_token,
-            'refresh_token': ret_json.get('refresh_token'),
-            'access_token_time': ret_json.get('expires_in'),
+            'refresh_token': ret_json_credentials.get('refresh_token'),
+            'access_token_time': ret_json_credentials.get('expires_in'),
             'program_name': ret_json.get('app_name')  ,     # 小程序的名称
             'app_key': ret_json.get('app_key')  ,       # 小程序的key
             'app_desc': ret_json.get('app_desc')  ,     # 小程序的介绍内容
