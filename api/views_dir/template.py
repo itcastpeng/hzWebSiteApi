@@ -447,23 +447,46 @@ def template_oper(request, oper_type, o_id):
 
         # 查询该用户 模板绑定的小程序信息
         elif oper_type == 'template_binding_applet_information':
-            objs = models.ClientApplet.objects.filter(
-                user_id=user_id,
-                template_id=o_id,
-            )
-            data_dict = {}
+            binding_type = request.GET.get('binding_type') # 查询绑定类型
+            data_dict = {
+                'xcx_appid': '',
+                'xcx_head_img': '',
+                'xcx_nick_name': '',
+                'xcx_id': '',
+            }
+            code = 301
+            msg = '未绑定小程序'
+            if binding_type in [2, '2']: # 百度小程序
+                objs = models.BaiduSmallProgramManagement.objects.filter(
+                    user_id=user_id,
+                    template_id=o_id,
+                )
+                if objs:
+                    appid = objs[0].appid
+                    head_img = objs[0].photo_addr
+                    nick_name = objs[0].program_name
+                    id = objs[0].id
+
+
+
+            else:# 微信小程序
+                objs = models.ClientApplet.objects.filter(
+                    user_id=user_id,
+                    template_id=o_id,
+                )
+                if objs:
+                    appid = objs[0].appid
+                    head_img = objs[0].head_img
+                    nick_name = objs[0].nick_name
+                    id = objs[0].id
+
             if objs:
-                obj = objs[0]
-                data_dict['xcx_appid'] = obj.appid
-                data_dict['xcx_head_img'] = obj.head_img
-                data_dict['xcx_nick_name'] = obj.nick_name
-                data_dict['xcx_id'] = obj.id
+                data_dict['xcx_appid'] = appid
+                data_dict['xcx_head_img'] = head_img
+                data_dict['xcx_nick_name'] = nick_name
+                data_dict['xcx_id'] = id
                 code = 200
                 msg = '查询成功'
-
-            else:
-                code = 301
-                msg = '未绑定小程序'
 
             response.code = code
             response.msg = msg

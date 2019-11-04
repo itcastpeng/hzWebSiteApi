@@ -337,7 +337,9 @@ class BaiduSmallProgramManagement(models.Model):
     access_token = models.TextField(verbose_name='access_token', null=True)
     refresh_token = models.TextField(verbose_name='refresh_token', null=True) # 接口调用凭据刷新令牌，有效期10年，使用后失效
     access_token_time = models.IntegerField(verbose_name='access_token 过期时间', default=0)  # 默认一个月
+    user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True, null=True)
+    template = models.ForeignKey('Template', verbose_name='对应模板', null=True)
 
 # 小程序保存代码版本页面数据 （预览用）
 class AppletCodeVersion(models.Model):
