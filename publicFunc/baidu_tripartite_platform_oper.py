@@ -85,14 +85,14 @@ class tripartite_platform_oper():
             'appid':app_id,
             'access_token':access_token,
             'refresh_token': ret_json_credentials.get('refresh_token'),
-            'access_token_time': ret_json_credentials.get('expires_in'),
+            'access_token_time': int(ret_json_credentials.get('expires_in')),
             'program_name': ret_json.get('app_name'),     # 小程序的名称
             'app_key': ret_json.get('app_key'),       # 小程序的key
             'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
             'photo_addr': ret_json.get('photo_addr').get('cover'), # 小程序图标
             'template_id': template_id,
         }
-
+        print('small_data----------> ', small_data)
         # qualification = ret_json.get('qualification')   # 小程序账号对应的主体信息
         # qualification_name = qualification.name     # 主体名称
 
