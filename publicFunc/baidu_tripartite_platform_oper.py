@@ -74,7 +74,8 @@ class tripartite_platform_oper():
             'grant_type': 'app_to_tp_authorization_code',
         }
         ret = requests.get(url, params=params)
-        ret_json = ret.json().get('data')
+        print('ret.json()-----------------------> ', ret.json())
+        ret_json = ret.json()
         access_token = ret_json.get('access_token')
 
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/info?access_token={}'.format(access_token)
