@@ -88,7 +88,7 @@ class tripartite_platform_oper():
             'access_token':access_token,
             'refresh_token': ret_json.get('refresh_token'),
             'access_token_time': ret_json.get('expires_in'),
-            'app_name': ret_json.get('app_name')  ,     # 小程序的名称
+            'program_name': ret_json.get('app_name')  ,     # 小程序的名称
             'app_key': ret_json.get('app_key')  ,       # 小程序的key
             'app_desc': ret_json.get('app_desc')  ,     # 小程序的介绍内容
             'photo_addr': ret_json.get('photo_addr')  , # 小程序图标
