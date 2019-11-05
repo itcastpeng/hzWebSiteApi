@@ -98,8 +98,8 @@ def xcx_login(request):
                 'openid': openid,
                 'access_token': client_obj.authorizer_access_token,
             }
-            ret = requests.get(url, params=params)
-            if ret.json().get('errcode') not in [0, '0']:
+            ret = requests.get(url, params=json.dumps(params))
+            if ret.json().get('errcode') in [42001, '42001']: # token失效 刷新
                 tripartite_platform_objs.refresh_exchange_calling_credentials(appid, client_obj.authorizer_refresh_token, 2)
                 ret = requests.get(url, params=params)
 
