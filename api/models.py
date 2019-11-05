@@ -69,7 +69,7 @@ class UserProfile(models.Model):
 
 
 
-# 公众号或小程序用户表(没用到)
+# 公众号或小程序用户表
 class ClientUserProfile(models.Model):
     openid = models.CharField(verbose_name="微信公众号openid", max_length=64)
     session_key = models.CharField(verbose_name="微信公众号openid", max_length=64)

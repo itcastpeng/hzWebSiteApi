@@ -615,38 +615,6 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 response.code = 301
                 response.msg = '该小程序不存在'
 
-        # 微信小程序客户登录
-        elif oper_type == 'weChat_small_program_client_login':
-            js_code = request.POST.get('js_code')
-            appid = request.POST.get('appid')
-            client_obj = models.ClientApplet.objects.get(appid=appid)
-
-            tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
-            ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code) # 获取客户openid
-            print('------------------获取客户openid---------》 ', ret_data)
-            openid = ret_data.get('openid')
-            session_key = ret_data.get('session_key')
-            objs = models.Customer.objects.filter(openid=openid)
-            if objs:
-                objs.update(session_key=session_key)
-
-            else:
-                token = account.get_token(account.str_encrypt(openid))
-                url = 'https://api.weixin.qq.com/cgi-bin/user/info'
-                params = {
-                    'lang': 'zh_CN',
-                    'openid': openid,
-                    'access_token': client_obj.authorizer_access_token,
-                }
-                ret = requests.get(url, params=params)
-                print('-------获取用户基本信息------------> ', ret.json())
-                ret_data = ret.json()
-
-                # models.Customer.objects.create(
-                #     session_key=session_key,
-                #     openid=openid,
-                #     token=token
-                # )
 
     else:
 

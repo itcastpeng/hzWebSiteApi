@@ -87,14 +87,14 @@ def xcx_login(request):
         print('data -->', data)
         openid = data.get('openid')
         session_key = data.get('session_key')
-        client_userprofile_objs = models.ClientUserProfile.objects.filter(openid=openid)
+        client_userprofile_objs = models.Customer.objects.filter(openid=openid)
         if client_userprofile_objs:     # 存在更新
             client_userprofile_objs.update(session_key=session_key)
             client_userprofile_obj = client_userprofile_objs[0]
         else:   # 不存在新建
             data['token'] = account.get_token()
-            data['user_type'] = 2
-            client_userprofile_obj = models.ClientUserProfile.objects.create(**data)
+            # data['user_type'] = 2
+            client_userprofile_obj = models.Customer.objects.create(**data)
         response.code = 200
         response.data = {
             'token': client_userprofile_obj.token,
