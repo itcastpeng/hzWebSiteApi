@@ -156,7 +156,6 @@ class tripartite_platform_oper():
         ret = requests.get(url, params=params)
         print('获取模板列表=================> ', ret.json())
         response_data = baidu_applet_return_data(ret.json(), '查询')
-        print('response_data--------> ', response_data, type(response_data))
         return response_data
 
     # 删除模板
