@@ -93,9 +93,8 @@ def xcx_login(request):
 
         else:
             token = account.get_token(account.str_encrypt(openid))
-            url = 'https://api.weixin.qq.com/cgi-bin/user/info'
+            url = 'https://api.weixin.qq.com/wxa/getpaidunionid'
             params = {
-                'lang': 'zh_CN',
                 'openid': openid,
                 'access_token': client_obj.authorizer_access_token,
             }
