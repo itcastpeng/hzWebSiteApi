@@ -81,30 +81,45 @@ def xcx_login(request):
     if request.method == "POST":
         js_code = request.POST.get('js_code')
         appid = request.POST.get('appid')
-        client_obj = models.ClientApplet.objects.get(appid=appid)
+        userInfo = request.POST.get('userInfo') # 客户信息
 
         tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
         ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code)  # 获取客户openid
         openid = ret_data.get('openid')
         session_key = ret_data.get('session_key')
         objs = models.Customer.objects.filter(openid=openid)
+
         if objs:
-            objs.update(session_key=session_key)
+            objs.update(**{
+                'head_portrait': userInfo.get('avatarUrl'),
+                'sex': userInfo.get('gender'),
+                'country': userInfo.get('country'),
+                'province': userInfo.get('province'),
+                'city': userInfo.get('city'),
+                'session_key': session_key,
+            })
+            obj = objs[0]
 
         else:
             token = account.get_token(account.str_encrypt(openid))
-            url = 'https://api.weixin.qq.com/wxa/getpaidunionid'
-            params = {
+            obj = models.Customer.objects.create(**{
+                'head_portrait': userInfo.get('avatarUrl'),
+                'sex': userInfo.get('gender'),
+                'country': userInfo.get('country'),
+                'province': userInfo.get('province'),
+                'city': userInfo.get('city'),
+                'session_key': session_key,
                 'openid': openid,
-                'access_token': client_obj.authorizer_access_token,
-            }
-            ret = requests.get(url, params=json.dumps(params))
-            if ret.json().get('errcode') in [42001, '42001']: # token失效 刷新
-                tripartite_platform_objs.refresh_exchange_calling_credentials(appid, client_obj.authorizer_refresh_token, 2)
-                ret = requests.get(url, params=params)
+                'token': token,
+            })
+        response.code = 200
+        response.msg = '登录成功'
+        response.data = {
+            'user_id': obj.id,
+            'token': obj.token,
+        }
 
-            print('-------获取用户基本信息------------> ', ret.json())
-            ret_data = ret.json()
+
     return JsonResponse(response.__dict__)
 
 # 外部登录

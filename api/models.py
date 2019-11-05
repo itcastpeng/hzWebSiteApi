@@ -385,7 +385,12 @@ class Customer(models.Model):
     token = models.CharField(verbose_name="token值", max_length=128, null=True)
     phone = models.CharField(verbose_name='手机号', max_length=20, blank=True, null=True)
     session_key = models.TextField(verbose_name='session_key', null=True)
-
+    user_type_choices = (
+        (1, '微信小程序'),
+        (2, '微信公众号'),
+        (3, '百度小程序'),
+    )
+    user_type = models.SmallIntegerField(verbose_name='用户类型', choices=user_type_choices, default=1)
 
 # 查看小程序信息
 class ViewCustomerSmallApplet(models.Model):
