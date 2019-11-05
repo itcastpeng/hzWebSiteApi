@@ -49,16 +49,16 @@ def QueryWhetherCallingCredentialExpired(appid, auth_type):
 # 获取开放平台信息
 def GetTripartitePlatformInfo():
     tripartite_objs = models.TripartitePlatform.objects.filter(appid__isnull=False)
-    flag = False
+    # flag = False
     response = {}
     if tripartite_objs:
         tripartite_obj = tripartite_objs[0]
         response['tripartite_appid'] = tripartite_obj.appid
         response['tripartite_appsecret'] = tripartite_obj.appsecret
         response['component_access_token'] = tripartite_obj.component_access_token
-    else:
-        flag = True
-    response['flag'] = flag
+    # else:
+    #     flag = True
+    # response['flag'] = flag
 
     return response
 
@@ -594,7 +594,19 @@ class tripartite_platform_oper():
         ret = requests.post(url, data=json.dumps(data))
         print('ret.json()--授权 合法域名-----------> ', ret.json())
 
-
+    # 获取客户openid
+    def get_customer_openid(self, appid, jscode):
+        url = 'https://api.weixin.qq.com/sns/component/jscode2session'
+        tripartite_platform_info = GetTripartitePlatformInfo()  # 获取三方平台信息
+        params = {
+            'appid': appid,  # 小程序APPID
+            'js_code': jscode,
+            'grant_type': 'authorization_code',
+            'component_appid': tripartite_platform_info.get('tripartite_appid'),  # 第三方平台 APPID
+            'component_access_token': tripartite_platform_info.get('component_access_token'),  # 令牌
+        }
+        ret = requests.get(url, params=params)
+        return ret.json()
 
 
 # 上传七牛云

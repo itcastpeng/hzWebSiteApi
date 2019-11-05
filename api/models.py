@@ -382,6 +382,7 @@ class Customer(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     token = models.CharField(verbose_name="token值", max_length=128, null=True)
     phone = models.CharField(verbose_name='手机号', max_length=20, blank=True, null=True)
+    session_key = models.TextField(verbose_name='session_key', null=True)
 
 
 # 查看小程序信息
