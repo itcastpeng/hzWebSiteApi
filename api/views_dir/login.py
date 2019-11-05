@@ -82,7 +82,8 @@ def xcx_login(request):
         js_code = request.POST.get('js_code')
         appid = request.POST.get('appid')
         userInfo = request.POST.get('userInfo') # 客户信息
-
+        print('userInfo, type(userInfo)------> ', userInfo, type(userInfo))
+        userInfo = json.loads(userInfo)
         tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
         ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code)  # 获取客户openid
         openid = ret_data.get('openid')
