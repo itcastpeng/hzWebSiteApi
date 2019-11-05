@@ -3,20 +3,23 @@ from publicFunc import Response, account
 import requests, json, time, os
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
-
+from publicFunc import Response
 
 baidu_tripartite_platform_key = 'PCwOy1gDSz0cAixIMIli4hBIzHaz4Kib' # 第三方平台Key
 
 # 百度小程序返回值处理
 def baidu_applet_return_data(return_data, add_msg):
+    response = Response.ResponseObj()
     code = return_data.get('errno')
     msg = return_data.get('msg')
     data = return_data.get('data')
     if code in [0, '0']:
         code = 200
         msg = str(add_msg) + '成功'
-
-    return {'code': code, 'msg': msg, 'data': data}
+    response.code = code
+    response.msg = msg
+    response.data = data
+    return response
 
 # 三方平台操作
 class tripartite_platform_oper():
@@ -153,7 +156,7 @@ class tripartite_platform_oper():
         ret = requests.get(url, params=params)
         print('获取模板列表=================> ', ret.json())
         response_data = baidu_applet_return_data(ret.json(), '查询')
-        response_data['data'] = ret.json().get('data')
+        print('response_data--------> ', response_data, type(response_data))
         return response_data
 
     # 删除模板
