@@ -93,10 +93,12 @@ urlpatterns = [
     url(r'^service_management$', service_management.service_management),
 
     # ---------------------------- 微信三方平台管理 -------------------------------
-    url(r'^tripartite_platform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', tripartite_platform.tripartite_platform_admin),
     url(r'^tripartite_platform/(?P<oper_type>\w+)$', tripartite_platform.tripartite_platform_oper),
     url(r'^tripartite_platform$', tripartite_platform.tongzhi),  # 微信通知
     url(r'^authorize_callback$', tripartite_platform.authorize_callback),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
+
+    # ---------------------------- 微信小程序管理 --------------------------------
+    url(r'^tripartite_platform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', tripartite_platform.tripartite_platform_admin),
 
     # ---------------------------- 百度三方平台管理 -------------------------------
     url(r'^baidu_platform_management/(?P<oper_type>\w+)$', baidu_tripartite_platform_management.tripartite_platform_oper),
@@ -105,3 +107,18 @@ urlpatterns = [
 
 
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
