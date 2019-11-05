@@ -85,7 +85,6 @@ def xcx_login(request):
 
         tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
         ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code)  # 获取客户openid
-        print('------------------获取客户openid---------》 ', ret_data)
         openid = ret_data.get('openid')
         session_key = ret_data.get('session_key')
         objs = models.Customer.objects.filter(openid=openid)
@@ -101,6 +100,10 @@ def xcx_login(request):
                 'access_token': client_obj.authorizer_access_token,
             }
             ret = requests.get(url, params=params)
+            if ret.json().get('errcode') not in [0, '0']:
+                tripartite_platform_objs.refresh_exchange_calling_credentials(appid, client_obj.authorizer_refresh_token, 2)
+                ret = requests.get(url, params=params)
+
             print('-------获取用户基本信息------------> ', ret.json())
             ret_data = ret.json()
     return JsonResponse(response.__dict__)

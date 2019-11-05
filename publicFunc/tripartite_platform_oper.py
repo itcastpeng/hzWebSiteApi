@@ -609,6 +609,7 @@ class tripartite_platform_oper():
         return ret.json()
 
 
+
 # 上传七牛云
 def upload_qiniu(img_path, img_size):
     redis_obj = get_redis_obj()
