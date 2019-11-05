@@ -7,7 +7,7 @@ from publicFunc import account
 from django.http import JsonResponse
 from publicFunc import base64_encryption
 from api.forms.login import LoginForm
-from publicFunc.weixin import weixin_xcx_api
+from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform
 import json, requests, datetime
 
 
@@ -79,30 +79,30 @@ def wechat_login(request):
 def xcx_login(request):
     response = Response.ResponseObj()
     if request.method == "POST":
-        code = request.POST.get('code')
-        print('code -->', code)
+        js_code = request.POST.get('js_code')
+        appid = request.POST.get('appid')
+        client_obj = models.ClientApplet.objects.get(appid=appid)
 
-        weixin_xcx_api_obj = weixin_xcx_api.WeChatApi()
-        data = weixin_xcx_api_obj.get_jscode2session(code)
-        print('data -->', data)
-        openid = data.get('openid')
-        session_key = data.get('session_key')
-        client_userprofile_objs = models.Customer.objects.filter(openid=openid)
-        if client_userprofile_objs:     # 存在更新
-            client_userprofile_objs.update(session_key=session_key)
-            client_userprofile_obj = client_userprofile_objs[0]
-        else:   # 不存在新建
-            data['token'] = account.get_token()
-            # data['user_type'] = 2
-            client_userprofile_obj = models.Customer.objects.create(**data)
-        response.code = 200
-        response.data = {
-            'token': client_userprofile_obj.token,
-            'id': client_userprofile_obj.id
-        }
-    else:
-        response.code = 402
-        response.msg = "请求异常"
+        tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
+        ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code)  # 获取客户openid
+        print('------------------获取客户openid---------》 ', ret_data)
+        openid = ret_data.get('openid')
+        session_key = ret_data.get('session_key')
+        objs = models.Customer.objects.filter(openid=openid)
+        if objs:
+            objs.update(session_key=session_key)
+
+        else:
+            token = account.get_token(account.str_encrypt(openid))
+            url = 'https://api.weixin.qq.com/cgi-bin/user/info'
+            params = {
+                'lang': 'zh_CN',
+                'openid': openid,
+                'access_token': client_obj.authorizer_access_token,
+            }
+            ret = requests.get(url, params=params)
+            print('-------获取用户基本信息------------> ', ret.json())
+            ret_data = ret.json()
     return JsonResponse(response.__dict__)
 
 # 外部登录
