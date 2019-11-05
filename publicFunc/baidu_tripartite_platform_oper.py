@@ -11,7 +11,7 @@ baidu_tripartite_platform_key = 'PCwOy1gDSz0cAixIMIli4hBIzHaz4Kib' # 第三方�
 def baidu_applet_return_data(return_data, add_msg):
     code = return_data.get('errno')
     msg = return_data.get('msg')
-    data = return_data.json().get('data')
+    data = return_data.get('data')
     if code in [0, '0']:
         code = 200
         msg = str(add_msg) + '成功'
@@ -151,6 +151,7 @@ class tripartite_platform_oper():
             'page_size': page_size,
         }
         ret = requests.get(url, params=params)
+        print('获取模板列表=================> ', ret.json())
         response_data = baidu_applet_return_data(ret.json(), '查询')
         response_data['data'] = ret.json().get('data')
         return response_data
@@ -175,6 +176,7 @@ class tripartite_platform_oper():
             'page_size': page_size
         }
         ret = requests.get(url, params=params)
+        print('获取模板草稿列表-------------------> ', ret.json())
         response_data = baidu_applet_return_data(ret.json(), '查询')
         return response_data
 
