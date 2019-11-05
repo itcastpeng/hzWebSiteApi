@@ -123,9 +123,10 @@ class UpdateForm(forms.Form):
                 self.add_error('o_id', '无权限操作')
 
     def clean_name(self):
+        o_id = self.data.get('o_id')
         name = self.data.get('name')
         create_user_id = self.data.get('create_user_id')
-        objs = models.BusinessCard.objects.filter(name=name, create_user_id=create_user_id)
+        objs = models.BusinessCard.objects.filter(name=name, create_user_id=create_user_id).exclude(id=o_id)
         if objs:
             self.add_error('name', '该名片名称已存在')
         else:
