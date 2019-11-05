@@ -42,7 +42,12 @@ class AddForm(forms.Form):
     create_user_id = forms.CharField(
         required=False,
     )
-
+    template_id = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "模板ID不能为空"
+        }
+    )
     def clean_name(self):
         name = self.data.get('name')
         create_user_id = self.data.get('create_user_id')
@@ -65,6 +70,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "请选择要修改的名片"
+        }
+    )
+    template_id = forms.CharField(
+        required=True,
+        error_messages={
+            'required': "模板ID不能为空"
         }
     )
     name = forms.CharField(

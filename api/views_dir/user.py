@@ -283,9 +283,9 @@ def user_oper(request, oper_type, o_id):
 
         # 修改企业名称
         elif oper_type == 'modify_enterprise_name':
+            template_id = request.POST.get('template_id')
             enterprise_name = request.POST.get('enterprise_name')
-            user_objs = models.UserProfile.objects.filter(id=user_id)
-            user_objs.update(enterprise_name=enterprise_name)
+            models.Template.objects.filter(id=template_id).update(enterprise_name=enterprise_name)
             response.code = 200
             response.msg = '修改成功'
 

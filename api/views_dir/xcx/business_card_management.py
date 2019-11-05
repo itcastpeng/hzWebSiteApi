@@ -113,7 +113,7 @@ def business_card_management_oper(request, oper_type, o_id):
                         'address': obj.address,  # 地址
                         'heading': obj.heading,  # 头像
                         'about_me': obj.about_me,  # 关于我
-                        'enterprise_name': obj.create_user.enterprise_name, # 企业名称
+                        'enterprise_name': obj.template.enterprise_name, # 企业名称
                         'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                     })
                 #  查询成功 返回200 状态码

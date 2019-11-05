@@ -65,8 +65,7 @@ class UserProfile(models.Model):
     login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
     ding_dong_marketing_treasure_user_id = models.IntegerField(verbose_name='叮咚营销宝', null=True)
 
-    # ----------------------------------名片数据---------------------------------------
-    enterprise_name = models.CharField(verbose_name='企业名称', max_length=64, null=True)
+
 
 
 
@@ -125,6 +124,8 @@ class Template(models.Model):
     qrcode = models.CharField(verbose_name='体验二维码H5页面', max_length=512, null=True)
     xcx_qrcode = models.CharField(verbose_name='体验二维码小程序', max_length=512, null=True)
     common_components = models.TextField(verbose_name='公用组件', default='')
+     # ----------------------------------名片数据---------------------------------------
+    enterprise_name = models.CharField(verbose_name='企业名称', max_length=64, null=True)
 
 # 页面分组表
 class PageGroup(models.Model):
@@ -207,6 +208,7 @@ class BusinessCard(models.Model):
     about_me = models.TextField(verbose_name='关于我', null=True)
     create_user = models.ForeignKey('UserProfile', verbose_name='创建人', null=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    template = models.ForeignKey('Template', verbose_name='模板', null=True)
 
 # 服务 表
 class ServiceTable(models.Model):

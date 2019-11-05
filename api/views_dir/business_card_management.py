@@ -17,6 +17,7 @@ def business_card_management(request):
             order = request.GET.get('order', '-create_date')
             field_dict = {
                 'id': '',
+                'template_id': '',
                 'name': '__contains',
             }
             q = conditionCom(request, field_dict)
@@ -44,7 +45,7 @@ def business_card_management(request):
                     'address': obj.address,                                 # 地址
                     'heading': obj.heading,                                 # 头像
                     'about_me': obj.about_me,                               # 关于我
-                    'enterprise_name': obj.create_user.enterprise_name,                               # 关于我
+                    'enterprise_name': obj.template.enterprise_name,        # 关于我
                     'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -83,6 +84,7 @@ def business_card_management_oper(request, oper_type, o_id):
         'o_id': o_id,
         'create_user_id': user_id,
         'name': request.POST.get('name'),                   # 名称
+        'template_id': request.POST.get('template_id'),     # 模板ID
         'phone': request.POST.get('phone'),                 # 电话
         'jobs': request.POST.get('jobs'),                   # 职位
         'email': request.POST.get('email'),                 # 邮箱
@@ -111,6 +113,7 @@ def business_card_management_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 o_id = forms_obj.cleaned_data.get('o_id')
                 update_data = {
+                    'template_id': forms_obj.cleaned_data.get('template_id'),
                     'create_user_id': forms_obj.cleaned_data.get('create_user_id'),
                     'name': forms_obj.cleaned_data.get('name'),
                     'phone': forms_obj.cleaned_data.get('phone'),
