@@ -249,6 +249,7 @@ class tripartite_platform_oper():
             'access_token': self.access_token
         }
         ret = requests.get(url, params=params)
+        print('获取小程序包列表ret.json()----------------> ', ret.json())
         response = baidu_applet_return_data(ret.json(), '获取小程序包列表')
         # response['note'] = {
         #     'version': '版本号',
