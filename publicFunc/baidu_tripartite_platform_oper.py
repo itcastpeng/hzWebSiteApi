@@ -141,6 +141,7 @@ class tripartite_platform_oper():
             'user_version': data.get('version'),                         # 版本号
             'user_desc': 'xxxx',                            # 描述
         }
+        print('post_data-----------> ', post_data)
         response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
         print('r未授权的小程序账号上传小程序代码et.json()------------> ', ret.json())
