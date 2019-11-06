@@ -252,10 +252,13 @@ class tripartite_platform_oper():
         print('获取小程序包列表------------------> ', ret.json())
         response = Response.ResponseObj()
         code = 301
+        msg = ret.json().get('error_msg')
         if ret.json().get('error_code') in [0, '0']:
+            msg = ret.json().get('msg')
             code = 200
         response.code = code
-        response.msg = ret.json().get('error_msg')
+        response.msg = msg
+        response.data = ret.json().get('data')
         response.note = {
             'version': '版本号',
             'remark': '备注',
