@@ -7,7 +7,7 @@ import json
 
 
 
-# @account.is_token(models.UserProfile)
+@account.is_token(models.Customer)
 def business_card_management_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
