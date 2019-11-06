@@ -138,7 +138,7 @@ class tripartite_platform_oper():
             'access_token': data.get('token'),
             'template_id': data.get('template_id'),
             'ext_json': json.dumps(ext_json),           # ext
-            'user_version': '',                         # 版本号
+            'user_version': data.get('version'),                         # 版本号
             'user_desc': '',                            # 描述
         }
         response = Response.ResponseObj()

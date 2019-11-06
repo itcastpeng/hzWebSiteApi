@@ -46,10 +46,13 @@ def tripartite_platform_oper(request, oper_type):
 
         # 未授权的小程序账号上传小程序代码(提交代码包)
         elif oper_type == 'upload_small_program_code':
+            response_data = tripartite_platform_oper.gets_list_small_packages(token)
+            version = response_data.data[0].get('version')
             data = {
                 'appid': appid,
                 'template_id': template_id,
                 'token': token,
+                'version': version,
             }
             response = tripartite_platform_oper.upload_small_program_code(data)
 
