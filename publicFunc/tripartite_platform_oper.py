@@ -611,6 +611,18 @@ class tripartite_platform_oper():
         ret = requests.get(url, params=params)
         return ret.json()
 
+    # 审核撤销
+    def audit_to_withdraw(self, token):
+        url = 'https://api.weixin.qq.com/wxa/undocodeaudit?access_token={}'.format(token)
+        ret = requests.get(url)
+        return ret.json()
+
+
+    # 版本回退
+    def version_back(self, token):
+        url = 'https://api.weixin.qq.com/wxa/revertcoderelease?access_token={}'.format(token)
+        ret = requests.get(url)
+        return ret.json()
 
 
 # 上传七牛云
