@@ -49,6 +49,7 @@ def tripartite_platform_oper(request, oper_type):
             data = {
                 'appid': appid,
                 'template_id': template_id,
+                'token': token,
             }
             response = tripartite_platform_oper.upload_small_program_code(data)
 
