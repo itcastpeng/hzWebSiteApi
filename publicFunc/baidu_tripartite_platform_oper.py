@@ -137,7 +137,7 @@ class tripartite_platform_oper():
         }
 
         post_data = {
-            'access_token': data.get('token'),
+            'access_token': self.access_token,
             'template_id': data.get('template_id'),
             'ext_json': json.dumps(ext_json),           # ext
             'user_version': data.get('version'),                         # 版本号
