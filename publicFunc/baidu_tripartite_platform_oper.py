@@ -243,10 +243,10 @@ class tripartite_platform_oper():
         return response
 
     # 获取小程序包列表
-    def gets_list_small_packages(self):
+    def gets_list_small_packages(self, access_token):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/get'
         params = {
-            'access_token': self.access_token
+            'access_token': access_token
         }
         ret = requests.get(url, params=params)
         response = Response.ResponseObj()

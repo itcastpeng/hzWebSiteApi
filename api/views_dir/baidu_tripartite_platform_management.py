@@ -120,7 +120,8 @@ def tripartite_platform_oper(request, oper_type):
 
         # 获取小程序包列表
         elif oper_type == 'gets_list_small_packages':
-            response = tripartite_platform_oper.gets_list_small_packages()
+            obj = models.BaiduSmallProgramManagement.objects.get(appid=appid)
+            response = tripartite_platform_oper.gets_list_small_packages(obj.access_token)
 
         # 获取授权小程序包详情
         elif oper_type == 'get_details_authorization_package':
