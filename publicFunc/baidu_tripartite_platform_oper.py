@@ -114,23 +114,25 @@ class tripartite_platform_oper():
     def upload_small_program_code(self, data):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/upload'
         ext_json = {
-            "extEnable": True,
+            # "extEnable": True,
             "extAppid": data.get('appid'),
-            "directCommit": False,
+            # "directCommit": False,
             "ext": {
-
+                # 'template_id': id,  # 小程序ID 查询改小程序模板
+                # 'user_id': user_id,
+                # 'token': user_token,
             },
             "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
-                "backgroundTextStyle": "light",
-                "navigationBarBackgroundColor": "#fff",
-                "navigationBarTitleText": "Demo",
-                "navigationBarTextStyle": "black"
+                # "backgroundTextStyle": "light",
+                # "navigationBarBackgroundColor": "#fff",
+                # "navigationBarTitleText": "Demo",
+                # "navigationBarTextStyle": "black"
             },
             "tabBar": {                         # 用于设置客户端底部的tab栏：可通过tabBar设置tab的颜色、个数、位置、背景色等内容。
             },
             "networkTimeout": {             # 网络超时
-                "request": 20000,
-                "downloadFile": 20000
+                # "request": 20000,
+                # "downloadFile": 20000
             }
         }
 
@@ -141,7 +143,7 @@ class tripartite_platform_oper():
             'user_version': data.get('version'),                         # 版本号
             'user_desc': 'xxxx',                            # 描述
         }
-        print('post_data-----------> ', json.dumps(ext_json))
+        print('post_data-----------> ', json.dumps(post_data))
         response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
         print('r未授权的小程序账号上传小程序代码et.json()------------> ', ret.json())
