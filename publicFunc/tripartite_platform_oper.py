@@ -465,6 +465,9 @@ class tripartite_platform_oper():
         configuration_url = 'https://api.weixin.qq.com/wxa/get_page'
         configuration_ret = requests.get(configuration_url, params=params).json()
         print('configuration_ret-->', configuration_ret)
+        address = ['index']
+        if configuration_ret.get('errcode') in [0, '0']:
+            address = configuration_ret.get('page_list')[0]
         # 获取授权小程序帐号已设置的类目
         class_to_set_url = 'https://api.weixin.qq.com/wxa/get_category'
         class_to_set_ret = requests.get(class_to_set_url, params=params).json()
@@ -476,7 +479,7 @@ class tripartite_platform_oper():
         data = {
             "item_list": [
             {
-                "address":configuration_ret.get('page_list')[0],
+                "address": address,
                 "first_class": category_list[0].get('first_class'),
                 "second_class": category_list[0].get('second_class'),
                 "first_id":category_list[0].get('first_id'),
