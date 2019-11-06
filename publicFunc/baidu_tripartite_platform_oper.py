@@ -139,16 +139,15 @@ class tripartite_platform_oper():
             'template_id': data.get('template_id'),
             'ext_json': json.dumps(ext_json),           # ext
             'user_version': data.get('version'),                         # 版本号
-            'user_desc': '',                            # 描述
+            'user_desc': 'xxxx',                            # 描述
         }
         response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
         print('r未授权的小程序账号上传小程序代码et.json()------------> ', ret.json())
         code = 301
-        msg = ret.json().get('error_msg')
         if ret.json().get('errno') in [0, '0']:
-            msg = ret.json().get('msg')
             code = 200
+        msg = ret.json().get('msg')
         response.code = code
         response.msg = msg
         return response
