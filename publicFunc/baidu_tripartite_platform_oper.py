@@ -89,7 +89,7 @@ class tripartite_platform_oper():
             'appid':app_id,
             'access_token':access_token,
             'refresh_token': ret_json_credentials.get('refresh_token'),
-            'access_token_time': int(ret_json_credentials.get('expires_in')),
+            'access_token_time': int(time.time()) + int(ret_json_credentials.get('expires_in')),
             'program_name': ret_json.get('app_name'),     # 小程序的名称
             'app_key': ret_json.get('app_key'),       # 小程序的key
             'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
@@ -347,6 +347,24 @@ class tripartite_platform_oper():
         response = baidu_applet_return_data(ret.json(), '操作')
         return response
 
+    # 判断小程序access_token是否过期
+    def determines_whether_access_token_expired(self, appid):
+        obj = models.BaiduSmallProgramManagement.objects.get(appid=appid)
+
+        url = 'https://openapi.baidu.com/rest/2.0/oauth/token'  # 刷新接口凭证
+        params = {
+            'access_token': self.access_token,
+            'refresh_token': obj.refresh_token,
+            'grant_type': 'app_to_tp_refresh_token',
+        }
+
+        if int(time.time()) - obj.access_token_time <= 60:
+            ret = requests.get(url, params=params)
+            obj.access_token =ret.json().get('access_token')
+            obj.refresh_token = ret.json().get('refresh_token')
+            obj.access_token_time = int(time.time()) + int(ret.json().get('expires_in'))
+            obj.save()
+        return obj.access_token
 
 # 上传七牛云
 def upload_qiniu(img_path, img_size):

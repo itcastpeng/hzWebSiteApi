@@ -24,6 +24,7 @@ def tripartite_platform_oper(request, oper_type):
 
     if request.method == 'POST':
         appid = request.POST.get('appid')
+        token = tripartite_platform_oper.determines_whether_access_token_expired(appid)  # 判断appid是否过期
 
         # 引导小程序管理员授权
         if oper_type == 'boot_small_program_administrator_authorization':
@@ -105,6 +106,7 @@ def tripartite_platform_oper(request, oper_type):
     else:
 
         appid = request.GET.get('appid')
+        token = tripartite_platform_oper.determines_whether_access_token_expired(appid) # 判断appid是否过期
 
         # 查询所有模板
         if oper_type == 'get_all_templates':
@@ -120,8 +122,7 @@ def tripartite_platform_oper(request, oper_type):
 
         # 获取小程序包列表
         elif oper_type == 'gets_list_small_packages':
-            obj = models.BaiduSmallProgramManagement.objects.get(appid=appid)
-            response = tripartite_platform_oper.gets_list_small_packages(obj.access_token)
+            response = tripartite_platform_oper.gets_list_small_packages(token)
 
         # 获取授权小程序包详情
         elif oper_type == 'get_details_authorization_package':
@@ -141,6 +142,10 @@ def tripartite_platform_oper(request, oper_type):
             response.data = {
                 'path': path
             }
+
+        # 判断是否可以审核
+        elif oper_type == 'Determine whether it can be audited':
+            pass
 
     if template_id and appid:
         models.BaiduSmallProgramManagement.objects.filter(
