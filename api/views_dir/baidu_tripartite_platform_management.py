@@ -75,8 +75,12 @@ def tripartite_platform_oper(request, oper_type):
 
         # 为授权的小程序提交审核
         elif oper_type == 'submit_approval_authorized_mini_program':
-            response_data = tripartite_platform_oper.gets_list_small_packages(token)
-            package_id = response_data.data[0].get('package_id')
+            current_page = request.GET.get('current_page', 1)
+            length = request.GET.get('length', 10)
+            response = tripartite_platform_oper.get_template_list(current_page, length)
+            response_data = response.data.get('list')[0]
+            print('response_data=====> ', response_data)
+            package_id = response_data.get('template_id')
             data = {
                 'content': request.POST.get('content'),
                 'package_id': package_id,
@@ -86,7 +90,12 @@ def tripartite_platform_oper(request, oper_type):
 
         # 发布已审核的小程序
         elif oper_type == 'release_approved_applet':
-            package_id = request.POST.get('package_id')
+            current_page = request.GET.get('current_page', 1)
+            length = request.GET.get('length', 10)
+            response = tripartite_platform_oper.get_template_list(current_page, length)
+            response_data = response.data.get('list')[0]
+            print('response_data=====> ', response_data)
+            package_id = response_data.get('template_id')
             response = tripartite_platform_oper.release_approved_applet(package_id)
 
         # 小程序版本回滚
