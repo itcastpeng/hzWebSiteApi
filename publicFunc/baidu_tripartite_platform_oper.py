@@ -249,21 +249,25 @@ class tripartite_platform_oper():
             'access_token': self.access_token
         }
         ret = requests.get(url, params=params)
-        print('获取小程序包列表ret.json()----------------> ', ret.json())
-        response = baidu_applet_return_data(ret.json(), '获取小程序包列表')
-        # response['note'] = {
-        #     'version': '版本号',
-        #     'remark': '备注',
-        #     'msg': '审核信息',
-        #     'committer': '提交人',
-        #     'status': '状态 1线上版本 3开发版本 4审核中 5审核失败 6审核通过 8回滚中',
-        #     'commit_time': '提交时间',
-        #     'version_desc': '版本描述',
-        #     'package_id': '代码包id',
-        #     'rollback_version': '上一个线上版本的版本号',
-        #     'upload_status': '上传状态 1上传中 3上传失败',
-        #     'upload_status_desc': '上传状态描述',
-        # }
+        response = Response.ResponseObj()
+        code = 301
+        if ret.json().get('error_code') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = ret.json().get('error_msg')
+        response.note = {
+            'version': '版本号',
+            'remark': '备注',
+            'msg': '审核信息',
+            'committer': '提交人',
+            'status': '状态 1线上版本 3开发版本 4审核中 5审核失败 6审核通过 8回滚中',
+            'commit_time': '提交时间',
+            'version_desc': '版本描述',
+            'package_id': '代码包id',
+            'rollback_version': '上一个线上版本的版本号',
+            'upload_status': '上传状态 1上传中 3上传失败',
+            'upload_status_desc': '上传状态描述',
+        }
         return response
 
     # 获取授权小程序包详情
