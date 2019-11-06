@@ -249,6 +249,7 @@ class tripartite_platform_oper():
             'access_token': access_token
         }
         ret = requests.get(url, params=params)
+        print('获取小程序包列表------------------> ', ret.json())
         response = Response.ResponseObj()
         code = 301
         if ret.json().get('error_code') in [0, '0']:
