@@ -87,7 +87,7 @@ def xcx_login(request):
         tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
         ret_data = tripartite_platform_objs.get_customer_openid(appid, js_code)  # 获取客户openid
         openid = ret_data.get('openid')
-        session_key = ret_data.get('session_key')
+        session_key = ret_data.get('session_key') # 用于加密
         objs = models.Customer.objects.filter(openid=openid)
 
         if objs:

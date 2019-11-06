@@ -23,6 +23,8 @@ def tripartite_platform_oper(request, oper_type):
     BaiduTripartitePlatformObj = BaiduTripartitePlatformObjs[0]
 
     if request.method == 'POST':
+        appid = request.POST.get('appid')
+
         # 引导小程序管理员授权
         if oper_type == 'boot_small_program_administrator_authorization':
             redirect_url = 'https://xcx.bjhzkq.com/api/baidu_authorize_callback?user_id={}&template_id={}'.format(
@@ -41,13 +43,11 @@ def tripartite_platform_oper(request, oper_type):
                 'url': url.strip()
             }
 
-        # 未授权的小程序账号上传小程序代码
+        # 未授权的小程序账号上传小程序代码(提交代码包)
         elif oper_type == 'upload_small_program_code':
-            appid = request.POST.get('appid')
-            o_id = request.POST.get('o_id')
             data = {
                 'appid': appid,
-                'o_id': o_id,
+                'template_id': template_id,
             }
             response = tripartite_platform_oper.upload_small_program_code(data)
 
@@ -103,6 +103,8 @@ def tripartite_platform_oper(request, oper_type):
             response = tripartite_platform_oper.submit_sitemap(higher_level, url_list)
 
     else:
+
+        appid = request.GET.get('appid')
 
         # 查询所有模板
         if oper_type == 'get_all_templates':
