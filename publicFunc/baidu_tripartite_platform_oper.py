@@ -358,7 +358,7 @@ class tripartite_platform_oper():
             'grant_type': 'app_to_tp_refresh_token',
         }
 
-        if int(time.time()) - obj.access_token_time <= 60:
+        if obj.access_token_time - int(time.time()) <= 60:
             ret = requests.get(url, params=params)
             obj.access_token =ret.json().get('access_token')
             obj.refresh_token = ret.json().get('refresh_token')
