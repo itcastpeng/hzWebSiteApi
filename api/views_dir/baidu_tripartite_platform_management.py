@@ -46,17 +46,17 @@ def tripartite_platform_oper(request, oper_type):
 
         # 未授权的小程序账号上传小程序代码(提交代码包)
         elif oper_type == 'upload_small_program_code':
-            response_data = tripartite_platform_oper.gets_list_small_packages(token)
-            status = response_data.data[0].get('status')
-            version = '测试'
-            package_id = 0
-            if status in [6, '6']:
-                version = response_data.data[0].get('version')
-                package_id = response_data.data[0].get('package_id')
+            current_page = request.GET.get('current_page', 1)
+            length = request.GET.get('length', 10)
+            response = tripartite_platform_oper.get_template_list(current_page, length)
+            response_data = response.data.get('list')[0]
+            print('response_data=====> ', response_data)
+            template_id = response_data.get('template_id')
+            version = response_data.get('user_version')
 
             data = {
                 'appid': appid,
-                'template_id': package_id,
+                'template_id': template_id,
                 'token': token,
                 'version': version,
             }
@@ -75,15 +75,11 @@ def tripartite_platform_oper(request, oper_type):
 
         # 为授权的小程序提交审核
         elif oper_type == 'submit_approval_authorized_mini_program':
-            current_page = request.GET.get('current_page', 1)
-            length = request.GET.get('length', 10)
-            response = tripartite_platform_oper.get_template_list(current_page, length)
-            response_data = response.data.get('list')[0]
-            template_id = response_data.get('template_id')
-
+            response_data = tripartite_platform_oper.gets_list_small_packages(token)
+            package_id = response_data.data[0].get('package_id')
             data = {
                 'content': request.POST.get('content'),
-                'package_id': template_id,
+                'package_id': package_id,
                 'remark': request.POST.get('remark'),
             }
             response = tripartite_platform_oper.submit_approval_authorized_mini_program(data)
