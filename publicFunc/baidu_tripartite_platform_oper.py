@@ -253,12 +253,32 @@ class tripartite_platform_oper():
         response = Response.ResponseObj()
         code = 301
         msg = ret.json().get('error_msg')
-        if ret.json().get('error_code') in [0, '0']:
+        if ret.json().get('errno') in [0, '0']:
             msg = ret.json().get('msg')
             code = 200
+        data_list = []
+        for data in ret.json().get('data'):
+
+            data_status = data.get('status')
+            if data_status in [3, '3']:
+                status = '开发版本'
+            elif data_status in [4, '4']:
+                status = '审核中'
+            elif data_status in [5, '5']:
+                status = '审核失败'
+            elif data_status in [6, '6']:
+                status = '审核通过'
+            elif data_status in [8, '8']:
+                status = '回滚中'
+            else:
+                status = '线上版本'
+
+            data['status'] = status
+            data_list.append(data)
+
         response.code = code
         response.msg = msg
-        response.data = ret.json().get('data')
+        response.data = data_list
         response.note = {
             'version': '版本号',
             'remark': '备注',

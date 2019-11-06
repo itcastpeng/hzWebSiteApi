@@ -144,8 +144,20 @@ def tripartite_platform_oper(request, oper_type):
             }
 
         # 判断是否可以审核
-        elif oper_type == 'Determine whether it can be audited':
-            pass
+        elif oper_type == 'determine_whether_can_be_audited':
+            response_data = tripartite_platform_oper.gets_list_small_packages(token)
+            flag = False
+            msg = '可以审核'
+            for data in response_data.get('data'):
+                if data.get('status') in [4, '4', 8, '8']:
+                    flag = True
+                    msg = '不可提交审核'
+                    break
+            response.code = 200
+            response.msg = msg
+            response.data = {
+                'flag': flag
+            }
 
     if template_id and appid:
         models.BaiduSmallProgramManagement.objects.filter(
