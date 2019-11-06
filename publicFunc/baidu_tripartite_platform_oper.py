@@ -137,11 +137,11 @@ class tripartite_platform_oper():
         post_data = {
             'access_token': data.get('token'),
             'template_id': data.get('template_id'),
-            'ext_json': ext_json,           # ext
+            'ext_json': json.dumps(ext_json),           # ext
             'user_version': data.get('version'),                         # 版本号
             'user_desc': 'xxxx',                            # 描述
         }
-        print('post_data-----------> ', post_data)
+        print('post_data-----------> ', json.dumps(ext_json))
         response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
         print('r未授权的小程序账号上传小程序代码et.json()------------> ', ret.json())
