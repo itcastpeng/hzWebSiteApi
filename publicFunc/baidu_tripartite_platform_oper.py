@@ -141,10 +141,16 @@ class tripartite_platform_oper():
             'user_version': '',                         # 版本号
             'user_desc': '',                            # 描述
         }
-
+        response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
-        response_data = baidu_applet_return_data(ret.json(), '上传')
-        return response_data
+        code = 301
+        msg = ret.json().get('error_msg')
+        if ret.json().get('errno') in [0, '0']:
+            msg = ret.json().get('msg')
+            code = 200
+        response.code = code
+        response.msg = msg
+        return response
 
     # 获取模板列表
     def get_template_list(self, page, page_size):
