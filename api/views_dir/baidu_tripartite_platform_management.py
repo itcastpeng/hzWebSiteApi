@@ -48,13 +48,15 @@ def tripartite_platform_oper(request, oper_type):
         elif oper_type == 'upload_small_program_code':
             response_data = tripartite_platform_oper.gets_list_small_packages(token)
             status = response_data.data[0].get('status')
-            version = ''
+            version = ' '
+            package_id = 0
             if status in [6, '6']:
                 version = response_data.data[0].get('version')
+                package_id = response_data.data[0].get('package_id')
 
             data = {
                 'appid': appid,
-                'template_id': template_id,
+                'template_id': package_id,
                 'token': token,
                 'version': version,
             }
