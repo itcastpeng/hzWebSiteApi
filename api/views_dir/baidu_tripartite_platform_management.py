@@ -65,9 +65,11 @@ def tripartite_platform_oper(request, oper_type):
 
         # 为授权的小程序提交审核
         elif oper_type == 'submit_approval_authorized_mini_program':
+            response_data = tripartite_platform_oper.gets_list_small_packages(token)
+            package_id = response_data.data[0].get('package_id')
             data = {
                 'content': request.POST.get('content'),
-                'package_id': request.POST.get('package_id'),
+                'package_id': package_id,
                 'remark': request.POST.get('remark'),
             }
             response = tripartite_platform_oper.submit_approval_authorized_mini_program(data)

@@ -10,7 +10,7 @@ import json
 from api.views_dir.page import page_base_data
 
 
-@account.is_token(models.ClientUserProfile)
+@account.is_token(models.Customer)
 def template(request, oper_type):
     response = Response.ResponseObj()
     if request.method == "GET":
