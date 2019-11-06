@@ -143,6 +143,7 @@ class tripartite_platform_oper():
         }
         response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
+        print('r未授权的小程序账号上传小程序代码et.json()------------> ', ret.json())
         code = 301
         msg = ret.json().get('error_msg')
         if ret.json().get('errno') in [0, '0']:
