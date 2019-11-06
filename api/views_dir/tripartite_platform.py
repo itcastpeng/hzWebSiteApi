@@ -285,7 +285,7 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 200
                 response.msg = '获取信息完成'
 
-            # 获取小程序体验二维码
+            # 获取小程序体验二维码(提交代码包)
             elif oper_type == 'get_experience_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
                 user_desc = request.POST.get('user_desc')
@@ -542,6 +542,22 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = 200
                 response.msg = '授权成功'
                 response.data = data
+
+            # 审核撤回
+            elif oper_type == 'audit_to_withdraw':
+                response_data = tripartite_platform_objs.audit_to_withdraw(authorizer_access_token)
+                response.code = 301
+                if response_data.get('errcode') in [0, '0']:
+                    response.code = 200
+                response.msg = response_data.get('errmsg')
+
+            # 版本回退
+            elif oper_type == 'version_back':
+                response_data = tripartite_platform_objs.version_back(authorizer_access_token)
+                response.code = 301
+                if response_data.get('errcode') in [0, '0']:
+                    response.code = 200
+                response.msg = response_data.get('errmsg')
 
 
         # authorize_callback
