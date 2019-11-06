@@ -148,7 +148,7 @@ def tripartite_platform_oper(request, oper_type):
             response_data = tripartite_platform_oper.gets_list_small_packages(token)
             flag = False
             msg = '可以审核'
-            for data in response_data.get('data'):
+            for data in response_data.data:
                 if data.get('status') in [4, '4', 8, '8']:
                     flag = True
                     msg = '不可提交审核'
