@@ -51,12 +51,12 @@ def tripartite_platform_oper(request, oper_type):
             response = tripartite_platform_oper.get_template_list(current_page, length)
             response_data = response.data.get('list')[0]
             print('response_data=====> ', response_data)
-            template_id = response_data.get('template_id')
+            package_id = response_data.get('template_id')
             version = response_data.get('user_version')
 
             data = {
                 'appid': appid,
-                'template_id': template_id,
+                'template_id': package_id,
                 'token': token,
                 'version': version,
             }
@@ -172,11 +172,7 @@ def tripartite_platform_oper(request, oper_type):
             }
 
     if template_id and appid:
-        models.BaiduSmallProgramManagement.objects.filter(
-            appid=appid
-        ).update(
-            template_id=template_id
-        )
+        models.BaiduSmallProgramManagement.objects.filter(appid=appid).update(template_id=template_id)
 
     return JsonResponse(response.__dict__)
 
