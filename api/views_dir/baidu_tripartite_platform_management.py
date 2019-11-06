@@ -141,6 +141,13 @@ def tripartite_platform_oper(request, oper_type):
                 'path': path
             }
 
+    if template_id and appid:
+        models.BaiduSmallProgramManagement.objects.filter(
+            appid=appid
+        ).update(
+            template_id=template_id
+        )
+
     return JsonResponse(response.__dict__)
 
 

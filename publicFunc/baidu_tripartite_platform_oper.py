@@ -70,7 +70,7 @@ class tripartite_platform_oper():
 
     # 使用 授权码 调用 小程序凭证
     def get_get_small_program_authorization_credentials(self, auth_code, template_id, user_id):
-        url = 'https://openapi.baidu.com/rest/2.0/oauth/token'
+        url = 'https://openapi.baidu.com/rest/2.0/oauth/token' #使用授权码换小程序的接口调用凭据和授权信息
         params = {
             'access_token': self.access_token,
             'code': auth_code,
@@ -81,8 +81,9 @@ class tripartite_platform_oper():
         access_token = ret_json_credentials.get('access_token')
 
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/info?access_token={}'.format(access_token)
-        ret = requests.get(url)
+        ret = requests.get(url)     # 获取小程序基础信息
         ret_json = ret.json().get('data')
+        print('v-获取小程序基础信息---------------------> ', ret_json)
         app_id = ret_json.get('app_id')
         small_data = {
             'appid':app_id,
@@ -249,19 +250,19 @@ class tripartite_platform_oper():
         }
         ret = requests.get(url, params=params)
         response = baidu_applet_return_data(ret.json(), '获取小程序包列表')
-        response['note'] = {
-            'version': '版本号',
-            'remark': '备注',
-            'msg': '审核信息',
-            'committer': '提交人',
-            'status': '状态 1线上版本 3开发版本 4审核中 5审核失败 6审核通过 8回滚中',
-            'commit_time': '提交时间',
-            'version_desc': '版本描述',
-            'package_id': '代码包id',
-            'rollback_version': '上一个线上版本的版本号',
-            'upload_status': '上传状态 1上传中 3上传失败',
-            'upload_status_desc': '上传状态描述',
-        }
+        # response['note'] = {
+        #     'version': '版本号',
+        #     'remark': '备注',
+        #     'msg': '审核信息',
+        #     'committer': '提交人',
+        #     'status': '状态 1线上版本 3开发版本 4审核中 5审核失败 6审核通过 8回滚中',
+        #     'commit_time': '提交时间',
+        #     'version_desc': '版本描述',
+        #     'package_id': '代码包id',
+        #     'rollback_version': '上一个线上版本的版本号',
+        #     'upload_status': '上传状态 1上传中 3上传失败',
+        #     'upload_status_desc': '上传状态描述',
+        # }
         return response
 
     # 获取授权小程序包详情
