@@ -213,9 +213,15 @@ class tripartite_platform_oper():
             'package_id': data.get('package_id'),           # 代码包id
             'remark': data.get('remark'),                   # 备注
         }
-
+        response = Response.ResponseObj()
         ret = requests.post(url, data=post_data)
-        response = baidu_applet_return_data(ret.json(), '提交授权')
+        print('ret.json()--------------------> ', ret.json())
+        code = 301
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        msg = ret.json().get('msg')
+        response.code = code
+        response.msg = msg
         return response
 
     # 发布已审核的小程序
