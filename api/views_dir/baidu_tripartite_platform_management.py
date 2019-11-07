@@ -8,6 +8,8 @@ from publicFunc import Response, account
 from django.http import JsonResponse, HttpResponse
 from urllib.parse import unquote, quote
 from django.shortcuts import redirect
+from publicFunc.condition_com import conditionCom
+from django.db.models import Q
 import time, json, datetime, requests
 
 # 三方平台操作
@@ -17,6 +19,8 @@ def tripartite_platform_oper(request, oper_type):
     user_id = request.GET.get('user_id')
     template_id = request.POST.get('template_id')        # 模板ID
 
+
+
     tripartite_platform_oper = tripartite_platform() # 实例化公共三方
 
     BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
@@ -24,7 +28,7 @@ def tripartite_platform_oper(request, oper_type):
 
     token = ''
     appid = request.GET.get('appid')
-    if appid:
+    if not appid:
         appid = request.POST.get('appid')
     if appid:
         token = tripartite_platform_oper.determines_whether_access_token_expired(appid)  # 判断appid是否过期
@@ -187,11 +191,85 @@ def tripartite_platform_oper(request, oper_type):
                 'flag': flag
             }
 
+
     if template_id and appid:
         models.BaiduSmallProgramManagement.objects.filter(appid=appid).update(template_id=template_id)
 
+
     return JsonResponse(response.__dict__)
 
+
+# 后台操作
+@account.is_token(models.UserProfile)
+def baidu_platform_management_admin(request, oper_type):
+    response = Response.ResponseObj()
+    if request.method == 'POST':
+        pass
+
+    else:
+
+        # 查询后台所有百度小程序
+        if oper_type == 'query_background_baidu_small_procedures':
+            forms_obj = SelectForm(request.GET)
+            if forms_obj.is_valid():
+                current_page = forms_obj.cleaned_data['current_page']
+                length = forms_obj.cleaned_data['length']
+                order = request.GET.get('order', '-create_date')
+                field_dict = {
+                    'id': '',
+                }
+                q = conditionCom(request, field_dict)
+                user_id_id = request.GET.get('user_id_id')
+                if user_id_id:
+                    q.add(Q(user_id=user_id_id), Q.AND)
+                objs = models.BaiduSmallProgramManagement.objects.filter(
+                    q,
+                    appid__isnull=False
+                ).order_by(order)
+                count = objs.count()
+
+                if length != 0:
+                    start_line = (current_page - 1) * length
+                    stop_line = start_line + length
+                    objs = objs[start_line: stop_line]
+
+                ret_data = []
+                for obj in objs:
+                    ret_data.append({
+                        'appid': obj.appid,
+                        'program_name':obj.program_name,                                        #小程序名称
+                        'app_desc': obj.app_desc,                                               # 小程序的介绍内容
+                        'photo_addr': obj.photo_addr,                                           # 小程序图标
+                        'user_id': obj.user_id,                                                 # 用户
+                        'user_name': obj.user.username,                                         # 用户
+                        'template_id': obj.template_id,                                         # 对应模板
+                        'template_name': obj.template.name,                                     # 对应模板
+                        'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),   # 创建时间
+                    })
+                response.note = {
+                    'appid': 'appid',
+                    'program_name': '小程序名称',
+                    'app_desc': '小程序的介绍内容',
+                    'photo_addr': '小程序图标',
+                    'user_id': '用户ID',
+                    'user_name':'用户名称',
+                    'template_id': '对应模板ID',
+                    'template_name': '对应模板名称',
+                    'create_datetime': '创建时间',
+                }
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = {
+                    'count': count,
+
+                }
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
+        else:
+            response.code = 402
+            response.msg = '请求异常'
 
 
 # 百度小程序后台 通知
@@ -238,7 +316,6 @@ def baidu_tongzhi(request):
         )
 
     return HttpResponse('success')
-
 
 
 
