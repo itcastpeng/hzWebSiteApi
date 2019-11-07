@@ -69,7 +69,7 @@ def tripartite_platform_oper(request, oper_type):
                     'template_id': response_data.get('template_id'),
                 }
                 response = tripartite_platform_oper.upload_small_program_code(data)
-                time.sleep(1)
+                time.sleep(3)
 
         # 删除模板
         elif oper_type == 'delete_template':
