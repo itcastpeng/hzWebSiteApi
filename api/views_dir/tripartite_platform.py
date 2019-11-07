@@ -571,13 +571,13 @@ def tripartite_platform_oper(request, oper_type):
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
                     template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
                     template_obj.save()
-
+                print('path, --------------------> ', path, template_obj.qrcode, template_obj)
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
                     'xcx_code': path,
                     'gzh_code': template_obj.qrcode,
-                    'baidu_xcx_qrcode': template_obj.baidu_xcx_qrcode,
+                    'baidu_xcx_qrcode': baidu_xcx_qrcode,
                 }
                 print('response.data--------> ', response.data)
 
