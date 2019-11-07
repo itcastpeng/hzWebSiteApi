@@ -53,6 +53,8 @@ def tripartite_platform_oper(request, oper_type):
 
             xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token) # 查询小程序包
             status = xiaochengxu_data.data[0].get('status')
+            response.code = 200
+            response.msg = '成功'
             if status not in [3, '3']:
                 data = {
                     'appid': appid,
@@ -61,8 +63,7 @@ def tripartite_platform_oper(request, oper_type):
                     'template_id': response_data.get('template_id'),
                 }
                 response = tripartite_platform_oper.upload_small_program_code(data)
-            response.code = 200
-            response.msg = '成功'
+
         # 删除模板
         elif oper_type == 'delete_template':
             o_id = request.POST.get('o_id')
