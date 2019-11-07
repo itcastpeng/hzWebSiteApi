@@ -291,7 +291,7 @@ def tripartite_platform_oper(request, oper_type):
                 user_obj = models.UserProfile.objects.get(id=user_id)
                 baidu_appid = request.GET.get('baidu_appid')
                 user_desc = request.GET.get('user_desc')
-                response_data = ''
+                xcx_code = ''
                 data_dict = {
                     'user_desc': user_desc,
                     'user_id': user_id,
@@ -311,7 +311,7 @@ def tripartite_platform_oper(request, oper_type):
 
                     code = 200
                     msg = '查询成功'
-                    response_data = data.get('path')
+                    xcx_code = data.get('path')
                 else:
                     obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
                     if obj.template:
@@ -329,7 +329,7 @@ def tripartite_platform_oper(request, oper_type):
 
                         code = 200
                         msg = '查询成功'
-                        response_data = data.get('path')
+                        xcx_code = data.get('path')
 
                     else:
                         code = 301
@@ -361,14 +361,13 @@ def tripartite_platform_oper(request, oper_type):
 
                 template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
                 data = {
-                    'xcx_code': response_data,
+                    'xcx_code': xcx_code,
                     'gzh_code': template_obj.qrcode,
                     'baidu_xcx_code': baidu_xcx_qrcode
                 }
                 response.code = code
                 response.msg = msg
                 response.data = data
-                print('response.data---------------> ', response.data)
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
