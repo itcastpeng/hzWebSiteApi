@@ -177,6 +177,7 @@ class tripartite_platform_oper():
         response_data = ret.json().get('data')
         response_data['list'] = list
         response.data = response_data
+        print('response_data----------------> ', json.dumps(response_data))
         return response
 
     # 删除模板
