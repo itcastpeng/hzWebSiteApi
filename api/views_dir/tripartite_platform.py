@@ -339,6 +339,7 @@ def tripartite_platform_oper(request, oper_type):
                 baidu_xcx_qrcode = ''
                 if baidu_appid:
                     baidu_objs = models.BaiduSmallProgramManagement.objects.filter(appid=baidu_appid)
+                    get_experience_qr_code_template_id = baidu_objs[0].template_id
                     baidu_tripartite_platform = baidu_tripartite_platform_oper()
                     response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
                     response_data = response.data.get('list')[0]
