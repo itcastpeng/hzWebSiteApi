@@ -579,6 +579,7 @@ def tripartite_platform_oper(request, oper_type):
                     'gzh_code': template_obj.qrcode,
                     'baidu_xcx_qrcode': template_obj.baidu_xcx_qrcode,
                 }
+                print('response.data--------> ', response.data)
 
             # 临时授权域名
             elif oper_type == 'temporary_authorized_domain_name':
