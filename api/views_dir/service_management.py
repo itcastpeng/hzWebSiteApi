@@ -52,6 +52,7 @@ def service_management(request):
                     'limit_amount': obj.limit_amount,
                     'virtual_order_volume': obj.virtual_order_volume,
                     'service_detail': obj.service_detail,
+                    'actual_order_quantity': 0,
                     'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 })
 
