@@ -23,6 +23,7 @@ from django.db.models import Q
 from publicFunc.public import send_error_msg, create_xhs_admin_response
 from publicFunc.tripartite_platform_oper import QueryWhetherCallingCredentialExpired
 from publicFunc.public import upload_qiniu
+from publicFunc.baidu_tripartite_platform_oper import tripartite_platform_oper
 
 # 更新小红书下拉数据
 @app.task
@@ -684,6 +685,30 @@ def get_gzh_qrcode(template_id, qrcode_path):
         img.save(f)
     path = upload_qiniu(time_name, 800)
     api_models.Template.objects.filter(id=template_id).update(qrcode=path)
+
+# 初始化模板 生成百度小程序二维码
+@app.task
+def get_baidu_xcx_qicode(template_id, user_id, token):
+    objs = api_models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
+    tripartite_platform = tripartite_platform_oper()
+    response = tripartite_platform.get_template_list(1, 10)
+    response_data = response.data.get('list')[0]
+    data = {
+        'appid': objs[0].appid,
+        'token': objs[0].access_token,
+        'version': response_data.get('user_version'),
+        'template_id': response_data.get('template_id'),
+        'id': template_id,
+        'user_id': user_id,
+        'user_token': token,
+    }
+    tripartite_platform.upload_small_program_code(data)
+    time.sleep(3)
+    response_data = tripartite_platform.gets_list_small_packages(token)
+    package_id = response_data.data[0].get('package_id')
+    path = tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
+
+    api_models.Template.objects.filter(id=template_id).update(baidu_xcx_qrcode=path)
 
 # 定时删除收录
 @app.task

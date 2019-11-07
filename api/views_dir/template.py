@@ -10,7 +10,7 @@ from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataFor
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
-from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode
+from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode, get_baidu_xcx_qicode
 import json
 
 
@@ -153,7 +153,12 @@ def template_oper(request, oper_type, o_id):
                     ) # 生成小程序二维码
 
                 # 生成百度小程序二维码
-
+                if not template_obj.baidu_xcx_qrcode:
+                    get_baidu_xcx_qicode.delay(
+                        template_obj.id,
+                        user_id,
+                        user_obj.token
+                    )
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
                     template=template_obj
