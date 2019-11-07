@@ -218,8 +218,9 @@ class tripartite_platform_oper():
         print('ret.json()--------------------> ', ret.json())
         code = 301
         msg = ret.json().get('error_msg')
-        if ret.json().get('errno') in [0, '0']:
+        if not msg:
             msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
             code = 200
         response.code = code
         response.msg = msg
