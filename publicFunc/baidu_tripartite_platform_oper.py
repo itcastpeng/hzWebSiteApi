@@ -356,17 +356,17 @@ class tripartite_platform_oper():
         return response
 
     # 获取二维码
-    def get_qr_code(self, package_id, width):
+    def get_qr_code(self, package_id, width, token):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode'
         params = {
-            'access_token': self.access_token,
-            # 'path': path, # 自定义打开路径
+            'access_token': token,
             'width': width, # 默认200px，最大1280px，最小200px
         }
         if package_id:
             params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
 
         ret = requests.get(url, params=params)
+        print('ret.json()---------------------> ', ret.json())
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)

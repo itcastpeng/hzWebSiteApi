@@ -97,7 +97,9 @@ class UpdateForm(forms.Form):
     virtual_order_volume = forms.CharField(
         required=False,
     )
-
+    service_detail = forms.CharField(
+        required=False,
+    )
     def clean_o_id(self):
         o_id = self.data.get('o_id')
         create_user_id = self.data.get('create_user_id')

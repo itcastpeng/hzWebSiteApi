@@ -227,6 +227,7 @@ class ServiceTable(models.Model):
     limit_amount = models.IntegerField(verbose_name='限制总量', default=0)
     virtual_order_volume = models.IntegerField(verbose_name='虚拟订单量', default=0)
     create_user = models.ForeignKey('UserProfile', verbose_name='创建人', null=True)
+    service_detail = models.TextField(verbose_name='服务详情', null=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
