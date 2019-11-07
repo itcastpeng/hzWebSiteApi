@@ -72,12 +72,13 @@ def tripartite_platform_oper(request, oper_type):
         # 为授权的小程序提交审核
         elif oper_type == 'submit_approval_authorized_mini_program':
             response_data = tripartite_platform_oper.gets_list_small_packages(token)
-            response = tripartite_platform_oper.submit_approval_authorized_mini_program({
+            data = {
                 'content': request.POST.get('content'),
                 'package_id': response_data.data[0].get('package_id'),
                 'remark': request.POST.get('remark'),
                 'token': token,
-            })
+            }
+            response = tripartite_platform_oper.submit_approval_authorized_mini_program(data)
 
         # 发布已审核的小程序
         elif oper_type == 'release_approved_applet':
