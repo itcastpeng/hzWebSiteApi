@@ -173,7 +173,10 @@ class tripartite_platform_oper():
             code = 200
         response.code = code
         response.msg = msg
-        response.data = ret.json().get('data')
+        list = sorted(ret.json().get('data').get('list'), key=lambda x: x['create_date'], reverse=True)
+        response_data = ret.json().get('data')
+        response_data['list'] = list
+        response.data = response_data
         return response
 
     # 删除模板

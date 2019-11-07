@@ -352,7 +352,6 @@ def tripartite_platform_oper(request, oper_type):
                         'user_id': user_id,
                         'user_token': user_obj.token,
                     }
-                    print('data------------> ', data)
                     baidu_tripartite_platform.upload_small_program_code(data)
                     time.sleep(3)
                     response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
