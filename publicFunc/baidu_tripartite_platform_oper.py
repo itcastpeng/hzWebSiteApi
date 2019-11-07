@@ -213,6 +213,7 @@ class tripartite_platform_oper():
             'remark': data.get('remark'),                   # 备注
         }
         response = Response.ResponseObj()
+        print('json.dumps()----------> ', json.dumps(post_data))
         ret = requests.post(url, data=post_data)
         print('ret.json()--------------------> ', ret.json())
         code = 301
