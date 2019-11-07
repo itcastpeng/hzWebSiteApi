@@ -206,9 +206,8 @@ class tripartite_platform_oper():
 
     # 为授权的小程序提交审核
     def submit_approval_authorized_mini_program(self, data):
-        url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/submitaudit'
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/submitaudit?access_token={}'.format(data.get('token'))
         post_data = {
-            'access_token': data.get('token'),
             'content': data.get('content'),                 # 送审描述
             'package_id': data.get('package_id'),           # 代码包id
             'remark': data.get('remark'),                   # 备注
@@ -217,9 +216,10 @@ class tripartite_platform_oper():
         ret = requests.post(url, data=post_data)
         print('ret.json()--------------------> ', ret.json())
         code = 301
+        msg = ret.json().get('error_msg')
         if ret.json().get('errno') in [0, '0']:
+            msg = ret.json().get('msg')
             code = 200
-        msg = ret.json().get('msg')
         response.code = code
         response.msg = msg
         return response
