@@ -154,7 +154,6 @@ def template_oper(request, oper_type, o_id):
 
                 # 生成百度小程序二维码
                 if not template_obj.baidu_xcx_qrcode:
-                    print('--------------------生成百度小程序二维码-----------------------')
                     get_baidu_xcx_qicode.delay(
                         template_obj.id,
                         user_id,
@@ -313,8 +312,8 @@ def template_oper(request, oper_type, o_id):
                     if not obj.xcx_qrcode:
                         get_xcx_qrcode.delay(obj.id, user_id, user_obj.token) # 生成小程序二维码
                     if not obj.baidu_xcx_qrcode:
-                        pass
-                        # 生成百度小程序二维码
+                        get_baidu_xcx_qicode.delay(obj.id, user_id, user_obj.token)# 生成百度小程序二维码
+
 
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
