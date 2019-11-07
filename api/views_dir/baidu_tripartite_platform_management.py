@@ -172,9 +172,7 @@ def tripartite_platform_oper(request, oper_type):
             if not package_id:
                 xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token)  # 查询小程序包
                 if len(xiaochengxu_data.data) > 0:
-                    status = xiaochengxu_data.data[0].get('status')
-                    if status != '开发版本':
-                        package_id = xiaochengxu_data.data[0].get('package_id')
+                    package_id = xiaochengxu_data.data[0].get('package_id')
 
             path = tripartite_platform_oper.get_qr_code(package_id, width, token)
             response.code = 200

@@ -80,6 +80,7 @@ def template(request):
                     'xcx_id': xcx_id,
                     'qrcode': obj.qrcode,
                     'xcx_qrcode': obj.xcx_qrcode,
+                    'baidu_xcx_qrcode': obj.baidu_xcx_qrcode,
                     'xcx_appid': xcx_appid,
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
@@ -150,6 +151,8 @@ def template_oper(request, oper_type, o_id):
                         user_id,
                         user_obj.token
                     ) # 生成小程序二维码
+
+                # 生成百度小程序二维码
 
                 page_group_obj = models.PageGroup.objects.create(
                     name="默认组",
@@ -303,6 +306,9 @@ def template_oper(request, oper_type, o_id):
                     get_gzh_qrcode.delay(obj.id, 'https://xcx.bjhzkq.com/wx/?id={}'.format(obj.id)) # 生成公众号二维码
                     if not obj.xcx_qrcode:
                         get_xcx_qrcode.delay(obj.id, user_id, user_obj.token) # 生成小程序二维码
+                    if not obj.baidu_xcx_qrcode:
+                        pass
+                        # 生成百度小程序二维码
 
                 tab_bar_data = json.loads(obj.tab_bar_data) # 将page_id 更改
 
