@@ -563,12 +563,13 @@ def tripartite_platform_oper(request, oper_type):
                         'user_id': user_id,
                         'user_token': user_obj.token,
                     }
-                    print('data------------> ', data)
                     baidu_tripartite_platform.upload_small_program_code(data)
                     time.sleep(3)
                     response_data = baidu_tripartite_platform.gets_list_small_packages(objs[0].access_token)
                     package_id = response_data.data[0].get('package_id')
+                    print('package_id--------------------> ', package_id)
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
+                    print('baidu_xcx_qrcode-============------------> ', baidu_xcx_qrcode)
                     template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
                     template_obj.save()
                 print('path, --------------------> ', path, template_obj.qrcode, template_obj)
