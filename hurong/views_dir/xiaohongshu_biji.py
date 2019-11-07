@@ -193,8 +193,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                     link = url
 
                 else:
-                    ret = requests.get(url, allow_redirects=False)
-                    link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                    try:
+                        ret = requests.get(url, allow_redirects=False)
+                        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                    except Exception:
+                        link = url
 
                 completion_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
