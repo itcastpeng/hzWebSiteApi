@@ -705,7 +705,7 @@ def get_baidu_xcx_qicode(template_id, user_id, token):
     print('data------------> ', data)
     tripartite_platform.upload_small_program_code(data)
     time.sleep(3)
-    response_data = tripartite_platform.gets_list_small_packages(token)
+    response_data = tripartite_platform.gets_list_small_packages(objs[0].access_token)
     package_id = response_data.data[0].get('package_id')
     path = tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
     print('path-----------------------> ', path)
