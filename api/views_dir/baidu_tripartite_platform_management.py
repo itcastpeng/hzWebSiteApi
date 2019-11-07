@@ -261,7 +261,7 @@ def baidu_platform_management_admin(request, oper_type, o_id):
                 response.msg = '查询成功'
                 response.data = {
                     'count': count,
-
+                    'ret_data': ret_data
                 }
             else:
                 response.code = 301
