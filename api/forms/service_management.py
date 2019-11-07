@@ -42,7 +42,9 @@ class AddForm(forms.Form):
     virtual_order_volume = forms.CharField(
         required=False,
     )
-
+    service_detail = forms.CharField(
+        required=False,
+    )
     def clean_name(self):
         name = self.data.get('name')
         create_user_id = self.data.get('create_user_id')
