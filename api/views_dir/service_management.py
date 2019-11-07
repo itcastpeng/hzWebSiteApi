@@ -50,6 +50,7 @@ def service_management(request):
                     'promotion_price': obj.promotion_price,
                     'limit_amount': obj.limit_amount,
                     'virtual_order_volume': obj.virtual_order_volume,
+                    'service_detail': obj.service_detail,
                     'create_date': obj.create_date.strftime('%Y-%m-%d %H:%M:%S'),
                 })
 
@@ -98,6 +99,7 @@ def service_management_oper(request, oper_type, o_id):
         'promotion_price': request.POST.get('promotion_price', 0),              # 促销价格
         'limit_amount': request.POST.get('limit_amount', 0),                    # 限制总量
         'virtual_order_volume': request.POST.get('virtual_order_volume', 0),    # 虚拟订单量
+        'service_detail': request.POST.get('service_detail'),    # 服务详情
     }
     if request.method == "POST":
 
@@ -129,6 +131,7 @@ def service_management_oper(request, oper_type, o_id):
                     'promotion_price': forms_obj.cleaned_data.get('promotion_price'),
                     'limit_amount': forms_obj.cleaned_data.get('limit_amount'),
                     'virtual_order_volume': forms_obj.cleaned_data.get('virtual_order_volume'),
+                    'service_detail': forms_obj.cleaned_data.get('service_detail'),
                 }
 
                 # 更新数据

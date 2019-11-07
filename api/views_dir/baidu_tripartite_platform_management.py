@@ -9,7 +9,8 @@ from django.http import JsonResponse, HttpResponse
 from urllib.parse import unquote, quote
 from django.shortcuts import redirect
 from publicFunc.condition_com import conditionCom
-from django.db.models import Q
+from django.db.models import Q, Count
+from publicFunc.role_choice import admin_list
 import time, json, datetime, requests
 
 # 三方平台操作
@@ -168,7 +169,14 @@ def tripartite_platform_oper(request, oper_type):
         elif oper_type == 'get_qr_code':
             width = request.GET.get('width') #
             package_id = request.GET.get('package_id') #
-            path = tripartite_platform_oper.get_qr_code(package_id, width)
+            if not package_id:
+                xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token)  # 查询小程序包
+                if len(xiaochengxu_data.data) > 0:
+                    status = xiaochengxu_data.data[0].get('status')
+                    if status != '开发版本':
+                        package_id = xiaochengxu_data.data[0].get('package_id')
+
+            path = tripartite_platform_oper.get_qr_code(package_id, width, token)
             response.code = 200
             response.msg = '查询成功'
             response.data = {
@@ -246,6 +254,25 @@ def baidu_platform_management_admin(request, oper_type, o_id):
                         'template_name': obj.template.name,                                     # 对应模板
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),   # 创建时间
                     })
+
+                user_list = []
+                baidu_user_objs = models.BaiduSmallProgramManagement.objects.select_related(
+                    'user'
+                ).values(
+                    'user_id',
+                    'user__username'
+                ).annotate(
+                    Count('id')
+                ).filter(
+                    appid__isnull=False
+                ).exclude(user__role_id__in=admin_list)
+                for baidu_user_obj in baidu_user_objs:
+                    user_list.append({
+                        'user_id': baidu_user_obj.get('user_id'),
+                        'username': baidu_user_obj.get('user__username'),
+                    })
+
+
                 response.note = {
                     'appid': 'appid',
                     'program_name': '小程序名称',
@@ -261,7 +288,8 @@ def baidu_platform_management_admin(request, oper_type, o_id):
                 response.msg = '查询成功'
                 response.data = {
                     'count': count,
-                    'ret_data': ret_data
+                    'ret_data': ret_data,
+                    'user_list': user_list
                 }
             else:
                 response.code = 301
