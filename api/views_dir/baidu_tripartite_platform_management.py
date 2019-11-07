@@ -85,7 +85,7 @@ def tripartite_platform_oper(request, oper_type):
                 'content': request.POST.get('content'),
                 'package_id': package_id,
                 'remark': request.POST.get('remark'),
-                'token': request.POST.get('token'),
+                'token': token,
             }
             response = tripartite_platform_oper.submit_approval_authorized_mini_program(data)
 
