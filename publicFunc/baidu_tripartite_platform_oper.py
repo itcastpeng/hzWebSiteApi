@@ -163,9 +163,17 @@ class tripartite_platform_oper():
             'page_size': page_size,
         }
         ret = requests.get(url, params=params)
-        print('获取模板列表=================> ', ret.json())
-        response_data = baidu_applet_return_data(ret.json(), '查询')
-        return response_data
+        response = Response.ResponseObj()
+        code = 301
+        msg = ret.json().get('error_msg')
+        if not msg:
+            msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = msg
+        response.data = ret.json().get('data')
+        return response
 
     # 删除模板
     def delete_template(self, template_id):
@@ -188,8 +196,17 @@ class tripartite_platform_oper():
         }
         ret = requests.get(url, params=params)
         print('获取模板草稿列表-------------------> ', ret.json())
-        response_data = baidu_applet_return_data(ret.json(), '查询')
-        return response_data
+        response = Response.ResponseObj()
+        code = 301
+        msg = ret.json().get('error_msg')
+        if not msg:
+            msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = msg
+        response.data = ret.json().get('data')
+        return response
 
     # 添加草稿至模板
     def add_draft_to_template(self, draft_id, user_desc):
