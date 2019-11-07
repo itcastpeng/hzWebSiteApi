@@ -22,9 +22,14 @@ def tripartite_platform_oper(request, oper_type):
     BaiduTripartitePlatformObjs = models.BaiduTripartitePlatformManagement.objects.filter(id=1)
     BaiduTripartitePlatformObj = BaiduTripartitePlatformObjs[0]
 
-    if request.method == 'POST':
+    token = ''
+    appid = request.GET.get('appid')
+    if appid:
         appid = request.POST.get('appid')
+    if appid:
         token = tripartite_platform_oper.determines_whether_access_token_expired(appid)  # 判断appid是否过期
+
+    if request.method == 'POST':
 
         # 引导小程序管理员授权
         if oper_type == 'boot_small_program_administrator_authorization':
@@ -130,9 +135,6 @@ def tripartite_platform_oper(request, oper_type):
             response = tripartite_platform_oper.submit_sitemap(higher_level, url_list)
 
     else:
-
-        appid = request.GET.get('appid')
-        token = tripartite_platform_oper.determines_whether_access_token_expired(appid) # 判断appid是否过期
 
         # 查询所有模板
         if oper_type == 'get_all_templates':
