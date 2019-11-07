@@ -270,7 +270,7 @@ def baidu_platform_management_admin(request, oper_type, o_id):
         else:
             response.code = 402
             response.msg = '请求异常'
-
+    return JsonResponse(response.__dict__)
 
 # 百度小程序后台 通知
 def baidu_tongzhi(request):
