@@ -50,8 +50,7 @@ def tripartite_platform_oper(request, oper_type):
             status = xiaochengxu_data.data[0].get('status')
             response.code = 200
             response.msg = '成功'
-            print('-=---------------------------> ', status)
-            if status not in [3, '3']:
+            if status != '开发版本':
                 current_page = request.GET.get('current_page', 1)
                 length = request.GET.get('length', 10)
                 response = tripartite_platform_oper.get_template_list(current_page, length)
