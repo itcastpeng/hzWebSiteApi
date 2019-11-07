@@ -177,7 +177,6 @@ class tripartite_platform_oper():
         response_data = ret.json().get('data')
         response_data['list'] = list
         response.data = response_data
-        print('response_data----------------> ', json.dumps(response_data))
         return response
 
     # 删除模板
@@ -314,8 +313,9 @@ class tripartite_platform_oper():
         if ret.json().get('errno') in [0, '0']:
             msg = ret.json().get('msg')
             code = 200
+        data_result = sorted(ret.json().get('data'), key=lambda x: x['commit_time'], reverse=True)  # 排序
         data_list = []
-        for data in ret.json().get('data'):
+        for data in data_result:
 
             data_status = data.get('status')
             if data_status in [3, '3']:
