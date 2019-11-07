@@ -368,7 +368,7 @@ def tripartite_platform_oper(request, oper_type):
                 response.code = code
                 response.msg = msg
                 response.data = data
-
+                print('response.data---------------> ', response.data)
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
@@ -567,12 +567,9 @@ def tripartite_platform_oper(request, oper_type):
                     time.sleep(3)
                     response_data = baidu_tripartite_platform.gets_list_small_packages(objs[0].access_token)
                     package_id = response_data.data[0].get('package_id')
-                    print('package_id--------------------> ', package_id)
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
-                    print('baidu_xcx_qrcode-============------------> ', baidu_xcx_qrcode)
                     template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
                     template_obj.save()
-                print('path, --------------------> ', path, template_obj.qrcode, template_obj)
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
@@ -580,7 +577,6 @@ def tripartite_platform_oper(request, oper_type):
                     'gzh_code': template_obj.qrcode,
                     'baidu_xcx_qrcode': baidu_xcx_qrcode,
                 }
-                print('response.data--------> ', response.data)
 
             # 临时授权域名
             elif oper_type == 'temporary_authorized_domain_name':
