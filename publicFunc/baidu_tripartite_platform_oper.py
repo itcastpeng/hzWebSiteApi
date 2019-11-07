@@ -208,7 +208,7 @@ class tripartite_platform_oper():
     def submit_approval_authorized_mini_program(self, data):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/submitaudit'
         post_data = {
-            'access_token': self.access_token,
+            'access_token': data.get('token'),
             'content': data.get('content'),                 # 送审描述
             'package_id': data.get('package_id'),           # 代码包id
             'remark': data.get('remark'),                   # 备注
