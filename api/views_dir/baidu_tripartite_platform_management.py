@@ -46,16 +46,16 @@ def tripartite_platform_oper(request, oper_type):
 
         # 未授权的小程序账号上传小程序代码(提交代码包)
         elif oper_type == 'upload_small_program_code':
-            current_page = request.GET.get('current_page', 1)
-            length = request.GET.get('length', 10)
-            response = tripartite_platform_oper.get_template_list(current_page, length)
-            response_data = response.data.get('list')[0]
-
             xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token) # 查询小程序包
             status = xiaochengxu_data.data[0].get('status')
             response.code = 200
             response.msg = '成功'
+            print('-=---------------------------> ', status)
             if status not in [3, '3']:
+                current_page = request.GET.get('current_page', 1)
+                length = request.GET.get('length', 10)
+                response = tripartite_platform_oper.get_template_list(current_page, length)
+                response_data = response.data.get('list')[0]
                 data = {
                     'appid': appid,
                     'token': token,
