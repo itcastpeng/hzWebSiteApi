@@ -34,9 +34,9 @@ def service_management(request):
 
             for obj in objs:
                 try:
-                    main_figure = obj.main_figure
-                except Exception:
                     main_figure = json.loads(obj.main_figure)
+                except Exception:
+                    main_figure = obj.main_figure
 
                 ret_data.append({
                     'id': obj.id,
@@ -47,6 +47,7 @@ def service_management(request):
                     'service_classification': obj.service_classification,
                     'price_type': obj.price_type,
                     'price': obj.price,
+                    'remaining_amount': 0, # 剩余量
                     'promotion_price': obj.promotion_price,
                     'limit_amount': obj.limit_amount,
                     'virtual_order_volume': obj.virtual_order_volume,
