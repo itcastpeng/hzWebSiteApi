@@ -118,9 +118,9 @@ class tripartite_platform_oper():
             "extAppid": data.get('appid'),
             # "directCommit": False,
             "ext": {
-                # 'template_id': id,  # 小程序ID 查询改小程序模板
-                # 'user_id': user_id,
-                # 'token': user_token,
+                'template_id': data.get('id'),  # 小程序ID 查询改小程序模板
+                'user_id': data.get('user_id'),
+                'token': data.get('user_token'),
             },
             "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
                 # "backgroundTextStyle": "light",
@@ -163,6 +163,7 @@ class tripartite_platform_oper():
             'page_size': page_size,
         }
         ret = requests.get(url, params=params)
+        print('-获取模板列表-=-------------> ', ret.json())
         response = Response.ResponseObj()
         code = 301
         msg = ret.json().get('error_msg')

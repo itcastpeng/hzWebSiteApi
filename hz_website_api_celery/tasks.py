@@ -691,7 +691,7 @@ def get_gzh_qrcode(template_id, qrcode_path):
 def get_baidu_xcx_qicode(template_id, user_id, token):
     objs = api_models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
     tripartite_platform = tripartite_platform_oper()
-    response = tripartite_platform.get_template_list(1, 10)
+    response = tripartite_platform.get_template_list(1, 10) # 获取模板列表
     response_data = response.data.get('list')[0]
     data = {
         'appid': objs[0].appid,
@@ -702,12 +702,13 @@ def get_baidu_xcx_qicode(template_id, user_id, token):
         'user_id': user_id,
         'user_token': token,
     }
+    print('data------------> ', data)
     tripartite_platform.upload_small_program_code(data)
     time.sleep(3)
     response_data = tripartite_platform.gets_list_small_packages(token)
     package_id = response_data.data[0].get('package_id')
     path = tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
-
+    print('path-----------------------> ', path)
     api_models.Template.objects.filter(id=template_id).update(baidu_xcx_qrcode=path)
 
 # 定时删除收录
