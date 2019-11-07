@@ -366,7 +366,6 @@ class tripartite_platform_oper():
             params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
 
         ret = requests.get(url, params=params)
-        print('ret.json()---------------------> ', ret.json())
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)

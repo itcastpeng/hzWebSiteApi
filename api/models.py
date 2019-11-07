@@ -123,6 +123,7 @@ class Template(models.Model):
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     qrcode = models.CharField(verbose_name='体验二维码H5页面', max_length=512, null=True)
     xcx_qrcode = models.CharField(verbose_name='体验二维码小程序', max_length=512, null=True)
+    baidu_xcx_qrcode = models.CharField(verbose_name='体验二维码百度小程序', max_length=512, null=True)
     common_components = models.TextField(verbose_name='公用组件', default='')
      # ----------------------------------名片数据---------------------------------------
     enterprise_name = models.CharField(verbose_name='企业名称', max_length=64, null=True)
