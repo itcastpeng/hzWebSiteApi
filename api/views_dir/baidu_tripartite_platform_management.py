@@ -51,13 +51,18 @@ def tripartite_platform_oper(request, oper_type):
             response = tripartite_platform_oper.get_template_list(current_page, length)
             response_data = response.data.get('list')[0]
 
-            response = tripartite_platform_oper.upload_small_program_code({
-                'appid': appid,
-                'token': token,
-                'version': response_data.get('user_version'),
-                'template_id': response_data.get('template_id'),
-            })
-
+            xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token) # 查询小程序包
+            status = xiaochengxu_data.data[0].get('status')
+            if status not in [3, '3']:
+                data = {
+                    'appid': appid,
+                    'token': token,
+                    'version': response_data.get('user_version'),
+                    'template_id': response_data.get('template_id'),
+                }
+                response = tripartite_platform_oper.upload_small_program_code(data)
+            response.code = 200
+            response.msg = '成功'
         # 删除模板
         elif oper_type == 'delete_template':
             o_id = request.POST.get('o_id')
