@@ -154,6 +154,7 @@ def template_oper(request, oper_type, o_id):
 
                 # 生成百度小程序二维码
                 if not template_obj.baidu_xcx_qrcode:
+                    print('--------------------生成百度小程序二维码-----------------------')
                     get_baidu_xcx_qicode.delay(
                         template_obj.id,
                         user_id,
