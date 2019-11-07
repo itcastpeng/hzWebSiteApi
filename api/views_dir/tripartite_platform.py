@@ -289,6 +289,7 @@ def tripartite_platform_oper(request, oper_type):
             # 获取小程序体验二维码(提交代码包) (体验码)
             elif oper_type == 'get_experience_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
+                baidu_appid = request.POST.get('baidu_appid')
                 user_desc = request.POST.get('user_desc')
                 response_data = ''
                 data_dict = {
@@ -336,8 +337,8 @@ def tripartite_platform_oper(request, oper_type):
 
                 # 百度小程序
                 baidu_xcx_qrcode = ''
-                baidu_objs = models.BaiduSmallProgramManagement.objects.filter(template_id=template_id)
-                if baidu_objs:
+                if baidu_appid:
+                    baidu_objs = models.BaiduSmallProgramManagement.objects.filter(appid=baidu_appid)
                     baidu_tripartite_platform = baidu_tripartite_platform_oper()
                     response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
                     response_data = response.data.get('list')[0]

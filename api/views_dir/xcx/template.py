@@ -13,6 +13,7 @@ from api.views_dir.page import page_base_data
 @account.is_token(models.Customer)
 def template(request, oper_type):
     response = Response.ResponseObj()
+    user_id = request.GET.get('user_id')
     if request.method == "GET":
         if oper_type == "get_tabbar_data":
             form_data = {
@@ -25,6 +26,8 @@ def template(request, oper_type):
                 objs = models.Template.objects.filter(id=template_id)
 
                 if objs:
+                    models.ViewCustomerSmallApplet.objects.create(user_id=user_id, template_id=template_id) # 记录日志
+
                     # 首页页面对象
                     first_page_obj = models.Page.objects.filter(page_group__template_id=template_id)[0]
                     response.code = 200
