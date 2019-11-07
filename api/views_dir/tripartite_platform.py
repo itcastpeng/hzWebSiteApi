@@ -289,8 +289,8 @@ def tripartite_platform_oper(request, oper_type):
             # 获取小程序体验二维码(提交代码包) (体验码)
             elif oper_type == 'get_experience_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
-                baidu_appid = request.POST.get('baidu_appid')
-                user_desc = request.POST.get('user_desc')
+                baidu_appid = request.GET.get('baidu_appid')
+                user_desc = request.GET.get('user_desc')
                 response_data = ''
                 data_dict = {
                     'user_desc': user_desc,
