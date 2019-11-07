@@ -246,7 +246,6 @@ class tripartite_platform_oper():
     def small_program_version_roll_back(self, package_id, token):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/rollback?access_token={}'.format(token)
         post_data = {
-            'access_token': self.access_token,
             'package_id': package_id
         }
         ret = requests.post(url, data=post_data)
@@ -265,7 +264,6 @@ class tripartite_platform_oper():
     def small_procedure_review_withdrawal(self, package_id, token):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/withdraw?access_token={}'.format(token)
         post_data = {
-            'access_token': self.access_token,
             'package_id': package_id
         }
         ret = requests.post(url, data=post_data)
