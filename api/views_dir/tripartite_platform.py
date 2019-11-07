@@ -13,6 +13,7 @@ from publicFunc.condition_com import conditionCom
 from publicFunc.public import get_qrcode, upload_qiniu
 from publicFunc.base64_encryption import b64decode
 from django.db.models import Q, Count
+from publicFunc.baidu_tripartite_platform_oper import  tripartite_platform_oper as baidu_tripartite_platform_oper
 import time, json, datetime, xml.etree.cElementTree as ET, requests
 
 # 三方平台操作
@@ -492,20 +493,16 @@ def tripartite_platform_oper(request, oper_type):
                     "errmsg": "ok",
                 }
 
-            # 获取预览二维码
+            # 获取预览微信/百度小程序二维码
             elif oper_type == 'get_preview_qr_code':
                 user_obj = models.UserProfile.objects.get(id=user_id)
                 template_id = request.GET.get('template_id')
                 whether_regenerate = request.GET.get('whether_regenerate', 0) # 重新生成
                 template_obj = models.Template.objects.get(id=template_id)
                 path = template_obj.xcx_qrcode
+                baidu_xcx_qrcode = template_obj.baidu_xcx_qrcode
 
-                is_whether_regenerate = False # 是否重新生成
-
-                if whether_regenerate or not path:
-                    is_whether_regenerate = True
-
-                if is_whether_regenerate: # 重新生成
+                if whether_regenerate or not path: # 重新生成 微信小程序码
                     request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}'.format(
                         user_obj.token, user_id, template_id
                     )
@@ -528,11 +525,35 @@ def tripartite_platform_oper(request, oper_type):
                     template_obj.xcx_qrcode = path
                     template_obj.save()
 
+                if whether_regenerate or not baidu_xcx_qrcode:
+                    objs = models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
+                    baidu_tripartite_platform = baidu_tripartite_platform_oper()
+                    response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
+                    response_data = response.data.get('list')[0]
+                    data = {
+                        'appid': objs[0].appid,
+                        'token': objs[0].access_token,
+                        'version': response_data.get('user_version'),
+                        'template_id': response_data.get('template_id'),
+                        'id': template_id,
+                        'user_id': user_id,
+                        'user_token': user_obj.token,
+                    }
+                    print('data------------> ', data)
+                    baidu_tripartite_platform.upload_small_program_code(data)
+                    time.sleep(3)
+                    response_data = baidu_tripartite_platform.gets_list_small_packages(objs[0].access_token)
+                    package_id = response_data.data[0].get('package_id')
+                    baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, objs[0].access_token)
+                    template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
+                    template_obj.save()
+
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
                     'xcx_code': path,
-                    'gzh_code': template_obj.qrcode
+                    'gzh_code': template_obj.qrcode,
+                    'baidu_xcx_qrcode': template_obj.baidu_xcx_qrcode,
                 }
 
             # 临时授权域名
