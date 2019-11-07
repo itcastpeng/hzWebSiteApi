@@ -201,7 +201,7 @@ def tripartite_platform_oper(request, oper_type):
 
 # 后台操作
 @account.is_token(models.UserProfile)
-def baidu_platform_management_admin(request, oper_type):
+def baidu_platform_management_admin(request, oper_type, o_id):
     response = Response.ResponseObj()
     if request.method == 'POST':
         pass
