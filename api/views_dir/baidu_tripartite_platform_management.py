@@ -83,17 +83,17 @@ def tripartite_platform_oper(request, oper_type):
         elif oper_type == 'release_approved_applet':
             response_data = tripartite_platform_oper.gets_list_small_packages(token)
             package_id = response_data.data[0].get('package_id')
-            response = tripartite_platform_oper.release_approved_applet(package_id)
+            response = tripartite_platform_oper.release_approved_applet(package_id, token)
 
         # 小程序版本回滚
         elif oper_type == 'small_program_version_roll_back':
             package_id = request.POST.get('package_id')
-            response = tripartite_platform_oper.small_program_version_roll_back(package_id)
+            response = tripartite_platform_oper.small_program_version_roll_back(package_id, token)
 
         # 小程序审核撤回
         elif oper_type == 'small_procedure_review_withdrawal':
             package_id = request.POST.get('package_id')
-            response = tripartite_platform_oper.small_procedure_review_withdrawal(package_id)
+            response = tripartite_platform_oper.small_procedure_review_withdrawal(package_id, token)
 
         # web化开关
         elif oper_type == 'web_the_switch':
