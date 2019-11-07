@@ -212,10 +212,8 @@ class tripartite_platform_oper():
             'package_id': data.get('package_id'),           # 代码包id
             'remark': data.get('remark'),                   # 备注
         }
-        response = Response.ResponseObj()
-        print('json.dumps()----------> ', json.dumps(post_data))
         ret = requests.post(url, data=post_data)
-        print('ret.json()--------------------> ', ret.json())
+        response = Response.ResponseObj()
         code = 301
         msg = ret.json().get('error_msg')
         if not msg:
@@ -234,7 +232,15 @@ class tripartite_platform_oper():
             'package_id': package_id,
         }
         ret = requests.post(url, data=post_data)
-        response = baidu_applet_return_data(ret.json(), '发布小程序')
+        response = Response.ResponseObj()
+        code = 301
+        msg = ret.json().get('error_msg')
+        if not msg:
+            msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = msg
         return response
 
     # 小程序版本回滚
@@ -245,7 +251,15 @@ class tripartite_platform_oper():
             'package_id': package_id
         }
         ret = requests.post(url, data=post_data)
-        response = baidu_applet_return_data(ret.json(), '回滚')
+        response = Response.ResponseObj()
+        code = 301
+        msg = ret.json().get('error_msg')
+        if not msg:
+            msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = msg
         return response
 
     # 小程序审核撤回
@@ -256,7 +270,15 @@ class tripartite_platform_oper():
             'package_id': package_id
         }
         ret = requests.post(url, data=post_data)
-        response = baidu_applet_return_data(ret.json(), '撤回')
+        response = Response.ResponseObj()
+        code = 301
+        msg = ret.json().get('error_msg')
+        if not msg:
+            msg = ret.json().get('msg')
+        if ret.json().get('errno') in [0, '0']:
+            code = 200
+        response.code = code
+        response.msg = msg
         return response
 
     # 获取小程序包列表
