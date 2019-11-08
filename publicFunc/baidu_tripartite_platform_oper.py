@@ -114,7 +114,7 @@ class tripartite_platform_oper():
     def upload_small_program_code(self, data):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/upload'
         ext_json = {
-            # "extEnable": True,
+            "extEnable": True,
             "extAppid": data.get('appid'),
             "directCommit": data.get('whether_audit'),
             "ext": {
