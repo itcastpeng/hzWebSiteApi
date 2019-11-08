@@ -135,7 +135,7 @@ class tripartite_platform_oper():
                 # "downloadFile": 20000
             }
         }
-
+        print('ext_json-------------------------------------> ', ext_json)
         post_data = {
             'access_token': data.get('token'),
             'template_id': data.get('template_id'),
