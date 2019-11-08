@@ -150,6 +150,12 @@ def tripartite_platform_oper(request, oper_type):
         # 获取小程序包列表
         elif oper_type == 'gets_list_small_packages':
             response = tripartite_platform_oper.gets_list_small_packages(token)
+            data_list = []
+            for data in response.data:
+                if data.get('status') != '开发版本':
+                    data_list.append(data)
+
+            response.data = data_list
 
         # 获取授权小程序包详情
         elif oper_type == 'get_details_authorization_package':
