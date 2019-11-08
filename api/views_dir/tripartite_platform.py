@@ -204,25 +204,28 @@ def tripartite_platform_oper(request, oper_type):
             ret_json = tripartite_platform_objs.code_package_submitted_review(
                 authorizer_access_token
             )
-            response.code = 200
-            response.msg = '提交成功'
+            response.code = 301
+            if ret_json.get('errcode') in [0, '0']:
+                response.code = 200
+                obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
+
+                # 记录上传的版本 模板
+                page_data = ''
+                page_objs = models.Page.objects.filter(page_group__template_id=obj.template_id)
+                if page_objs:
+                    page_data = page_objs[0].data
+                models.AppletCodeVersion.objects.create(
+                    applet_id=obj.id,
+                    page_data=page_data,
+                    navigation_data=obj.template.tab_bar_data,
+                    user_version='1.10',
+                    user_desc='',
+                    auditid=ret_json.get('auditid')
+                )
+            response.msg = ret_json.get('errmsg')
             response.data = ret_json
 
-            obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
 
-            # 记录上传的版本 模板
-            page_data = ''
-            page_objs = models.Page.objects.filter(page_group__template_id=obj.template_id)
-            if page_objs:
-                page_data = page_objs[0].data
-            models.AppletCodeVersion.objects.create(
-                applet_id=obj.id,
-                page_data=page_data,
-                navigation_data=obj.template.tab_bar_data,
-                user_version='1.10',
-                user_desc='',
-                auditid=ret_json.get('auditid')
-            )
 
         # 将草稿箱的草稿选为小程序代码模版
         elif oper_type == 'select_draft_applet_code_template':
