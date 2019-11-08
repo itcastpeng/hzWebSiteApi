@@ -16,22 +16,37 @@ def template(request, oper_type):
     user_id = request.GET.get('user_id')
     if request.method == "GET":
         template_id = request.GET.get('template_id')
-        source = request.GET.get('source', 1) # 1微信小程序 2百度小程序
-        log_data = {
-            'user_id':user_id,
-            'template_id':template_id,
-            'source':source
-        }
-        if source in [1, '1']:
-            applet_objs = models.ClientApplet.objects.filter(template_id=template_id)
-            log_data['client_applet_id'] = applet_objs[0].id
-        else:
-            applet_objs = models.BaiduSmallProgramManagement.objects.filter(template_id=template_id)
-            log_data['baidu_client_applet_id'] = applet_objs[0].id
+        # source = request.GET.get('source', 1) # 1微信小程序 2百度小程序
+        # log_data = {
+        #     'user_id':user_id,
+        #     'template_id':template_id,
+        #     'source':source
+        # }
+        # if source in [1, '1']:
+        #     applet_objs = models.ClientApplet.objects.filter(template_id=template_id)
+        #     log_data['client_applet_id'] = applet_objs[0].id
+        # else:
+        #     applet_objs = models.BaiduSmallProgramManagement.objects.filter(template_id=template_id)
+        #     log_data['baidu_client_applet_id'] = applet_objs[0].id
+        #
+        # models.ViewCustomerSmallApplet.objects.create(**log_data) # 记录日志
 
-        models.ViewCustomerSmallApplet.objects.create(**log_data) # 记录日志
+        # 获取底部导航数据
+        if oper_type == "get_tab_bar_data":
+            # 获取需要修改的信息
+            template_id = request.GET.get('template_id')
+            template_objs = models.Template.objects.filter(id=template_id)
+            if template_objs:
+                response.code = 200
+                response.data = {
+                    'data': template_objs[0].tab_bar_data
+                }
+            else:
+                response.code = 301
+                response.msg = "模板id异常"
 
-        if oper_type == "get_tabbar_data":
+
+        elif oper_type == "get_tabbar_data":
             form_data = {
                 'template_id': template_id,
             }

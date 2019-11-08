@@ -4,7 +4,8 @@ from api.views_dir import upload_img, login, user, template, page_group, page, w
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class, article_management, baidu_tripartite_platform_management, business_card_management, service_management, \
     view_log
-from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management
+from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management, \
+    page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management
 
 urlpatterns = [
 
@@ -78,8 +79,11 @@ urlpatterns = [
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
     url(r'^xcx/business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_business_card_management.business_card_management_oper),  # 小程序名片管理
 
-    url(r'^xcx/log/(?P<oper_type>\w+)$', view_log.view_log_oper),  # 获取页面数据
+    url(r'^xcx/article_management/(?P<oper_type>\w+)$', xcx_article_management.article_management),    # 文章查询
 
+    url(r'^xcx/page_group$', xcx_page_group.page_group),                            # 页面分组查询
+
+    url(r'^xcx/page/(?P<oper_type>\w+)/(?P<o_id>\d+)', xcx_page.page_oper),         # 页面查询
 
     # ------------------------------------ 表单管理 -------------------------------
     url(r'^xcx/form_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', form_management.form_management_oper),
