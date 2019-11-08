@@ -717,8 +717,9 @@ def timed_deletion():
     models.XiaohongshuFugai.objects.filter(task_type=2).delete()
 
 
-
-
+@app.task
+def test_time_zone(): # ceshi
+    print('===================================================')
 
 
 
