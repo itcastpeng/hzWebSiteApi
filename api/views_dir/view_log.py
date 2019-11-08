@@ -55,27 +55,3 @@ def view_log_oper(request, oper_type):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @account.is_token(models.UserProfile)
-def xcx_log_oper(request, oper_type):
-
-    if request.method == 'POST':
-        pass
-
-    else:
-        pass
