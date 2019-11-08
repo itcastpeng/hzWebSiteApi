@@ -298,14 +298,14 @@ def tripartite_platform_oper(request, oper_type):
                     'user_id': user_id,
                     'user_token': user_obj.token,
                 }
-                data = {
+                ret_data = {
                     'xcx_code': '',
                     'gzh_code': '',
                     'baidu_xcx_code': ''
                 }
+                get_experience_qr_code_template_id = ''
                 if appid:
                     xcx_code = ''
-                    get_experience_qr_code_template_id = ''
                     if not credential_expired_data.get('flag'): #
                         appid = 'wx700c48cb72073e61'
                         get_experience_qr_code_template_id = request.GET.get('template_id')
@@ -340,9 +340,8 @@ def tripartite_platform_oper(request, oper_type):
                         else:
                             code = 301
                             msg = '请先绑定模板'
-                    data['xcx_code'] = xcx_code
+                    ret_data['xcx_code'] = xcx_code
                 # 百度小程序
-                baidu_xcx_qrcode = ''
                 if baidu_appid:
                     baidu_objs = models.BaiduSmallProgramManagement.objects.filter(appid=baidu_appid)
                     get_experience_qr_code_template_id = baidu_objs[0].template_id
@@ -363,14 +362,15 @@ def tripartite_platform_oper(request, oper_type):
                     response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
                     package_id = response_data.data[0].get('package_id')
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, baidu_objs[0].access_token)
-                    data['baidu_xcx_code'] = baidu_xcx_qrcode
+                    ret_data['baidu_xcx_code'] = baidu_xcx_qrcode
+
                 if get_experience_qr_code_template_id:
                     template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
-                    data['gzh_code'] = template_obj.qrcode
+                    ret_data['gzh_code'] = template_obj.qrcode
 
                 response.code = code
                 response.msg = msg
-                response.data = data
+                response.data = ret_data
 
             # 获取代码模板库中的所有小程序代码模板
             elif oper_type == 'get_code':
