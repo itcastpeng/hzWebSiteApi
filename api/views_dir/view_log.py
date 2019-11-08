@@ -12,35 +12,7 @@ def view_log_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "POST":
-        objs = models.Page.objects.filter(create_datetime__isnull=False)
-        for obj in objs:
-            print('obj.id---------> ', obj.id)
-            data = json.loads(obj.data)
-            data['setting'] = [
-                {
-                    'title':'侧停分享',
-                    'disabled': True,
-                    'check': True,
-                    'tpye':'shareSelect'
-                },{
-                    'title':'侧停客服',
-                    'disabled': 'false',
-                    'check': True,
-                    'tpye':'customerSelect'
-                },{
-                    'title':'侧停技术支持',
-                    'disabled': True,
-                    'check': True,
-                    'tpye':'supportSelect'
-                },{
-                    'title':'制作信息',
-                    'disabled': True,
-                    'check': True,
-                    'tpye':'makeSelect'
-                },
-            ]
-            obj.data = json.dumps(data)
-            obj.save()
+        pass
 
 
     else:
@@ -102,12 +74,13 @@ def xcx_view_log_oper(request, oper_type):
         if oper_type == 'record_log':
 
             template_id = request.GET.get('template_id')
-
+            log_type = request.GET.get('log_type', 1)
             source = request.GET.get('source', 1) # 1微信小程序 2百度小程序
             log_data = {
                 'user_id':user_id,
                 'template_id':template_id,
-                'source':source
+                'source':source,
+                'log_type': log_type
             }
             if source in [1, '1']:
                 applet_objs = models.ClientApplet.objects.filter(template_id=template_id)
@@ -117,6 +90,9 @@ def xcx_view_log_oper(request, oper_type):
                 log_data['baidu_client_applet_id'] = applet_objs[0].id
 
             models.ViewCustomerSmallApplet.objects.create(**log_data) # 记录日志
+
+            response.code = 200
+            response.msg = '记录成功'
 
         else:
             response.code = 402

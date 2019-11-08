@@ -406,6 +406,10 @@ class ViewCustomerSmallApplet(models.Model):
         (2, '百度小程序')
     )
     source = models.SmallIntegerField(verbose_name='客户来源', choices=source_choices, default=1)
+    log_type_choices = (
+        (1, '查看小程序'),
+    )
+    log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
