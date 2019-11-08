@@ -143,6 +143,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('30', '0', '*', '*', '*'),
     },
 
+    #
+    'test_time_zone': {
+        'task': 'hz_website_api_celery.tasks.test_time_zone',
+        'schedule': crontab('10', '16', '*', '*', '*'),
+    },
+
 }
 app.conf.update(
     result_expires=3600,
