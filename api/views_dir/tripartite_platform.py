@@ -291,13 +291,20 @@ def tripartite_platform_oper(request, oper_type):
                 user_obj = models.UserProfile.objects.get(id=user_id)
                 baidu_appid = request.GET.get('baidu_appid')
                 user_desc = request.GET.get('user_desc')
-                xcx_code = ''
+                code = 200
+                msg = '查询成功'
                 data_dict = {
                     'user_desc': user_desc,
                     'user_id': user_id,
                     'user_token': user_obj.token,
                 }
+                data = {
+                    'xcx_code': '',
+                    'gzh_code': '',
+                    'baidu_xcx_code': ''
+                }
                 if appid:
+                    xcx_code = ''
                     get_experience_qr_code_template_id = ''
                     if not credential_expired_data.get('flag'): #
                         appid = 'wx700c48cb72073e61'
@@ -310,8 +317,6 @@ def tripartite_platform_oper(request, oper_type):
                         tripartite_platform_objs.xcx_update_code(data_dict)
                         data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)
 
-                        code = 200
-                        msg = '查询成功'
                         xcx_code = data.get('path')
                     else:
                         obj = models.ClientApplet.objects.get(id=credential_expired_data.get('id'))
@@ -335,7 +340,7 @@ def tripartite_platform_oper(request, oper_type):
                         else:
                             code = 301
                             msg = '请先绑定模板'
-
+                    data['xcx_code'] = xcx_code
                 # 百度小程序
                 baidu_xcx_qrcode = ''
                 if baidu_appid:
@@ -358,13 +363,11 @@ def tripartite_platform_oper(request, oper_type):
                     response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
                     package_id = response_data.data[0].get('package_id')
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, baidu_objs[0].access_token)
+                    data['baidu_xcx_code'] = baidu_xcx_qrcode
+                if get_experience_qr_code_template_id:
+                    template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
+                    data['gzh_code'] = template_obj.qrcode
 
-                template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
-                data = {
-                    'xcx_code': xcx_code,
-                    'gzh_code': template_obj.qrcode,
-                    'baidu_xcx_code': baidu_xcx_qrcode
-                }
                 response.code = code
                 response.msg = msg
                 response.data = data
