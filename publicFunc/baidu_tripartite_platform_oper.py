@@ -116,7 +116,7 @@ class tripartite_platform_oper():
         ext_json = {
             # "extEnable": True,
             "extAppid": data.get('appid'),
-            # "directCommit": False,
+            "directCommit": data.get('whether_audit'),
             "ext": {
                 'template_id': data.get('id'),  # 小程序ID 查询改小程序模板
                 'user_id': 4,

@@ -59,27 +59,32 @@ def tripartite_platform_oper(request, oper_type):
             xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token) # 查询小程序包
             response.code = 200
             response.msg = '成功'
-            flag = False
-            if len(xiaochengxu_data.data) > 0:
-                status = xiaochengxu_data.data[0].get('status')
-                if status != '开发版本':
-                    flag = True
-            else:
-                flag = True
+            # flag = False
+            # if len(xiaochengxu_data.data) > 0:
+            #     status = xiaochengxu_data.data[0].get('status')
+            #     if status != '开发版本':
+            #         flag = True
+            # else:
+            #     flag = True
+            #
+            # if flag:
+            whether_audit = request.GET.get('whether_audit')
+            if not whether_audit:
+                whether_audit = False
 
-            if flag:
-                current_page = request.GET.get('current_page', 1)
-                length = request.GET.get('length', 10)
-                response = tripartite_platform_oper.get_template_list(current_page, length)
-                response_data = response.data.get('list')[0]
-                data = {
-                    'appid': appid,
-                    'token': token,
-                    'version': response_data.get('user_version'),
-                    'template_id': response_data.get('template_id'),
-                }
-                response = tripartite_platform_oper.upload_small_program_code(data)
-                time.sleep(3)
+            current_page = request.GET.get('current_page', 1)
+            length = request.GET.get('length', 10)
+            response = tripartite_platform_oper.get_template_list(current_page, length)
+            response_data = response.data.get('list')[0]
+            data = {
+                'appid': appid,
+                'token': token,
+                'version': response_data.get('user_version'),
+                'template_id': response_data.get('template_id'),
+            }
+            data['whether_audit'] = whether_audit
+            response = tripartite_platform_oper.upload_small_program_code(data)
+            time.sleep(3)
 
         # 删除模板
         elif oper_type == 'delete_template':
