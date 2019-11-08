@@ -251,7 +251,9 @@ class tripartite_platform_oper():
         post_data = {
             'package_id': package_id,
         }
+        print('package_id=------------------------------------------> ', package_id)
         ret = requests.post(url, data=post_data)
+        print('r发布已审核的小程序et.json()--------------------> ', ret.json())
         response = Response.ResponseObj()
         code = 301
         msg = ret.json().get('error_msg')
