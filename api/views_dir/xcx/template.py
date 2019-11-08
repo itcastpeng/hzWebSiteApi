@@ -15,9 +15,25 @@ def template(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     if request.method == "GET":
+        template_id = request.GET.get('template_id')
+        source = request.GET.get('source', 1) # 1微信小程序 2百度小程序
+        log_data = {
+            'user_id':user_id,
+            'template_id':template_id,
+            'source':source
+        }
+        if source in [1, '1']:
+            applet_objs = models.ClientApplet.objects.filter(template_id=template_id)
+            log_data['client_applet_id'] = applet_objs[0].id
+        else:
+            applet_objs = models.BaiduSmallProgramManagement.objects.filter(template_id=template_id)
+            log_data['baidu_client_applet_id'] = applet_objs[0].id
+
+        models.ViewCustomerSmallApplet.objects.create(**log_data) # 记录日志
+
         if oper_type == "get_tabbar_data":
             form_data = {
-                'template_id': request.GET.get('template_id'),
+                'template_id': template_id,
             }
             print('form_data -->', form_data)
             forms_obj = GetTabbarDataForm(form_data)
@@ -26,7 +42,6 @@ def template(request, oper_type):
                 objs = models.Template.objects.filter(id=template_id)
 
                 if objs:
-                    models.ViewCustomerSmallApplet.objects.create(user_id=user_id, template_id=template_id) # 记录日志
 
                     # 首页页面对象
                     first_page_obj = models.Page.objects.filter(page_group__template_id=template_id)[0]
