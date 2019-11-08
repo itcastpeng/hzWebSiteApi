@@ -346,8 +346,8 @@ class tripartite_platform_oper():
                 'extAppid':appid,   #授权方APPID
                 'ext':{           # 自定义字段 可在小程序调用
                     'template_id': id, #小程序ID 查询改小程序模板
-                    'user_id': 4,
-                    'token': 'f0b813db005dd5273cd9d6129c75fc4c',
+                    'user_id': user_id,
+                    'token': user_token,
                 },
                 # 'extPages':{      # 页面配置
                 #     "index":{
