@@ -119,8 +119,8 @@ class tripartite_platform_oper():
             # "directCommit": False,
             "ext": {
                 'template_id': data.get('id'),  # 小程序ID 查询改小程序模板
-                'user_id': data.get('user_id'),
-                'token': data.get('user_token'),
+                'user_id': 4,
+                'token': 'f0b813db005dd5273cd9d6129c75fc4c',
             },
             "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
                 # "backgroundTextStyle": "light",

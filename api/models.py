@@ -378,6 +378,7 @@ class Customer(models.Model):
         (2, "女"),
     )
     sex = models.SmallIntegerField(verbose_name="性别", choices=sex_choices, null=True, blank=True)
+    name = models.CharField(verbose_name="名称", max_length=128, blank=True)
     country = models.CharField(verbose_name="国家", max_length=128, null=True, blank=True)
     province = models.CharField(verbose_name="省份", max_length=128, null=True, blank=True)
     city = models.CharField(verbose_name="城市", max_length=128, null=True, blank=True)
@@ -397,7 +398,14 @@ class Customer(models.Model):
 # 查看小程序信息
 class ViewCustomerSmallApplet(models.Model):
     customer = models.ForeignKey('Customer', verbose_name='客户', null=True)
-    client_applet = models.ForeignKey('ClientApplet', verbose_name='查看的小程序', null=True)
+    client_applet = models.ForeignKey('ClientApplet', verbose_name='查看的微信小程序', null=True)
+    baidu_client_applet = models.ForeignKey('BaiduSmallProgramManagement', verbose_name='查看的百度小程序', null=True)
+    template = models.ForeignKey('Template', verbose_name='模板', null=True)
+    source_choices = (
+        (1, '微信小程序'),
+        (2, '百度小程序')
+    )
+    source = models.SmallIntegerField(verbose_name='客户来源', choices=source_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
