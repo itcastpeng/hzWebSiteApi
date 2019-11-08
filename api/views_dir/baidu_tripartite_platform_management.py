@@ -68,7 +68,7 @@ def tripartite_platform_oper(request, oper_type):
             #     flag = True
             #
             # if flag:
-            whether_audit = request.GET.get('whether_audit')
+            whether_audit = request.POST.get('whether_audit')
             if not whether_audit:
                 whether_audit = False
 
