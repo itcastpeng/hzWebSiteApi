@@ -127,156 +127,173 @@ def wechat(request):
             collection = DOMTree.documentElement
             print('collection -->', collection)
 
-            # 事件类型
-            event = collection.getElementsByTagName("Event")[0].childNodes[0].data
-            print("event -->", event)
-
             # 用户的 openid
             openid = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
 
-            user_is_exists = False
-            if models.UserProfile.objects.filter(openid=openid):
-                user_is_exists = True
+            # 事件类型
+            msg_type = collection.getElementsByTagName("MsgType")[0].childNodes[0].data
+            if msg_type == 'event':
+                # 事件类型
+                event = collection.getElementsByTagName("Event")[0].childNodes[0].data
+                print("event -->", event)
 
-            # 扫描带参数的二维码
-            if event in ["subscribe", "SCAN"]:
-                # subscribe = 首次关注
-                # SCAN = 已关注
-                # 事件 Key 值
-                ret_obj = weichat_api_obj.get_user_info(openid=openid)
 
-                event_key = collection.getElementsByTagName("EventKey")[0].childNodes[0].data
-                if event == "subscribe":
-                    event_key = event_key.split("qrscene_")[-1]
-                event_key = json.loads(event_key)
-                timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
-                inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
-                new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+                user_is_exists = False
+                if models.UserProfile.objects.filter(openid=openid):
+                    user_is_exists = True
 
-                # ========================转接=================================
-                transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
-                xcx_id = event_key.get('xcx_id')  # 单独转接ID
-                token = event_key.get('token')  # 转接人token
-                if transfer_user_id and token:
-                    user_obj = models.UserProfile.objects.get(id=new_user_id)
-                    if user_obj.inviter:
-                        post_data = {
-                            "touser": openid,
-                            "msgtype": "text",
-                            "text": {
-                                "content": '您无权接受他人账号'
-                            }
-                        }
-                    else:
-                        time_stamp = event_key.get('time_stamp')
-                        transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
-                        if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
-                            transfer_objs.update(
-                                by_connecting_people_id=new_user_id,
-                                whether_transfer_successful=2
-                            )
-                            weichat_api_obj = WeChatApi()
-                            url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}&xcx_id={}'.format(
-                                transfer_user_id,
-                                new_user_id,
-                                token,
-                                xcx_id
-                            )
+                # 扫描带参数的二维码
+                if event in ["subscribe", "SCAN"]:
+                    # subscribe = 首次关注
+                    # SCAN = 已关注
+                    # 事件 Key 值
+                    ret_obj = weichat_api_obj.get_user_info(openid=openid)
+
+                    event_key = collection.getElementsByTagName("EventKey")[0].childNodes[0].data
+                    if event == "subscribe":
+                        event_key = event_key.split("qrscene_")[-1]
+                    event_key = json.loads(event_key)
+                    timestamp = event_key.get('timestamp')  # 时间戳，用于判断是否扫码登录
+                    inviter_user_id = event_key.get('inviter_user_id')      # 邀请人id
+                    new_user_id = update_user_info(openid, ret_obj, timestamp=timestamp, inviter_user_id=inviter_user_id)
+
+                    # ========================转接=================================
+                    transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
+                    xcx_id = event_key.get('xcx_id')  # 单独转接ID
+                    token = event_key.get('token')  # 转接人token
+                    if transfer_user_id and token:
+                        user_obj = models.UserProfile.objects.get(id=new_user_id)
+                        if user_obj.inviter:
                             post_data = {
                                 "touser": openid,
-                                "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
-                                "news": {
-                                    "articles": [
-                                        {
-                                            "title": '{}请求将建站数据转接给您'.format(base64_encryption.b64decode(transfer_objs[0].speak_to_people.name)),
-                                            "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
-                                            "url": url,
-                                            # "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
-                                            "picurl": transfer_objs[0].speak_to_people.head_portrait
-                                        }
-                                    ]
+                                "msgtype": "text",
+                                "text": {
+                                    "content": '您无权接受他人账号'
                                 }
                             }
                         else:
-                            if transfer_objs:
-                                content = '二维码异常, 请刷新'
-
+                            time_stamp = event_key.get('time_stamp')
+                            transfer_objs = models.Transfer.objects.filter(speak_to_people_id=transfer_user_id, timestamp=time_stamp)
+                            if transfer_objs and transfer_objs[0].whether_transfer_successful not in [3, '3']:
+                                transfer_objs.update(
+                                    by_connecting_people_id=new_user_id,
+                                    whether_transfer_successful=2
+                                )
+                                weichat_api_obj = WeChatApi()
+                                url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}&xcx_id={}'.format(
+                                    transfer_user_id,
+                                    new_user_id,
+                                    token,
+                                    xcx_id
+                                )
+                                post_data = {
+                                    "touser": openid,
+                                    "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                                    "news": {
+                                        "articles": [
+                                            {
+                                                "title": '{}请求将建站数据转接给您'.format(base64_encryption.b64decode(transfer_objs[0].speak_to_people.name)),
+                                                "description": '如果您接收了数据转接, 发起人的所有数据 将同步到您的账户下',
+                                                "url": url,
+                                                # "picurl": 'http://tianyan.zhugeyingxiao.com/合众logo.png'
+                                                "picurl": transfer_objs[0].speak_to_people.head_portrait
+                                            }
+                                        ]
+                                    }
+                                }
                             else:
-                                content = '二维码已过期, 请刷新'
+                                if transfer_objs:
+                                    content = '二维码异常, 请刷新'
 
+                                else:
+                                    content = '二维码已过期, 请刷新'
+
+                                post_data = {
+                                    "touser": openid,
+                                    "msgtype": "text",
+                                    "text": {
+                                        "content": content
+                                    }
+                                }
+                        post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                        weichat_api_obj.news_service(post_data)
+
+                    # =========================创建子级=================
+                    parent_id = event_key.get('parent_id')  # 父级ID
+                    if parent_id:
+                        if int(parent_id) == int(new_user_id): # 不能转接给自己
                             post_data = {
                                 "touser": openid,
                                 "msgtype": "text",
                                 "text": {
-                                    "content": content
+                                    "content": '不可转接给自己'
                                 }
                             }
-                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
-                    weichat_api_obj.news_service(post_data)
-
-                # =========================创建子级=================
-                parent_id = event_key.get('parent_id')  # 父级ID
-                if parent_id:
-                    InviteTheChildObjs = models.InviteTheChild.objects.filter(
-                        timestamp=timestamp
-                    ).update(
-                        whether_transfer_successful=2,
-                        child_id=new_user_id
-                    )
-                    if InviteTheChildObjs:
-                        parent_user_obj = models.UserProfile.objects.get(id=parent_id)
-                        chil_user_count = models.UserProfile.objects.filter(
-                            inviter_id=parent_id
-                        ).count()
-                        if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
-                            user_obj = models.UserProfile.objects.get(id=new_user_id)
-                            url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}&token={}'.format(
-                                parent_id,
-                                new_user_id,
-                                user_is_exists,
-                                timestamp,
-                                user_obj.token
-                            )
-                            post_data = {
-                                "touser": openid,
-                                "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
-                                "news": {
-                                    "articles": [
-                                        {
-                                            "title": '我是{} 加入我的团队吧'.format(
-                                                base64_encryption.b64decode(parent_user_obj.name),
-                                            ),
-                                            "description": '加入团队将看到邀请人所有数据',
-                                            "url": url,
-                                            "picurl": parent_user_obj.head_portrait
-                                        }
-                                    ]
-                                }
-                            }
-
                         else:
-                            post_data = {
-                                "touser": openid,
-                                "msgtype": "text",
-                                "text": {
-                                    "content": '邀请人子级用户达到上限'
-                                }
-                            }
-                    else:
-                        post_data = {
-                            "touser": openid,
-                            "msgtype": "text",
-                            "text": {
-                                "content": '未找到二维码信息'
-                            }
-                        }
-                    post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
-                    weichat_api_obj.news_service(post_data)
-            # 取消关注
-            elif event == "unsubscribe":
-                models.UserProfile.objects.filter(openid=openid).update(openid=None)
+                            InviteTheChildObjs = models.InviteTheChild.objects.filter(
+                                timestamp=timestamp
+                            ).update(
+                                whether_transfer_successful=2,
+                                child_id=new_user_id
+                            )
+                            if InviteTheChildObjs:
+                                parent_user_obj = models.UserProfile.objects.get(id=parent_id)
+                                chil_user_count = models.UserProfile.objects.filter(
+                                    inviter_id=parent_id
+                                ).count()
+                                if parent_user_obj.number_child_users > chil_user_count:  # 如果可创建数量 大于 已创建数量
+                                    user_obj = models.UserProfile.objects.get(id=new_user_id)
+                                    url = 'https://xcx.bjhzkq.com/joinTeam?parent_id={}&new_user_id={}&user_is_exists={}&timestamp={}&token={}'.format(
+                                        parent_id,
+                                        new_user_id,
+                                        user_is_exists,
+                                        timestamp,
+                                        user_obj.token
+                                    )
+                                    post_data = {
+                                        "touser": openid,
+                                        "msgtype": "news",  # 图文消息 图文消息条数限制在1条以内，注意，如果图文数超过1，则将会返回错误码45008。
+                                        "news": {
+                                            "articles": [
+                                                {
+                                                    "title": '我是{} 加入我的团队吧'.format(
+                                                        base64_encryption.b64decode(parent_user_obj.name),
+                                                    ),
+                                                    "description": '加入团队将看到邀请人所有数据',
+                                                    "url": url,
+                                                    "picurl": parent_user_obj.head_portrait
+                                                }
+                                            ]
+                                        }
+                                    }
 
-                # we_chat_public_send_msg_obj.sendTempMsg(post_data)
+                                else:
+                                    post_data = {
+                                        "touser": openid,
+                                        "msgtype": "text",
+                                        "text": {
+                                            "content": '邀请人子级用户达到上限'
+                                        }
+                                    }
+                            else:
+                                post_data = {
+                                    "touser": openid,
+                                    "msgtype": "text",
+                                    "text": {
+                                        "content": '未找到二维码信息'
+                                    }
+                                }
+                        post_data = bytes(json.dumps(post_data, ensure_ascii=False), encoding='utf-8')
+                        weichat_api_obj.news_service(post_data)
+                # 取消关注
+                elif event == "unsubscribe":
+                    models.UserProfile.objects.filter(openid=openid).update(openid=None)
+
+                    # we_chat_public_send_msg_obj.sendTempMsg(post_data)
+
+            # 公众号收到消息
+            elif msg_type == 'text':
+                Content = collection.getElementsByTagName("Content")[0].childNodes[0].data
 
             return HttpResponse("")
 
