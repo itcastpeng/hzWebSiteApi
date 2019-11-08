@@ -56,18 +56,8 @@ def tripartite_platform_oper(request, oper_type):
 
         # 未授权的小程序账号上传小程序代码(提交代码包)
         elif oper_type == 'upload_small_program_code':
-            xiaochengxu_data = tripartite_platform_oper.gets_list_small_packages(token) # 查询小程序包
             response.code = 200
             response.msg = '成功'
-            # flag = False
-            # if len(xiaochengxu_data.data) > 0:
-            #     status = xiaochengxu_data.data[0].get('status')
-            #     if status != '开发版本':
-            #         flag = True
-            # else:
-            #     flag = True
-            #
-            # if flag:
             whether_audit = request.POST.get('whether_audit')
             if not whether_audit:
                 whether_audit = False
@@ -191,7 +181,7 @@ def tripartite_platform_oper(request, oper_type):
             flag = False
             msg = '可以审核'
             for data in response_data.data:
-                if data.get('status') in [4, '4', 8, '8']:
+                if data.get('status') == '审核中':
                     flag = True
                     msg = '不可提交审核'
                     break
