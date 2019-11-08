@@ -17,65 +17,32 @@ page_base_data = {
         }
     },
     'itemData': [],
-    'selectedTabBar': True
-}
-#
-# @account.is_token(models.UserProfile)
-# def page(request):
-#     response = Response.ResponseObj()
-#     if request.method == "GET":
-#         forms_obj = SelectForm(request.GET)
-#         if forms_obj.is_valid():
-#             current_page = forms_obj.cleaned_data['current_page']
-#             length = forms_obj.cleaned_data['length']
-#             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
-#             order = request.GET.get('order', '-create_datetime')
-#             field_dict = {
-#                 'id': '',
-#                 'template_id': '',
-#                 'name': '__contains',
-#                 'create_datetime': '',
-#             }
-#             q = conditionCom(request, field_dict)
-#             print('q -->', q)
-#             objs = models.Page.objects.filter(q).order_by(order)
-#             count = objs.count()
-#
-#             if length != 0:
-#                 start_line = (current_page - 1) * length
-#                 stop_line = start_line + length
-#                 objs = objs[start_line: stop_line]
-#
-#             # 返回的数据
-#             ret_data = []
-#
-#             for obj in objs:
-#
-#                 #  将查询出来的数据 加入列表
-#                 ret_data.append({
-#                     'id': obj.id,
-#                     'name': obj.name,
-#                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-#                 })
-#             #  查询成功 返回200 状态码
-#             response.code = 200
-#             response.msg = '查询成功'
-#             response.data = {
-#                 'ret_data': ret_data,
-#                 'data_count': count,
-#             }
-#             response.note = {
-#                 'id': "页面分组id",
-#                 'name': '页面分组名称',
-#                 'create_datetime': '创建时间',
-#             }
-#         else:
-#             response.code = 402
-#             response.msg = "请求异常"
-#             response.data = json.loads(forms_obj.errors.as_json())
-#     return JsonResponse(response.__dict__)
-#
+    'selectedTabBar': True,
+    'setting':[
+        {
+            'title':'侧停分享',
+            'disabled': True,
+            'check': True,
+            'tpye':'shareSelect'
+        },{
+            'title':'侧停客服',
+            'disabled': 'false',
+            'check': True,
+            'tpye':'customerSelect'
+        },{
+            'title':'侧停技术支持',
+            'disabled': True,
+            'check': True,
+            'tpye':'supportSelect'
+        },{
+            'title':'制作信息',
+            'disabled': True,
+            'check': True,
+            'tpye':'makeSelect'
+        },
+    ]
 
+}
 
 @account.is_token(models.UserProfile)
 def page_oper(request, oper_type, o_id):
