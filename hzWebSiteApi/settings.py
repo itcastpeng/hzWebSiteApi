@@ -168,8 +168,7 @@ USE_L10N = True
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Shanghai'
 USE_TZ = False
-CELERY_TIMEZONE = 'Asia/Shanghai'
-CELERY_ENABLE_UTC = False
+
 
 
 # Static files (CSS, JavaScript, Images)
