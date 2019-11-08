@@ -78,6 +78,9 @@ urlpatterns = [
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
     url(r'^xcx/business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_business_card_management.business_card_management_oper),  # 小程序名片管理
 
+    url(r'^xcx/log/(?P<oper_type>\w+)$', view_log.view_log_oper),  # 获取页面数据
+
+
     # ------------------------------------ 表单管理 -------------------------------
     url(r'^xcx/form_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', form_management.form_management_oper),
     url(r'^xcx/form_management$', form_management.form_management),

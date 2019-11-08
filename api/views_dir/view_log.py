@@ -49,3 +49,33 @@ def view_log_oper(request, oper_type):
             response.code = 402
             response.msg = "请求异常"
     return JsonResponse(response.__dict__)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @account.is_token(models.UserProfile)
+def xcx_log_oper(request, oper_type):
+
+    if request.method == 'POST':
+        pass
+
+    else:
+        pass

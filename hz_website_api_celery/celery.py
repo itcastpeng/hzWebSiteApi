@@ -16,8 +16,8 @@ app = Celery(
 
 )
 # app.conf.enable_utc = False
-# app.conf.timezone = "Asia/Shanghai"
-# CELERYD_FORCE_EXECV = True           # 非常重要,有些情况下可以防止死锁
+app.conf.timezone = "Asia/Shanghai"
+CELERYD_FORCE_EXECV = True           # 非常重要,有些情况下可以防止死锁
 # CELERYD_MAX_TASKS_PER_CHILD = 100    # 每个worker最多执行万100个任务就会被销毁，可防止内存泄露
 app.conf.beat_schedule = {
 
@@ -146,7 +146,7 @@ app.conf.beat_schedule = {
     #
     'test_time_zone': {
         'task': 'hz_website_api_celery.tasks.test_time_zone',
-        'schedule': crontab('10', '16', '*', '*', '*'),
+        'schedule': crontab('40', '16', '*', '*', '*'),
     },
 
 }
