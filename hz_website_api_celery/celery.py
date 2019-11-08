@@ -140,7 +140,7 @@ app.conf.beat_schedule = {
     # 定时删除收录  每天12点半 执行
     'timed_deletion': {
         'task': 'hz_website_api_celery.tasks.timed_deletion',
-        'schedule': crontab('30', '0', '*', '*', '*'),
+        'schedule': crontab('30', '16', '*', '*', '*'),
     },
 
 }
