@@ -532,7 +532,11 @@ def template_oper(request, oper_type, o_id):
                     'my':obj.my,
                     'article_details':obj.article_details,
                     'service_details':obj.service_details,
-                    'information_details':obj.information_details,
+                    'submit_form':obj.submit_form,
+                    'submit_article':obj.submit_article,
+                    'submit_service_order':obj.submit_service_order,
+                    'vote':obj.vote,
+                    'share_page':obj.share_page,
                 }
                 response.code = 200
                 response.msg = '查询成功'
@@ -547,7 +551,11 @@ def template_oper(request, oper_type, o_id):
                 'my': '我的',
                 'article_details': '文章详情',
                 'service_details': '服务详情',
-                'information_details': '信息详情',
+                'submit_form': '提交表单',
+                'submit_article': '提交文章',
+                'submit_service_order': '提交服务订单',
+                'vote': '投票',
+                'share_page': '分享页面',
             }
 
         else:

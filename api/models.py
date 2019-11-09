@@ -140,7 +140,12 @@ class Template(models.Model):
     my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
     article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
     service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
-    information_details = models.SmallIntegerField(verbose_name='信息详情', choices=card_details_choices, default=1)
+    submit_form = models.SmallIntegerField(verbose_name='提交表单', choices=card_details_choices, default=1)
+    submit_article = models.SmallIntegerField(verbose_name='提交文章', choices=card_details_choices, default=1)
+    submit_service_order = models.SmallIntegerField(verbose_name='提交服务订单', choices=card_details_choices, default=1)
+    vote = models.SmallIntegerField(verbose_name='投票', choices=card_details_choices, default=1)
+    share_page = models.SmallIntegerField(verbose_name='分享页面', choices=card_details_choices, default=1)
+
 
 
 # 页面分组表
@@ -430,7 +435,11 @@ class ViewCustomerSmallApplet(models.Model):
         (5, '我的'),
         (6, '文章详情'),
         (7, '服务详情'),
-        (8, '信息详情'),
+        (9, '提交表单'),
+        (10, '提交文章'),
+        (11, '提交服务订单'),
+        (12, '投票'),
+        (13, '分享页面'),
     )
     log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

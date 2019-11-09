@@ -79,5 +79,44 @@ def template(request, oper_type):
             else:
                 response.code = 402
                 response.msg = "请求异常"
+
+        # 查询场景值
+        elif oper_type == 'query_triggered_logging_scenario':
+            template_id = request.GET.get('template_id')
+            objs = models.Template.objects.filter(id=template_id)
+            if objs:
+                obj = objs[0]
+                ret_data = {
+                    'card_details': obj.card_details,
+                    'save_address_book': obj.save_address_book,
+                    'make_phone_call': obj.make_phone_call,
+                    'my': obj.my,
+                    'article_details': obj.article_details,
+                    'service_details': obj.service_details,
+                    'submit_form': obj.submit_form,
+                    'submit_article': obj.submit_article,
+                    'submit_service_order': obj.submit_service_order,
+                    'vote': obj.vote,
+                    'share_page': obj.share_page,
+                }
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = ret_data
+            else:
+                response.code = 301
+                response.msg = '模板错误'
+            response.note = {
+                'card_details': '进入名片详情',
+                'save_address_book': '保存通讯录',
+                'make_phone_call': '拨打电话',
+                'my': '我的',
+                'article_details': '文章详情',
+                'service_details': '服务详情',
+                'submit_form': '提交表单',
+                'submit_article': '提交文章',
+                'submit_service_order': '提交服务订单',
+                'vote': '投票',
+                'share_page': '分享页面',
+            }
     return JsonResponse(response.__dict__)
 
