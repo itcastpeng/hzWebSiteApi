@@ -93,6 +93,7 @@ def template(request, oper_type):
                     'name_my': obj.name_my,
                     'name_article_details': obj.name_article_details,
                     'name_service_details': obj.name_service_details,
+                    'name_share_page': obj.name_share_page,
 
                     'phone_card_details': obj.phone_card_details,
                     'phone_save_address_book': obj.phone_save_address_book,
@@ -119,6 +120,7 @@ def template(request, oper_type):
                 'name_my': '我的',
                 'name_article_details': '文章详情',
                 'name_service_details': '服务详情',
+                'name_share_page': '分享页面',
 
                 'phone_card_details': '进入名片详情',
                 'phone_save_address_book': '保存通讯录',
