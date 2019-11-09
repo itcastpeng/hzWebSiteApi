@@ -5,8 +5,8 @@ from publicFunc.condition_com import conditionCom
 from api.forms.xcx.business_card_management import SelectForm
 from PIL import Image, ImageFont, ImageDraw
 from PIL import Image
-from publicFunc.public import upload_qiniu
-import json, time
+from publicFunc.public import upload_qiniu, requests_img_download
+import json, time, os
 
 
 
@@ -33,7 +33,8 @@ def business_card_management_oper(request, oper_type):
             address = obj.address                           # 地址
             dibu = '长按识别小程序码, 马上认识我'
 
-            im1 = Image.open('1.jpg')
+            heading_path = requests_img_download(obj.heading) # 下载头像
+            im1 = Image.open(heading_path)
             im2 = Image.open('2.jpg')
 
             huabu_x = 375  # 画布宽度
@@ -82,6 +83,8 @@ def business_card_management_oper(request, oper_type):
             path = upload_qiniu(key, 500)
             obj.card_poster = path
             obj.save()
+            if os.path.exists(heading_path):
+                os.remove(heading_path)  # 删除本地图片
             response.code = 200
             response.msg = '完成'
         else:
