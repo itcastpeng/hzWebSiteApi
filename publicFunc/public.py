@@ -193,7 +193,7 @@ def get_qrcode(qrcode_path):
 
 def requests_img_download(old_url):
     ret = requests.get(old_url)
-    path = os.path.join('statics', 'img', randon_str() + '.png')
+    path = os.path.join('statics', 'imgs', randon_str() + '.png')
     with open(path, 'wb') as e:
         e.write(ret.content)
     return path
