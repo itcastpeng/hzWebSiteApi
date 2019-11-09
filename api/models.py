@@ -140,6 +140,7 @@ class Template(models.Model):
     name_my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
     name_article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
     name_service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
+    name_share_page = models.SmallIntegerField(verbose_name='分享页面', choices=card_details_choices, default=1)
 
     phone_card_details = models.SmallIntegerField(verbose_name='进入名片详情', choices=card_details_choices, default=1)
     phone_save_address_book = models.SmallIntegerField(verbose_name='保存通讯录', choices=card_details_choices, default=1)
