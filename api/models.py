@@ -230,6 +230,8 @@ class BusinessCard(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name='创建人', null=True)
     create_date = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
     template = models.ForeignKey('Template', verbose_name='模板', null=True)
+    card_poster = models.CharField(verbose_name='海报图片', max_length=256, null=True)
+
 
 # 服务 表
 class ServiceTable(models.Model):

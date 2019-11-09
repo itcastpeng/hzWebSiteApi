@@ -722,6 +722,10 @@ def test_time_zone(): # ceshi
     print('===================================================')
 
 
+@app.task
+def generate_business_card_poster(card_id): # 生成海报
+    url = 'https://xcx.bjhzkq.com/api/celery/generate_business_card_poster?card_id={}'.format(card_id)
+    requests.get(url)
 
 
 

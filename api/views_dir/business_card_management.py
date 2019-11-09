@@ -3,6 +3,7 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
 from api.forms.business_card_management import AddForm, UpdateForm, SelectForm
+from hz_website_api_celery.tasks import generate_business_card_poster
 import json
 
 # 名片
@@ -103,6 +104,8 @@ def business_card_management_oper(request, oper_type, o_id):
                 response.code = 200
                 response.msg = "添加成功"
                 response.data = {'testCase': obj.id}
+                # 生成海报
+                generate_business_card_poster.delay(obj.id)
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
@@ -129,6 +132,9 @@ def business_card_management_oper(request, oper_type, o_id):
                 models.BusinessCard.objects.filter(id=o_id).update(**update_data)
                 response.code = 200
                 response.msg = "修改成功"
+
+                # 生成海报
+                generate_business_card_poster.delay(o_id)
 
             else:
                 response.code = 301
