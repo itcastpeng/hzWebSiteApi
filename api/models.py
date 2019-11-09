@@ -125,8 +125,23 @@ class Template(models.Model):
     xcx_qrcode = models.CharField(verbose_name='体验二维码小程序', max_length=512, null=True)
     baidu_xcx_qrcode = models.CharField(verbose_name='体验二维码百度小程序', max_length=512, null=True)
     common_components = models.TextField(verbose_name='公用组件', default='')
-     # ----------------------------------名片数据---------------------------------------
+    # ----------------------------------名片数据---------------------------------------
     enterprise_name = models.CharField(verbose_name='企业名称', max_length=64, null=True)
+
+    # ----------------------------------模板记录日志 触发场景---------------------------# 是否触发日志
+    card_details_choices = (
+        (1, '不触发'),
+        (2, '引导授权'),
+        (3, '强制授权'),
+    )
+    card_details = models.SmallIntegerField(verbose_name='进入名片详情', choices=card_details_choices, default=1)
+    save_address_book = models.SmallIntegerField(verbose_name='保存通讯录', choices=card_details_choices, default=1)
+    make_phone_call = models.SmallIntegerField(verbose_name='拨打电话', choices=card_details_choices, default=1)
+    my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
+    article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
+    service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
+    information_details = models.SmallIntegerField(verbose_name='信息详情', choices=card_details_choices, default=1)
+
 
 # 页面分组表
 class PageGroup(models.Model):
@@ -388,6 +403,7 @@ class Customer(models.Model):
     token = models.CharField(verbose_name="token值", max_length=128, null=True)
     phone = models.CharField(verbose_name='手机号', max_length=20, blank=True, null=True)
     session_key = models.TextField(verbose_name='session_key', null=True)
+    ip_address = models.CharField(verbose_name='IP地址', max_length=64, null=True)
     user_type_choices = (
         (1, '微信小程序'),
         (2, '微信公众号'),
@@ -408,6 +424,13 @@ class ViewCustomerSmallApplet(models.Model):
     source = models.SmallIntegerField(verbose_name='客户来源', choices=source_choices, default=1)
     log_type_choices = (
         (1, '查看小程序'),
+        (2, '进入名片详情'),
+        (3, '保存通讯录'),
+        (4, '拨打电话'),
+        (5, '我的'),
+        (6, '文章详情'),
+        (7, '服务详情'),
+        (8, '信息详情'),
     )
     log_type = models.SmallIntegerField(verbose_name='日志类型', choices=log_type_choices, default=1)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)

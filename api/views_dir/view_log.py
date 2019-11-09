@@ -4,6 +4,8 @@ from publicFunc import account
 from django.http import JsonResponse
 from api.forms.view_log import SelectForm
 from publicFunc.condition_com import conditionCom
+from django.db.models import Count
+from publicFunc.base64_encryption import b64decode
 import json
 
 
@@ -16,6 +18,8 @@ def view_log_oper(request, oper_type):
 
 
     else:
+
+        # 查询日志
         if oper_type == "get_view_data":
             form_objs = SelectForm(request.GET)
             if form_objs.is_valid():
@@ -25,9 +29,17 @@ def view_log_oper(request, oper_type):
                 field_dict = {
                     'id': '',
                     'client_applet_id': '',
+                    'source': '',
                 }
                 q = conditionCom(request, field_dict)
-                objs = models.ViewCustomerSmallApplet.objects.filter(q).order_by(order)
+                objs = models.ViewCustomerSmallApplet.objects.select_related(
+                    'customer'
+                ).filter(
+                    q
+                ).values(
+                    'customer_id', 'customer__name', 'source', 'customer__phone', 'customer__ip_address'
+                ).annotate(Count('id'))
+
                 if length != 0:
                     start_line = (current_page - 1) * length
                     stop_line = start_line + length
@@ -35,14 +47,46 @@ def view_log_oper(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
+                    customer_id = obj.get('customer_id')
+                    source = obj.get('source')
+                    objs_detail = models.ViewCustomerSmallApplet.objects.filter(
+                        customer_id=customer_id, source=source
+                    ).order_by('create_datetime')
+
                     ret_data.append({
-                        'customer_id': obj.customer_id,
-                        'customer_name': obj.customer,
+                        'intention_degree': 0,                              # 意向度
+                        'access_permissions': '',                           # 访问权限
+                        'visitors_id': customer_id,                         # 访客ID
+                        'visitors': b64decode(obj.get('customer__name')),   # 访客
+                        'terminal': obj.get('customer__ip_address'),        # 终端
+                        'mobile_phone': obj.get('customer__phone'),         # 手机
+                        'source_id': source,                                # 来源ID
+                        'source': objs_detail[0].get_source_display(),      # 来源
+                        'first_visit_to': objs_detail[0].create_datetime.strftime('%Y-%m-%d %H:%M:%S'), # 首次访问时间
+                        'last_active_time': objs_detail.order_by(
+                            '-create_datetime'
+                        )[0].create_datetime.strftime('%Y-%m-%d %H:%M:%S'),# 最近活跃时间
                     })
 
 
                 response.code = 200
-                response.msg = ''
+                response.msg = '查询成功'
+                response.data = {
+                    'count':'',
+                    'ret_data': ret_data
+                }
+                response.note = {
+                    'intention_degree': '意向度',
+                    'access_permissions': '访问权限',
+                    'visitors_id': '访客ID',
+                    'visitors': '访客',
+                    'terminal': '终端',
+                    'mobile_phone': '手机',
+                    'source_id': '来源ID',
+                    'source': '来源',
+                    'first_visit_to': '首次访问时间',
+                    'last_active_time': '最近活跃时间',
+                }
 
             else:
                 response.code = 301
