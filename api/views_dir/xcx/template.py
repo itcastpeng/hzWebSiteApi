@@ -87,17 +87,24 @@ def template(request, oper_type):
             if objs:
                 obj = objs[0]
                 ret_data = {
-                    'card_details': obj.card_details,
-                    'save_address_book': obj.save_address_book,
-                    'make_phone_call': obj.make_phone_call,
-                    'my': obj.my,
-                    'article_details': obj.article_details,
-                    'service_details': obj.service_details,
-                    'submit_form': obj.submit_form,
-                    'submit_article': obj.submit_article,
-                    'submit_service_order': obj.submit_service_order,
-                    'vote': obj.vote,
-                    'share_page': obj.share_page,
+                    'name_card_details': obj.name_card_details,
+                    'name_save_address_book': obj.name_save_address_book,
+                    'name_make_phone_call': obj.name_make_phone_call,
+                    'name_my': obj.name_my,
+                    'name_article_details': obj.name_article_details,
+                    'name_service_details': obj.name_service_details,
+
+                    'phone_card_details': obj.phone_card_details,
+                    'phone_save_address_book': obj.phone_save_address_book,
+                    'phone_make_phone_call': obj.phone_make_phone_call,
+                    'phone_my': obj.phone_my,
+                    'phone_article_details': obj.phone_article_details,
+                    'phone_service_details': obj.phone_service_details,
+                    'phone_submit_form': obj.phone_submit_form,
+                    'phone_submit_article': obj.phone_submit_article,
+                    'phone_submit_service_order': obj.phone_submit_service_order,
+                    'phone_vote': obj.phone_vote,
+                    'phone_share_page': obj.phone_share_page,
                 }
                 response.code = 200
                 response.msg = '查询成功'
@@ -106,17 +113,24 @@ def template(request, oper_type):
                 response.code = 301
                 response.msg = '模板错误'
             response.note = {
-                'card_details': '进入名片详情',
-                'save_address_book': '保存通讯录',
-                'make_phone_call': '拨打电话',
-                'my': '我的',
-                'article_details': '文章详情',
-                'service_details': '服务详情',
-                'submit_form': '提交表单',
-                'submit_article': '提交文章',
-                'submit_service_order': '提交服务订单',
-                'vote': '投票',
-                'share_page': '分享页面',
+                'name_card_details': '进入名片详情',
+                'name_save_address_book': '保存通讯录',
+                'name_make_phone_call': '拨打电话',
+                'name_my': '我的',
+                'name_article_details': '文章详情',
+                'name_service_details': '服务详情',
+
+                'phone_card_details': '进入名片详情',
+                'phone_save_address_book': '保存通讯录',
+                'phone_make_phone_call': '拨打电话',
+                'phone_my': '我的',
+                'phone_article_details': '文章详情',
+                'phone_service_details': '服务详情',
+                'phone_submit_form': '提交表单',
+                'phone_submit_article': '提交文章',
+                'phone_submit_service_order': '提交服务订单',
+                'phone_vote': '投票',
+                'phone_share_page': '分享页面',
             }
     return JsonResponse(response.__dict__)
 
