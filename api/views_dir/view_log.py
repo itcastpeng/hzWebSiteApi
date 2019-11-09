@@ -8,7 +8,7 @@ from django.db.models import Count
 from publicFunc.base64_encryption import b64decode
 import json
 
-
+# 后台操作
 @account.is_token(models.UserProfile)
 def view_log_oper(request, oper_type):
     response = Response.ResponseObj()
@@ -92,6 +92,7 @@ def view_log_oper(request, oper_type):
                 response.code = 301
                 response.msg = form_objs.errors.as_json()
 
+
         else:
             response.code = 402
             response.msg = "请求异常"
@@ -104,7 +105,7 @@ def view_log_oper(request, oper_type):
 
 
 
-
+# 小程序操作
 # @account.is_token(models.UserProfile)
 def xcx_view_log_oper(request, oper_type):
     user_id = request.GET.get('user_id')
@@ -137,6 +138,9 @@ def xcx_view_log_oper(request, oper_type):
 
             response.code = 200
             response.msg = '记录成功'
+
+
+
 
         else:
             response.code = 402
