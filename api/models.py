@@ -134,17 +134,24 @@ class Template(models.Model):
         (2, '引导授权'),
         (3, '强制授权'),
     )
-    card_details = models.SmallIntegerField(verbose_name='进入名片详情', choices=card_details_choices, default=1)
-    save_address_book = models.SmallIntegerField(verbose_name='保存通讯录', choices=card_details_choices, default=1)
-    make_phone_call = models.SmallIntegerField(verbose_name='拨打电话', choices=card_details_choices, default=1)
-    my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
-    article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
-    service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
-    submit_form = models.SmallIntegerField(verbose_name='提交表单', choices=card_details_choices, default=1)
-    submit_article = models.SmallIntegerField(verbose_name='提交文章', choices=card_details_choices, default=1)
-    submit_service_order = models.SmallIntegerField(verbose_name='提交服务订单', choices=card_details_choices, default=1)
-    vote = models.SmallIntegerField(verbose_name='投票', choices=card_details_choices, default=1)
-    share_page = models.SmallIntegerField(verbose_name='分享页面', choices=card_details_choices, default=1)
+    name_card_details = models.SmallIntegerField(verbose_name='进入名片详情', choices=card_details_choices, default=1)
+    name_save_address_book = models.SmallIntegerField(verbose_name='保存通讯录', choices=card_details_choices, default=1)
+    name_make_phone_call = models.SmallIntegerField(verbose_name='拨打电话', choices=card_details_choices, default=1)
+    name_my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
+    name_article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
+    name_service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
+
+    phone_card_details = models.SmallIntegerField(verbose_name='进入名片详情', choices=card_details_choices, default=1)
+    phone_save_address_book = models.SmallIntegerField(verbose_name='保存通讯录', choices=card_details_choices, default=1)
+    phone_make_phone_call = models.SmallIntegerField(verbose_name='拨打电话', choices=card_details_choices, default=1)
+    phone_my = models.SmallIntegerField(verbose_name='我的', choices=card_details_choices, default=1)
+    phone_article_details = models.SmallIntegerField(verbose_name='文章详情', choices=card_details_choices, default=1)
+    phone_service_details = models.SmallIntegerField(verbose_name='服务详情', choices=card_details_choices, default=1)
+    phone_submit_form = models.SmallIntegerField(verbose_name='提交表单', choices=card_details_choices, default=1)
+    phone_submit_article = models.SmallIntegerField(verbose_name='提交文章', choices=card_details_choices, default=1)
+    phone_submit_service_order = models.SmallIntegerField(verbose_name='提交服务订单', choices=card_details_choices, default=1)
+    phone_vote = models.SmallIntegerField(verbose_name='投票', choices=card_details_choices, default=1)
+    phone_share_page = models.SmallIntegerField(verbose_name='分享页面', choices=card_details_choices, default=1)
 
 
 
