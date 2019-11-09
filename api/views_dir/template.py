@@ -414,6 +414,21 @@ def template_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(form_objs.errors.as_json())
 
+        # 修改触发日志场景
+        elif oper_type == 'update_triggered_logging_scenario':
+            scenario = request.POST.get('scenario')
+            scenario_id = request.POST.get('scenario_id', 1)
+            objs = models.Template.objects.filter(create_user_id=user_id, id=o_id)
+            data = {scenario: scenario_id}
+            if objs:
+                objs.update(**data)
+                response.code = 200
+                response.msg = '修改成功'
+
+            else:
+                response.code = 301
+                response.msg = '模板错误'
+
     else:
         # 获取底部导航数据
         if oper_type == "get_tab_bar_data":
@@ -503,6 +518,36 @@ def template_oper(request, oper_type, o_id):
             response.msg = msg
             response.data = {
                 'data_dict': data_dict
+            }
+
+        # 查询触发日志场景
+        elif oper_type == 'query_triggered_logging_scenario':
+            objs = models.Template.objects.filter(id=o_id)
+            if objs:
+                obj = objs[0]
+                ret_data = {
+                    'card_details':obj.card_details,
+                    'save_address_book':obj.save_address_book,
+                    'make_phone_call':obj.make_phone_call,
+                    'my':obj.my,
+                    'article_details':obj.article_details,
+                    'service_details':obj.service_details,
+                    'information_details':obj.information_details,
+                }
+                response.code = 200
+                response.msg = '查询成功'
+                response.data = ret_data
+            else:
+                response.code = 301
+                response.msg = '模板错误'
+            response.note = {
+                'card_details': '进入名片详情',
+                'save_address_book': '保存通讯录',
+                'make_phone_call': '拨打电话',
+                'my': '我的',
+                'article_details': '文章详情',
+                'service_details': '服务详情',
+                'information_details': '信息详情',
             }
 
         else:

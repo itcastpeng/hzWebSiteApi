@@ -89,6 +89,7 @@ def xcx_login(request):
         openid = ret_data.get('openid')
         session_key = ret_data.get('session_key') # 用于加密
         objs = models.Customer.objects.filter(openid=openid)
+        nickName = base64_encryption.b64encode(userInfo.get('nickName'))
 
         if objs:
             objs.update(**{
@@ -97,6 +98,7 @@ def xcx_login(request):
                 'country': userInfo.get('country'),
                 'province': userInfo.get('province'),
                 'city': userInfo.get('city'),
+                'name': nickName,
                 'session_key': session_key,
             })
             obj = objs[0]
@@ -110,6 +112,7 @@ def xcx_login(request):
                 'province': userInfo.get('province'),
                 'city': userInfo.get('city'),
                 'session_key': session_key,
+                'name': nickName,
                 'openid': openid,
                 'token': token,
             })
