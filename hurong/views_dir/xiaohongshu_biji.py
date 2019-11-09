@@ -192,12 +192,14 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 elif 'show.meitu.com' in url: # 美图
                     link = url
 
+                elif 'xhsurl' in url:
+                    link = url.split('，')[0]
+                    ret = requests.get(link)
+                    link = ret.url.split('?')[0]
+
                 else:
-                    try:
-                        ret = requests.get(url, allow_redirects=False)
-                        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-                    except Exception:
-                        link = url
+                    ret = requests.get(url, allow_redirects=False)
+                    link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
 
                 completion_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)

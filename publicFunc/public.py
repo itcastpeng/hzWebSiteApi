@@ -1,6 +1,7 @@
 from hurong import models
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
+from publicFunc.account import randon_str
 import re, random, requests, json, os, qrcode, time
 
 pcRequestHeader = [
@@ -190,7 +191,12 @@ def get_qrcode(qrcode_path):
     path = upload_qiniu(time_name, 800)
     return path
 
-
+def requests_img_download(old_url):
+    ret = requests.get(old_url)
+    path = os.path.join('statics', 'img', randon_str() + '.png')
+    with open(path, 'wb') as e:
+        e.write(ret.content)
+    return path
 
 
 
