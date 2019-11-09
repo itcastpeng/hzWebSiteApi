@@ -60,8 +60,10 @@ def business_card_management_oper(request, oper_type):
 
             image_draw = ImageDraw.Draw(p)  # 画布对象
 
-            font = ImageFont.truetype('/usr/share/fonts/chinese/simkai.ttf', 18)  # 字体
-            heading_font = ImageFont.truetype('/usr/share/fonts/chinese/simsun.ttc', 30)  # 名称 字体
+            # font = ImageFont.truetype('/usr/share/fonts/chinese/simkai.ttf', 18)  # 字体
+            # heading_font = ImageFont.truetype('/usr/share/fonts/chinese/simsun.ttc', 30)  # 名称 字体
+            font = ImageFont.truetype('/usr/share/fonts/chinese/SIMKAI.TTF', 18)  # 字体
+            heading_font = ImageFont.truetype('/usr/share/fonts/chinese/SIMSUN.TTC', 30)  # 名称 字体
 
             dibux, dibuy = image_draw.textsize(dibu, font=font)  # 底部字体 长宽
             headingx, headingy = image_draw.textsize(name, font=heading_font)  # 底部字体 长宽
