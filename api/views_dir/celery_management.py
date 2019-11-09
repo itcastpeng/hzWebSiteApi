@@ -5,6 +5,8 @@ from django.db.models import Q
 import datetime, time, random, requests, json
 from PIL import Image, ImageFont, ImageDraw
 from PIL import Image
+from publicFunc.public import upload_qiniu, requests_img_download
+import os
 
 
 # 定时刷新转接 时间是否过期
@@ -21,15 +23,19 @@ def time_refresh_whether_connect_time_expired(request):
 
 
 def generate_business_card_poster(request):
-    qiyemingcheng = '广告公司'
-    mingcheng = 'Miss Huang'
-    zhiwei = '销售经理'
-    dianhua = '13000000000'
-    youxiang = 'xxx@.co.m'
-    dizhi = 'xxx省xxx市xxx县xxx路xxx号'
+    card_id = request.GET.get('card_id')
+    obj = models.BusinessCard.objects.get(id=card_id)
+
+    enterprise_name = obj.template.enterprise_name  # 企业名称
+    name = obj.name  # 名称
+    jobs = obj.jobs  # 职位
+    phone = obj.phone  # 电话
+    email = obj.email  # 邮箱
+    address = obj.address  # 地址
     dibu = '长按识别小程序码, 马上认识我'
 
-    im1 = Image.open('1.jpg')
+    heading_path = requests_img_download(obj.heading)  # 下载头像
+    im1 = Image.open(heading_path)
     im2 = Image.open('2.jpg')
 
     huabu_x = 375  # 画布宽度
@@ -56,20 +62,28 @@ def generate_business_card_poster(request):
 
     image_draw = ImageDraw.Draw(p)  # 画布对象
 
-    font = ImageFont.truetype('/usr/share/fonts/chinese/simkai.ttf', 18)  # 字体
-    heading_font = ImageFont.truetype('/usr/share/fonts/chinese/simsun.ttc', 30)  # 名称 字体
+    font = ImageFont.truetype('/usr/share/fonts/chinese/SIMKAI.TTF', 18)  # 字体
+    heading_font = ImageFont.truetype('/usr/share/fonts/chinese/SIMSUN.TTC', 30)  # 名称 字体
 
     dibux, dibuy = image_draw.textsize(dibu, font=font)  # 底部字体 长宽
-    headingx, headingy = image_draw.textsize(mingcheng, font=heading_font)  # 底部字体 长宽
+    headingx, headingy = image_draw.textsize(name, font=heading_font)  # 底部字体 长宽
     image_draw.text((int((huabu_x - dibux) / 2), qr_y + qr_suofang_y + 10), dibu, font=font, fill=(0, 0, 0))
 
-    image_draw.text((15, 20), qiyemingcheng, font=font, fill=(0, 0, 0))
+    image_draw.text((15, 20), enterprise_name, font=font, fill=(0, 0, 0))
     heading_y = heading_suofang_y + heading_y
-    image_draw.text((15, heading_y), mingcheng, font=heading_font, fill=(0, 0, 0))
-    image_draw.text((15, heading_y + headingy + 15), zhiwei, font=font, fill=(0, 0, 0))
-    image_draw.text((15, heading_y + headingy + 40), dianhua, font=font, fill=(0, 0, 0))
-    image_draw.text((15, heading_y + headingy + 60), youxiang, font=font, fill=(0, 0, 0))
-    image_draw.text((15, heading_y + headingy + 80), dizhi, font=font, fill=(0, 0, 0))
+    image_draw.text((15, heading_y), name, font=heading_font, fill=(0, 0, 0))
+    image_draw.text((15, heading_y + headingy + 15), jobs, font=font, fill=(0, 0, 0))
+    image_draw.text((15, heading_y + headingy + 40), phone, font=font, fill=(0, 0, 0))
+    image_draw.text((15, heading_y + headingy + 60), email, font=font, fill=(0, 0, 0))
+    image_draw.text((15, heading_y + headingy + 80), address, font=font, fill=(0, 0, 0))
 
-    p.save('5.png')
+    key = str(int(time.time())) + '.png'
+    p.save(key)
+    path = upload_qiniu(key, 500)
+    obj.card_poster = path
+    obj.save()
+    if os.path.exists(heading_path):
+        os.remove(heading_path)  # 删除本地图片
+
+
     return HttpResponse('1')
