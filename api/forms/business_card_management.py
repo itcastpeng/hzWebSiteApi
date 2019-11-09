@@ -117,10 +117,7 @@ class UpdateForm(forms.Form):
         if not objs:
             self.add_error('o_id', '名片不存在')
         else:
-            if int(objs[0].create_user_id) == int(create_user_id):
-                return o_id
-            else:
-                self.add_error('o_id', '无权限操作')
+            return o_id
 
     def clean_name(self):
         o_id = self.data.get('o_id')
