@@ -21,5 +21,5 @@ from django.conf.urls import url, include
 urlpatterns = [
     # path('admin/', admin.site.urls),
     url('api/', include('api.urls')),
-    url('api_hurong/', include('hurong.urls')),
+    url('api_hurong/', include('hurong.urls', 'hurong'), "hurong"),
 ]
