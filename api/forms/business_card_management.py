@@ -18,22 +18,37 @@ class AddForm(forms.Form):
         }
     )
     phone = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "电话不能为空"
+        }
     )
     jobs = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "职位不能为空"
+        }
     )
     email = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "邮箱不能为空"
+        }
     )
     wechat_num = forms.CharField(
         required=False,
     )
     address = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "地址不能为空"
+        }
     )
     heading = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "头像不能为空"
+        }
     )
     about_me = forms.CharField(
         required=False,
@@ -85,22 +100,37 @@ class UpdateForm(forms.Form):
         }
     )
     phone = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "电话不能为空"
+        }
     )
     jobs = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "职位不能为空"
+        }
     )
     email = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "邮箱不能为空"
+        }
     )
     wechat_num = forms.CharField(
         required=False,
     )
     address = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "地址不能为空"
+        }
     )
     heading = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            'required': "头像不能为空"
+        }
     )
     about_me = forms.CharField(
         required=False,
