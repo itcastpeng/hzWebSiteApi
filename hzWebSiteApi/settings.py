@@ -15,7 +15,6 @@ from hzWebSiteApi import params
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-print("params.DEBUG -->", params.DEBUG)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -24,7 +23,7 @@ print("params.DEBUG -->", params.DEBUG)
 SECRET_KEY = 'xz2wx-#(%$344x38@ha6xr)#!o2bhgx5f-#&g9vaecvxw9*g3u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = params.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
