@@ -502,6 +502,12 @@ def comment_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
+                    article_notes_title = ''
+                    article_notes_id = ''
+                    if obj.article_notes:
+                        article_notes_id = obj.article_notes_id
+                        article_notes_title = obj.article_notes.title
+
                     ret_data.append({
                         'id': obj.id,
                         'phone_name': obj.xhs_user.phone_id.name,
@@ -518,7 +524,8 @@ def comment_management(request, oper_type):
                         'article_picture_address': obj.article_picture_address,
                         'delete_id': obj.delete,
                         'delete': obj.get_delete_display(),
-                        'article_notes_id': obj.article_notes_id,
+                        'article_notes_id': article_notes_id,
+                        'article_notes_title': article_notes_title,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
                 response.note = {
@@ -644,6 +651,34 @@ def comment_management(request, oper_type):
                     'more_than_12_hours': '最后一次提交评论时间 是否超过12小时 True已超过 False未超过',
                 }
             response.code = 200
+
+        # 手动关联评论/笔记 (胡蓉后台)
+        elif oper_type == 'manually_associate_comments_notes':
+            article_notes_id = request.GET.get('article_notes_id')
+            comment_id = request.GET.get('comment_id')
+            code = 301
+
+            objs = models.littleRedBookReviewForm.objects.filter(id=comment_id)
+            if objs:
+                if not models.XiaohongshuBiji.objects.filter(id=article_notes_id):
+                    msg = '笔记不存在'
+
+                else:
+                    objs.update(article_notes_id=article_notes_id)
+                    code = 200
+                    msg = '修改成功'
+                    form_data = {
+                        'transfer_type': 7,
+                        'id': article_notes_id,
+                        'comment_id': comment_id,
+                    }
+                    asynchronous_transfer_data.delay(form_data)
+
+            else:
+                msg = '评论不存在'
+
+            response.code = code
+            response.msg = msg
 
         else:
             response.code = 402
