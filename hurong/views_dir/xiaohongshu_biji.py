@@ -69,7 +69,6 @@ def xiaohongshu_biji(request):
                     'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'update_datetime': update_datetime,
-                    'exist_content': obj.exist_content
                 })
             #  查询成功 返回200 状态码
             response.code = 200
@@ -532,6 +531,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                         'is_delete_old_biji': obj.is_delete_old_biji,
                         'update_reding_num_time': update_reding_num_time,
                         'platform': obj.user_id.platform,
+                        'exist_content': obj.exist_content,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
                     result_data['content'] = json.loads(obj.content)
