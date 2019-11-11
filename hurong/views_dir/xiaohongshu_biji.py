@@ -195,6 +195,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 elif 'xhsurl' in url:
                     link = url.split('，')[0]
                     ret = requests.get(link)
+
                     link = ret.url.split('?')[0]
 
                 else:
