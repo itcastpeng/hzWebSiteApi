@@ -22,8 +22,6 @@ def tripartite_platform_oper(request, oper_type):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     template_id = request.POST.get('template_id')  # 模板ID
-    if not template_id:
-        template_id = request.GET.get('template_id')  # 模板ID
     tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
     tripartite_platform_info = GetTripartitePlatformInfo() # 获取三方平台信息
 
@@ -357,7 +355,7 @@ def tripartite_platform_oper(request, oper_type):
                         'token': baidu_objs[0].access_token,
                         'version': response_data.get('user_version'),
                         'template_id': response_data.get('template_id'),
-                        'id': template_id,
+                        'id': get_experience_qr_code_template_id,
                         'user_id': user_id,
                         'user_token': user_obj.token,
                     }
