@@ -43,13 +43,13 @@ class mobilePhoneReviews(forms.Form):
         }
     )
     article_notes_id = forms.IntegerField(
-        required=True,
+        required=False,
         error_messages={
             'required': "文章笔记不能为空"
         }
     )
     screenshots_address = forms.CharField(
-        required=False,
+        required=True,
         error_messages={
             'required': "截图地址不能为空"
         }
@@ -64,6 +64,7 @@ class mobilePhoneReviews(forms.Form):
             self.add_error('xhs_user_id', '小红书账号ID错误')
 
     def clean_article_notes_id(self):
+        screenshots_address = self.data.get('screenshots_address')
         article_notes_id = self.data.get('article_notes_id')
         if article_notes_id:
             objs = models.XiaohongshuBiji.objects.filter(id=article_notes_id)
@@ -71,6 +72,14 @@ class mobilePhoneReviews(forms.Form):
                 return article_notes_id
             else:
                 self.add_error('article_notes_id', '笔记不存在')
+        else:
+            # 没有文章ID
+            objs = models.XiaohongshuBiji.objects.filter(screenshots_address=screenshots_address)
+            if objs:
+                obj = objs[0]
+                return obj.id
+
+
 
     def clean_comments_content(self):
         comments_content = self.data.get('comments_content')
