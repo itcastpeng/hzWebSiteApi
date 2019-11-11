@@ -6,6 +6,7 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
 from publicFunc.public import create_xhs_admin_response, send_error_msg
+from publicFunc.base64_encryption import b64decode
 import json, base64, datetime, requests
 
 
@@ -506,7 +507,7 @@ def comment_management(request, oper_type):
                     article_notes_id = ''
                     if obj.article_notes:
                         article_notes_id = obj.article_notes_id
-                        article_notes_title = obj.article_notes.title
+                        article_notes_title = b64decode(obj.article_notes.title)
 
                     ret_data.append({
                         'id': obj.id,
