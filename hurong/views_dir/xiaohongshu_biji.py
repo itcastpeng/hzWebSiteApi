@@ -486,8 +486,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 }
                 q = conditionCom(request, field_dict)
                 content = request.GET.get('content')
+                xhs_user_id = request.GET.get('xhs_user_id')
                 if content:
                     q.add(Q(title__contains=b64encode(content)), Q.AND)
+                if xhs_user_id:
+                    q.add(Q(user_id=xhs_user_id), Q.AND)
                 objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     q,
                 ).exclude(user_id_id=5).order_by(order)
