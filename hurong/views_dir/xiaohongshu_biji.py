@@ -92,6 +92,7 @@ def xiaohongshu_biji(request):
                 'create_user__username': "创建人",
                 'create_datetime': "创建时间",
                 'update_datetime': "更新时间",
+
                 'exist_content': "比较是否存在内容"
             }
         else:
