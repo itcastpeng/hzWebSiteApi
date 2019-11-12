@@ -29,7 +29,7 @@ urlpatterns = [
 
     url(r'^xcx/business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_business_card_management.business_card_management_oper),  # 小程序名片管理
 
-    url(r'^xcx/article_management/(?P<oper_type>\w+)$', xcx_article_management.article_management),    # 文章查询
+    url(r'^xcx/article_management$', xcx_article_management.article_management),    # 文章查询
 
     url(r'^xcx/page_group$', xcx_page_group.page_group),                            # 页面分组查询
 
