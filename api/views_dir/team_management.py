@@ -23,7 +23,7 @@ def team_management_oper(request, oper_type):
             template_list = request.POST.get('template_list') # 权限模板列表
             objs = models.UserProfile.objects.filter(id=players_id)
             if objs:
-                objs.update(select_template_list=json.dumps(template_list))
+                objs.update(select_template_list=template_list)
                 response.code = 200
                 response.msg = '修改成功'
 
