@@ -555,8 +555,8 @@ def tripartite_platform_oper(request, oper_type):
 
                 if whether_regenerate or not baidu_xcx_qrcode:
                     objs = models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
-                    token = tripartite_platform_oper.determines_whether_access_token_expired('14794638')  # 判断appid是否过期
                     baidu_tripartite_platform = baidu_tripartite_platform_oper()
+                    token = baidu_tripartite_platform.determines_whether_access_token_expired('14794638')  # 判断appid是否过期
                     response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
                     response_data = response.data.get('list')[0]
                     data = {
