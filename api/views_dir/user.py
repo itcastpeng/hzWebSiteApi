@@ -106,9 +106,9 @@ def user_oper(request, oper_type, o_id):
             transfer_objs = models.Transfer.objects.filter(
                 speak_to_people_id=user_id,
                 by_connecting_people_id=o_id,
-                whether_transfer_successful=3
+                whether_transfer_successful=2
             ).order_by('-create_datetime')
-            if not transfer_objs:
+            if transfer_objs:
                 transfer_obj = transfer_objs[0]
                 if cancel_transfer:
                     transfer_obj.whether_transfer_successful = 5
