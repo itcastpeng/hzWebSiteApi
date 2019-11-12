@@ -198,7 +198,22 @@ def requests_img_download(old_url):
         e.write(ret.content)
     return path
 
+def get_existing_url(url):
+    if "www.xiaohongshu.com" in url:
+        link = url.split('?')[0]
 
+    elif 'show.meitu.com' in url:  # 美图
+        link = url
 
+    elif 'xhsurl' in url:
+        link = url.split('，')[0]
+        ret = requests.get(link)
+
+        link = ret.url.split('?')[0]
+
+    else:
+        ret = requests.get(url, allow_redirects=False)
+        link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+    return link
 
 
