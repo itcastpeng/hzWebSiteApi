@@ -572,6 +572,7 @@ def tripartite_platform_oper(request, oper_type):
                     time.sleep(3)
                     response_data = baidu_tripartite_platform.gets_list_small_packages(token)
                     package_id = response_data.data[0].get('package_id')
+                    print('package_id---------------------> ', package_id)
                     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, token)
                     template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
                     template_obj.save()
