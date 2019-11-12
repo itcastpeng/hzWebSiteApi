@@ -396,6 +396,8 @@ class tripartite_platform_oper():
         #     params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode?access_token={}'.format(token)
         ret = requests.get(url)
+        print('ret-------------> ', ret)
+        print(ret.content)
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)
