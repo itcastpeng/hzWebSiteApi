@@ -2,6 +2,7 @@ from django import forms
 from hurong import models
 from publicFunc import account
 import re, json, requests
+from publicFunc.public import get_existing_url
 
 
 # 手机端添加接口
@@ -243,21 +244,7 @@ class AssociatedScreenshots(forms.Form):
     )
     def clean_notes_url(self):
         notes_url = self.data.get('notes_url')
-
-        link = notes_url
-        if 'www.xiaohongshu.com' in notes_url:
-            link = notes_url.split('?')[0]
-
-
-        else:
-            try:
-                print("notes_url -->", notes_url)
-                # ret = requests.get(notes_url, allow_redirects=False)
-                ret = requests.get(notes_url)
-                print("ret.text -->", ret.text)
-                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-            except Exception:
-                pass
+        link = get_existing_url(notes_url)
 
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
         if biji_objs:
