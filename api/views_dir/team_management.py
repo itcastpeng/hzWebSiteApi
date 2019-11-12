@@ -31,6 +31,24 @@ def team_management_oper(request, oper_type):
                 response.code = 301
                 response.msg = '队员错误'
 
+        # 踢出团员
+        elif oper_type == 'delete_team':
+            players_id = request.POST.get('players_id')  # 队员ID
+            objs = models.UserProfile.objects.filter(id=players_id)
+            if objs:
+                obj = objs[0]
+
+                if int(obj.inviter_id) == user_id:
+                    obj.inviter_id = None
+                    obj.save()
+
+                else:
+                    response.code = 301
+                    response.msg = '权限不足'
+
+            else:
+                response.code = 301
+                response.msg = '队员错误'
 
     else:
         # 获取角色对应的权限
