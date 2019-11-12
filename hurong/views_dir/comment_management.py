@@ -52,7 +52,7 @@ def comment_management(request, oper_type):
                     forms_obj = mobilePhoneReviews(form_data)
                     if forms_obj.is_valid():
                         forms_data = forms_obj.cleaned_data
-
+                        article_picture_address = forms_data.get('article_picture_address')
                         nick_name = forms_data.get('nick_name')
                         comments_content = forms_data.get('comments_content')
                         response.code = 200
@@ -66,7 +66,7 @@ def comment_management(request, oper_type):
                                 rule_not_message_flag = False
                                 break
                         article_notes_id = forms_data.get('article_notes_id')
-                        if rule_not_message_flag:
+                        if rule_not_message_flag and article_picture_address: # 如果没有截图不记录
                             objs = models.littleRedBookReviewForm.objects.filter(
                                         xhs_user_id=xhs_user_id,
                                         nick_name=nick_name,
