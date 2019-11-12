@@ -161,8 +161,8 @@ class tripartite_platform_oper():
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/template/gettemplatelist'
         params = {
             'access_token': self.access_token,
-            'page': page,
-            'page_size': page_size,
+            'page': 1,
+            'page_size': 200,
         }
         ret = requests.get(url, params=params)
         print('-获取模板列表-=-------------> ', ret.json())
@@ -177,7 +177,7 @@ class tripartite_platform_oper():
         response.msg = msg
         list = sorted(ret.json().get('data').get('list'), key=lambda x: x['create_time'], reverse=True) # 排序
         response_data = ret.json().get('data')
-        response_data['list'] = list
+        response_data['list'] = list[page: page_size]
         response.data = response_data
         return response
 
@@ -388,8 +388,8 @@ class tripartite_platform_oper():
             'access_token': token,
             'width': width, # 默认200px，最大1280px，最小200px
         }
-        if package_id:
-            params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
+        # if package_id:
+        #     params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
 
         ret = requests.get(url, params=params)
         img_path = str(int(time.time())) + '.png'
