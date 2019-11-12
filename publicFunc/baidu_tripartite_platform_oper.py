@@ -113,10 +113,14 @@ class tripartite_platform_oper():
     # 未授权的小程序账号上传小程序代码
     def upload_small_program_code(self, data):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/upload'
+        whether_audit = True
+        if not data.get('whether_audit'):
+            whether_audit = False
+
         ext_json = {
             "extEnable": True,
             "extAppid": data.get('appid'),
-            "directCommit": data.get('whether_audit'),
+            "directCommit": whether_audit,
             "ext": {
                 'template_id': data.get('id'),  # 小程序ID 查询改小程序模板
                 # 'user_id': 4,
