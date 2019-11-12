@@ -118,7 +118,7 @@ class TransferAllUserInformation(forms.Form):
             if objs:
                 return transfer_template_id
             else:
-                self.add_error('xcx_id', '模板不存在')
+                self.add_error('transfer_template_id', '模板不存在')
 
 
 # 删除团队成员

@@ -108,7 +108,7 @@ def user_oper(request, oper_type, o_id):
                 by_connecting_people_id=o_id,
                 whether_transfer_successful=3
             ).order_by('-create_datetime')
-            if transfer_objs:
+            if not transfer_objs:
                 transfer_obj = transfer_objs[0]
                 if cancel_transfer:
                     transfer_obj.whether_transfer_successful = 5
