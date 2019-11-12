@@ -177,8 +177,8 @@ class tripartite_platform_oper():
         response.msg = msg
         list = sorted(ret.json().get('data').get('list'), key=lambda x: x['create_time'], reverse=True) # 排序
         response_data = ret.json().get('data')
-        start_line = (page_size- 1) * page
-        stop_line = start_line + page
+        start_line = (page- 1) * page_size
+        stop_line = start_line + page_size
         response_data['list'] = list[int(start_line): int(stop_line)]
         response.data = response_data
         return response
