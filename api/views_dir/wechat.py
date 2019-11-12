@@ -159,7 +159,7 @@ def wechat(request):
 
                     # ========================转接=================================
                     transfer_user_id = event_key.get('transfer_user_id')  # 转接人ID
-                    xcx_id = event_key.get('xcx_id')  # 单独转接ID
+                    transfer_template_id = event_key.get('transfer_template_id')  # 单独转接ID
                     token = event_key.get('token')  # 转接人token
                     if transfer_user_id and token:
                         user_obj = models.UserProfile.objects.get(id=new_user_id)
@@ -180,11 +180,11 @@ def wechat(request):
                                     whether_transfer_successful=2
                                 )
                                 weichat_api_obj = WeChatApi()
-                                url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}&xcx_id={}'.format(
+                                url = 'https://xcx.bjhzkq.com/handoverUser?transfer_user_id={}&new_user_id={}&token={}&transfer_template_id={}'.format(
                                     transfer_user_id,
                                     new_user_id,
                                     token,
-                                    xcx_id
+                                    transfer_template_id
                                 )
                                 post_data = {
                                     "touser": openid,
@@ -328,7 +328,7 @@ def wechat_oper(request, oper_type):
 
         # 获取转接 二维码(当前用户转接给别的用户)
         elif oper_type == 'transfer_all_user_information':
-            xcx_id = request.GET.get('xcx_id') # 如果有xcx_id为单独转接一个小程序
+            transfer_template_id = request.GET.get('transfer_template_id') # 如果有xcx_id为单独转接一个小程序
 
             weichat_api_obj = WeChatApi()
             obj = models.UserProfile.objects.get(id=user_id)
@@ -339,8 +339,8 @@ def wechat_oper(request, oper_type):
                 'transfer_user_id': user_id,
                 'token': obj.token,
             }
-            if xcx_id:
-                qrcode_data['xcx_id'] = xcx_id
+            if transfer_template_id:
+                qrcode_data['transfer_template_id'] = transfer_template_id
             qc_code_url = weichat_api_obj.generate_qrcode(qrcode_data)
             models.Transfer.objects.create(
                 speak_to_people_id=user_id,
