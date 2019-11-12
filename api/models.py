@@ -64,7 +64,7 @@ class UserProfile(models.Model):
     )
     login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
     ding_dong_marketing_treasure_user_id = models.IntegerField(verbose_name='叮咚营销宝', null=True)
-
+    select_template_list = models.TextField(verbose_name='可查看模板ID列表', default=[])
 
 
 
