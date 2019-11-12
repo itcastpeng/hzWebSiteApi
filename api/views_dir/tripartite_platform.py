@@ -659,6 +659,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
     user_obj = models.UserProfile.objects.get(id=user_id)
     if user_obj.inviter:
         user_id = user_obj.inviter_id
+
     if request.method == "POST":
 
         # 保存小程序页面数据
@@ -828,6 +829,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 }
                 q = conditionCom(request, field_dict)
                 print('q -->', q)
+
+                if len(user_obj.select_template_list) >= 0:
+                    q.add(Q(id__in=json.loads(user_obj.select_template_list)), Q.AND)
 
                 objs = models.Template.objects.filter(
                     q,
