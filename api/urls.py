@@ -6,7 +6,7 @@ from api.views_dir import upload_img, login, user, template, page_group, page, w
     view_log
 
 from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management, \
-    page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management
+    page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management, customer as xcx_customer
 
 urlpatterns = [
 
@@ -22,6 +22,7 @@ urlpatterns = [
     # ------------------------------------ 小程序管理 -------------------------------
     url(r'^xcx/login$', login.xcx_login),    # 小程序登录
 
+    url(r'^xcx/customer/(?P<oper_type>\w+)$', xcx_customer.xcx_customer_oper),  # 个人信息操作
     url(r'^xcx/log_view/(?P<oper_type>\w+)$', view_log.view_log_oper),  # 日志操作
 
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
