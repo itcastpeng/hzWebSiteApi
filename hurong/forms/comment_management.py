@@ -80,7 +80,6 @@ class mobilePhoneReviews(forms.Form):
                 return obj.id
 
 
-
     def clean_comments_content(self):
         comments_content = self.data.get('comments_content')
 
@@ -127,6 +126,13 @@ class mobilePhoneReviews(forms.Form):
         article_picture_address = self.data.get('article_picture_address')
         if article_picture_address.endswith('400'):
             article_picture_address = article_picture_address[:-3] + '150'
+
+        if article_picture_address in [
+            'http://qiniu.bjhzkq.com/Fkon8nOb_DzhOvW2fPJYKedRKTWv?imageView2/0/h/150',
+            'http://qiniu.bjhzkq.com/FkeL94fqH9lXlUYpqn4A3S0kWnPh?imageView2/0/h/150',
+        ]:
+            article_picture_address = False
+
         return article_picture_address
 
 
