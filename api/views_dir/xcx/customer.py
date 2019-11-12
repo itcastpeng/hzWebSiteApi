@@ -13,7 +13,7 @@ def xcx_customer_oper(request, oper_type):
     user_id = request.GET.get('user_id')
     if request.method == "POST":
         if oper_type == "add":
-            phone = request.GET.get('phone')
+            phone = request.POST.get('phone')
             if verify_phone_number(phone):
                 objs = models.Customer.objects.filter(id=user_id).update(phone=phone)
 
