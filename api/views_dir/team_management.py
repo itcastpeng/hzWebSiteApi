@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from publicFunc.condition_com import conditionCom
 from api.forms.team_management import SelectForm
+from publicFunc.base64_encryption import b64decode
 import json
 
 
@@ -54,7 +55,8 @@ def team_management_oper(request, oper_type):
                 for obj in objs:
                     data = {
                         'id': obj.id,
-                        'name': obj.name,
+                        'name': b64decode(obj.name),
+                        'head_portrait': obj.head_portrait,
                     }
 
                     if request.GET.get('id'):
