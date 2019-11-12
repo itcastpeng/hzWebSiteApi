@@ -128,60 +128,61 @@ def user_oper(request, oper_type, o_id):
 
                         # template_id = applet_objs[0].template_id
                         if transfer_template_id: # 转接单独模板
-                            template_objs = models.Template.objects.filter(id=transfer_template_id)  # 模板表
-                            template_objs.update(create_user_id=o_id)
-
-                            models.TemplateClass.objects.filter(
-                                id=template_objs[0].template_class_id
-                            ).update(create_user_id=o_id)  # 模板分类表
-
-                            models.PhotoLibraryGroup.objects.filter(
-                                create_user_id=user_id,
-                                template_id=transfer_template_id
-                            ).update(create_user_id=o_id)  # 图片分类
-
-                            models.PhotoLibrary.objects.filter(
-                                create_user_id=user_id,
-                                template_id=transfer_template_id
-                            ).update(create_user_id=o_id)  # 图片
-
-                            page_group_objs = models.PageGroup.objects.filter(
-                                create_user_id=user_id,
-                                template_id=transfer_template_id
-                            )
-                            page_group_objs.update(create_user_id=o_id)  # 页面分组表
-
-                            models.Page.objects.filter(
-                                create_user_id=user_id,
-                                page_group_id=page_group_objs[0].id
-                            ).update(create_user_id=o_id)  # 页面表
-
-                            # ===========组件库分类 和 组件库================
-                            compoment_library_class_objs = models.CompomentLibraryClass.objects.filter(
-                                create_user_id=user_id
-                            )
-                            for obj in compoment_library_class_objs:
-
-                                library_class_obj = models.CompomentLibraryClass.objects.create(
-                                    name=obj.name,
-                                    create_user_id=o_id
-                                )
-                                # =================================组件库=============================
-                                compoment_library_objs = models.CompomentLibrary.objects.filter(
-                                    create_user_id=user_id,
-                                    compoment_library_class_id=obj.id,
-                                )
-                                querysetlist = []
-                                for obj in compoment_library_objs:
-                                    querysetlist.append(models.CompomentLibrary(
-                                        name=obj.name,
-                                        compoment_library_class_id=library_class_obj.id,
-                                        data=obj.data,
-                                        create_user_id=o_id,
-                                        is_delete=obj.is_delete
-                                    ))
-
-                                models.CompomentLibrary.objects.bulk_create(querysetlist)
+                            pass
+                            # template_objs = models.Template.objects.filter(id=transfer_template_id)  # 模板表
+                            # template_objs.update(create_user_id=o_id)
+                            #
+                            # models.TemplateClass.objects.filter(
+                            #     id=template_objs[0].template_class_id
+                            # ).update(create_user_id=o_id)  # 模板分类表
+                            #
+                            # models.PhotoLibraryGroup.objects.filter(
+                            #     create_user_id=user_id,
+                            #     template_id=transfer_template_id
+                            # ).update(create_user_id=o_id)  # 图片分类
+                            #
+                            # models.PhotoLibrary.objects.filter(
+                            #     create_user_id=user_id,
+                            #     template_id=transfer_template_id
+                            # ).update(create_user_id=o_id)  # 图片
+                            #
+                            # page_group_objs = models.PageGroup.objects.filter(
+                            #     create_user_id=user_id,
+                            #     template_id=transfer_template_id
+                            # )
+                            # if page_group_objs:
+                            #     models.Page.objects.filter(
+                            #         create_user_id=user_id,
+                            #         page_group_id=page_group_objs[0].id
+                            #     ).update(create_user_id=o_id)  # 页面表
+                            # page_group_objs.update(create_user_id=o_id)  # 页面分组表
+                            #
+                            # # ===========组件库分类 和 组件库================
+                            # compoment_library_class_objs = models.CompomentLibraryClass.objects.filter(
+                            #     create_user_id=user_id
+                            # )
+                            # for obj in compoment_library_class_objs:
+                            #
+                            #     library_class_obj = models.CompomentLibraryClass.objects.create(
+                            #         name=obj.name,
+                            #         create_user_id=o_id
+                            #     )
+                            #     # =================================组件库=============================
+                            #     compoment_library_objs = models.CompomentLibrary.objects.filter(
+                            #         create_user_id=user_id,
+                            #         compoment_library_class_id=obj.id,
+                            #     )
+                            #     querysetlist = []
+                            #     for obj in compoment_library_objs:
+                            #         querysetlist.append(models.CompomentLibrary(
+                            #             name=obj.name,
+                            #             compoment_library_class_id=library_class_obj.id,
+                            #             data=obj.data,
+                            #             create_user_id=o_id,
+                            #             is_delete=obj.is_delete
+                            #         ))
+                            #
+                            #     models.CompomentLibrary.objects.bulk_create(querysetlist)
 
 
 
