@@ -41,6 +41,8 @@ def team_management_oper(request, oper_type):
                 if int(obj.inviter_id) == user_id:
                     obj.inviter_id = None
                     obj.save()
+                    response.code = 200
+                    response.msg = '操作成功'
 
                 else:
                     response.code = 301
