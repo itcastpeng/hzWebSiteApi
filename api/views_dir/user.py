@@ -101,7 +101,7 @@ def user_oper(request, oper_type, o_id):
             form_data = {
                 'user_id':user_id,
                 'o_id': o_id,
-                'xcx_id': request.POST.get('xcx_id'),
+                'transfer_template_id': request.POST.get('transfer_template_id'),
             }
             transfer_objs = models.Transfer.objects.filter(
                 speak_to_people_id=user_id,
@@ -120,15 +120,15 @@ def user_oper(request, oper_type, o_id):
                     if form_obj.is_valid():
                         o_id = form_obj.cleaned_data.get('o_id')
                         user_id = form_obj.cleaned_data.get('user_id')
-                        xcx_id = form_obj.cleaned_data.get('xcx_id')
+                        transfer_template_id = form_obj.cleaned_data.get('transfer_template_id')
 
                         applet_objs = models.ClientApplet.objects.filter(user_id=user_id)                   # 小程序
                         models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)  # 小程序版本
                         applet_objs.update(user_id=o_id)
 
-                        if xcx_id: # 转接单独小程序
-                            template_id = applet_objs[0].template_id
-                            template_objs = models.Template.objects.filter(id=template_id)  # 模板表
+                        # template_id = applet_objs[0].template_id
+                        if transfer_template_id: # 转接单独模板
+                            template_objs = models.Template.objects.filter(id=transfer_template_id)  # 模板表
                             template_objs.update(create_user_id=o_id)
 
                             models.TemplateClass.objects.filter(
@@ -137,17 +137,17 @@ def user_oper(request, oper_type, o_id):
 
                             models.PhotoLibraryGroup.objects.filter(
                                 create_user_id=user_id,
-                                template_id=template_id
+                                template_id=transfer_template_id
                             ).update(create_user_id=o_id)  # 图片分类
 
                             models.PhotoLibrary.objects.filter(
                                 create_user_id=user_id,
-                                template_id=template_id
+                                template_id=transfer_template_id
                             ).update(create_user_id=o_id)  # 图片
 
                             page_group_objs = models.PageGroup.objects.filter(
                                 create_user_id=user_id,
-                                template_id=template_id
+                                template_id=transfer_template_id
                             )
                             page_group_objs.update(create_user_id=o_id)  # 页面分组表
 
