@@ -389,11 +389,11 @@ class tripartite_platform_oper():
 
     # 获取二维码
     def get_qr_code(self, package_id, width, token):
-        # params = {
-        #     'width': width, # 默认200px，最大1280px，最小200px
-        # }
-        # if package_id:
-        #     params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
+        params = {
+            'width': width, # 默认200px，最大1280px，最小200px
+        }
+        if package_id:
+            params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode?access_token={}'.format(token)
         ret = requests.get(url)
         print('ret-------------> ', ret)
