@@ -556,7 +556,9 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
         elif oper_type == 'xxxx':
             objs = models.XiaohongshuBiji.objects.filter(biji_url__contains='xhsurl')
+            print('objs--. ', objs)
             for obj in objs:
+                print('obj.id-------> ', obj.id)
                 url = get_existing_url(obj.biji_url)
                 obj.biji_url = url
                 obj.save()
