@@ -74,6 +74,7 @@ def tripartite_platform_oper(request, oper_type):
             }
             data['whether_audit'] = whether_audit
             response = tripartite_platform_oper.upload_small_program_code(data)
+            time.sleep(5)
 
         # 删除模板
         elif oper_type == 'delete_template':
