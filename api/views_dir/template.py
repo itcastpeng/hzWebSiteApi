@@ -36,8 +36,8 @@ def template(request):
             user_obj = models.UserProfile.objects.get(id=user_id)
             if user_obj.inviter:
                 user_id = user_obj.inviter_id
-                if len(user_obj.select_template_list) >= 0:
-                    q.add(Q(id__in=json.loads(user_obj.select_template_list)), Q.AND)
+                # if len(user_obj.select_template_list) >= 0:
+                #     q.add(Q(id__in=json.loads(user_obj.select_template_list)), Q.AND)
             obj = models.UserProfile.objects.get(id=user_id)
 
             if obj.role_id in [7, '7'] and not is_all:
