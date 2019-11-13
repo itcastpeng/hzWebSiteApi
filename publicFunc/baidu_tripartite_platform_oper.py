@@ -409,9 +409,9 @@ class tripartite_platform_oper():
         return path
 
     # web化开关
-    def web_the_switch(self, web_status):
+    def web_the_switch(self, token, web_status):
         # web_status 1:开启 2:关闭
-        url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/modifywebstatus?access_token={}'.format(self.access_token)
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/modifywebstatus?access_token={}'.format(token)
         post_data = {
             'web_status': web_status,
         }

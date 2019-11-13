@@ -360,7 +360,7 @@ def tripartite_platform_oper(request, oper_type):
                         'user_id': user_id,
                         'user_token': user_obj.token,
                     }
-                    baidu_tripartite_platform.web_the_switch(2) # 关闭web化开关
+                    baidu_tripartite_platform.web_the_switch(baidu_objs[0].access_token, 2) # 关闭web化开关
                     baidu_tripartite_platform.upload_small_program_code(data)
                     time.sleep(3)
                     response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
