@@ -65,6 +65,7 @@ def update_user_info(openid, ret_obj, timestamp=None, inviter_user_id=None):
         "country": ret_obj.get('country'),
         "province": ret_obj.get('province'),
         "city": ret_obj.get('city'),
+        "head_portrait": ret_obj.get('headimgurl'),
         "login_timestamp": timestamp,
     }
 
