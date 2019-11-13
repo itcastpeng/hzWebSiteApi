@@ -397,6 +397,11 @@ class tripartite_platform_oper():
         print('params-----------------> ', params)
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode?access_token={}'.format(token)
         ret = requests.get(url, params=params)
+        try:
+            print('ret.json()---------> ', ret.json())
+        except Exception:
+            pass
+
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:
             f.write(ret.content)
