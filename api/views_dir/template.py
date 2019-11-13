@@ -13,7 +13,7 @@ from publicFunc.public import get_qrcode
 from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode, get_baidu_xcx_qicode
 import json
 
-
+# 该查询为 建站 首页模板 公共模板查询 个人模板 路由: tripartite_platform/query_all_templates
 @account.is_token(models.UserProfile)
 def template(request):
     response = Response.ResponseObj()
@@ -36,8 +36,7 @@ def template(request):
             user_obj = models.UserProfile.objects.get(id=user_id)
             if user_obj.inviter:
                 user_id = user_obj.inviter_id
-                # if len(user_obj.select_template_list) >= 0:
-                #     q.add(Q(id__in=json.loads(user_obj.select_template_list)), Q.AND)
+
             obj = models.UserProfile.objects.get(id=user_id)
 
             if obj.role_id in [7, '7'] and not is_all:

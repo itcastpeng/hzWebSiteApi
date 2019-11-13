@@ -78,12 +78,12 @@ class TransferAllUserInformation(forms.Form):
             'required': "转接人不能为空"
         }
     )
-    transfer_template_id = forms.IntegerField(
-        required=False,
-        error_messages={
-            'required': '小程序ID类型错误'
-        }
-    )
+    # transfer_template_id = forms.IntegerField(
+    #     required=False,
+    #     error_messages={
+    #         'required': '小程序ID类型错误'
+    #     }
+    # )
     def clean_o_id(self):
         o_id = self.data.get('o_id')
         user_id = self.data.get('user_id')
@@ -111,14 +111,14 @@ class TransferAllUserInformation(forms.Form):
         else:
             self.add_error('user_id', '管理员不可转接')
 
-    def clean_transfer_template_id(self):
-        transfer_template_id = self.data.get('transfer_template_id')
-        if transfer_template_id:
-            objs = models.Template.objects.filter(id=transfer_template_id)
-            if objs:
-                return transfer_template_id
-            else:
-                self.add_error('transfer_template_id', '模板不存在')
+    # def clean_transfer_template_id(self):
+    #     transfer_template_id = self.data.get('transfer_template_id')
+    #     if transfer_template_id:
+    #         objs = models.Template.objects.filter(id=transfer_template_id)
+    #         if objs:
+    #             return transfer_template_id
+    #         else:
+    #             self.add_error('transfer_template_id', '模板不存在')
 
 
 # 删除团队成员
