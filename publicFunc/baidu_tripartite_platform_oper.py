@@ -113,14 +113,20 @@ class tripartite_platform_oper():
     # 未授权的小程序账号上传小程序代码
     def upload_small_program_code(self, data):
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/package/upload'
+        whether_audit = True
+        if not data.get('whether_audit'):
+            whether_audit = False
+
         ext_json = {
             "extEnable": True,
             "extAppid": data.get('appid'),
-            "directCommit": data.get('whether_audit'),
+            "directCommit": whether_audit,
             "ext": {
                 'template_id': data.get('id'),  # 小程序ID 查询改小程序模板
-                'user_id': 4,
-                'token': 'f0b813db005dd5273cd9d6129c75fc4c',
+                # 'user_id': 4,
+                # 'token': 'f0b813db005dd5273cd9d6129c75fc4c',
+                'user_id': data.get('user_id'),
+                'token': data.get('user_token'),
             },
             "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
                 # "backgroundTextStyle": "light",
@@ -159,8 +165,8 @@ class tripartite_platform_oper():
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/template/gettemplatelist'
         params = {
             'access_token': self.access_token,
-            'page': page,
-            'page_size': page_size,
+            'page': 1,
+            'page_size': 200,
         }
         ret = requests.get(url, params=params)
         print('-获取模板列表-=-------------> ', ret.json())
@@ -175,7 +181,9 @@ class tripartite_platform_oper():
         response.msg = msg
         list = sorted(ret.json().get('data').get('list'), key=lambda x: x['create_time'], reverse=True) # 排序
         response_data = ret.json().get('data')
-        response_data['list'] = list
+        start_line = (int(page) - 1) * int(page_size)
+        stop_line = start_line + int(page_size)
+        response_data['list'] = list[int(start_line): int(stop_line)]
         response.data = response_data
         return response
 
@@ -381,14 +389,12 @@ class tripartite_platform_oper():
 
     # 获取二维码
     def get_qr_code(self, package_id, width, token):
-        url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode'
         params = {
-            'access_token': token,
             'width': width, # 默认200px，最大1280px，最小200px
         }
         if package_id:
             params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
-
+        url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode?access_token={}'.format(token)
         ret = requests.get(url, params=params)
         img_path = str(int(time.time())) + '.png'
         with open(img_path, 'wb') as f:

@@ -101,12 +101,12 @@ def user_oper(request, oper_type, o_id):
             form_data = {
                 'user_id':user_id,
                 'o_id': o_id,
-                'xcx_id': request.POST.get('xcx_id'),
+                # 'transfer_template_id': request.POST.get('transfer_template_id'),
             }
             transfer_objs = models.Transfer.objects.filter(
                 speak_to_people_id=user_id,
                 by_connecting_people_id=o_id,
-                whether_transfer_successful=3
+                whether_transfer_successful=2
             ).order_by('-create_datetime')
             if transfer_objs:
                 transfer_obj = transfer_objs[0]
@@ -120,84 +120,22 @@ def user_oper(request, oper_type, o_id):
                     if form_obj.is_valid():
                         o_id = form_obj.cleaned_data.get('o_id')
                         user_id = form_obj.cleaned_data.get('user_id')
-                        xcx_id = form_obj.cleaned_data.get('xcx_id')
 
                         applet_objs = models.ClientApplet.objects.filter(user_id=user_id)                   # 小程序
                         models.CustomerOfficialNumber.objects.filter(user_id=user_id).update(user_id=o_id)  # 小程序版本
                         applet_objs.update(user_id=o_id)
 
-                        if xcx_id: # 转接单独小程序
-                            template_id = applet_objs[0].template_id
-                            template_objs = models.Template.objects.filter(id=template_id)  # 模板表
-                            template_objs.update(create_user_id=o_id)
+                        models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)             # 模板分类表
+                        models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                  # 模板表
 
-                            models.TemplateClass.objects.filter(
-                                id=template_objs[0].template_class_id
-                            ).update(create_user_id=o_id)  # 模板分类表
+                        models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)         # 图片分类
+                        models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)              # 图片
 
-                            models.PhotoLibraryGroup.objects.filter(
-                                create_user_id=user_id,
-                                template_id=template_id
-                            ).update(create_user_id=o_id)  # 图片分类
+                        models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                 # 页面分组表
+                        models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                      # 页面表
 
-                            models.PhotoLibrary.objects.filter(
-                                create_user_id=user_id,
-                                template_id=template_id
-                            ).update(create_user_id=o_id)  # 图片
-
-                            page_group_objs = models.PageGroup.objects.filter(
-                                create_user_id=user_id,
-                                template_id=template_id
-                            )
-                            page_group_objs.update(create_user_id=o_id)  # 页面分组表
-
-                            models.Page.objects.filter(
-                                create_user_id=user_id,
-                                page_group_id=page_group_objs[0].id
-                            ).update(create_user_id=o_id)  # 页面表
-
-                            # ===========组件库分类 和 组件库================
-                            compoment_library_class_objs = models.CompomentLibraryClass.objects.filter(
-                                create_user_id=user_id
-                            )
-                            for obj in compoment_library_class_objs:
-
-                                library_class_obj = models.CompomentLibraryClass.objects.create(
-                                    name=obj.name,
-                                    create_user_id=o_id
-                                )
-                                # =================================组件库=============================
-                                compoment_library_objs = models.CompomentLibrary.objects.filter(
-                                    create_user_id=user_id,
-                                    compoment_library_class_id=obj.id,
-                                )
-                                querysetlist = []
-                                for obj in compoment_library_objs:
-                                    querysetlist.append(models.CompomentLibrary(
-                                        name=obj.name,
-                                        compoment_library_class_id=library_class_obj.id,
-                                        data=obj.data,
-                                        create_user_id=o_id,
-                                        is_delete=obj.is_delete
-                                    ))
-
-                                models.CompomentLibrary.objects.bulk_create(querysetlist)
-
-
-
-
-                        else:
-                            models.TemplateClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)             # 模板分类表
-                            models.Template.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                  # 模板表
-
-                            models.PhotoLibraryGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)         # 图片分类
-                            models.PhotoLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)              # 图片
-
-                            models.PageGroup.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                 # 页面分组表
-                            models.Page.objects.filter(create_user_id=user_id).update(create_user_id=o_id)                      # 页面表
-
-                            models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)     # 组件库分类
-                            models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)          # 组件库
+                        models.CompomentLibraryClass.objects.filter(create_user_id=user_id).update(create_user_id=o_id)     # 组件库分类
+                        models.CompomentLibrary.objects.filter(create_user_id=user_id).update(create_user_id=o_id)          # 组件库
 
 
                         code = 200

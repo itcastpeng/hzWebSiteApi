@@ -13,7 +13,7 @@ from publicFunc.public import get_qrcode
 from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode, get_baidu_xcx_qicode
 import json
 
-
+# 该查询为 建站 首页模板 公共模板查询 个人模板 路由: tripartite_platform/query_all_templates
 @account.is_token(models.UserProfile)
 def template(request):
     response = Response.ResponseObj()
@@ -24,11 +24,6 @@ def template(request):
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
             is_all = request.GET.get('is_all') #
-            user_id = request.GET.get('user_id')
-            user_obj = models.UserProfile.objects.get(id=user_id)
-            if user_obj.inviter:
-                user_id = user_obj.inviter_id
-            obj = models.UserProfile.objects.get(id=user_id)
             order = request.GET.get('order', '-create_datetime')
             field_dict = {
                 'id': '',
@@ -37,10 +32,19 @@ def template(request):
                 'create_datetime': '',
             }
             q = conditionCom(request, field_dict)
+            user_id = request.GET.get('user_id')
+            user_obj = models.UserProfile.objects.get(id=user_id)
+            if user_obj.inviter:
+                user_id = user_obj.inviter_id
+
+            obj = models.UserProfile.objects.get(id=user_id)
+
             if obj.role_id in [7, '7'] and not is_all:
                 q.add(Q(create_user_id=user_id), Q.AND)
             else:
                 q.add(Q(create_user__role_id__in=admin_list), Q.AND)
+
+            print('q----------> ', q)
             objs = models.Template.objects.filter(q).order_by(order)
             count = objs.count()
 

@@ -6,6 +6,7 @@ from hz_website_api_celery.tasks import asynchronous_transfer_data
 from hurong.forms.comment_management import mobilePhoneReviews, ReplyCommentForm, \
     SelectForm, ReplyCommentIsSuccess, AssociatedScreenshots, QueryReplyTask, DeleteComment, QueryDeleteComment
 from publicFunc.public import create_xhs_admin_response, send_error_msg
+from publicFunc.base64_encryption import b64decode
 import json, base64, datetime, requests
 
 
@@ -51,7 +52,7 @@ def comment_management(request, oper_type):
                     forms_obj = mobilePhoneReviews(form_data)
                     if forms_obj.is_valid():
                         forms_data = forms_obj.cleaned_data
-
+                        article_picture_address = forms_data.get('article_picture_address')
                         nick_name = forms_data.get('nick_name')
                         comments_content = forms_data.get('comments_content')
                         response.code = 200
@@ -65,7 +66,7 @@ def comment_management(request, oper_type):
                                 rule_not_message_flag = False
                                 break
                         article_notes_id = forms_data.get('article_notes_id')
-                        if rule_not_message_flag:
+                        if rule_not_message_flag and article_picture_address: # 如果没有截图不记录
                             objs = models.littleRedBookReviewForm.objects.filter(
                                         xhs_user_id=xhs_user_id,
                                         nick_name=nick_name,
@@ -502,6 +503,12 @@ def comment_management(request, oper_type):
 
                 ret_data = []
                 for obj in objs:
+                    article_notes_title = ''
+                    article_notes_id = ''
+                    if obj.article_notes:
+                        article_notes_id = obj.article_notes_id
+                        article_notes_title = b64decode(obj.article_notes.title)
+
                     ret_data.append({
                         'id': obj.id,
                         'phone_name': obj.xhs_user.phone_id.name,
@@ -518,7 +525,8 @@ def comment_management(request, oper_type):
                         'article_picture_address': obj.article_picture_address,
                         'delete_id': obj.delete,
                         'delete': obj.get_delete_display(),
-                        'article_notes_id': obj.article_notes_id,
+                        'article_notes_id': article_notes_id,
+                        'article_notes_title': article_notes_title,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
                 response.note = {
@@ -644,6 +652,34 @@ def comment_management(request, oper_type):
                     'more_than_12_hours': '最后一次提交评论时间 是否超过12小时 True已超过 False未超过',
                 }
             response.code = 200
+
+        # 手动关联评论/笔记 (胡蓉后台)
+        elif oper_type == 'manually_associate_comments_notes':
+            article_notes_id = request.GET.get('article_notes_id')
+            comment_id = request.GET.get('comment_id')
+            code = 301
+
+            objs = models.littleRedBookReviewForm.objects.filter(id=comment_id)
+            if objs:
+                if not models.XiaohongshuBiji.objects.filter(id=article_notes_id):
+                    msg = '笔记不存在'
+
+                else:
+                    objs.update(article_notes_id=article_notes_id)
+                    code = 200
+                    msg = '修改成功'
+                    form_data = {
+                        'transfer_type': 7,
+                        'id': article_notes_id,
+                        'comment_id': comment_id,
+                    }
+                    asynchronous_transfer_data.delay(form_data)
+
+            else:
+                msg = '评论不存在'
+
+            response.code = code
+            response.msg = msg
 
         else:
             response.code = 402

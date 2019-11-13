@@ -143,6 +143,8 @@ def asynchronous_transfer_data(request):
         3更改笔记阅读量
         4删除评论是否成功
         5传递更改笔记为发布异常
+        6更改博主是否开启地图
+        7更改评论对应的笔记
     )
     :param request:
     :return:
@@ -176,6 +178,11 @@ def asynchronous_transfer_data(request):
         elif transfer_type in [6, '6']:
             msg = '异步传输 更改博主是否开启地图'
             url = 'https://a.ppxhs.com/api/v1/sync/open-location'
+            ret = requests.post(url, data=request.POST)
+
+        elif transfer_type in [7, '7']:
+            msg = '异步传输 更改评论对应的笔记'
+            url = 'https://a.ppxhs.com/api/v1/sync/comment-article'
             ret = requests.post(url, data=request.POST)
 
         else: # 2

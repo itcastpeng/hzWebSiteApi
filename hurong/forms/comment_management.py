@@ -2,6 +2,7 @@ from django import forms
 from hurong import models
 from publicFunc import account
 import re, json, requests
+from publicFunc.public import get_existing_url
 
 
 # 手机端添加接口
@@ -43,13 +44,13 @@ class mobilePhoneReviews(forms.Form):
         }
     )
     article_notes_id = forms.IntegerField(
-        required=True,
+        required=False,
         error_messages={
             'required': "文章笔记不能为空"
         }
     )
     screenshots_address = forms.CharField(
-        required=False,
+        required=True,
         error_messages={
             'required': "截图地址不能为空"
         }
@@ -64,6 +65,7 @@ class mobilePhoneReviews(forms.Form):
             self.add_error('xhs_user_id', '小红书账号ID错误')
 
     def clean_article_notes_id(self):
+        screenshots_address = self.data.get('screenshots_address')
         article_notes_id = self.data.get('article_notes_id')
         if article_notes_id:
             objs = models.XiaohongshuBiji.objects.filter(id=article_notes_id)
@@ -71,6 +73,13 @@ class mobilePhoneReviews(forms.Form):
                 return article_notes_id
             else:
                 self.add_error('article_notes_id', '笔记不存在')
+        else:
+            # 没有文章ID
+            objs = models.XiaohongshuBiji.objects.filter(screenshots_address=screenshots_address)
+            if objs:
+                obj = objs[0]
+                return obj.id
+
 
     def clean_comments_content(self):
         comments_content = self.data.get('comments_content')
@@ -118,6 +127,13 @@ class mobilePhoneReviews(forms.Form):
         article_picture_address = self.data.get('article_picture_address')
         if article_picture_address.endswith('400'):
             article_picture_address = article_picture_address[:-3] + '150'
+
+        if article_picture_address in [
+            'http://qiniu.bjhzkq.com/Fkon8nOb_DzhOvW2fPJYKedRKTWv?imageView2/0/h/150',
+            'http://qiniu.bjhzkq.com/FkeL94fqH9lXlUYpqn4A3S0kWnPh?imageView2/0/h/150',
+        ]:
+            article_picture_address = False
+
         return article_picture_address
 
 
@@ -228,21 +244,7 @@ class AssociatedScreenshots(forms.Form):
     )
     def clean_notes_url(self):
         notes_url = self.data.get('notes_url')
-
-        link = notes_url
-        if 'www.xiaohongshu.com' in notes_url:
-            link = notes_url.split('?')[0]
-
-
-        else:
-            try:
-                print("notes_url -->", notes_url)
-                # ret = requests.get(notes_url, allow_redirects=False)
-                ret = requests.get(notes_url)
-                print("ret.text -->", ret.text)
-                link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
-            except Exception:
-                pass
+        link = get_existing_url(notes_url)
 
         biji_objs = models.XiaohongshuBiji.objects.filter(biji_existing_url=link)
         if biji_objs:

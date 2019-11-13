@@ -8,7 +8,7 @@ from hurong.forms.xiaohongshu_biji import SelectForm, AddForm, GetReleaseTaskFor
 from hz_website_api_celery.tasks import asynchronous_transfer_data, asynchronous_synchronous_trans
 from publicFunc.base64_encryption import b64decode, b64encode
 from django.db.models import Q
-from publicFunc.public import create_xhs_admin_response
+from publicFunc.public import create_xhs_admin_response, get_existing_url
 import requests, datetime, json, re
 
 
@@ -186,27 +186,13 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
 
                 task_id = forms_obj.cleaned_data.get('task_id')
                 url = forms_obj.cleaned_data.get('url')
-                if "www.xiaohongshu.com" in url:
-                    link = url.split('?')[0]
-
-                elif 'show.meitu.com' in url: # 美图
-                    link = url
-
-                elif 'xhsurl' in url:
-                    link = url.split('，')[0]
-                    ret = requests.get(link)
-
-                    link = ret.url.split('?')[0]
-
-                else:
-                    ret = requests.get(url, allow_redirects=False)
-                    link = re.findall('HREF="(.*?)"', ret.text)[0].split('?')[0]
+                link = get_existing_url(url) # 获取真实链接
 
                 completion_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
                 biji_objs.update(
                     biji_existing_url=link,
-                    biji_url=url,
+                    biji_url=link,
                     status=2,
                     completion_time=completion_time
                 )
@@ -486,8 +472,11 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 }
                 q = conditionCom(request, field_dict)
                 content = request.GET.get('content')
+                xhs_user_id = request.GET.get('xhs_user_id')
                 if content:
                     q.add(Q(title__contains=b64encode(content)), Q.AND)
+                if xhs_user_id:
+                    q.add(Q(user_id=xhs_user_id), Q.AND)
                 objs = models.XiaohongshuBiji.objects.select_related('user_id').filter(
                     q,
                 ).exclude(user_id_id=5).order_by(order)
@@ -563,6 +552,27 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
             else:
                 response.code = 0
                 response.msg = "当前无任务"
+
+
+        elif oper_type == 'xxxx':
+            objs = models.XiaohongshuBiji.objects.filter(biji_url__contains='xhsurl')
+            print('objs--. ', objs)
+            for obj in objs:
+                print('obj.id-------> ', obj.id)
+                url = get_existing_url(obj.biji_url)
+                obj.biji_url = url
+                obj.save()
+
+                api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
+                data = {
+                    "id": obj.id,
+                    "link": url,
+                    "platform": obj.user_id.platform,
+                    "pubTime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
+                }
+                ret = requests.post(url=api_url, data=data)
+
 
         else:
             response.code = 402

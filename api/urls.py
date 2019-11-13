@@ -3,10 +3,10 @@ from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class, article_management, baidu_tripartite_platform_management, business_card_management, service_management, \
-    view_log
+    view_log, team_management
 
 from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management, \
-    page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management
+    page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management, customer as xcx_customer
 
 urlpatterns = [
 
@@ -22,13 +22,14 @@ urlpatterns = [
     # ------------------------------------ 小程序管理 -------------------------------
     url(r'^xcx/login$', login.xcx_login),    # 小程序登录
 
-    url(r'^xcx/log_view/(?P<oper_type>\w+)$', view_log.view_log_oper),  # 日志操作
+    url(r'^xcx/customer/(?P<oper_type>\w+)$', xcx_customer.xcx_customer_oper),  # 个人信息操作
+    url(r'^xcx/log_view/(?P<oper_type>\w+)$', view_log.xcx_view_log_oper),  # 日志操作
 
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
 
     url(r'^xcx/business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_business_card_management.business_card_management_oper),  # 小程序名片管理
 
-    url(r'^xcx/article_management/(?P<oper_type>\w+)$', xcx_article_management.article_management),    # 文章查询
+    url(r'^xcx/article_management$', xcx_article_management.article_management),    # 文章查询
 
     url(r'^xcx/page_group$', xcx_page_group.page_group),                            # 页面分组查询
 
@@ -122,6 +123,8 @@ urlpatterns = [
     # ----------------------------- 查看日志 -------------------------------------
     url(r'^view_log/(?P<oper_type>\w+)$', view_log.view_log_oper),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
 
+    # ----------------------------- 团队管理 ---------------------------------------
+    url(r'^team_management/(?P<oper_type>\w+)$', team_management.team_management_oper),  # 用户确认 同意授权 回调(用户点击授权 or 扫码授权后 跳转)
 
 ]
 
