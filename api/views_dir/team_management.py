@@ -38,7 +38,7 @@ def team_management_oper(request, oper_type):
             if objs:
                 obj = objs[0]
 
-                if int(obj.inviter_id) == user_id:
+                if int(obj.inviter_id) == int(user_id):
                     obj.inviter_id = None
                     obj.save()
                     response.code = 200
