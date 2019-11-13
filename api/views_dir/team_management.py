@@ -40,6 +40,7 @@ def team_management_oper(request, oper_type):
 
                 if int(obj.inviter_id) == int(user_id):
                     obj.inviter_id = None
+                    obj.select_template_list = []
                     obj.save()
                     response.code = 200
                     response.msg = '操作成功'
