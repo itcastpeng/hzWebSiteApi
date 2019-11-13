@@ -736,7 +736,9 @@ def zhangcong_test():
         biji_url = obj.biji_url.strip().replace('，复制本条信息，打开【小红书】App查看精彩内容！', '').rstrip("，")
         ret = requests.get(biji_url)
         print(ret.url)
-        break
+        if "www.xiaohongshu.com" in ret.url:
+            obj.biji_url = ret.url
+            obj.save()
 
 
 
