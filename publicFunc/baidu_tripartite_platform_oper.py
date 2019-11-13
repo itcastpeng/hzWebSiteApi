@@ -146,7 +146,7 @@ class tripartite_platform_oper():
             'template_id': data.get('template_id'),
             'ext_json': json.dumps(ext_json),           # ext
             'user_version': data.get('version'),                         # 版本号
-            'user_desc': 'xxxx',                            # 描述
+            'user_desc': data.get('version'),                            # 描述
         }
         print('ext_json-------------------------------------> ', 'post_data-----------> ', post_data)
         response = Response.ResponseObj()
