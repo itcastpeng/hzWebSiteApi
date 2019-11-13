@@ -741,7 +741,6 @@ def zhangcong_test():
         if "www.xiaohongshu.com" in ret.headers['Location']:
             obj.biji_url = ret.headers['Location']
             obj.save()
-        break
 
 
 
