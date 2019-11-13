@@ -394,7 +394,7 @@ class tripartite_platform_oper():
         }
         if package_id:
             params['package_id'] = package_id # 可指定代码包id(只支持审核、开发、线上版本)，不传默认线上版本。
-        params['path'] = 'pages/home/home'
+        params['path'] = '/pages/home/home'
         print('params-----------------> ', params)
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/qrcode?access_token={}'.format(token)
         ret = requests.get(url, params=params)
