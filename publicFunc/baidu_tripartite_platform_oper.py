@@ -416,6 +416,7 @@ class tripartite_platform_oper():
             'web_status': web_status,
         }
         ret = requests.post(url, data=post_data)
+        print('ret.json()---------web化开关-------------> ', ret.json())
         response = baidu_applet_return_data(ret.json(), '操作')
         return response
 
