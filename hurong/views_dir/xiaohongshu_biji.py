@@ -192,7 +192,7 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 biji_objs = models.XiaohongshuBiji.objects.filter(id=task_id)
                 biji_objs.update(
                     biji_existing_url=link,
-                    biji_url=url,
+                    biji_url=link,
                     status=2,
                     completion_time=completion_time
                 )
