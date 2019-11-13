@@ -830,7 +830,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 q = conditionCom(request, field_dict)
                 print('q -->', q)
 
-                if len(user_obj.select_template_list) >= 0:
+                if user_obj.inviter and len(user_obj.select_template_list) > 0:
                     q.add(Q(id__in=json.loads(user_obj.select_template_list)), Q.AND)
 
                 objs = models.Template.objects.filter(
