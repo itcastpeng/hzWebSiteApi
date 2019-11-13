@@ -733,7 +733,7 @@ def generate_business_card_poster(card_id): # 生成海报
 def zhangcong_test():
     objs = models.xhs_bpw_biji_url.objects.filter(biji_url__contains="xhsurl.com")
     for obj in objs:
-        biji_url = obj.biji_url.replace('，复制本条信息，打开【小红书】App查看精彩内容！', '')
+        biji_url = obj.biji_url.strip().replace('，复制本条信息，打开【小红书】App查看精彩内容！', '').rstrip("，")
         print(biji_url)
 
 
