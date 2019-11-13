@@ -553,6 +553,25 @@ def xiaohongshu_biji_oper(request, oper_type, o_id):
                 response.code = 0
                 response.msg = "当前无任务"
 
+
+        elif oper_type == 'xxxx':
+            objs = models.XiaohongshuBiji.objects.filter(biji_url__contains='xhsurl')
+            for obj in objs:
+                url = get_existing_url(obj.biji_url)
+                obj.biji_url = url
+                obj.save()
+
+                api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-article"
+                data = {
+                    "id": obj.id,
+                    "link": url,
+                    "platform": obj.user_id.platform,
+                    "pubTime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                    "online_pic": "http://qiniu.bjhzkq.com/xiaohongshu_fabu_1560934704790"
+                }
+                ret = requests.post(url=api_url, data=data)
+
+
         else:
             response.code = 402
             response.msg = "请求异常"
