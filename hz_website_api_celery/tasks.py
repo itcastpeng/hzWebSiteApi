@@ -737,8 +737,9 @@ def zhangcong_test():
         print(biji_url)
         ret = requests.head(biji_url, allow_redirects=False)
         print(ret.headers)
-        if "www.xiaohongshu.com" in ret.url:
-            obj.biji_url = ret.url
+        print(ret.headers['Location'])
+        if "www.xiaohongshu.com" in ret.headers['Location']:
+            obj.biji_url = ret.headers['Location']
             obj.save()
         break
 
