@@ -118,7 +118,7 @@ class tripartite_platform_oper():
             whether_audit = False
 
         ext_json = {
-            "extEnable": True,
+            "extEnable": False,
             "extAppid": data.get('appid'),
             "directCommit": whether_audit,
             "ext": {
