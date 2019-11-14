@@ -142,12 +142,12 @@ class SelectForm(forms.Form):
         }
     )
 
-    user_id = forms.IntegerField(
-        required=True,
-        error_messages={
-            'required': "非法用户"
-        }
-    )
+    # user_id = forms.IntegerField(
+    #     required=True,
+    #     error_messages={
+    #         'required': "非法用户"
+    #     }
+    # )
 
     def clean_current_page(self):
         if 'current_page' not in self.data:
