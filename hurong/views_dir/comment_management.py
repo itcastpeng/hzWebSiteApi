@@ -488,6 +488,7 @@ def comment_management(request, oper_type):
                     'delete': '',
                     'xhs_user__name': '__contains',
                     'comments_content': '__contains',
+                    'article_notes__isnull': '',
                 }
 
                 q = conditionCom(request, field_dict)
