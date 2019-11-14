@@ -257,6 +257,8 @@ def tripartite_platform_oper(request, oper_type):
             if data.get('errcode') in [0, '0']:
                 code = 200
                 errmsg = '发布完成'
+            if 'app is already released' in errmsg:
+                errmsg = '重复发布'
 
             response.code = code
             response.msg = errmsg
@@ -375,6 +377,7 @@ def tripartite_platform_oper(request, oper_type):
 
                 response.code = code
                 response.msg = msg
+
                 response.data = ret_data
 
             # 获取代码模板库中的所有小程序代码模板

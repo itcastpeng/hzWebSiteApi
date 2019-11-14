@@ -128,14 +128,14 @@ class tripartite_platform_oper():
                 'user_id': data.get('user_id'),
                 'token': data.get('user_token'),
             },
-            "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
+            # "window": {                         # 用于设置 SWAN 的状态栏、导航条、标题、窗口背景色。
                 # "backgroundTextStyle": "light",
                 # "navigationBarBackgroundColor": "#fff",
                 # "navigationBarTitleText": "Demo",
                 # "navigationBarTextStyle": "black"
-            },
-            "tabBar": {                         # 用于设置客户端底部的tab栏：可通过tabBar设置tab的颜色、个数、位置、背景色等内容。
-            },
+            # },
+            # "tabBar": {                         # 用于设置客户端底部的tab栏：可通过tabBar设置tab的颜色、个数、位置、背景色等内容。
+            # },
             "networkTimeout": {             # 网络超时
                 # "request": 20000,
                 # "downloadFile": 20000
