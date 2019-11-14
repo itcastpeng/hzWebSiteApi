@@ -75,10 +75,10 @@ class mobilePhoneReviews(forms.Form):
                 self.add_error('article_notes_id', '笔记不存在')
         else:
             # 没有文章ID
-            objs = models.XiaohongshuBiji.objects.filter(screenshots_address=screenshots_address)
+            objs = models.noteAssociationScreenshot.objects.filter(screenshots_address=screenshots_address)
             if objs:
                 obj = objs[0]
-                return obj.id
+                return obj.notes_id
 
 
     def clean_comments_content(self):
