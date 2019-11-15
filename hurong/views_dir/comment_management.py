@@ -221,7 +221,7 @@ def comment_management(request, oper_type):
             if form_obj.is_valid():
                 forms_data = form_obj.cleaned_data
                 screenshots = forms_data.get('screenshots')
-
+                screenshots = screenshots.split('?')[0]
                 notes_url, biji_id = forms_data.get('notes_url')
 
                 objs = models.noteAssociationScreenshot.objects.filter(

@@ -65,7 +65,8 @@ class mobilePhoneReviews(forms.Form):
             self.add_error('xhs_user_id', '小红书账号ID错误')
 
     def clean_article_notes_id(self):
-        screenshots_address = self.data.get('screenshots_address')
+        article_picture_address = self.data.get('article_picture_address')
+        article_picture_address=article_picture_address.split('?')[0]
         article_notes_id = self.data.get('article_notes_id')
         if article_notes_id:
             objs = models.XiaohongshuBiji.objects.filter(id=article_notes_id)
@@ -75,7 +76,7 @@ class mobilePhoneReviews(forms.Form):
                 self.add_error('article_notes_id', '笔记不存在')
         else:
             # 没有文章ID
-            objs = models.noteAssociationScreenshot.objects.filter(screenshots_address=screenshots_address)
+            objs = models.noteAssociationScreenshot.objects.filter(screenshots__contains=article_picture_address)
             if objs:
                 obj = objs[0]
                 return obj.notes_id
