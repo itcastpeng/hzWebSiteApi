@@ -451,6 +451,7 @@ def template_oper(request, oper_type, o_id):
                 "pages_data": [],       # 所有页面数据
                 "tab_bar_data": template_obj[0].tab_bar_data_dev,   # 底部导航数据
                 "remark": remark,        # 备注信息
+                "is_public": False,        # 是否为发布版本
                 "create_datetime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
 
