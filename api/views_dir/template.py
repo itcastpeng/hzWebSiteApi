@@ -251,7 +251,9 @@ def template_oper(request, oper_type, o_id):
                 if name:
                     update_data['name'] = name
                 if tab_bar_data:
-                    update_data['tab_bar_data'] = tab_bar_data
+                    # 此处修改设计模式的数据
+                    # update_data['tab_bar_data'] = tab_bar_data
+                    update_data['tab_bar_data_dev'] = tab_bar_data
 
                 # 更新数据
                 models.Template.objects.filter(id=o_id).update(**update_data)
@@ -493,7 +495,8 @@ def template_oper(request, oper_type, o_id):
                 if template_objs:
                     response.code = 200
                     response.data = {
-                        'data': template_objs[0].tab_bar_data
+                        # 'data': template_objs[0].tab_bar_data
+                        'data': template_objs[0].tab_bar_data_dev
                     }
                 else:
                     response.code = 301

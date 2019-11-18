@@ -143,7 +143,9 @@ def page_oper(request, oper_type, o_id):
                 if name:
                     update_data['name'] = name
                 if data:
-                    update_data['data'] = data
+                    # 此处修改设计模式的数据
+                    # update_data['data'] = data
+                    update_data['data_dev'] = data
 
                 if page_group_id:
                     update_data['page_group_id'] = page_group_id
@@ -164,7 +166,8 @@ def page_oper(request, oper_type, o_id):
             if page_objs:
                 page_obj = page_objs[0]
                 response.code = 200
-                response.data = page_obj.data
+                # response.data = page_obj.data
+                response.data = page_obj.data_dev
             else:
                 print('page_objs -->', page_objs)
                 response.code = 302
