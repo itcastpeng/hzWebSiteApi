@@ -27,7 +27,9 @@ def template_class(request):
             }
             q = conditionCom(request, field_dict)
             # print('q -->', q)
-            objs = models.TemplateClass.objects.filter(q).order_by(order)
+            class_type = request.GET.get('class_type', 2)
+            objs = models.TemplateClass.objects.filter(q).filter(class_type=class_type)
+            objs = objs.order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -44,6 +46,8 @@ def template_class(request):
                 ret_data.append({
                     'id': obj.id,
                     'name': obj.name,
+                    'class_type': obj.class_type,
+                    'class_type_text': obj.get_class_type_display(),
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
             #  查询成功 返回200 状态码
@@ -56,6 +60,8 @@ def template_class(request):
             response.note = {
                 'id': "模板id",
                 'name': '模板名称',
+                'class_type': "分类类型id",
+                'class_type_text': "分类类型",
                 'create_datetime': '创建时间',
             }
         else:

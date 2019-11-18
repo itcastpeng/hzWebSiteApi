@@ -105,6 +105,12 @@ class ClientUserProfile(models.Model):
 # 模板分类表
 class TemplateClass(models.Model):
     name = models.CharField(verbose_name="模板分类名称", max_length=256)
+
+    class_type_choices = (
+        (1, "单页模板"),
+        (2, "多页模板"),
+    )
+    class_type = models.SmallIntegerField(verbose_name="分类类型", choices=class_type_choices, default=2)
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
