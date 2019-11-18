@@ -445,7 +445,7 @@ def template_oper(request, oper_type, o_id):
             template_id = request.POST.get('o_id')   # 模板id
             remark = request.POST.get('remark')             # 备注信息
 
-            redis_key = "xcx::template::save_history_version::{template_id}".format(template_id=template_id)
+            redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
 
             # 查找所有页面数据
             template_obj = models.Template.objects.filter(id=template_id)
@@ -472,10 +472,12 @@ def template_oper(request, oper_type, o_id):
                 redis_data = []
 
             redis_data = redis_data.append(template_data)
-            redis_obj.set(redis_key, redis_data)
+            redis_obj.set(redis_key, json.dumps(redis_data))
 
             response.code = 200
             response.msg = '保存成功'
+
+
 
     else:
         # 获取底部导航数据
@@ -621,6 +623,42 @@ def template_oper(request, oper_type, o_id):
                 'phone_submit_service_order': '提交服务订单',
                 'phone_vote': '投票',
                 'phone_share_page': '分享页面',
+            }
+
+        # 获取历史版本数据
+        elif oper_type == "get_history_version":
+            redis_obj = get_redis_obj()
+            template_id = request.POST.get('o_id')  # 模板id
+
+            redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
+            redis_data = redis_obj.get(redis_key)
+            if redis_data:
+                redis_data = json.loads(redis_data)
+            else:
+                redis_data = []
+
+            """
+            template_data = {
+                "pages_data": [],       # 所有页面数据
+                "tab_bar_data": template_obj[0].tab_bar_data_dev,   # 底部导航数据
+                "remark": remark,        # 备注信息
+                "is_public": False,        # 是否为发布版本
+                "create_datetime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            """
+            result_data = []
+            for data in reversed(redis_data)[:10]:  # 倒序,最新排最上面
+                result_data.append({
+                    "remark": data["remark"],
+                    "create_datetime": data["create_datetime"],
+                })
+
+            response.code = 200
+            response.msg = '查询成功'
+            response.data = result_data
+            response.note = {
+                "remark": "备注信息",
+                "create_datetime": "创建时间",
             }
 
         else:
