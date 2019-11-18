@@ -517,6 +517,42 @@ def template_oper(request, oper_type, o_id):
                 response.code = 0
                 response.msg = '请求异常'
 
+        # 版本上线
+        elif oper_type == "online_history_version":
+            redis_obj = get_redis_obj()
+            template_id = request.POST.get('o_id')  # 模板id
+            time_stamp = request.POST.get('time_stamp')  # 版本唯一时间戳
+            redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
+            redis_data = redis_obj.get(redis_key)
+            if redis_data:
+                rollback_data = None
+                redis_data = json.loads(redis_data)
+                for i in redis_data:
+                    if i['time_stamp'] == time_stamp:   # 匹配到版本数据
+                        rollback_data = i
+                        tab_bar_data = i["tab_bar_data"]    # 底部导航数据
+                        models.Template.objects.filter(id=template_id).update(tab_bar_data=tab_bar_data)
+
+                        pages_data = i["pages_data"]  # 页面数据
+                        for page_data in pages_data:
+                            page_id = page_data["page_id"]
+                            page_data = page_data["page_data"]
+                            models.Page.objects.filter(id=page_id).update(data=page_data)
+
+                if rollback_data:
+                    rollback_data['is_public'] = True
+                    redis_data.append(rollback_data)
+
+                    response.code = 200
+                    response.msg = '版本发布成功'
+                else:
+                    response.code = 0
+                    response.msg = '请求异常'
+            else:
+                response.code = 0
+                response.msg = '请求异常'
+
+
 
     else:
         # 获取底部导航数据
