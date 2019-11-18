@@ -129,11 +129,11 @@ class mobilePhoneReviews(forms.Form):
         if article_picture_address.endswith('400'):
             article_picture_address = article_picture_address[:-3] + '150'
 
-        if article_picture_address in [
-            'http://qiniu.bjhzkq.com/Fkon8nOb_DzhOvW2fPJYKedRKTWv?imageView2/0/h/150',
-            'http://qiniu.bjhzkq.com/FkeL94fqH9lXlUYpqn4A3S0kWnPh?imageView2/0/h/150',
-        ]:
-            article_picture_address = False
+        pai_chu_url = ['Fkon8nOb_DzhOvW2fPJYKedRKTWv', 'FkeL94fqH9lXlUYpqn4A3S0kWnPh', 'Fmd2knUCYyF5oaBerStRAz1LaMAa']
+        for url in pai_chu_url:
+            if url in article_picture_address:
+                article_picture_address = False
+                break
 
         return article_picture_address
 
