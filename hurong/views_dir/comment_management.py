@@ -70,7 +70,6 @@ def comment_management(request, oper_type):
                             objs = models.littleRedBookReviewForm.objects.filter(
                                         xhs_user_id=xhs_user_id,
                                         nick_name=nick_name,
-                                        article_notes_id=article_notes_id,
                                         comments_content=comments_content
                                     )
                             print("**forms_obj.cleaned_data -->", forms_obj.cleaned_data)
