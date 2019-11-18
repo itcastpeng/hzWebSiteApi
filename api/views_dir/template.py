@@ -12,6 +12,10 @@ from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
 from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode, get_baidu_xcx_qicode
 import json
+from publicFunc.redisOper import get_redis_obj
+import datetime
+
+
 
 # 该查询为 建站 首页模板 公共模板查询 个人模板 路由: tripartite_platform/query_all_templates
 @account.is_token(models.UserProfile)
@@ -432,6 +436,43 @@ def template_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = '模板错误'
+
+        # 保存历史版本数据
+        elif oper_type == "save_history_version":
+            redis_obj = get_redis_obj()
+            template_id = request.POST.get('template_id')   # 模板id
+            remark = request.POST.get('remark')             # 备注信息
+
+            redis_key = "xcx::template::save_history_version::{template_id}".format(template_id=template_id)
+
+            # 查找所有页面数据
+            template_obj = models.Template.objects.filter(id=template_id)
+            template_data = {
+                "pages_data": [],       # 所有页面数据
+                "tab_bar_data": template_obj[0].tab_bar_data_dev,   # 底部导航数据
+                "remark": remark,        # 备注信息
+                "create_datetime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+
+            page_objs = models.Page.objects.filter(page_group__template_id=template_id)
+            for obj in page_objs:
+                page_data = {
+                    'page_id': obj.id,
+                    'page_data': obj.dev_data
+                }
+                template_data["pages_data"].append(page_data)
+
+            redis_data = redis_obj.get(redis_key)
+            if redis_data:
+                redis_data = json.loads(redis_data)
+            else:
+                redis_data = []
+
+            redis_data = redis_data.append(template_data)
+            redis_obj.set(redis_key, redis_data)
+
+            response.code = 200
+            response.msg = '保存成功'
 
     else:
         # 获取底部导航数据

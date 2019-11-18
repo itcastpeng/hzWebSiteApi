@@ -117,7 +117,8 @@ class Template(models.Model):
         default="/statics/admin_imgs/logo_img.png"
     )
 
-    tab_bar_data = models.TextField(verbose_name="底部导航数据", null=True)
+    tab_bar_data = models.TextField(verbose_name="底部导航数据(正式)", null=True)
+    tab_bar_data_dev = models.TextField(verbose_name="底部导航数据(设计)", null=True)
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     thumbnail = models.CharField(verbose_name='缩略图', max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
@@ -168,7 +169,8 @@ class PageGroup(models.Model):
 class Page(models.Model):
     name = models.CharField(verbose_name="页面名称", max_length=256)
     page_group = models.ForeignKey('PageGroup', verbose_name="所属模板")
-    data = models.TextField(verbose_name="模板数据", null=True, blank=True)
+    data = models.TextField(verbose_name="页面数据(正式)", null=True, blank=True)
+    data_dev = models.TextField(verbose_name="页面数据(设计)", null=True, blank=True)
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
