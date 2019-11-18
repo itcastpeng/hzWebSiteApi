@@ -69,6 +69,8 @@ def wechat_login(request):
                 'permissions_list': data_list,
                 'inviter': inviter
             }
+            obj.last_login_datetime = datetime.datetime.now()
+            obj.save()
     else:
         response.code = 402
         response.msg = "请求异常"

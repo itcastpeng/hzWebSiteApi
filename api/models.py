@@ -28,6 +28,7 @@ class UserProfile(models.Model):
     role = models.ForeignKey('Role', verbose_name="角色", null=True)
     token = models.CharField(verbose_name="token值", max_length=128)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    last_login_datetime = models.DateTimeField(verbose_name="最后登录时间", null=True, blank=True)
     head_portrait = models.CharField(
         verbose_name='头像',
         default='/statics/admin_imgs/head_portrait.jpg',
