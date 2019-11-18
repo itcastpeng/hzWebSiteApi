@@ -651,6 +651,7 @@ def template_oper(request, oper_type, o_id):
                 result_data.append({
                     "remark": data["remark"],
                     "create_datetime": data["create_datetime"],
+                    "is_public": data["is_public"],
                 })
 
             response.code = 200
@@ -659,6 +660,7 @@ def template_oper(request, oper_type, o_id):
             response.note = {
                 "remark": "备注信息",
                 "create_datetime": "创建时间",
+                "is_public": "是否为发布版本",
             }
 
         else:
