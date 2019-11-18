@@ -625,7 +625,7 @@ def template_oper(request, oper_type, o_id):
                 'phone_share_page': '分享页面',
             }
 
-        # 获取历史版本数据
+        # 获取模板历史版本数据
         elif oper_type == "get_history_version":
             redis_obj = get_redis_obj()
             template_id = request.POST.get('o_id')  # 模板id
@@ -656,7 +656,9 @@ def template_oper(request, oper_type, o_id):
 
             response.code = 200
             response.msg = '查询成功'
-            response.data = result_data
+            response.data = {
+                "ret_data": result_data
+            }
             response.note = {
                 "remark": "备注信息",
                 "create_datetime": "创建时间",
