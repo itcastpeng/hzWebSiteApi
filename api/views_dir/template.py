@@ -525,7 +525,6 @@ def template_oper(request, oper_type, o_id):
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
             redis_data = redis_obj.get(redis_key)
             if redis_data:
-                rollback_data = []
                 redis_data = json.loads(redis_data)
                 for i in redis_data:
                     if i['time_stamp'] == time_stamp:   # 匹配到版本数据
