@@ -2,7 +2,7 @@ from api import models
 from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.condition_com import conditionCom
-from api.forms.user import SelectForm, UpdateRoleForm, TransferAllUserInformation, DeleteTeamMembers
+from api.forms.user import SelectForm, UpdateRoleForm, TransferAllUserInformation, DeleteTeamMembers, UpdateForm
 import datetime, re, json
 from publicFunc.api_public import create_error_log
 from publicFunc import base64_encryption
@@ -95,7 +95,7 @@ def user_oper(request, oper_type, o_id):
     user_id = request.GET.get('user_id')
     if request.method == "POST":
 
-        # 修改用户角色
+        # 修改用户角色    (即将废弃,被update取代)
         if oper_type == 'update_role':
             form_data = {
                  'role_id': request.POST.get('role_id'),
@@ -118,6 +118,43 @@ def user_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(form_obj.errors.as_json())
+
+        elif oper_type == "update":
+            # 获取需要修改的信息
+            form_data = {
+                'o_id': o_id,
+                'role_id': request.POST.get('role_id'),  # 角色id
+                'company_name': request.POST.get('company_name'),  # 公司名称
+                'remark': request.POST.get('remark'),  # 备注信息
+            }
+
+            forms_obj = UpdateForm(form_data)
+            if forms_obj.is_valid():
+                o_id = forms_obj.cleaned_data['o_id']
+                role_id = forms_obj.cleaned_data['role_id']  # 角色id
+                company_name = forms_obj.cleaned_data['company_name']  # 公司名称
+                remark = forms_obj.cleaned_data['remark']  # 备注信息
+                #  查询数据库  用户id
+                objs = models.UserProfile.objects.filter(
+                    id=o_id
+                )
+                #  更新 数据
+                if objs:
+                    objs.update(
+                        role_id=role_id,
+                        company_name=company_name,
+                        remark=remark,
+                    )
+
+                    response.code = 200
+                    response.msg = "修改成功"
+                else:
+                    response.code = 303
+                    response.msg = '不存在的数据'
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
 
         # 转接 用户所有信息
         elif oper_type == 'transfer_all_user_information':

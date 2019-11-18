@@ -36,6 +36,38 @@ class SelectForm(forms.Form):
         return length
 
 
+# 修改
+class UpdateForm(forms.Form):
+    role_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "角色ID不能为空"
+            # 'invalid': "角色ID不能为空"
+        }
+    )
+    company_name = forms.CharField(
+        required=False
+    )
+
+    remark = forms.CharField(
+        required=False
+    )
+
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "要修改的用户ID不能为空"
+        }
+    )
+
+    def clean_role_id(self):
+        role_id = self.data.get('role_id')
+        if models.Role.objects.filter(id=role_id):
+            return role_id
+        else:
+            self.add_error('role_id', '角色ID不存在')
+
+
 # 修改角色
 class UpdateRoleForm(forms.Form):
     role_id = forms.IntegerField(
