@@ -23,6 +23,7 @@ class Role(models.Model):
 class UserProfile(models.Model):
     username = models.CharField(verbose_name="用户名", max_length=128, null=True, blank=True)
     name = models.CharField(verbose_name="微信昵称", max_length=128, null=True, blank=True)
+    company_name = models.CharField(verbose_name="公司名称", max_length=256, null=True, blank=True)
     password = models.CharField(verbose_name="密码", max_length=128, null=True, blank=True)
     role = models.ForeignKey('Role', verbose_name="角色", null=True)
     token = models.CharField(verbose_name="token值", max_length=128)
@@ -65,6 +66,7 @@ class UserProfile(models.Model):
     login_type = models.SmallIntegerField(verbose_name='登录类型', choices=login_type_choices, default=1)
     ding_dong_marketing_treasure_user_id = models.IntegerField(verbose_name='叮咚营销宝', null=True)
     select_template_list = models.TextField(verbose_name='可查看模板ID列表', default=[])
+    remark = models.TextField(verbose_name="备注信息", null=True, blank=True)
 
 
 
@@ -343,7 +345,7 @@ class CustomerOfficialNumber(models.Model):
     user = models.ForeignKey('UserProfile', verbose_name='用户', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
-# 客户小程序授权 信息
+# 客户小程序授权 信息(微信小程序)
 class ClientApplet(models.Model):
     is_authorization = models.IntegerField(verbose_name='授权是否完成', default=0)
     appid = models.CharField(verbose_name='小程序APPID', max_length=64)

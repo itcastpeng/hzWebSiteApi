@@ -15,6 +15,7 @@ def user(request):
         forms_obj = SelectForm(request.GET)
         if forms_obj.is_valid():
             user_id = request.GET.get('user_id')
+
             current_page = forms_obj.cleaned_data['current_page']
             length = forms_obj.cleaned_data['length']
             print('forms_obj.cleaned_data -->', forms_obj.cleaned_data)
@@ -26,7 +27,14 @@ def user(request):
             q = conditionCom(request, field_dict)
 
             print('q -->', q)
-            objs = models.UserProfile.objects.filter(q, openid__isnull=False).order_by(order)
+            objs = models.UserProfile.objects.select_related('role').filter(q, openid__isnull=False)
+
+            exclude_role_admin = request.GET.get('exclude_admin', False)  # 是否排除管理员角色
+            if exclude_role_admin:
+                role_admin_id_list = [6, 8]  # 管理员角色id
+                objs = objs.exclude(role_id__in=role_admin_id_list)
+
+            objs = objs.order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -44,6 +52,9 @@ def user(request):
                     'head_portrait': obj.head_portrait,
                     'sex_id': obj.sex,
                     'sex': obj.get_sex_display(),
+                    'company_name': obj.company_name,
+                    'remark': obj.remark,
+                    'login_timestamp': obj.login_timestamp,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
 
@@ -53,6 +64,19 @@ def user(request):
             response.data = {
                 'ret_data': ret_data,
                 'data_count': count,
+            }
+            response.note = {
+                'id': "用户id",
+                'name': "微信昵称",
+                'role_id': "角色id",
+                'role_name': "角色名称",
+                'head_portrait': "头像",
+                'sex_id': "性别id",
+                'sex': "性别",
+                'company_name': "公司名称",
+                'remark': "备注",
+                'login_timestamp': "最后登录时间戳",
+                'create_datetime': "创建时间",
             }
 
         else:
