@@ -14,6 +14,7 @@ from hz_website_api_celery.tasks import get_xcx_qrcode, get_gzh_qrcode, get_baid
 import json
 from publicFunc.redisOper import get_redis_obj
 import datetime
+import time
 
 
 
@@ -454,7 +455,8 @@ def template_oper(request, oper_type, o_id):
                 "tab_bar_data": template_obj[0].tab_bar_data_dev,   # 底部导航数据
                 "remark": remark,        # 备注信息
                 "is_public": False,        # 是否为发布版本
-                "create_datetime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                "create_datetime": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                "time_stamp": int(time.time() * 10000000)
             }
 
             page_objs = models.Page.objects.filter(page_group__template_id=template_id)
@@ -477,6 +479,43 @@ def template_oper(request, oper_type, o_id):
             response.code = 200
             response.msg = '保存成功'
 
+        # 历史版本回滚
+        elif oper_type == "rollback_history_version":
+            redis_obj = get_redis_obj()
+            template_id = request.POST.get('o_id')  # 模板id
+            time_stamp = request.POST.get('time_stamp')  # 版本唯一时间戳
+            redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
+            redis_data = redis_obj.get(redis_key)
+
+            if redis_data:
+                rollback_data = None
+                redis_data = json.loads(redis_data)
+                for i in redis_data:
+                    if i['time_stamp'] == time_stamp:   # 匹配到版本数据
+                        rollback_data = i
+                        tab_bar_data = i["tab_bar_data"]    # 底部导航数据
+                        models.Template.objects.filter(id=template_id).update(tab_bar_data_dev=tab_bar_data)
+
+                        pages_data = i["pages_data"]  # 页面数据
+                        for page_data in pages_data:
+                            page_id = page_data["page_id"]
+                            page_data = page_data["page_data"]
+                            models.Page.objects.filter(id=page_id).update(data_dev=page_data)
+
+                if rollback_data:
+                    rollback_data['remark'] = '版本回退, 回退到 {time_stamp}'.format(time_stamp=rollback_data['time_stamp'])
+                    rollback_data['time_stamp'] = int(time.time() * 10000000)
+                    rollback_data['create_datetime'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    redis_data.append(rollback_data)
+
+                    response.code = 200
+                    response.msg = '版本回滚成功'
+                else:
+                    response.code = 0
+                    response.msg = '请求异常'
+            else:
+                response.code = 0
+                response.msg = '请求异常'
 
 
     else:
@@ -652,6 +691,7 @@ def template_oper(request, oper_type, o_id):
                     "remark": data["remark"],
                     "create_datetime": data["create_datetime"],
                     "is_public": data["is_public"],
+                    "time_stamp": data["time_stamp"],
                 })
 
             response.code = 200
@@ -663,6 +703,7 @@ def template_oper(request, oper_type, o_id):
                 "remark": "备注信息",
                 "create_datetime": "创建时间",
                 "is_public": "是否为发布版本",
+                "time_stamp": "时间戳",
             }
 
         else:
