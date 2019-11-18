@@ -855,8 +855,12 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 for obj in objs:
 
                     is_applet = False
-                    if obj.clientapplet_set.all():
+                    if obj.clientapplet_set.count():
                         is_applet = True
+
+                    is_baidu_applet = False
+                    if obj.baidusmallprogrammanagement_set.count():
+                        is_baidu_applet = True
 
                     template_class_id = ''
                     template_class_name = ''
@@ -875,6 +879,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'template_class_name': template_class_name,
                         'tab_bar_data': obj.tab_bar_data,
                         'is_applet': is_applet,
+                        'is_baidu_applet': is_baidu_applet,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
 
@@ -898,7 +903,8 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 }
                 response.note = {
                     'id': '提交的代码ID',
-                    'is_applet': '是否有小程序',
+                    'is_applet': '微信小程序是否授权',
+                    'is_baidu_applet': '百度小程序是否授权',
                     'logo_img': 'logo图片',
                     'thumbnail': '缩略图',
                     'share_qr_code': '微信分享二维码',
