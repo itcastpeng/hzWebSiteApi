@@ -440,7 +440,7 @@ def template_oper(request, oper_type, o_id):
         # 保存历史版本数据
         elif oper_type == "save_history_version":
             redis_obj = get_redis_obj()
-            template_id = request.POST.get('template_id')   # 模板id
+            template_id = request.POST.get('o_id')   # 模板id
             remark = request.POST.get('remark')             # 备注信息
 
             redis_key = "xcx::template::save_history_version::{template_id}".format(template_id=template_id)
