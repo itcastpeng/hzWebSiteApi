@@ -34,6 +34,10 @@ def user(request):
                 role_admin_id_list = [6, 8]  # 管理员角色id
                 objs = objs.exclude(role_id__in=role_admin_id_list)
 
+            inviter_id_is_null = request.GET.get('inviter_id_is_null', False)
+            if inviter_id_is_null:
+                objs = objs.filter(inviter_id__isnull=True)
+
             objs = objs.order_by(order)
             count = objs.count()
 
