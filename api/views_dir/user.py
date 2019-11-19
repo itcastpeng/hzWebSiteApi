@@ -47,7 +47,20 @@ def user(request):
                 objs = objs[start_line: stop_line]
 
             ret_data = []
+
+
+
+
             for obj in objs:
+                inviter = 0
+                if obj.inviter:
+                    inviter = 1
+
+                role_obj = models.Role.objects.filter(id=obj.role_id)
+                data_list = []
+                for i in role_obj[0].permissions.all():
+                    data_list.append(i.name)
+
                 ret_data.append({
                     'id': obj.id,
                     'name': base64_encryption.b64decode(obj.name),
@@ -58,6 +71,8 @@ def user(request):
                     'sex_id': obj.sex,
                     'sex': obj.get_sex_display(),
                     'company_name': obj.company_name,
+                    'permissions_list': data_list,
+                    'inviter': inviter,
                     'remark': obj.remark,
                     'last_login_datetime': obj.last_login_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
