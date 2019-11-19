@@ -829,6 +829,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 current_page = forms_obj.cleaned_data['current_page']
                 length = forms_obj.cleaned_data['length']
                 order = request.GET.get('order', '-create_datetime')
+
+                create_user_id = request.GET.get('create_user_id', user_id)
+
                 field_dict = {
                     'user_desc': '__contains',
                     'user_version': '__contains'
@@ -841,7 +844,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
                 objs = models.Template.objects.filter(
                     q,
-                    create_user_id=user_id
+                    create_user_id=create_user_id
                 ).order_by(order)
                 count = objs.count()
                 if length != 0:
