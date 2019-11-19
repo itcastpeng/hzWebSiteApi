@@ -50,7 +50,7 @@ def template(request):
                 q.add(Q(create_user__role_id__in=admin_list), Q.AND)
 
             print('q----------> ', q)
-            objs = models.Template.objects.filter(q).order_by(order)
+            objs = models.Template.objects.select_related('template_class').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0 and not request.GET.get('id'):
@@ -83,6 +83,7 @@ def template(request):
                 dict_data = {
                     'id': obj.id,
                     'name': obj.name,
+                    'template_class_type': obj.template_class.class_type,
                     'is_authorization': is_authorization,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
