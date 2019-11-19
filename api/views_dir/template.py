@@ -64,9 +64,11 @@ def template(request):
             for obj in objs:
                 template_class_id = ''
                 template_class_name = ''
+                template_class_type = ''
                 if obj.template_class:
                     template_class_id = obj.template_class_id
                     template_class_name = obj.template_class.name
+                    template_class_type = obj.template_class.class_type
 
                 is_authorization = False
                 apple_objs = obj.clientapplet_set.all()
@@ -83,7 +85,7 @@ def template(request):
                 dict_data = {
                     'id': obj.id,
                     'name': obj.name,
-                    'template_class_type': obj.template_class.class_type,
+                    'template_class_type': template_class_type,
                     'is_authorization': is_authorization,
                     'share_qr_code': obj.share_qr_code,
                     'logo_img': obj.logo_img,
