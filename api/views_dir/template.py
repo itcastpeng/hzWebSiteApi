@@ -177,7 +177,8 @@ def template_oper(request, oper_type, o_id):
                 page_obj = models.Page.objects.create(
                     name="首页",
                     page_group=page_group_obj,
-                    data=json.dumps(page_base_data)
+                    data=json.dumps(page_base_data),
+                    data_dev=json.dumps(page_base_data)
                 )
 
                 tab_bar_base_data = {
@@ -207,6 +208,7 @@ def template_oper(request, oper_type, o_id):
                     ]
                 }
                 template_obj.tab_bar_data = json.dumps(tab_bar_base_data)
+                template_obj.tab_bar_data_dev = template_obj.tab_bar_data
                 template_obj.save()
                 response.code = 200
                 response.msg = "添加成功"
