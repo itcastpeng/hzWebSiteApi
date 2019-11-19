@@ -476,6 +476,7 @@ def template_oper(request, oper_type, o_id):
             # print("redis_data -->", redis_data)
             # print("template_data -->", template_data)
             redis_data = redis_data.append(template_data)
+            print("redis_data -->", redis_data)
             redis_data = json.dumps(redis_data)
             print("redis_data -->", redis_data)
             redis_obj.set(redis_key, redis_data)
