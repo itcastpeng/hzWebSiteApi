@@ -87,7 +87,8 @@ def template_class_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 obj = models.TemplateClass.objects.create(
                     create_user_id=forms_obj.cleaned_data.get('create_user_id'),
-                    name=forms_obj.cleaned_data.get('name')
+                    name=forms_obj.cleaned_data.get('name'),
+                    class_type=forms_obj.cleaned_data.get('class_type')
                 )
 
                 response.code = 200
