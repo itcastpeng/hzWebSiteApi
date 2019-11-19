@@ -493,6 +493,7 @@ def template_oper(request, oper_type, o_id):
                 rollback_data = None
                 redis_data = json.loads(redis_data)
                 for i in redis_data:
+                    print("i['time_stamp'] -->", i['time_stamp'], time_stamp, i['time_stamp'] == time_stamp)
                     if i['time_stamp'] == time_stamp:   # 匹配到版本数据
                         rollback_data = i
                         tab_bar_data = i["tab_bar_data"]    # 底部导航数据
@@ -503,6 +504,8 @@ def template_oper(request, oper_type, o_id):
                             page_id = page_data["page_id"]
                             page_data = page_data["page_data"]
                             models.Page.objects.filter(id=page_id).update(data_dev=page_data)
+
+                        break
 
                 if rollback_data:
                     rollback_data['remark'] = '版本回退, 回退到 {time_stamp}'.format(time_stamp=rollback_data['time_stamp'])
