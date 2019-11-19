@@ -465,6 +465,7 @@ def template_oper(request, oper_type, o_id):
                     'page_id': obj.id,
                     'page_data': obj.data_dev
                 }
+
                 template_data["pages_data"].append(page_data)
 
             redis_data = redis_obj.get(redis_key)
