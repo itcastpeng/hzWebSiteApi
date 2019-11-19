@@ -473,10 +473,12 @@ def template_oper(request, oper_type, o_id):
                 redis_data = json.loads(redis_data)
             else:
                 redis_data = []
-            print("redis_data -->", redis_data)
-            print("template_data -->", template_data)
+            # print("redis_data -->", redis_data)
+            # print("template_data -->", template_data)
             redis_data = redis_data.append(template_data)
-            redis_obj.set(redis_key, json.dumps(redis_data))
+            redis_data = json.dumps(redis_data)
+            # print("redis_data -->", redis_data)
+            redis_obj.set(redis_key, redis_data)
 
             response.code = 200
             response.msg = '保存成功'
