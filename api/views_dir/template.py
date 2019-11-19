@@ -346,6 +346,7 @@ def template_oper(request, oper_type, o_id):
                             name=page_obj.name,
                             page_group=PageGroupObj,
                             data=page_obj.data,
+                            data_dev=page_obj.data,
                             create_user_id=user_id
                         )
                         for tab_data in tab_bar_data.get('data'):
@@ -353,9 +354,13 @@ def template_oper(request, oper_type, o_id):
                                 tab_data['page_id'] = page_obj.id
 
                 if old_template_id:
-                    template_objs.update(tab_bar_data=json.dumps(tab_bar_data))
+                    template_objs.update(
+                        tab_bar_data=json.dumps(tab_bar_data),
+                        tab_bar_data_dev=json.dumps(tab_bar_data),
+                    )
                 else:
                     obj.tab_bar_data = json.dumps(tab_bar_data)
+                    obj.tab_bar_data_dev = json.dumps(tab_bar_data)
                     obj.save()
 
                 response.code = 200
