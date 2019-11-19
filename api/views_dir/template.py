@@ -494,7 +494,7 @@ def template_oper(request, oper_type, o_id):
                 redis_data = json.loads(redis_data)
                 for i in redis_data:
                     print("i['time_stamp'] -->", i['time_stamp'], time_stamp, i['time_stamp'] == time_stamp)
-                    if i['time_stamp'] == time_stamp:   # 匹配到版本数据
+                    if str(i['time_stamp']) == time_stamp:   # 匹配到版本数据
                         rollback_data = i
                         tab_bar_data = i["tab_bar_data"]    # 底部导航数据
                         models.Template.objects.filter(id=template_id).update(tab_bar_data_dev=tab_bar_data)
