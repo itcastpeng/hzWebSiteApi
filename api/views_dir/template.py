@@ -443,7 +443,7 @@ def template_oper(request, oper_type, o_id):
         # 保存历史版本数据
         elif oper_type == "save_history_version":
             redis_obj = get_redis_obj()
-            template_id = request.POST.get('o_id')   # 模板id
+            template_id = o_id   # 模板id
             remark = request.POST.get('remark')             # 备注信息
 
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
@@ -482,7 +482,7 @@ def template_oper(request, oper_type, o_id):
         # 历史版本回滚
         elif oper_type == "rollback_history_version":
             redis_obj = get_redis_obj()
-            template_id = request.POST.get('o_id')  # 模板id
+            template_id = o_id  # 模板id
             time_stamp = request.POST.get('time_stamp')  # 版本唯一时间戳
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
             redis_data = redis_obj.get(redis_key)
@@ -520,7 +520,7 @@ def template_oper(request, oper_type, o_id):
         # 版本上线
         elif oper_type == "online_history_version":
             redis_obj = get_redis_obj()
-            template_id = request.POST.get('o_id')  # 模板id
+            template_id = o_id  # 模板id
             time_stamp = request.POST.get('time_stamp')  # 版本唯一时间戳
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
             redis_data = redis_obj.get(redis_key)
