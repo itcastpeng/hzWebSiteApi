@@ -80,6 +80,7 @@ def template_class_oper(request, oper_type, o_id):
             form_data = {
                 'create_user_id': request.GET.get('user_id'),
                 'name': request.POST.get('name'),
+                'class_type': request.POST.get('class_type', 2),
             }
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)

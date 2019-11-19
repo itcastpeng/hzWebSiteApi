@@ -20,6 +20,13 @@ class AddForm(forms.Form):
         }
     )
 
+    class_type = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "模板名称不能为空"
+        }
+    )
+
     # 查询名称是否存在
     def clean_name(self):
         name = self.data['name']

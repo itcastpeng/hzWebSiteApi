@@ -463,7 +463,7 @@ def template_oper(request, oper_type, o_id):
             for obj in page_objs:
                 page_data = {
                     'page_id': obj.id,
-                    'page_data': obj.dev_data
+                    'page_data': obj.data_dev
                 }
                 template_data["pages_data"].append(page_data)
 
