@@ -721,7 +721,7 @@ def template_oper(request, oper_type, o_id):
             }
             """
             result_data = []
-            for data in reversed(redis_data)[:10]:  # 倒序,最新排最上面
+            for data in list(reversed(redis_data))[:10]:  # 倒序,最新排最上面
                 result_data.append({
                     "remark": data["remark"],
                     "create_datetime": data["create_datetime"],
