@@ -469,18 +469,12 @@ def template_oper(request, oper_type, o_id):
                 template_data["pages_data"].append(page_data)
 
             redis_data = redis_obj.get(redis_key)
-            print("redis_data -->", redis_data)
             if redis_data:
                 redis_data = json.loads(redis_data)
             else:
                 redis_data = []
-            # print("redis_data -->", redis_data)
-            # print("template_data -->", template_data)
-            print("redis_data -->", redis_data)
-            redis_data = redis_data.append(template_data)
-            print("redis_data -->", redis_data)
+            redis_data.append(template_data)
             redis_data = json.dumps(redis_data)
-            print("redis_data -->", redis_data)
             redis_obj.set(redis_key, redis_data)
 
             response.code = 200
