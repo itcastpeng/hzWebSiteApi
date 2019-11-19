@@ -479,7 +479,7 @@ def template_oper(request, oper_type, o_id):
 
             response.code = 200
             response.msg = '保存成功'
-            response.data = redis_data
+            # response.data = redis_data
 
         # 历史版本回滚
         elif oper_type == "rollback_history_version":
