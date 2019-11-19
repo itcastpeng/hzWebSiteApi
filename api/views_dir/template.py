@@ -704,7 +704,7 @@ def template_oper(request, oper_type, o_id):
         # 获取模板历史版本数据
         elif oper_type == "get_history_version":
             redis_obj = get_redis_obj()
-            template_id = request.POST.get('o_id')  # 模板id
+            template_id = o_id  # 模板id
 
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
             redis_data = redis_obj.get(redis_key)
