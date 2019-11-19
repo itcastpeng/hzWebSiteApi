@@ -54,6 +54,7 @@ def user(request):
                     'role_id': obj.role_id,
                     'role_name': obj.role.name,
                     'head_portrait': obj.head_portrait,
+                    'token': obj.token,
                     'sex_id': obj.sex,
                     'sex': obj.get_sex_display(),
                     'company_name': obj.company_name,
