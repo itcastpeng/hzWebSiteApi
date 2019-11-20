@@ -333,6 +333,7 @@ def tripartite_platform_oper(request, oper_type):
                                 'user_id': user_id,
                                 'user_token': user_obj.token,
                                 'id': get_experience_qr_code_template_id,
+                                'experience': True,
                             }
                             tripartite_platform_objs.xcx_update_code(data_dict)
                             data = tripartite_platform_objs.xcx_get_experience_qr_code(authorizer_access_token)

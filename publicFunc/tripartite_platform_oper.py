@@ -340,6 +340,7 @@ class tripartite_platform_oper():
         token = data.get('token')
         user_id = data.get('user_id')
         user_token = data.get('user_token')
+        experience = data.get('experience', False)
         id = data.get('id')
 
         ext_json = {
@@ -348,6 +349,7 @@ class tripartite_platform_oper():
                     'template_id': id, #小程序ID 查询改小程序模板
                     'user_id': user_id,
                     'token': user_token,
+                    'experience': experience,
                 },
                 # 'extPages':{      # 页面配置
                 #     "index":{
