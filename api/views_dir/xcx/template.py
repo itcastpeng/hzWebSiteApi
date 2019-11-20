@@ -20,7 +20,7 @@ def template(request, oper_type):
             template_objs = models.Template.objects.filter(id=template_id)
             if template_objs:
                 tab_bar_data = template_objs[0].tab_bar_data
-                if experience:  # 如果是体验版,则获取开发数据
+                if experience == "true":  # 如果是体验版,则获取开发数据
                     tab_bar_data = template_objs[0].tab_bar_data_dev
 
                 response.code = 200
@@ -76,7 +76,7 @@ def template(request, oper_type):
                     response.code = 200
                     response.msg = '查询成功'
                     page_data = objs[0].data
-                    if experience:  # 如果是体验版,则获取开发数据
+                    if experience == "true":  # 如果是体验版,则获取开发数据
                         page_data = objs[0].data_dev
                     response.data = {
                         'page_data': page_data

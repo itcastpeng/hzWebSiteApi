@@ -122,7 +122,7 @@ def xcx_view_log_oper(request, oper_type):
             log_type = request.GET.get('log_type', 1)
             source = request.GET.get('source', 1) # 1微信小程序 2百度小程序
             log_data = {
-                'user_id':user_id,
+                'customer_id':user_id,
                 'template_id':template_id,
                 'source':source,
                 'log_type': log_type
