@@ -33,6 +33,9 @@ def article_management(request):
             ret_data = []
 
             for obj in objs:
+                article_class_name = ""
+                if obj.article_class_id:
+                    article_class_name = obj.article_class.name
                 ret_data.append({
                     'id': obj.id,
                     'template_id': obj.template_id,
@@ -40,7 +43,7 @@ def article_management(request):
                     'article_introduction': obj.article_introduction,
                     'article_title': obj.article_title,
                     'article_class_id': obj.article_class_id,
-                    'article_class_name': obj.article_class.name,
+                    'article_class_name': article_class_name,
                     'template_name': obj.template.name,
                     'article_content': obj.article_content,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
