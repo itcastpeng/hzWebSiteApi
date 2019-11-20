@@ -72,6 +72,7 @@ class UserProfile(models.Model):
 
 
 
+
 # 公众号或小程序用户表
 class ClientUserProfile(models.Model):
     openid = models.CharField(verbose_name="微信公众号openid", max_length=64)
@@ -164,6 +165,11 @@ class Template(models.Model):
     phone_vote = models.SmallIntegerField(verbose_name='投票', choices=card_details_choices, default=1)
     phone_share_page = models.SmallIntegerField(verbose_name='分享页面', choices=card_details_choices, default=1)
 
+
+# 表单管理
+class Form(models.Model):
+    template = models.ForeignKey('Template', verbose_name="模板", null=True)
+    data = models.TextField(verbose_name="表单数据,数据结构前端自己定义")
 
 
 # 页面分组表

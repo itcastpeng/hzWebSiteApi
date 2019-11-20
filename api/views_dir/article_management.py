@@ -21,7 +21,7 @@ def article_management(request):
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
-            objs = models.Article.objects.filter(q).order_by(order)
+            objs = models.Article.objects.select_related('article_class').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0:
@@ -39,6 +39,8 @@ def article_management(request):
                     'thumbnail': obj.thumbnail,
                     'article_introduction': obj.article_introduction,
                     'article_title': obj.article_title,
+                    'article_class_id': obj.article_class_id,
+                    'article_class_name': obj.article_class.name,
                     'template_name': obj.template.name,
                     'article_content': obj.article_content,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
