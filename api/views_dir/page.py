@@ -63,7 +63,8 @@ def page_oper(request, oper_type, o_id):
                     'create_user_id': forms_obj.cleaned_data.get('create_user_id'),
                     'name': forms_obj.cleaned_data.get('name'),
                     'page_group_id': forms_obj.cleaned_data.get('page_group_id'),
-                    'data': json.dumps(page_base_data)
+                    'data': json.dumps(page_base_data),
+                    'data_dev': json.dumps(page_base_data),
                 }
                 print('create_data -->', create_data)
                 obj = models.Page.objects.create(**create_data)
@@ -95,6 +96,7 @@ def page_oper(request, oper_type, o_id):
                         name=page_name,
                         page_group=old_obj.page_group,
                         data=old_obj.data,
+                        data_dev=old_obj.data,
                         create_user_id=user_id
                     )
                     response.code = 200
