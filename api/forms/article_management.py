@@ -47,6 +47,12 @@ class AddForm(forms.Form):
             'required': "文章简介不能为空"
         }
     )
+    article_class_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "文章分类id不能为空"
+        }
+    )
 
     def clean_template_id(self):
         template_id = self.data.get('template_id')
@@ -105,6 +111,12 @@ class UpdateForm(forms.Form):
         required=True,
         error_messages={
             'required': "文章简介不能为空"
+        }
+    )
+    article_class_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "文章分类id不能为空"
         }
     )
 

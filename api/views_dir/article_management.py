@@ -84,10 +84,12 @@ def article_management_oper(request, oper_type, o_id):
                 article_title = forms_obj.cleaned_data.get('article_title')
                 thumbnail = forms_obj.cleaned_data.get('thumbnail')
                 article_introduction = forms_obj.cleaned_data.get('article_introduction')
+                article_class_id = forms_obj.cleaned_data.get('article_class_id')
 
                 obj = models.Article.objects.create(
                     article_introduction=article_introduction,
                     article_content=article_content,
+                    article_class_id=article_class_id,
                     article_title=article_title,
                     thumbnail=thumbnail,
                     template_id=template_id,
@@ -119,6 +121,7 @@ def article_management_oper(request, oper_type, o_id):
                 article_title = forms_obj.cleaned_data['article_title']
                 thumbnail = forms_obj.cleaned_data['thumbnail']
                 article_introduction = forms_obj.cleaned_data['article_introduction']
+                article_class_id = forms_obj.cleaned_data['article_class_id']
 
                 # 更新数据
                 models.Article.objects.filter(id=o_id).update(
@@ -126,6 +129,7 @@ def article_management_oper(request, oper_type, o_id):
                     article_title=article_title,
                     article_introduction=article_introduction,
                     thumbnail=thumbnail,
+                    article_class_id=article_class_id,
                 )
                 response.code = 200
                 response.msg = "修改成功"
