@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class, article_management, baidu_tripartite_platform_management, business_card_management, service_management, \
-    view_log, team_management, article_class
+    view_log, team_management, article_class, form
 
 from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management, \
     page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management, customer as xcx_customer
@@ -88,6 +88,11 @@ urlpatterns = [
     # 文章分类管理
     url(r'^article_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', article_class.article_class_oper),
     url(r'^article_class', article_class.article_class),
+
+    # 表单管理
+    url(r'^form/(?P<oper_type>\w+)/(?P<o_id>\d+)', form.form_oper),
+    url(r'^form', form.form),
+
 
 
     # # ----------------------------- 公众号操作 ----------------------------------
