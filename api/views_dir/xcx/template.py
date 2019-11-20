@@ -16,16 +16,20 @@ def template(request, oper_type):
         if oper_type == "get_tab_bar_data":
             # 获取需要修改的信息
             template_id = request.GET.get('template_id')
+            experience = request.GET.get('experience')      # 是否是体验版,该字段有值则为体验版
             template_objs = models.Template.objects.filter(id=template_id)
             if template_objs:
+                tab_bar_data = template_objs[0].tab_bar_data
+                if experience:  # 如果是体验版,则获取开发数据
+                    tab_bar_data = template_objs[0].tab_bar_data_dev
+
                 response.code = 200
                 response.data = {
-                    'data': template_objs[0].tab_bar_data
+                    'data': tab_bar_data
                 }
             else:
                 response.code = 301
                 response.msg = "模板id异常"
-
 
         elif oper_type == "get_tabbar_data":
             form_data = {
@@ -58,6 +62,7 @@ def template(request, oper_type):
 
         # 获取页面数据
         elif oper_type == "get_page_data":
+            experience = request.GET.get('experience')      # 是否是体验版,该字段有值则为体验版
             form_data = {
                 'page_id': request.GET.get('page_id'),
             }
@@ -70,8 +75,11 @@ def template(request, oper_type):
                 if objs:
                     response.code = 200
                     response.msg = '查询成功'
+                    page_data = objs[0].data
+                    if experience:  # 如果是体验版,则获取开发数据
+                        page_data = objs[0].data_dev
                     response.data = {
-                        'page_data': objs[0].data,
+                        'page_data': page_data
                     }
                     response.note = {
                         'page_data': "页面数据"
