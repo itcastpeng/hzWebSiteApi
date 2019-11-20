@@ -72,6 +72,7 @@ def article_management_oper(request, oper_type, o_id):
         'article_title': request.POST.get('article_title'),         # 文章标题
         'thumbnail': request.POST.get('thumbnail'),                 # 缩略图
         'template_id': request.POST.get('template_id'),             # 模板ID
+        'article_class_id': request.POST.get('article_class_id'),             # 模板ID
     }
     if request.method == "POST":
 
