@@ -35,6 +35,7 @@ def template(request):
                 'name': '__contains',
                 'template_class_id': '',
                 'create_datetime': '',
+                'template_class__class_type': '',
             }
             q = conditionCom(request, field_dict)
             user_id = request.GET.get('user_id')
@@ -47,7 +48,8 @@ def template(request):
             if obj.role_id in [7, '7'] and not is_all:
                 q.add(Q(create_user_id=user_id), Q.AND)
             else:
-                q.add(Q(create_user__role_id__in=admin_list), Q.AND)
+                # q.add(Q(create_user__role_id__in=admin_list), Q.AND)
+                q.add(Q(create_user__role_id__in=[6, 8]), Q.AND)
 
             print('q----------> ', q)
             objs = models.Template.objects.select_related('template_class').filter(q).order_by(order)
