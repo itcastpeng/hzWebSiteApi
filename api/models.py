@@ -227,9 +227,19 @@ class ReservationForm(models.Model):
     form_content = models.TextField(verbose_name='表单数据', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
+
+# 文章分类表
+class ArticleClass(models.Model):
+    template = models.ForeignKey('Template', verbose_name='对应模板')
+    name = models.CharField(verbose_name="分类名称", max_length=256, null=True)
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
 # 文章表
 class Article(models.Model):
     template = models.ForeignKey('Template', verbose_name='对应模板')
+    article_class = models.ForeignKey('ArticleClass', verbose_name="文章分类", null=True, blank=True)
     article_title = models.CharField(verbose_name='文章标题', max_length=512, null=True)
     article_introduction = models.CharField(verbose_name='文章简介', max_length=512, null=True)
     thumbnail = models.CharField(verbose_name='缩略图', max_length=512, null=True)
