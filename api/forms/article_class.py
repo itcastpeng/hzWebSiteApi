@@ -65,7 +65,7 @@ class UpdateForm(forms.Form):
         name = self.data.get('name')
         o_id = self.data.get('o_id')
         template_id = self.data.get('template_id')
-        objs = models.CompomentLibraryClass.objects.filter(name=name, template_id=template_id).exclude(id=o_id)
+        objs = models.ArticleClass.objects.filter(name=name, template_id=template_id).exclude(id=o_id)
         if objs:
             self.add_error('name', '分类名称已存在')
         else:

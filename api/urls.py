@@ -27,10 +27,6 @@ urlpatterns = [
 
     url(r'^xcx/template/(?P<oper_type>\w+)$', xcx_template.template),  # 获取页面数据
 
-    # 文章分类管理
-    url(r'^article_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', article_class.article_class_oper),
-    url(r'^article_class', article_class.article_class),
-
     url(r'^xcx/business_card_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', xcx_business_card_management.business_card_management_oper),  # 小程序名片管理
 
     url(r'^xcx/article_management$', xcx_article_management.article_management),    # 文章查询
@@ -88,6 +84,10 @@ urlpatterns = [
     # 组件库
     url(r'^compoment_library/(?P<oper_type>\w+)/(?P<o_id>\d+)', compoment_library.compoment_library_oper),
     url(r'^compoment_library$', compoment_library.compoment_library),
+
+    # 文章分类管理
+    url(r'^article_class/(?P<oper_type>\w+)/(?P<o_id>\d+)', article_class.article_class_oper),
+    url(r'^article_class', article_class.article_class),
 
 
     # # ----------------------------- 公众号操作 ----------------------------------
