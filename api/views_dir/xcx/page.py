@@ -19,7 +19,7 @@ def page_oper(request, oper_type, o_id):
                 page_obj = page_objs[0]
                 page_data = page_obj.data
                 if experience == "true":
-                    page_data = page_data.data_dev
+                    page_data = page_obj.data_dev
                 response.code = 200
                 response.data = page_data
             else:
