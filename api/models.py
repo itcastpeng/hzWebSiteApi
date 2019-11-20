@@ -171,6 +171,7 @@ class Form(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     template = models.ForeignKey('Template', verbose_name="模板", null=True)
     data = models.TextField(verbose_name="表单数据,数据结构前端自己定义")
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 
 # 页面分组表

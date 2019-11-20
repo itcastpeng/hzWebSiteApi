@@ -4,7 +4,6 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from publicFunc.condition_com import conditionCom
 from api.forms.form import AddForm, UpdateForm, SelectForm
-from api.views_dir.permissions import init_data
 import json
 
 
@@ -44,6 +43,7 @@ def form(request):
                 ret_data.append({
                     'id': obj.id,
                     'data': obj.data,  # 表单数据
+                    'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
 
             #  查询成功 返回200 状态码
