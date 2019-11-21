@@ -425,7 +425,8 @@ class AppletCodeVersion(models.Model):
     choices_status = (
         (2, '审核中'),
         (0, '审核成功'),
-        (1, '审核失败')
+        (1, '审核失败'),
+        (3, '发布成功')
     )
     status = models.SmallIntegerField(verbose_name='审核状态', default=2, choices=choices_status)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
