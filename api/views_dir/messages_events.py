@@ -69,6 +69,8 @@ def messages_events_oper(request, oper_type, appid):
                 nick_name = client_applet_objs[0].nick_name
                 msg = "微信小程序: %s 发布代码审核不通过\n不通过原因: %s " % (nick_name, Reason)
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+            elif Event == "SCAN":
+                pass
             else:
                 content = collection.getElementsByTagName("Content")[0].childNodes[0].data
                 print('content--------> ', content)
