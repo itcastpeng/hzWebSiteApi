@@ -128,3 +128,6 @@ def send_wechat_msg(request):
             }
         }
         wechat_api_obj.sendTempMsg(post_data)
+
+        obj.is_send = True
+        obj.save()
