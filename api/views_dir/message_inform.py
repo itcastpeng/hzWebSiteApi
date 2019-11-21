@@ -27,7 +27,7 @@ def save_msg_inform(user_id, msg, is_send_admin=False):
         admin_user_id_data = models.UserProfile.objects.filter(role_id__in=[8]).values('id')
         for admin_user_id in admin_user_id_data:
             models.MessageInform.objects.create(
-                create_user_id=admin_user_id,
+                create_user_id=admin_user_id['id'],
                 msg=msg
             )
 
