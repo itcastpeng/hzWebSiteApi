@@ -8,4 +8,7 @@ urlpatterns = [
 
     # 异步生成海报名片
     url(r'^generate_business_card_poster$', celery_management.generate_business_card_poster),
+
+    # 发送微信公众号模板消息
+    url(r'^send_wechat_msg', celery_management.send_wechat_msg),
 ]

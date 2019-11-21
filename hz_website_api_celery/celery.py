@@ -143,6 +143,12 @@ app.conf.beat_schedule = {
         'schedule': crontab('30', '16', '*', '*', '*'),
     },
 
+    'send_wechat_msg': {
+        'task': 'hz_website_api_celery.tasks.send_wechat_msg',
+        'schedule': crontab('*', '*', '*', '*', '*'),
+    },
+
+
 
 }
 app.conf.update(

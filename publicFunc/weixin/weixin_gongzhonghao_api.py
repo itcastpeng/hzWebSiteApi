@@ -339,7 +339,40 @@ class WeChatApi(WeixinApiPublic):
         ret = requests.post(url, data=data)
         print('ret.text--客服消息--------->', ret.text)
 
-# if __name__ == '__main__':
+if __name__ == '__main__':
 #
-#     obj = WeChatApi("wechat_data.json")
+    import datetime
+    obj = WeChatApi("wechat_data.json")
+    post_data = {
+        "touser": "oCdre5_xWT_bKETinHI94szWyEb4",
+        "template_id": "Tn107ZLaOMdfc3TIV3R2WFG846IH4ztf1DezkgnLwI0",
+        # "url": "http://wenda.zhugeyingxiao.com/",
+        "data": {
+            # "first": {
+            #     "value": obj.msg,
+            #     # "color": "#173177"
+            # },
+            "keyword1": {
+                "value": "审核通过\ndsfds",
+                # "color": "#173177"
+            },
+            "keyword2": {
+                "value": datetime.datetime.now().strftime("%y-%m-%d %H:%M:%S"),
+                # "color": "#173177"
+            },
+            # "keyword3": {
+            #     "value": "发布失败",
+            #     "color": "#173177"
+            # },
+            # "keyword4": {
+            #     "value": "请修改",
+            #     "color": "#173177"
+            # },
+            # "remark": {
+            #     "value": "问题:嘻嘻嘻\n答案:嘻嘻嘻",
+            #     "color": "#173177"
+            # }
+        }
+    }
+    obj.sendTempMsg(post_data)
 #     obj.get_jsapi_ticket()

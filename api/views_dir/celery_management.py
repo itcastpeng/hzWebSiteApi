@@ -7,6 +7,7 @@ from PIL import Image, ImageFont, ImageDraw
 from PIL import Image
 from publicFunc.public import upload_qiniu, requests_img_download
 import os
+from publicFunc.weixin import weixin_gongzhonghao_api
 
 
 # 定时刷新转接 时间是否过期
@@ -87,3 +88,43 @@ def generate_business_card_poster(request):
 
 
     return HttpResponse('1')
+
+
+# 发送微信公众号模板消息
+def send_wechat_msg(request):
+    wechat_api_obj = weixin_gongzhonghao_api.WeChatApi()
+    objs = models.MessageInform.objects.select_related('create_user').filter(is_send=False)
+
+    for obj in objs:
+        post_data = {
+            "touser": obj.create_user.openid,
+            "template_id": "Tn107ZLaOMdfc3TIV3R2WFG846IH4ztf1DezkgnLwI0",
+            # "url": "http://wenda.zhugeyingxiao.com/",
+            "data": {
+                # "first": {
+                #     "value": obj.msg,
+                #     # "color": "#173177"
+                # },
+                "keyword1": {
+                    "value": obj.msg,
+                    # "color": "#173177"
+                },
+                "keyword2": {
+                    "value": obj.create_datetime.strftime("%y-%m-%d %H:%M:%S"),
+                    # "color": "#173177"
+                },
+                # "keyword3": {
+                #     "value": "发布失败",
+                #     "color": "#173177"
+                # },
+                # "keyword4": {
+                #     "value": "请修改",
+                #     "color": "#173177"
+                # },
+                # "remark": {
+                #     "value": "问题:嘻嘻嘻\n答案:嘻嘻嘻",
+                #     "color": "#173177"
+                # }
+            }
+        }
+        wechat_api_obj.sendTempMsg(post_data)
