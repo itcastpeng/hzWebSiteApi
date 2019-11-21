@@ -223,6 +223,7 @@ def tripartite_platform_oper(request, oper_type):
                     auditid=ret_json.get('auditid')
                 )
 
+                print("======================")
                 msg = "微信小程序: %s 提交审核 " % (obj.nick_name)
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             response.msg = ret_json.get('errmsg')
