@@ -15,6 +15,7 @@ from publicFunc.base64_encryption import b64decode
 from django.db.models import Q, Count
 from publicFunc.baidu_tripartite_platform_oper import  tripartite_platform_oper as baidu_tripartite_platform_oper
 import time, json, datetime, xml.etree.cElementTree as ET, requests
+from api.views_dir import message_inform
 
 # 三方平台操作
 @account.is_token(models.UserProfile)
@@ -221,6 +222,9 @@ def tripartite_platform_oper(request, oper_type):
                     user_desc='',
                     auditid=ret_json.get('auditid')
                 )
+
+                msg = "微信小程序: %s 提交审核 " % (obj.nick_name)
+                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             response.msg = ret_json.get('errmsg')
             response.data = ret_json
 
@@ -262,11 +266,13 @@ def tripartite_platform_oper(request, oper_type):
             if 'app is already released' in errmsg:
                 errmsg = '重复发布'
 
-            applet_code_version_obj = \
-            models.AppletCodeVersion.objects.filter(applet__authorizer_access_token=authorizer_access_token).order_by(
+            applet_code_version_obj = models.AppletCodeVersion.objects.select_related('applet').filter(applet__authorizer_access_token=authorizer_access_token).order_by(
                 '-create_datetime')[0]
             applet_code_version_obj.status = 3
             applet_code_version_obj.save()
+
+            msg = "微信小程序: %s 发布成功 " % (applet_code_version_obj.applet.nick_name)
+            message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
 
             response.code = code
             response.msg = errmsg

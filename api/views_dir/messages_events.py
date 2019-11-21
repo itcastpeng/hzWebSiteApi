@@ -55,7 +55,7 @@ def messages_events_oper(request, oper_type, appid):
                 client_applet_objs = models.ClientApplet.objects.filter(appid=ToUserName)
                 user_id = client_applet_objs[0].user_id
                 nick_name = client_applet_objs[0].nick_name
-                msg = "小程序: %s 发布代码审核通过" % nick_name
+                msg = "微信小程序: %s 发布代码审核通过" % nick_name
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             elif Event == 'weapp_audit_fail':   # 小程序审核不通过
                 applet_code_version_obj = models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).order_by('-create_datetime')[0]
@@ -66,7 +66,7 @@ def messages_events_oper(request, oper_type, appid):
                 client_applet_objs = models.ClientApplet.objects.filter(appid=ToUserName)
                 user_id = client_applet_objs[0].user_id
                 nick_name = client_applet_objs[0].nick_name
-                msg = "小程序: %s 发布代码审核不通过\n不通过原因: %s " % (nick_name, Reason)
+                msg = "微信小程序: %s 发布代码审核不通过\n不通过原因: %s " % (nick_name, Reason)
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             else:
                 content = collection.getElementsByTagName("Content")[0].childNodes[0].data
