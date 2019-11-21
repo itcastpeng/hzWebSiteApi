@@ -979,6 +979,14 @@ def tripartite_platform_admin(request, oper_type, o_id):
                     if obj.user:
                         user_id = obj.user_id
                         username = obj.user.name
+
+                    status = ""
+                    status_name = "未提交"
+                    applet_code_version_objs = obj.appletcodeversion_set.all()
+                    if applet_code_version_objs:
+                        status = applet_code_version_objs.order_by('-create_datetime')[0].status
+                        status_name = applet_code_version_objs.order_by('-create_datetime')[0].get_status_display()
+
                     ret_data.append({
                         'id': obj.id,
                         'appid': obj.appid,
@@ -987,7 +995,8 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'user_id': user_id,
 
                         # 此处需要优化
-                        'status': obj.appletcodeversion_set.all().order_by('-create_datetime')[0].status,
+                        'status': status,
+                        'status_name': status_name,
                         'username': b64decode(username),
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
