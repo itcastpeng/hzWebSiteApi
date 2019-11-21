@@ -5,8 +5,9 @@ from publicFunc import Response, account
 from django.http import JsonResponse
 from publicFunc.tripartite_platform_oper import encoding_appid, encodingAESKey, encoding_token
 from wechatpy.crypto import WeChatCrypto
-import xml.etree.cElementTree as ET, xml.dom.minidom as xmldom, requests
+from api.views_dir import message_inform
 
+import xml.etree.cElementTree as ET, xml.dom.minidom as xmldom, requests
 
 
 def messages_events_oper(request, oper_type, appid):
@@ -45,9 +46,28 @@ def messages_events_oper(request, oper_type, appid):
             FailTime = collection.getElementsByTagName("FailTime")[0].childNodes[0].data
             ScreenShot = collection.getElementsByTagName("ScreenShot")[0].childNodes[0].data
 
-            if Event == 'weapp_audit_success': # 小程序审核通知
-                pass
+            if Event == 'weapp_audit_success': # 小程序审核通通过知
+                # 更新审核状态
+                models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).update(
+                    status=0,
+                )
 
+                client_applet_objs = models.ClientApplet.objects.filter(appid=ToUserName)
+                user_id = client_applet_objs[0].user_id
+                nick_name = client_applet_objs[0].nick_name
+                msg = "小程序: %s 发布代码审核通过" % nick_name
+                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+            elif Event == 'weapp_audit_fail':   # 小程序审核不通过
+                models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).update(
+                    status=1,
+                    user_desc=Reason
+                )
+
+                client_applet_objs = models.ClientApplet.objects.filter(appid=ToUserName)
+                user_id = client_applet_objs[0].user_id
+                nick_name = client_applet_objs[0].nick_name
+                msg = "小程序: %s 发布代码审核不通过\n不通过原因: %s " % (nick_name, Reason)
+                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             else:
                 content = collection.getElementsByTagName("Content")[0].childNodes[0].data
                 print('content--------> ', content)

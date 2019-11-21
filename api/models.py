@@ -231,7 +231,8 @@ class CompomentLibrary(models.Model):
 class MessageInform(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
     msg = models.TextField(verbose_name="通知消息")
-    status = models.BooleanField(verbose_name="查看状态", default=False)
+    status = models.BooleanField(verbose_name="查阅状态", default=False)
+    is_send = models.BooleanField(verbose_name="是否发送微信公众号模板消息通知", default=False)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 
 

@@ -3,7 +3,7 @@ from django.conf.urls import url, include
 from api.views_dir import upload_img, login, user, template, page_group, page, wechat, photo_library_group,\
     photo_library, qiniu, compoment_library, compoment_library_class, tripartite_platform, messages_events, permissions, \
     role, template_class, article_management, baidu_tripartite_platform_management, business_card_management, service_management, \
-    view_log, team_management, article_class, form
+    view_log, team_management, article_class, form, message_inform
 
 from api.views_dir.xcx import template as xcx_template, form_management, business_card_management as xcx_business_card_management, \
     page as xcx_page, page_group as xcx_page_group, article_management as xcx_article_management, customer as xcx_customer
@@ -37,6 +37,9 @@ urlpatterns = [
 
     url(r'^xcx/form_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', form_management.form_management_oper),# 表单管理
     url(r'^xcx/form_management$', form_management.form_management),# 表单查询
+
+    url(r'^xcx/message_inform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', message_inform.message_inform_oper),# 消息通知
+    url(r'^xcx/message_inform', message_inform.message_inform),# 消息通知
 
     # ------------------------ 后台管理 ----------------------
     # 用户管理
