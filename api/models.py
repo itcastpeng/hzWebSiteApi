@@ -227,11 +227,20 @@ class CompomentLibrary(models.Model):
     is_delete = models.BooleanField(verbose_name="是否删除", default=False)
 
 
+# 消息通知
+class MessageInform(models.Model):
+    create_user = models.ForeignKey('UserProfile', verbose_name="创建用户", null=True)
+    msg = models.TextField(verbose_name="通知消息")
+    status = models.BooleanField(verbose_name="查看状态", default=False)
+    create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+
+
 """ 建站表单 数据表 """
 
 # 预约表单 表
 class ReservationForm(models.Model):
     template = models.ForeignKey('Template', verbose_name='对应模板')
+    form = models.ForeignKey('Form', verbose_name='表单', null=True)
     form_content = models.TextField(verbose_name='表单数据', null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
 

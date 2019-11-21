@@ -17,6 +17,12 @@ class AddForm(forms.Form):
             'required': "模板ID不能为空"
         }
     )
+    form_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "表单ID不能为空"
+        }
+    )
     form_content = forms.CharField(
         required=True,
         error_messages={

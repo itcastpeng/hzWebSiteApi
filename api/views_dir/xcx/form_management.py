@@ -41,6 +41,7 @@ def form_management(request):
 
                 ret_data.append({
                     'id': obj.id,
+                    'form_id': obj.form_id,
                     'template_id': obj.template_id,
                     'template_name': obj.template.name,
                     'form_content': form_content,
@@ -77,13 +78,16 @@ def form_management_oper(request, oper_type, o_id):
 
         # 添加表单数据
         if oper_type == "add":
+            form_data["form_id"] = request.POST.get('form_id')
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
                 template_id = forms_obj.cleaned_data.get('template_id')
                 form_content = forms_obj.cleaned_data.get('form_content')
+                form_id = forms_obj.cleaned_data.get('form_id')
 
                 obj = models.ReservationForm.objects.create(
                     template_id=template_id,
+                    form_id=form_id,
                     form_content=form_content,
                 )
                 response.code = 200
