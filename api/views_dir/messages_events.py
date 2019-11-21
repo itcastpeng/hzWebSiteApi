@@ -42,9 +42,9 @@ def messages_events_oper(request, oper_type, appid):
             ToUserName = collection.getElementsByTagName("ToUserName")[0].childNodes[0].data
             FromUserName = collection.getElementsByTagName("FromUserName")[0].childNodes[0].data
             CreateTime = collection.getElementsByTagName("CreateTime")[0].childNodes[0].data
-            Reason = collection.getElementsByTagName("Reason")[0].childNodes[0].data
-            FailTime = collection.getElementsByTagName("FailTime")[0].childNodes[0].data
-            ScreenShot = collection.getElementsByTagName("ScreenShot")[0].childNodes[0].data
+
+            # FailTime = collection.getElementsByTagName("FailTime")[0].childNodes[0].data
+            # ScreenShot = collection.getElementsByTagName("ScreenShot")[0].childNodes[0].data
 
             if Event == 'weapp_audit_success': # 小程序审核通通过知
                 # 更新审核状态
@@ -58,6 +58,7 @@ def messages_events_oper(request, oper_type, appid):
                 msg = "微信小程序: %s 发布代码审核通过" % nick_name
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             elif Event == 'weapp_audit_fail':   # 小程序审核不通过
+                Reason = collection.getElementsByTagName("Reason")[0].childNodes[0].data
                 applet_code_version_obj = models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).order_by('-create_datetime')[0]
                 applet_code_version_obj.status = 1
                 applet_code_version_obj.status = Reason
