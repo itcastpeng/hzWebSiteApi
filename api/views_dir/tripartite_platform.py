@@ -985,6 +985,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'nick_name': obj.nick_name,
                         'head_img': obj.head_img,
                         'user_id': user_id,
+
+                        # 此处需要优化
+                        'status': obj.appletcodeversion_set.all().order_by('-create_datetime')[0].status,
                         'username': b64decode(username),
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     })
