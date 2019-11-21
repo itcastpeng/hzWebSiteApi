@@ -259,12 +259,14 @@ def tripartite_platform_oper(request, oper_type):
                 code = 200
                 errmsg = '发布完成'
 
-                applet_code_version_obj = models.AppletCodeVersion.objects.filter(applet__authorizer_access_token=authorizer_access_token).order_by('-create_datetime')[0]
-                applet_code_version_obj.status = 3
-                applet_code_version_obj.save()
-
             if 'app is already released' in errmsg:
                 errmsg = '重复发布'
+
+            applet_code_version_obj = \
+            models.AppletCodeVersion.objects.filter(applet__authorizer_access_token=authorizer_access_token).order_by(
+                '-create_datetime')[0]
+            applet_code_version_obj.status = 3
+            applet_code_version_obj.save()
 
             response.code = code
             response.msg = errmsg
