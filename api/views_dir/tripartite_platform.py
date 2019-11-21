@@ -1039,6 +1039,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                 response.note = {
                     'id': '提交的代码ID',
                     'create_datetime': '创建时间',
+                    'status_choices': models.AppletCodeVersion.choices_status,
                 }
             else:
                 response.code = 402
