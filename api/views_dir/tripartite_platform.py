@@ -224,6 +224,7 @@ def tripartite_platform_oper(request, oper_type):
             response.msg = ret_json.get('errmsg')
             response.data = ret_json
 
+            # ===== 记录日志 =======
 
 
         # 将草稿箱的草稿选为小程序代码模版
