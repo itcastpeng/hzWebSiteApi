@@ -48,7 +48,7 @@ def messages_events_oper(request, oper_type, appid):
 
             if Event == 'weapp_audit_success': # 小程序审核通通过知
                 # 更新审核状态
-                applet_code_version_obj = models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).order_by('-create_datetime')[0]
+                applet_code_version_obj = models.AppletCodeVersion.objects.filter(applet__appid=ToUserName).order_by('-create_datetime')[0]
                 applet_code_version_obj.status = 0
                 applet_code_version_obj.save()
 
@@ -59,7 +59,7 @@ def messages_events_oper(request, oper_type, appid):
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
             elif Event == 'weapp_audit_fail':   # 小程序审核不通过
                 Reason = collection.getElementsByTagName("Reason")[0].childNodes[0].data
-                applet_code_version_obj = models.AppletCodeVersion.objects.filter(ClientApplet__appid=ToUserName).order_by('-create_datetime')[0]
+                applet_code_version_obj = models.AppletCodeVersion.objects.filter(applet__appid=ToUserName).order_by('-create_datetime')[0]
                 applet_code_version_obj.status = 1
                 applet_code_version_obj.status = Reason
                 applet_code_version_obj.save()
