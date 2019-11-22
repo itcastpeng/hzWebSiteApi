@@ -8,19 +8,21 @@ import json
 
 
 # 消息通知管理
-def save_msg_inform(user_id, msg, is_send_admin=False):
+def save_msg_inform(user_id, msg, is_send_admin=False, only_send_admin=False):
     """
 
     :param user_id:         发送消息通知给谁
     :param msg:             消息内容
     :param is_send_admin:   是否发送给管理员角色
+    :param only_send_admin:   是否只发送给管理员角色
     :return:
     """
 
-    models.MessageInform.objects.create(
-        create_user_id=user_id,
-        msg=msg
-    )
+    if not only_send_admin:
+        models.MessageInform.objects.create(
+            create_user_id=user_id,
+            msg=msg
+        )
 
     # 发消息给管理员
     if is_send_admin:

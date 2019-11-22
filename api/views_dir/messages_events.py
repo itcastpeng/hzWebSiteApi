@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from publicFunc.tripartite_platform_oper import encoding_appid, encodingAESKey, encoding_token
 from wechatpy.crypto import WeChatCrypto
 from api.views_dir import message_inform
+from publicFunc.tripartite_platform_oper import tripartite_platform_oper as tripartite_platform, QueryWhetherCallingCredentialExpired as CredentialExpired
 
 import xml.etree.cElementTree as ET, xml.dom.minidom as xmldom, requests
 
@@ -57,6 +58,16 @@ def messages_events_oper(request, oper_type, appid):
                 nick_name = client_applet_objs[0].nick_name
                 msg = "微信小程序: %s 发布代码审核通过" % nick_name
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+
+                # 审核通过之后,发布代码
+                tripartite_platform_objs = tripartite_platform()  # 实例化三方平台
+                credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                authorizer_access_token = credential_expired_data.get('authorizer_access_token')
+                tripartite_platform_objs.publish_approved_applets(authorizer_access_token)
+                msg = "微信小程序: %s 发布代码由系统发布上线成功" % nick_name
+                message_inform.save_msg_inform(user_id, msg, is_send_admin=True, only_send_admin=True)  # 只发送给管理员
+
+
             elif Event == 'weapp_audit_fail':   # 小程序审核不通过
                 Reason = collection.getElementsByTagName("Reason")[0].childNodes[0].data
                 applet_code_version_obj = models.AppletCodeVersion.objects.filter(applet__appid=ToUserName).order_by('-create_datetime')[0]
