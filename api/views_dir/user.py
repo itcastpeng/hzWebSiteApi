@@ -34,6 +34,11 @@ def user(request):
                 role_admin_id_list = [6, 8]  # 管理员角色id
                 objs = objs.exclude(role_id__in=role_admin_id_list)
 
+            exclude_role_client = request.GET.get('exclude_role_client', False)  # 是否排除普通用户角色
+            if exclude_role_client:
+                role_client_id_list = [7]  # 普通用户角色id
+                objs = objs.exclude(role_id__in=role_client_id_list)
+
             inviter_id_is_null = request.GET.get('inviter_id_is_null', False)
             if inviter_id_is_null:
                 objs = objs.filter(inviter_id__isnull=True)
