@@ -724,8 +724,8 @@ def generate_business_card_poster(card_id): # 生成海报
     requests.get(url)
 
 @app.task
-def send_wechat_msg(card_id): # 发送消息通知
-    url = 'https://xcx.bjhzkq.com/api/celery/send_wechat_msg'.format(card_id)
+def send_wechat_msg(): # 发送消息通知
+    url = 'https://xcx.bjhzkq.com/api/celery/send_wechat_msg'
     requests.get(url)
 
 
