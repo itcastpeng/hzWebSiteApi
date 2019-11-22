@@ -38,8 +38,6 @@ urlpatterns = [
     url(r'^xcx/form_management/(?P<oper_type>\w+)/(?P<o_id>\d+)$', form_management.form_management_oper),# 表单管理
     url(r'^xcx/form_management$', form_management.form_management),# 表单查询
 
-    url(r'^xcx/message_inform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', message_inform.message_inform_oper),# 消息通知
-    url(r'^xcx/message_inform', message_inform.message_inform),# 消息通知
 
     # ------------------------ 后台管理 ----------------------
     # 用户管理
@@ -95,6 +93,9 @@ urlpatterns = [
     # 表单管理
     url(r'^form/(?P<oper_type>\w+)/(?P<o_id>\d+)', form.form_oper),
     url(r'^form', form.form),
+
+    url(r'^message_inform/(?P<oper_type>\w+)/(?P<o_id>\d+)$', message_inform.message_inform_oper),  # 消息通知
+    url(r'^message_inform', message_inform.message_inform),     # 消息通知
 
 
 
