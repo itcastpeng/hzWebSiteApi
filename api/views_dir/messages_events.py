@@ -66,7 +66,14 @@ def messages_events_oper(request, oper_type, appid):
                 tripartite_platform_objs.publish_approved_applets(authorizer_access_token)
                 msg = "微信小程序: %s 发布代码由系统发布上线成功" % nick_name
                 message_inform.save_msg_inform(user_id, msg, is_send_admin=True, only_send_admin=True)  # 只发送给管理员
+                template_obj = client_applet_objs[0].template.objects.all()[0]
+                template_obj.tab_bar_data = template_obj.tab_bar_data_dev
+                template_obj.save()
 
+                page_objs = models.Page.objects.filter(page_group__template=template_obj)
+                for page_obj in page_objs:
+                    page_obj.data = page_obj.data_dev
+                    page_obj.save()
 
             elif Event == 'weapp_audit_fail':   # 小程序审核不通过
                 Reason = collection.getElementsByTagName("Reason")[0].childNodes[0].data
