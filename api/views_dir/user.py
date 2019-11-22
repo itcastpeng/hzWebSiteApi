@@ -146,6 +146,8 @@ def user_oper(request, oper_type, o_id):
                 'role_id': request.POST.get('role_id'),  # 角色id
                 'company_name': request.POST.get('company_name'),  # 公司名称
                 'remark': request.POST.get('remark'),  # 备注信息
+                'small_program_number': request.POST.get('small_program_number'),  # 小程序数量
+                'number_child_users': request.POST.get('number_child_users'),  # 子账号数量
             }
 
             forms_obj = UpdateForm(form_data)
@@ -154,6 +156,8 @@ def user_oper(request, oper_type, o_id):
                 role_id = forms_obj.cleaned_data['role_id']  # 角色id
                 company_name = forms_obj.cleaned_data['company_name']  # 公司名称
                 remark = forms_obj.cleaned_data['remark']  # 备注信息
+                small_program_number = forms_obj.cleaned_data['small_program_number']  # 小程序数量
+                number_child_users = forms_obj.cleaned_data['number_child_users']  # 子账号数量
                 #  查询数据库  用户id
                 objs = models.UserProfile.objects.filter(
                     id=o_id
@@ -164,6 +168,8 @@ def user_oper(request, oper_type, o_id):
                         role_id=role_id,
                         company_name=company_name,
                         remark=remark,
+                        small_program_number=small_program_number,
+                        number_child_users=number_child_users,
                     )
 
                     response.code = 200

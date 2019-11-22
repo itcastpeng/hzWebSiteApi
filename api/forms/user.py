@@ -59,6 +59,18 @@ class UpdateForm(forms.Form):
             'required': "要修改的用户ID不能为空"
         }
     )
+    small_program_number = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "小程序数量不能为空"
+        }
+    )
+    number_child_users = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': "子账号数量不能为空"
+        }
+    )
 
     def clean_role_id(self):
         role_id = self.data.get('role_id')
