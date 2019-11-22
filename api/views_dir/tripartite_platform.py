@@ -888,7 +888,8 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         template_class_name = obj.template_class.name
 
                     #  将查询出来的数据 加入列表
-                    ret_data.append({
+
+                    data = {
                         'id': obj.id,
                         'name': obj.name,
                         'logo_img': obj.logo_img,
@@ -900,16 +901,39 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'is_applet': is_applet,
                         'is_baidu_applet': is_baidu_applet,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                    })
+                    }
 
                     if is_applet:
                         applet_obj = obj.clientapplet_set.all()[0]
-                        ret_data[num]['is_authorization'] = applet_obj.is_authorization
-                        ret_data[num]['appid'] = applet_obj.appid
-                        ret_data[num]['applet_id'] = applet_obj.id
-                        ret_data[num]['nick_name'] = applet_obj.nick_name
-                        ret_data[num]['qrcode_url'] = applet_obj.qrcode_url
-                        ret_data[num]['head_img'] = applet_obj.head_img
+                        data['is_authorization'] = applet_obj.is_authorization
+                        data['appid'] = applet_obj.appid
+                        data['applet_id'] = applet_obj.id
+                        data['nick_name'] = applet_obj.nick_name
+                        data['qrcode_url'] = applet_obj.qrcode_url
+                        data['head_img'] = applet_obj.head_img
+
+                        status = ""
+                        status_name = ""
+                        # 此处强烈建议优化,该api需要查询数据库31次才能返回数据
+                        applet_code_version_objs = applet_obj.appletcodeversion_set.all().order_by('-create_datetime')
+                        if applet_code_version_objs:
+                            status = applet_code_version_objs[0].status
+                            status_name = applet_code_version_objs[0].get_status_display()
+
+                        data['version_status'] = status
+                        data['version_status_name'] = status_name
+
+
+                    if is_baidu_applet:
+                        baidu_applet_obj = obj.baidusmallprogrammanagement_set.all()[0]
+                        # data['is_authorization'] = applet_obj.is_authorization
+                        data['baidu_appid'] = baidu_applet_obj.appid
+                        data['baidu_applet_id'] = baidu_applet_obj.id
+                        # data['baidu_nick_name'] = baidu_applet_obj.nick_name
+                        # data['baidu_qrcode_url'] = baidu_applet_obj.qrcode_url
+                        data['baidu_photo_addr'] = baidu_applet_obj.photo_addr
+
+                    ret_data.append(data)
 
                     num += 1
 
@@ -937,6 +961,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                     'qrcode_url': '小程序二维码',
                     'is_authorization': '小程序是否授权',
                     'create_datetime': '创建时间',
+                    'baidu_appid': '百度小程序APPID',
+                    'baidu_applet_id': '百度小程序id',
+                    'baidu_photo_addr': '百度小程序图标',
                 }
             else:
                 response.code = 301
