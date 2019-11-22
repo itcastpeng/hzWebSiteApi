@@ -74,6 +74,8 @@ def user(request):
                     'permissions_list': data_list,
                     'inviter': inviter,
                     'remark': obj.remark,
+                    'small_program_number': obj.small_program_number,
+                    'number_child_users': obj.number_child_users,
                     'last_login_datetime': obj.last_login_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
@@ -97,6 +99,8 @@ def user(request):
                 'remark': "备注",
                 'last_login_datetime': "最后登录时间",
                 'create_datetime': "创建时间",
+                'number_child_users': "可创建子账号数量",
+                'small_program_number': "可创建小程序数量",
             }
 
         else:
