@@ -89,6 +89,24 @@ class UpdateForm(forms.Form):
         else:
             return name
 
+# 更新过期时间
+class UpdateExpireDateForm(forms.Form):
+    o_id = forms.IntegerField(
+        required=True,
+        error_messages={
+            'required': '模板id不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )
+
+    expire_date = forms.DateTimeField(
+        required=False,
+        error_messages={
+            'required': '过期时间不能为空',
+            'invalid': "参数数据类型错误"
+        }
+    )
+
 
 # 更新模板分类
 class UpdateClassForm(forms.Form):

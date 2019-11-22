@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from publicFunc.condition_com import conditionCom
 from api.forms.template import AddForm, UpdateForm, SelectForm, GetTabBarDataForm, UpdateClassForm, UserAddTemplateForm, \
-    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName, AddModifyCommonComponents
+    BindTemplatesAndApplets, UnbindAppletAndTemplate, UpdateTemplateName, AddModifyCommonComponents, UpdateExpireDateForm
 from api.views_dir.page import page_base_data
 from publicFunc.role_choice import admin_list
 from publicFunc.public import get_qrcode
@@ -271,6 +271,30 @@ def template_oper(request, oper_type, o_id):
             else:
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
+
+        # 修改到期时间
+        elif oper_type == "update_expire_date":
+            expire_date = request.POST.get('expire_date')
+            form_data = {
+                "expire_date": expire_date,
+                'o_id': o_id,
+            }
+            forms_obj = UpdateExpireDateForm(form_data)
+            if forms_obj.is_valid():
+                # print("验证通过")
+                # print(forms_obj.cleaned_data)
+                o_id = forms_obj.cleaned_data['o_id']
+                expire_date = forms_obj.cleaned_data['expire_date']
+
+                # 更新数据
+                models.Template.objects.filter(id=o_id).update(expire_date=expire_date)
+                response.code = 200
+                response.msg = "修改成功"
+
+            else:
+                response.code = 301
+                response.msg = json.loads(forms_obj.errors.as_json())
+
 
         # 修改模板分类id/name
         elif oper_type == "update_class":

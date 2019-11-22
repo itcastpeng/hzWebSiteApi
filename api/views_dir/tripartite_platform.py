@@ -901,6 +901,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'is_applet': is_applet,
                         'is_baidu_applet': is_baidu_applet,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                        'expire_datetime': obj.expire_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                     }
 
                     if is_applet:
@@ -961,6 +962,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                     'qrcode_url': '小程序二维码',
                     'is_authorization': '小程序是否授权',
                     'create_datetime': '创建时间',
+                    'expire_datetime': '到期时间',
                     'baidu_appid': '百度小程序APPID',
                     'baidu_applet_id': '百度小程序id',
                     'baidu_photo_addr': '百度小程序图标',

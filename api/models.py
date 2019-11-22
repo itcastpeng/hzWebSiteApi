@@ -132,6 +132,7 @@ class Template(models.Model):
     create_user = models.ForeignKey('UserProfile', verbose_name="创建用户")
     thumbnail = models.CharField(verbose_name='缩略图', max_length=256, null=True)
     create_datetime = models.DateTimeField(verbose_name="创建时间", auto_now_add=True)
+    expire_datetime = models.DateTimeField(verbose_name="到期时间", null=True)
     qrcode = models.CharField(verbose_name='体验二维码H5页面', max_length=512, null=True)
     xcx_qrcode = models.CharField(verbose_name='体验二维码小程序', max_length=512, null=True)
     baidu_xcx_qrcode = models.CharField(verbose_name='体验二维码百度小程序', max_length=512, null=True)
