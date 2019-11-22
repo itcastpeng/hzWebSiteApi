@@ -287,7 +287,7 @@ def template_oper(request, oper_type, o_id):
                 expire_date = forms_obj.cleaned_data['expire_date']
 
                 # 更新数据
-                models.Template.objects.filter(id=o_id).update(expire_date=expire_date)
+                models.Template.objects.filter(id=o_id).update(expire_datetime=expire_date)
                 response.code = 200
                 response.msg = "修改成功"
 
