@@ -130,7 +130,7 @@ def message_inform_oper(request, oper_type, o_id):
             if forms_obj.is_valid():
                 status = forms_obj.cleaned_data['status']  # 操作人ID
                 #  查询数据库  用户id
-                objs = models.Form.objects.filter(
+                objs = models.MessageInform.objects.filter(
                     id=o_id,
                 )
                 #  更新 数据
