@@ -128,7 +128,7 @@ def message_inform_oper(request, oper_type, o_id):
 
             forms_obj = UpdateForm(form_data)
             if forms_obj.is_valid():
-                status = forms_obj.cleaned_data['status']  # 操作人ID
+                # status = forms_obj.cleaned_data['status']  # 操作人ID
                 #  查询数据库  用户id
                 objs = models.MessageInform.objects.filter(
                     id=o_id,
@@ -136,7 +136,7 @@ def message_inform_oper(request, oper_type, o_id):
                 #  更新 数据
                 if objs:
                     objs.update(
-                        status=status,
+                        status=True,
                     )
                     response.code = 200
                     response.msg = "修改成功"
