@@ -888,7 +888,9 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         template_class_name = obj.template_class.name
 
                     #  将查询出来的数据 加入列表
-
+                    expire_datetime = ""
+                    if obj.expire_datetime:
+                        expire_datetime = obj.expire_datetime.strftime('%Y-%m-%d %H:%M:%S')
                     data = {
                         'id': obj.id,
                         'name': obj.name,
@@ -901,7 +903,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
                         'is_applet': is_applet,
                         'is_baidu_applet': is_baidu_applet,
                         'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
-                        'expire_datetime': obj.expire_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                        'expire_datetime': expire_datetime,
                     }
 
                     if is_applet:
