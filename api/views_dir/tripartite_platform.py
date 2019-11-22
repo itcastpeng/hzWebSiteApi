@@ -225,7 +225,7 @@ def tripartite_platform_oper(request, oper_type):
 
                 print("======================")
                 msg = "微信小程序: %s 提交审核 " % (obj.nick_name)
-                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+                message_inform.save_msg_inform(obj.user_id, msg, is_send_admin=True)
             response.msg = ret_json.get('errmsg')
             response.data = ret_json
 
@@ -273,7 +273,7 @@ def tripartite_platform_oper(request, oper_type):
             applet_code_version_obj.save()
 
             msg = "微信小程序: %s 发布成功 " % (applet_code_version_obj.applet.nick_name)
-            message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+            message_inform.save_msg_inform(applet_code_version_obj.applet.user_id, msg, is_send_admin=True)
 
             response.code = code
             response.msg = errmsg

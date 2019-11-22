@@ -105,7 +105,7 @@ def tripartite_platform_oper(request, oper_type):
                 response = tripartite_platform_oper.submit_approval_authorized_mini_program(data)
                 baidu_small_program_management_obj = models.BaiduSmallProgramManagement.objects.get(appid=appid)
                 msg = "百度小程序: %s 提交审核 " % (baidu_small_program_management_obj.program_name)
-                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+                message_inform.save_msg_inform(baidu_small_program_management_obj.user_id, msg, is_send_admin=True)
 
         # 发布已审核的小程序
         elif oper_type == 'release_approved_applet':
@@ -115,7 +115,7 @@ def tripartite_platform_oper(request, oper_type):
             if response.code == 200:
                 baidu_small_program_management_obj = models.BaiduSmallProgramManagement.objects.get(appid=appid)
                 msg = "百度小程序: %s 发布成功 " % (baidu_small_program_management_obj.program_name)
-                message_inform.save_msg_inform(user_id, msg, is_send_admin=True)
+                message_inform.save_msg_inform(baidu_small_program_management_obj.user_id, msg, is_send_admin=True)
 
         # 小程序版本回滚
         elif oper_type == 'small_program_version_roll_back':
