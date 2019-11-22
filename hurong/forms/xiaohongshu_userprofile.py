@@ -83,6 +83,14 @@ class UpdateUserinfoForm(forms.Form):
         name = name.strip()
         return name
 
+    def clean_xiaohongshu_id(self):
+        xiaohongshu_id = self.data.get('xiaohongshu_id')
+        count = models.XiaohongshuUserProfile.objects.filter(xiaohongshu_id=xiaohongshu_id).count()
+        if count > 0:
+            self.add_error('xiaohongshu_id', '小红书id已经存在')
+        else:
+            return xiaohongshu_id
+
 class RegistreForm(forms.Form):
     uid = forms.IntegerField(
         required=True,
