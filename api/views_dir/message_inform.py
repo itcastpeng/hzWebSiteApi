@@ -123,32 +123,19 @@ def message_inform_oper(request, oper_type, o_id):
 
         # 修改
         elif oper_type == "update":
-            # 获取需要修改的信息
-            form_data = {
-                'status': request.POST.get('status'),               # 模板id
-            }
-
-            forms_obj = UpdateForm(form_data)
-            if forms_obj.is_valid():
-                # status = forms_obj.cleaned_data['status']  # 操作人ID
-                #  查询数据库  用户id
-                objs = models.MessageInform.objects.filter(
-                    id=o_id,
+            objs = models.MessageInform.objects.filter(
+                id=o_id,
+            )
+            #  更新 数据
+            if objs:
+                objs.update(
+                    status=True,
                 )
-                #  更新 数据
-                if objs:
-                    objs.update(
-                        status=True,
-                    )
-                    response.code = 200
-                    response.msg = "修改成功"
-                else:
-                    response.code = 303
-                    response.msg = '不存在的数据'
-
+                response.code = 200
+                response.msg = "修改成功"
             else:
-                response.code = 301
-                response.msg = json.loads(forms_obj.errors.as_json())
+                response.code = 303
+                response.msg = '不存在的数据'
 
         # # 删除
         # elif oper_type == "delete":
