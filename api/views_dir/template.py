@@ -509,9 +509,9 @@ def template_oper(request, oper_type, o_id):
                 redis_data = json.loads(redis_data)
             else:
                 redis_data = []
-            redis_data.append(template_data)
+            redis_data.insert(0, template_data)
             redis_data = json.dumps(redis_data)
-            redis_obj.set(redis_key, redis_data)
+            redis_obj.set(redis_key, redis_data[:10])       # 只保留最近十次数据
 
             response.code = 200
             response.msg = '保存成功'
@@ -765,7 +765,7 @@ def template_oper(request, oper_type, o_id):
             """
             result_data = []
             print("redis_data -->", redis_data)
-            for data in list(reversed(redis_data))[:10]:  # 倒序,最新排最上面
+            for data in redis_data:  # 倒序,最新排最上面
                 print("data -->", data)
                 result_data.append({
                     "remark": data["remark"],
