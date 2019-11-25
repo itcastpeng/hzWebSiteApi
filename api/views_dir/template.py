@@ -570,7 +570,7 @@ def template_oper(request, oper_type, o_id):
                 redis_data = json.loads(redis_data)
                 for index, i in enumerate(redis_data):
                     print(index, i['time_stamp'])
-                    if i['time_stamp'] == time_stamp:   # 匹配到版本数据
+                    if str(i['time_stamp']) == time_stamp:   # 匹配到版本数据
                         print("======================> 匹配到版本数据匹配到版本数据匹配到版本数据匹配到版本数据")
                         i['is_public'] = True
 
