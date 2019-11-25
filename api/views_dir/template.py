@@ -765,9 +765,9 @@ def template_oper(request, oper_type, o_id):
             }
             """
             result_data = []
-            print("redis_data -->", redis_data)
+            # print("redis_data -->", redis_data)
             for data in redis_data:  # 倒序,最新排最上面
-                print("data -->", data)
+                # print("data -->", data)
                 result_data.append({
                     "remark": data["remark"],
                     "create_datetime": data["create_datetime"],
