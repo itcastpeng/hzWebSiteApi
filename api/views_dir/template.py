@@ -569,6 +569,7 @@ def template_oper(request, oper_type, o_id):
                 redis_data = json.loads(redis_data)
                 for i in redis_data:
                     if i['time_stamp'] == time_stamp:   # 匹配到版本数据
+                        print("======================> 匹配到版本数据匹配到版本数据匹配到版本数据匹配到版本数据")
                         i['is_public'] = True
 
                         tab_bar_data = i["tab_bar_data"]    # 底部导航数据
@@ -576,6 +577,7 @@ def template_oper(request, oper_type, o_id):
 
                         pages_data = i["pages_data"]  # 页面数据
                         for page_data in pages_data:
+                            print("======================> 更换页面数据更换页面数据更换页面数据更换页面数据")
                             page_id = page_data["page_id"]
                             page_data = page_data["page_data"]
                             models.Page.objects.filter(id=page_id).update(data=page_data)
