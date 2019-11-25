@@ -218,7 +218,7 @@ class UserAddTemplateForm(forms.Form):
                 'name': obj.name,
                 'share_qr_code': obj.share_qr_code,
                 'logo_img': obj.logo_img,
-                'tab_bar_data': obj.tab_bar_data,
+                'tab_bar_data': obj.tab_bar_data_dev,
                 'thumbnail': obj.thumbnail,
             }
 

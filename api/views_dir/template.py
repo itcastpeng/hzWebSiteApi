@@ -371,8 +371,8 @@ def template_oper(request, oper_type, o_id):
                         page_obj = models.Page.objects.create(
                             name=page_obj.name,
                             page_group=PageGroupObj,
-                            data=page_obj.data,
-                            data_dev=page_obj.data,
+                            data=page_obj.data_dev,
+                            data_dev=page_obj.data_dev,
                             create_user_id=user_id
                         )
                         for tab_data in tab_bar_data.get('data'):
