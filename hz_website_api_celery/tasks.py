@@ -56,11 +56,12 @@ def xiaohongshu_xiala_update_data():
             xialaci_num += 1
             xialaci = i['text'] + " " + i['desc']
             query.append(models.XiaohongshuXiaLaKeywordsChildren(keywords=xialaci, parent=obj))
-
+        models.XiaohongshuXiaLaKeywordsChildren.objects.bulk_create(query)
         obj.status = 2
         obj.xialaci_num = xialaci_num
         obj.update_datetime = datetime.datetime.now()
         obj.save()
+
 
 
     # 2、假如redis队列中没有下拉关键词，则将数据库中等待查询的下拉词存入redis队列中
