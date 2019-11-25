@@ -510,8 +510,8 @@ def template_oper(request, oper_type, o_id):
             else:
                 redis_data = []
             redis_data.insert(0, template_data)
-            redis_data = json.dumps(redis_data)
-            redis_obj.set(redis_key, redis_data[:10])       # 只保留最近十次数据
+            redis_data = json.dumps(redis_data[:10])
+            redis_obj.set(redis_key, redis_data)       # 只保留最近十次数据
 
             response.code = 200
             response.msg = '保存成功'
