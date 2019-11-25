@@ -565,9 +565,10 @@ def template_oper(request, oper_type, o_id):
             time_stamp = request.POST.get('time_stamp')  # 版本唯一时间戳
             redis_key = "xcx::template::history_version::{template_id}".format(template_id=template_id)
             redis_data = redis_obj.get(redis_key)
+
             if redis_data:
                 redis_data = json.loads(redis_data)
-                for i in redis_data:
+                for index, i in enumerate(redis_data):
                     if i['time_stamp'] == time_stamp:   # 匹配到版本数据
                         print("======================> 匹配到版本数据匹配到版本数据匹配到版本数据匹配到版本数据")
                         i['is_public'] = True
@@ -583,13 +584,12 @@ def template_oper(request, oper_type, o_id):
                             models.Page.objects.filter(id=page_id).update(data=page_data)
                     else:
                         i['is_public'] = False
-                    redis_data.append(i)
-
-                    response.code = 200
-                    response.msg = '版本发布成功'
-                else:
-                    response.code = 0
-                    response.msg = '请求异常'
+                    # redis_data.append(i)
+                    redis_data[index] = i
+                redis_data = json.dumps(redis_data[:10])
+                redis_obj.set(redis_key, redis_data)  # 只保留最近十次数据
+                response.code = 200
+                response.msg = '版本发布成功'
             else:
                 response.code = 0
                 response.msg = '请求异常'
