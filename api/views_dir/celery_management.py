@@ -131,3 +131,4 @@ def send_wechat_msg(request):
 
         obj.is_send = True
         obj.save()
+    return HttpResponse('1')
