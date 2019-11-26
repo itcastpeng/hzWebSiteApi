@@ -553,7 +553,7 @@ def tripartite_platform_oper(request, oper_type):
                 baidu_xcx_qrcode = template_obj.baidu_xcx_qrcode
 
                 if whether_regenerate or not path: # 重新生成 微信小程序码
-                    request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}&experience=true,'.format(
+                    request_url = 'pages/index/tarBar01?token={}&user_id={}&template_id={}&experience=true'.format(
                         user_obj.token, user_id, template_id
                     )
                     if not appid:
