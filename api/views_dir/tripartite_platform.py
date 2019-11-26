@@ -979,7 +979,7 @@ def tripartite_platform_admin(request, oper_type, o_id):
 
             data = {'path': ''}
             if objs:
-                path = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}'.format(o_id))
+                path = get_qrcode('https://xcx.bjhzkq.com/wx/?id={}&experience=true'.format(o_id))
                 objs.update(qrcode=path)
                 code = 200
                 msg = '获取成功'
