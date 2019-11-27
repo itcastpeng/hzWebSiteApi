@@ -138,19 +138,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 if objs:
                     obj = objs[0]
                     print('obj.id-----> ', obj.id)
-                    if not obj.xiaohongshuuserprofile_set.all():
-                        objs.update(phone_num=phone_num, is_debug=False)
-                        xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
-                            name=name,
-                            xiaohongshu_id=xiaohongshu_id,
-                            home_url=home_url,
-                            platform=platform
-                        )
-                    else:
-                        # 第二次更新数据
-                        response.code = 0
-                        response.msg = "更新异常，不能重复提交注册信息，请联系管理员"
-                        return JsonResponse(response.__dict__)
+
                     # else:
                     #     xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
                     #         phone_id=obj
@@ -167,25 +155,38 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                         is_register=False,
                     )
                     if xhs_userprofile_register_objs:
-                        xhs_userprofile_register_obj = xhs_userprofile_register_objs[0]
-                        # print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
-                        # 将注册成功的小红书账号推送到小红书后台
-                        api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
-                        data = {
-                            "id": xhs_userprofile_register_obj.uid,
-                            "xhs_id": xiaohongshu_id,
-                            "link": home_url,
-                            "mobile": phone_num,
-                            "platform": platform,
-                        }
-                        ret = requests.post(api_url, data=data)
-                        # print("ret.json() -->", ret.json())
-                        create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
-                        xhs_userprofile_register_objs.update(
-                            is_register=True,
-                            register_datetime=datetime.datetime.now()
-                        )
+                        if not obj.xiaohongshuuserprofile_set.all():
+                            objs.update(phone_num=phone_num, is_debug=False)
+                            xiaohongshu_userprofile_obj = obj.xiaohongshuuserprofile_set.create(
+                                name=name,
+                                xiaohongshu_id=xiaohongshu_id,
+                                home_url=home_url,
+                                platform=platform
+                            )
 
+                            xhs_userprofile_register_obj = xhs_userprofile_register_objs[0]
+                            # print("===============>", xhs_userprofile_register_obj.name, xhs_userprofile_register_obj.uid)
+                            # 将注册成功的小红书账号推送到小红书后台
+                            api_url = "https://www.ppxhs.com/api/v1/sync/sync-screen-blogger"
+                            data = {
+                                "id": xhs_userprofile_register_obj.uid,
+                                "xhs_id": xiaohongshu_id,
+                                "link": home_url,
+                                "mobile": phone_num,
+                                "platform": platform,
+                            }
+                            ret = requests.post(api_url, data=data)
+                            # print("ret.json() -->", ret.json())
+                            create_xhs_admin_response(request, ret.json(), 1, url=api_url, req_type=2) # 记录请求日志
+                            xhs_userprofile_register_objs.update(
+                                is_register=True,
+                                register_datetime=datetime.datetime.now()
+                            )
+
+                        else:
+                            # 第二次更新数据
+                            response.code = 301
+                            response.msg = "更新异常，不能重复提交注册信息，请联系管理员"
 
                 response.code = 200
                 response.msg = "更新成功"
