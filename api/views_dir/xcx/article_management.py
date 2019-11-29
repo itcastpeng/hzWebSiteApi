@@ -18,6 +18,7 @@ def article_management(request):
             field_dict = {
                 'id': '',
                 'template_id': '',
+                'article_class_id': '',
             }
             q = conditionCom(request, field_dict)
             print('q -->', q)
@@ -39,7 +40,6 @@ def article_management(request):
                     'thumbnail': obj.thumbnail,
                     'article_introduction': obj.article_introduction,
                     'article_title': obj.article_title,
-                    'article_class_id': obj.article_class_id,
                     'template_name': obj.template.name,
                     'article_content': obj.article_content,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
