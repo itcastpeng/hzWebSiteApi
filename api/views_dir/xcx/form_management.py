@@ -7,7 +7,7 @@ from publicFunc.role_choice import admin_list
 import json
 
 # 模板 表单
-# @account.is_token(models.UserProfile)
+@account.is_token(models.UserProfile)
 def form_management(request):
     response = Response.ResponseObj()
     if request.method == "GET":
@@ -65,7 +65,7 @@ def form_management(request):
     return JsonResponse(response.__dict__)
 
 
-# @account.is_token(models.UserProfile)
+@account.is_token(models.UserProfile)
 def form_management_oper(request, oper_type, o_id):
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
