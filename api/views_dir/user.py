@@ -66,6 +66,10 @@ def user(request):
                 for i in role_obj[0].permissions.all():
                     data_list.append(i.name)
 
+                last_login_datetime = ''
+                if obj.last_login_datetime:
+                    last_login_datetime = obj.last_login_datetime.strftime('%Y-%m-%d %H:%M:%S')
+
                 ret_data.append({
                     'id': obj.id,
                     'name': base64_encryption.b64decode(obj.name),
@@ -81,7 +85,7 @@ def user(request):
                     'remark': obj.remark,
                     'small_program_number': obj.small_program_number,
                     'number_child_users': obj.number_child_users,
-                    'last_login_datetime': obj.last_login_datetime.strftime('%Y-%m-%d %H:%M:%S'),
+                    'last_login_datetime': last_login_datetime,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 })
 
