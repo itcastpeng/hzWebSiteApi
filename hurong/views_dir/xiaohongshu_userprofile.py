@@ -137,7 +137,7 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                 # print("objs --->", objs)
                 if objs:
                     obj = objs[0]
-                    print('obj.id-----> ', obj.id)
+                    print('obj.id-----> ', obj.id, name)
 
                     # else:
                     #     xiaohongshu_userprofile_obj = models.XiaohongshuUserProfile.objects.get(
@@ -182,14 +182,20 @@ def xiaohongshu_userprofile_oper(request, oper_type, o_id):
                                 is_register=True,
                                 register_datetime=datetime.datetime.now()
                             )
+                            response.code = 200
+                            response.msg = "更新成功"
 
                         else:
                             # 第二次更新数据
                             response.code = 301
                             response.msg = "更新异常，不能重复提交注册信息，请联系管理员"
+                    else:
+                        response.code = 0
+                        response.msg = "没有找到注册用户"
+                else:
+                    response.code = 0
+                    response.msg = "请求异常"
 
-                response.code = 200
-                response.msg = "更新成功"
             else:
                 print("验证不通过")
                 response.code = 301
