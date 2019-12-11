@@ -295,7 +295,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
             stop_time = time.time() - start_time
-            print("stop_time -->", stop_time)
+            print("stop_time -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
     else:
         response.code = 402
         response.msg = "请求异常"
