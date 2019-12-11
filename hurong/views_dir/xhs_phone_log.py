@@ -7,6 +7,7 @@ from publicFunc.public import send_error_msg
 from publicFunc.redisOper import get_redis_obj
 from publicFunc.public import create_xhs_admin_response
 import json, datetime
+import time
 
 @account.is_token(models.UserProfile)
 def xhs_phone_log(request):
@@ -98,6 +99,7 @@ def xhs_phone_log(request):
 # token验证
 @account.is_token(models.UserProfile)
 def xhs_phone_log_oper(request, oper_type, o_id):
+    start_time = time.time()
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     # print('request.POST -->', request.POST)
@@ -118,7 +120,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
-                print("cleaned_data --> ", forms_obj.cleaned_data)
+                stop_time = time.time() - start_time
+                print(stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 ip_addr = forms_obj.cleaned_data.get('ip_addr')
@@ -291,7 +294,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
-
+            stop_time = time.time() - start_time
+            print(stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
     else:
         response.code = 402
         response.msg = "请求异常"
