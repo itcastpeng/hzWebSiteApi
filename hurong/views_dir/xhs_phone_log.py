@@ -199,6 +199,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     "create_date": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 }))
 
+                stop_time = time.time() - start_time
+                print("redis_oper -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
+
                 phone_id = obj.id
                 phone_name = obj.name
 
