@@ -118,6 +118,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
+                print("cleaned_data --> ", forms_obj.cleaned_data)
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 ip_addr = forms_obj.cleaned_data.get('ip_addr')
