@@ -190,6 +190,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 #     parent=obj
                 # )
                 #  将日志存入redis中
+                stop_time = time.time() - start_time
+                print("redis_start -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
+
                 phone_log_id_key = "phone_log_{phone_id}".format(phone_id=obj.id)
                 phone_log_list_key = "phone_log_list"
                 if redis_obj.llen(phone_log_id_key) > 500:
@@ -200,7 +203,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 }))
 
                 stop_time = time.time() - start_time
-                print("redis_oper -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
+                print("redis_stop -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
 
                 phone_id = obj.id
                 phone_name = obj.name
