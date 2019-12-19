@@ -189,6 +189,7 @@ def template_oper(request, oper_type, o_id):
                     "type": "tab_bar",
                     "txt": "底部导航",
                     "style": {
+                        'iconWidth': 32,  # 图标大小
                         'borderStyle': 'solid',  # 顶部边框 solid->实线  dotted->点线  dashed->虚线
                         'borderColor': '#d8d8d8',  # 顶部边框颜色
                         'borderWidth': 1,  # 顶部边框粗细
