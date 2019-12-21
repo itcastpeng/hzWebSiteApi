@@ -89,12 +89,7 @@ def xiaohongshu_fugai_update_data():
         password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
     )
 
-    # 小红书工具单独使用
-    redis_obj2 = redis.StrictRedis(
-        host='192.168.10.64',
-        port=6379,
-        db=4,
-    )
+
 
     redis_key = "xiaohongshu_fugai_data"
 
@@ -177,7 +172,13 @@ def xiaohongshu_fugai_update_data():
     redis_key = "xiaohongshu_task_list"
 
     # # 小红书工具单独使用(优先查询)
+    redis_obj2 = redis.StrictRedis(
+        host='192.168.10.64',
+        port=6379,
+        db=4,
+    )
     for _ in range(redis_obj2.llen("xhs_tool_api::keyword::xhs")):
+        print("添加小红书工具单独使用关键词")
         keywords = redis_obj.rpop("xhs_tool_api::keyword::xhs")
         item = {
             "keywords": keywords,
