@@ -88,10 +88,23 @@ def xiaohongshu_fugai_update_data():
         db=13,
         password="Fmsuh1J50R%T*Lq15TL#IkWb#oMp^@0OYzx5Q2CSEEs$v9dd*mnqRFByoeGZ"
     )
+
+    # 小红书工具单独使用
+    redis_obj2 = redis.StrictRedis(
+        host='192.168.10.64',
+        port=6379,
+        db=4,
+    )
+
     redis_key = "xiaohongshu_fugai_data"
 
     for _ in range(redis_obj.llen(redis_key)):
-        item = json.loads(redis_obj.rpop(redis_key).decode('utf8'))
+        data = redis_obj.rpop(redis_key)
+
+        # 小红书工具单独使用
+        redis_obj2.lpush(redis_key, data)
+
+        item = json.loads(data.decode('utf8'))
         keywords = item['keywords']
         print('keywords -->', keywords)
         page_id_list = item['page_id_list']
@@ -165,6 +178,20 @@ def xiaohongshu_fugai_update_data():
 
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
+
+    # 小红书工具单独使用(优先查询)
+    for _ in range(redis_obj2.llen("xhs_tool_api::keyword::xhs")):
+        keywords = redis_obj.rpop("xhs_tool_api::keyword::xhs")
+        item = {
+            "keywords": keywords,
+            # "url": obj.url,
+            # "count": 2,  # 当前关键词存在几个任务
+            # "select_type": obj.select_type,
+            "task_type": "xhs_tool"
+        }
+        redis_obj.rpush(redis_key, json.dumps(item))
+
+
 
     # 霸屏王查排名
     if redis_obj.llen(redis_key) == 0:
