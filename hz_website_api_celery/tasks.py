@@ -177,9 +177,9 @@ def xiaohongshu_fugai_update_data():
         port=6379,
         db=4,
     )
-    for _ in range(redis_obj2.llen("xhs_tool_api::keyword::xhs")):
+    for _ in range(redis_obj2.llen("xhs_tool_api::keyword_list::xhs")):
         print("添加小红书工具单独使用关键词")
-        keywords = redis_obj2.rpop("xhs_tool_api::keyword::xhs").decode('utf8')
+        keywords = redis_obj2.rpop("xhs_tool_api::keyword_list::xhs").decode('utf8')
         item = {
             "keywords": keywords,
             # "url": obj.url,
