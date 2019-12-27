@@ -6,7 +6,7 @@ from publicFunc.redisOper import get_redis_obj
 
 encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
 encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
-encoding_appid = 'wx1f63785f9acaab9c'
+encoding_appid = 'wx531f7fb3f30231b3'
 
 # 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
 def QueryWhetherCallingCredentialExpired(appid, auth_type):
