@@ -1104,18 +1104,14 @@ def tongzhi(request):
     appid = xml_tree.find('AppId').text
     Encrypt = xml_tree.find('Encrypt').text
 
-    print('appid-----------> ', appid)
-    print('Encrypt-----------> ', Encrypt)
-    print('msg_signature-----------> ', msg_signature)
-    print('timestamp-----------> ', timestamp)
-    print('nonce-----------> ', nonce)
+    print('appid-----------> ', appid, 'Encrypt--', Encrypt, 'msg_signature--', msg_signature, 'timestamp--', timestamp, 'nonce--', nonce)
 
     objs = models.TripartitePlatform.objects.filter(
         appid=appid
     )
     objs.update(linshi=postdata)
     wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, appid)
-    ret, decryp_xml = wx_obj.DecryptMsg(postdata, msg_signature, timestamp, nonce)
+    ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
     decryp_xml_tree = ET.fromstring(decryp_xml)
     oper_type = decryp_xml_tree.find("InfoType").text
     print('*******************//////////*******************/////////******************')
