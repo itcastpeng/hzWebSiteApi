@@ -1103,7 +1103,13 @@ def tongzhi(request):
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
     Encrypt = xml_tree.find('Encrypt').text
+
     print('appid-----------> ', appid)
+    print('Encrypt-----------> ', Encrypt)
+    print('msg_signature-----------> ', msg_signature)
+    print('timestamp-----------> ', timestamp)
+    print('nonce-----------> ', nonce)
+
     objs = models.TripartitePlatform.objects.filter(
         appid=appid
     )
