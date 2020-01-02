@@ -5,7 +5,7 @@ from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
 from publicFunc import Response
 
-baidu_tripartite_platform_key = 'PCwOy1gDSz0cAixIMIli4hBIzHaz4Kib' # 第三方平台Key
+baidu_tripartite_platform_key = 'CRKWROD97fIVGAVFgoPdyFEKydBpvPQA' # 第三方平台Key
 
 # 百度小程序返回值处理
 def baidu_applet_return_data(return_data, add_msg):
