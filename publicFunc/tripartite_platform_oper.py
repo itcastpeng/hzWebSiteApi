@@ -4,8 +4,8 @@ import requests, json, time, os
 from publicFunc.qiniu.auth import Auth
 from publicFunc.redisOper import get_redis_obj
 
-encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyX'
-encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
+encoding_token = 'sisciiZiJCC6PuGOtFWwmDnIHMszxp'
+encodingAESKey = 'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyXzxp'
 encoding_appid = 'wx531f7fb3f30231b3'
 
 # 查询 授权的 公众号/小程序 调用凭证是否过期 (操作公众号 调用凭证 过期重新获取)
