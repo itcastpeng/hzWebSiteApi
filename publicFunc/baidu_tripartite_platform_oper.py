@@ -43,6 +43,7 @@ class tripartite_platform_oper():
                 'ticket': ticket
             }
             ret = requests.get(url, params=params)
+            print('--> ret.text', ret.text)
             ret_data = ret.json().get('data')
             self.access_token = ret_data.get('access_token')  # access_token
             access_token_time = int(time.time()) + int(ret_data.get('expires_in'))  # 有效时长
