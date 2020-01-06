@@ -326,7 +326,7 @@ def tripartite_platform_oper(request, oper_type):
                 if appid:
                     xcx_code = ''
                     if not credential_expired_data.get('flag'): #
-                        appid = 'wx700c48cb72073e61'
+                        appid = 'wxc1ce16fad3bb2e6d'
                         get_experience_qr_code_template_id = request.GET.get('template_id')
                         credential_expired_data = CredentialExpired(appid, 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
                         authorizer_access_token = credential_expired_data.get('authorizer_access_token')
@@ -557,7 +557,7 @@ def tripartite_platform_oper(request, oper_type):
                         user_obj.token, user_id, template_id
                     )
                     if not appid:
-                        credential_expired_data = CredentialExpired('wx700c48cb72073e61', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
+                        credential_expired_data = CredentialExpired('wxc1ce16fad3bb2e6d', 2)  # 判断调用凭证是否过期 (操作 GZH/XCX 前调用该函数)
                         authorizer_access_token = credential_expired_data.get('authorizer_access_token')
 
                     url = 'https://api.weixin.qq.com/cgi-bin/wxaapp/createwxaqrcode?access_token={}'.format(authorizer_access_token)
@@ -1104,10 +1104,13 @@ def tongzhi(request):
     appid = xml_tree.find('AppId').text
     Encrypt = xml_tree.find('Encrypt').text
 
+    print('appid-----------> ', appid, 'Encrypt--', Encrypt, 'msg_signature--', msg_signature, 'timestamp--', timestamp, 'nonce--', nonce)
+
     objs = models.TripartitePlatform.objects.filter(
         appid=appid
     )
-    wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, encoding_appid)
+    objs.update(linshi=postdata)
+    wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, appid)
     ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
     decryp_xml_tree = ET.fromstring(decryp_xml)
     oper_type = decryp_xml_tree.find("InfoType").text
@@ -1129,7 +1132,6 @@ def tongzhi(request):
         )
 
 
-    objs.update(linshi=postdata)
 
     return HttpResponse('success')
 

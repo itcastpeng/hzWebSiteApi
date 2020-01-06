@@ -37,11 +37,13 @@ class phone_management():
     def login(self):
         data = [
             {
-                "login_url":"http://47.110.86.5:9999",
+                # "login_url":"http://47.110.86.5:9999",
+                "login_url":"http://103.99.210.71:1111",
                 "username": "张聪296",
                 "password": "zhang_cong.123",
             },{
-                "login_url":"http://120.55.80.27:9999",
+                # "login_url":"http://120.55.80.27:9999",
+                "login_url":"http://103.99.210.71:2222",
                 "username": "张聪0627",
                 "password": "zhang_cong.123",
             }
