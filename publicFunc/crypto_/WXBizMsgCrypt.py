@@ -7,7 +7,7 @@ import struct
 from Crypto.Cipher import AES
 import xml.etree.cElementTree as ET
 import socket
-import ierror as ierror
+from publicFunc.crypto_ import ierror as ierror
 
 """ AES加解密用 pycrypto """
 
