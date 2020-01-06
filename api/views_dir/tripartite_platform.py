@@ -1099,6 +1099,7 @@ def tongzhi(request):
     nonce = request.GET.get('nonce')
     msg_signature = request.GET.get('msg_signature')
     postdata = request.body.decode(encoding='UTF-8')
+    # postdata = request.body
     print("postdata -->", postdata)
 
     xml_tree = ET.fromstring(postdata)
@@ -1112,7 +1113,9 @@ def tongzhi(request):
     )
     objs.update(linshi=postdata)
     wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, appid)
-    ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+    ret, decryp_xml = wx_obj.DecryptMsg(postdata, msg_signature, timestamp, nonce)
+    print('ret, decryp_xml -->', ret, decryp_xml)
+    # ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
     decryp_xml_tree = ET.fromstring(decryp_xml)
     oper_type = decryp_xml_tree.find("InfoType").text
     print('*******************//////////*******************/////////******************')
