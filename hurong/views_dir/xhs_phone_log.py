@@ -7,6 +7,7 @@ from publicFunc.public import send_error_msg
 from publicFunc.redisOper import get_redis_obj
 from publicFunc.public import create_xhs_admin_response
 import json, datetime
+import time
 
 @account.is_token(models.UserProfile)
 def xhs_phone_log(request):
@@ -98,6 +99,7 @@ def xhs_phone_log(request):
 # token验证
 @account.is_token(models.UserProfile)
 def xhs_phone_log_oper(request, oper_type, o_id):
+    start_time = time.time()
     response = Response.ResponseObj()
     user_id = request.GET.get('user_id')
     # print('request.POST -->', request.POST)
@@ -118,6 +120,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
             #  创建 form验证 实例（参数默认转成字典）
             forms_obj = AddForm(form_data)
             if forms_obj.is_valid():
+                stop_time = time.time() - start_time
+                print(stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
                 log_msg = forms_obj.cleaned_data.get('log_msg')
                 macaddr = forms_obj.cleaned_data.get('macaddr')
                 ip_addr = forms_obj.cleaned_data.get('ip_addr')
@@ -186,6 +190,7 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 #     parent=obj
                 # )
                 #  将日志存入redis中
+
                 phone_log_id_key = "phone_log_{phone_id}".format(phone_id=obj.id)
                 phone_log_list_key = "phone_log_list"
                 if redis_obj.llen(phone_log_id_key) > 500:
@@ -194,6 +199,9 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                     "log_msg": log_msg,
                     "create_date": datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 }))
+
+                stop_time = time.time() - start_time
+                print("redis_stop -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
 
                 phone_id = obj.id
                 phone_name = obj.name
@@ -290,7 +298,8 @@ def xhs_phone_log_oper(request, oper_type, o_id):
                 print("验证不通过")
                 response.code = 301
                 response.msg = json.loads(forms_obj.errors.as_json())
-
+            stop_time = time.time() - start_time
+            print("stop_time -->", stop_time, "cleaned_data --> ", forms_obj.cleaned_data)
     else:
         response.code = 402
         response.msg = "请求异常"
