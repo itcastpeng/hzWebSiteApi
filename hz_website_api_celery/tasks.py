@@ -193,8 +193,8 @@ def xiaohongshu_fugai_update_data():
     # 霸屏王查排名
     if redis_obj.llen(redis_key) == 0:
 
-        redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
-        keys = redis_obj.keys("XHS_SCREEN*")
+        redis_obj2 = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+        keys = redis_obj2.keys("XHS_SCREEN*")
         uid_list = []
         for key in keys:
             uid = key.replace('XHS_SCREEN_', "")
