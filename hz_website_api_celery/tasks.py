@@ -171,32 +171,39 @@ def xiaohongshu_fugai_update_data():
     # 2、假如redis队列中没有任务，则将数据库中等待查询的下拉词存入redis队列中
     redis_key = "xiaohongshu_task_list"
 
-    # # 小红书工具单独使用(优先查询)
-    redis_obj2 = redis.StrictRedis(
-        host='192.168.10.64',
-        port=6379,
-        db=4,
-    )
-    for _ in range(redis_obj2.llen("xhs_tool_api::keyword_list::xhs")):
-        print("添加小红书工具单独使用关键词")
-        keywords = redis_obj2.rpop("xhs_tool_api::keyword_list::xhs").decode('utf8')
-        item = {
-            "keywords": keywords,
-            # "url": obj.url,
-            # "count": 2,  # 当前关键词存在几个任务
-            # "select_type": obj.select_type,
-            "task_type": "xhs_tool"
-        }
-        redis_obj.rpush(redis_key, json.dumps(item))
-
+    # # # 小红书工具单独使用(优先查询)
+    # redis_obj2 = redis.StrictRedis(
+    #     host='192.168.10.64',
+    #     port=6379,
+    #     db=4,
+    # )
+    # for _ in range(redis_obj2.llen("xhs_tool_api::keyword_list::xhs")):
+    #     print("添加小红书工具单独使用关键词")
+    #     keywords = redis_obj2.rpop("xhs_tool_api::keyword_list::xhs").decode('utf8')
+    #     item = {
+    #         "keywords": keywords,
+    #         # "url": obj.url,
+    #         # "count": 2,  # 当前关键词存在几个任务
+    #         # "select_type": obj.select_type,
+    #         "task_type": "xhs_tool"
+    #     }
+    #     redis_obj.rpush(redis_key, json.dumps(item))
 
 
     # 霸屏王查排名
     if redis_obj.llen(redis_key) == 0:
+
+        redis_obj = redis.StrictRedis(host='redis', port=6381, db=0, decode_responses=True)
+        keys = redis_obj.keys("XHS_SCREEN*")
+        uid_list = []
+        for key in keys:
+            uid = key.replace('XHS_SCREEN_', "")
+            uid_list.append(uid)
+
         now_date = datetime.datetime.now().strftime("%Y-%m-%d")
         q = Q(update_datetime__isnull=True) | Q(update_datetime__lt=now_date)
         print('q -->', q)
-        objs = models.xhs_bpw_keywords.objects.filter(q).order_by('?')[:2000]
+        objs = models.xhs_bpw_keywords.objects.filter(q).filter(uid__in=uid_list).order_by('?')[:2000]
         print("霸屏王查排名---->", datetime.datetime.now(), objs.count())
         for obj in objs:
             print('obj.keywords----------------> ', obj.keywords)
