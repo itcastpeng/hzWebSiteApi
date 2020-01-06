@@ -1098,7 +1098,8 @@ def tongzhi(request):
     timestamp = request.GET.get('timestamp')
     nonce = request.GET.get('nonce')
     msg_signature = request.GET.get('msg_signature')
-    postdata = request.body.decode(encoding='UTF-8')
+    # postdata = request.body.decode(encoding='UTF-8')
+    postdata = request.body
     print("postdata -->", postdata)
 
     xml_tree = ET.fromstring(postdata)
