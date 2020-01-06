@@ -1099,6 +1099,7 @@ def tongzhi(request):
     nonce = request.GET.get('nonce')
     msg_signature = request.GET.get('msg_signature')
     postdata = request.body.decode(encoding='UTF-8')
+    print("postdata -->", postdata)
 
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
