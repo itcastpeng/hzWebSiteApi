@@ -102,7 +102,15 @@ def template(request):
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
-                    dict_data['common_components'] = obj.common_components
+                    if user_obj.role_id in admin_list:
+                        objs_two = models.Template.objects.select_related('create_user').filter(create_user__role_id__in=admin_list)
+                        data = []
+                        for i in objs_two:
+                            data.append(i.common_components)
+                        dict_data['common_components'] = data
+                        
+                    else:
+                        dict_data['common_components'] = [obj.common_components]
 
                 ret_data.append(dict_data)
 
