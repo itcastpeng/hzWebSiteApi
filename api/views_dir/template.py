@@ -100,7 +100,7 @@ def template(request):
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
-                    'create_user__username': obj.create_user.username,
+                    'create_user__username': obj.create_user.name,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
