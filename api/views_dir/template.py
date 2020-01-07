@@ -102,13 +102,18 @@ def template(request):
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
-                    if user_obj.role_id in admin_list:
-                        objs_two = models.Template.objects.select_related('create_user').filter(create_user__role_id__in=admin_list)
-                        data = []
-                        for i in objs_two:
-                            if i.common_components:
-                                data.extend(json.loads(i.common_components))
-                        dict_data['common_components'] = json.dumps(data)
+                    if user_obj.role_id in admin_list:      # 管理员角色的公共组件从redis中取出
+                        # objs_two = models.Template.objects.select_related('create_user').filter(create_user__role_id__in=admin_list)
+                        # data = []
+                        # for i in objs_two:
+                        #     if i.common_components:
+                        #         data.extend(json.loads(i.common_components))
+                        # dict_data['common_components'] = json.dumps(data)
+
+                        redis_obj = get_redis_obj()
+                        redis_key = "xcx::template::add_modify_common_components"
+
+                        dict_data['common_components'] = redis_obj.get(redis_key)
 
                     else:
                         dict_data['common_components'] = obj.common_components
