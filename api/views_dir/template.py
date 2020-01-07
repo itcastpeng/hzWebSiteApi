@@ -34,6 +34,7 @@ def template(request):
                 'id': '',
                 'name': '__contains',
                 'template_class_id': '',
+                'create_user_id': '',
                 'create_datetime': '',
                 'template_class__class_type': '',
             }
@@ -52,7 +53,7 @@ def template(request):
                 q.add(Q(create_user__role_id__in=[6, 8]), Q.AND)
 
             print('q----------> ', q)
-            objs = models.Template.objects.select_related('template_class').filter(q).order_by(order)
+            objs = models.Template.objects.select_related('template_class', 'create_user').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0 and not request.GET.get('id'):
@@ -99,6 +100,7 @@ def template(request):
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
+                    'create_user__username': obj.create_user.username,
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
