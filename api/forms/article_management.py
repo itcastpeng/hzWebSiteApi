@@ -54,24 +54,24 @@ class AddForm(forms.Form):
         }
     )
 
-    def clean_template_id(self):
-        template_id = self.data.get('template_id')
-        objs = models.Template.objects.filter(id=template_id)
-        if objs and objs[0].create_user.role_id not in admin_list:
-            return template_id
-        else:
-            if objs:
-                self.add_error('template_id', '该模板不可添加表单')
-            else:
-                self.add_error('template_id', '模板不存在')
-
-    def clean_create_user_id(self):
-        create_user_id = self.data.get('create_user_id')
-        objs = models.UserProfile.objects.get(id=create_user_id)
-        if objs and objs.role_id not in admin_list:
-            return create_user_id
-        else:
-            self.add_error('create_user_id', '权限不足')
+    # def clean_template_id(self):
+    #     template_id = self.data.get('template_id')
+    #     objs = models.Template.objects.filter(id=template_id)
+    #     if objs and objs[0].create_user.role_id not in admin_list:
+    #         return template_id
+    #     else:
+    #         if objs:
+    #             self.add_error('template_id', '该模板不可添加表单')
+    #         else:
+    #             self.add_error('template_id', '模板不存在')
+    #
+    # def clean_create_user_id(self):
+    #     create_user_id = self.data.get('create_user_id')
+    #     objs = models.UserProfile.objects.get(id=create_user_id)
+    #     if objs and objs.role_id not in admin_list:
+    #         return create_user_id
+    #     else:
+    #         self.add_error('create_user_id', '权限不足')
 
 
 
@@ -120,21 +120,21 @@ class UpdateForm(forms.Form):
         }
     )
 
-    def clean_create_user_id(self):
-        create_user_id = self.data.get('create_user_id')
-        objs = models.UserProfile.objects.get(id=create_user_id)
-        if objs and objs.role_id not in admin_list:
-            return create_user_id
-        else:
-            self.add_error('create_user_id', '权限不足')
-
-    def clean_o_id(self):
-        o_id = self.data.get('o_id')
-        objs = models.Article.objects.filter(id=o_id)
-        if objs:
-            return o_id
-        else:
-            self.add_error('o_id', '该表单不存在')
+    # def clean_create_user_id(self):
+    #     create_user_id = self.data.get('create_user_id')
+    #     objs = models.UserProfile.objects.get(id=create_user_id)
+    #     if objs and objs.role_id not in admin_list:
+    #         return create_user_id
+    #     else:
+    #         self.add_error('create_user_id', '权限不足')
+    #
+    # def clean_o_id(self):
+    #     o_id = self.data.get('o_id')
+    #     objs = models.Article.objects.filter(id=o_id)
+    #     if objs:
+    #         return o_id
+    #     else:
+    #         self.add_error('o_id', '该表单不存在')
 
 
 
