@@ -37,12 +37,10 @@ class phone_management():
     def login(self):
         data = [
             {
-                # "login_url":"http://47.110.86.5:9999",
                 "login_url":"http://103.99.210.71:1111",
                 "username": "张聪296",
                 "password": "zhang_cong.123",
             },{
-                # "login_url":"http://120.55.80.27:9999",
                 "login_url":"http://103.99.210.71:2222",
                 "username": "张聪0627",
                 "password": "zhang_cong.123",
@@ -56,6 +54,7 @@ class phone_management():
         verification_code = 0
         yzm_time = ''
         for data in zh_data:
+            self.headers['X-Requested-With'] = 'XMLHttpRequest'
             login_url = data.get('login_url') + '/index.php?g=cust&m=login&a=dologin'
             self.requests_obj.post(url=login_url, headers=self.headers, data=data)
             yzm_url = data.get('login_url') + '/index.php?g=cust&m=smscust&a=receive'
