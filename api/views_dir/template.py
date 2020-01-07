@@ -15,6 +15,7 @@ import json
 from publicFunc.redisOper import get_redis_obj
 import datetime
 import time
+from publicFunc import base64_encryption
 
 
 
@@ -100,7 +101,7 @@ def template(request):
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
-                    'create_user__username': obj.create_user.name,
+                    'create_user__username': base64_encryption.b64decode(obj.create_user.name),
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
