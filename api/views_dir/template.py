@@ -461,9 +461,17 @@ def template_oper(request, oper_type, o_id):
             }
             form_objs = AddModifyCommonComponents(form_data)
             if form_objs.is_valid():
-                o_id, objs = form_objs.cleaned_data.get('o_id')
+
                 common_components = form_objs.cleaned_data.get('common_components')
-                objs.update(common_components=common_components)
+
+                if user_obj.role_id in admin_list:      # 管理员角色的公共组件存入redis中
+                    redis_obj = get_redis_obj()
+                    redis_key = "xcx::template::add_modify_common_components"
+                    redis_obj.set(redis_key, common_components)
+                else:
+                    o_id, objs = form_objs.cleaned_data.get('o_id')
+
+                    objs.update(common_components=common_components)
                 response.code = 200
                 response.msg = '操作成功'
 
