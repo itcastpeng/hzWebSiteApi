@@ -136,6 +136,12 @@ def template(request):
                 'share_qr_code': '分享二维码',
                 'logo_img': 'logo图片',
                 'is_authorization': '是否授权',
+
+                "搜索条件": {
+                    "name": "模板名称,支持模糊搜索",
+                    "template_class_id": "模板分类id",
+                    "create_user_id": "创建人id",
+                }
             }
         else:
             response.code = 402
