@@ -106,7 +106,8 @@ def template(request):
                         objs_two = models.Template.objects.select_related('create_user').filter(create_user__role_id__in=admin_list)
                         data = []
                         for i in objs_two:
-                            data.extend(json.loads(i.common_components))
+                            if i.common_components:
+                                data.extend(json.loads(i.common_components))
                         dict_data['common_components'] = json.dumps(data)
 
                     else:
