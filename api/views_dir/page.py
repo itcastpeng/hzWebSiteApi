@@ -96,7 +96,7 @@ def page_oper(request, oper_type, o_id):
                         name=page_name,
                         page_group=old_obj.page_group,
                         data=old_obj.data,
-                        data_dev=old_obj.data,
+                        data_dev=old_obj.data_dev,
                         create_user_id=user_id
                     )
                     response.code = 200
