@@ -106,11 +106,11 @@ def template(request):
                         objs_two = models.Template.objects.select_related('create_user').filter(create_user__role_id__in=admin_list)
                         data = []
                         for i in objs_two:
-                            data.append(i.common_components)
-                        dict_data['common_components'] = data
-                        
+                            data.extend(json.loads(i.common_components))
+                        dict_data['common_components'] = json.dumps(data)
+
                     else:
-                        dict_data['common_components'] = [obj.common_components]
+                        dict_data['common_components'] = obj.common_components
 
                 ret_data.append(dict_data)
 
