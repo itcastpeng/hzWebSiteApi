@@ -575,30 +575,30 @@ def tripartite_platform_oper(request, oper_type):
                     template_obj.xcx_qrcode = path
                     template_obj.save()
 
-                if whether_regenerate or not baidu_xcx_qrcode:
-                    objs = models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
-                    baidu_tripartite_platform = baidu_tripartite_platform_oper()
-                    token = baidu_tripartite_platform.determines_whether_access_token_expired('14794638')  # 判断appid是否过期
-                    response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
-                    response_data = response.data.get('list')[0]
-                    data = {
-                        'appid': objs[0].appid,
-                        'token': objs[0].access_token,
-                        'version': response_data.get('user_version'),
-                        'template_id': response_data.get('template_id'),
-                        'id': template_id,
-                        'user_id': user_id,
-                        'user_token': user_obj.token,
-                    }
-                    print('data-=-------------------------> ', data)
-                    baidu_tripartite_platform.upload_small_program_code(data)
-                    time.sleep(3)
-                    response_data = baidu_tripartite_platform.gets_list_small_packages(token)
-                    package_id = response_data.data[0].get('package_id')
-                    print('package_id---------------------> ', package_id)
-                    baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, token)
-                    template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
-                    template_obj.save()
+                # if whether_regenerate or not baidu_xcx_qrcode:
+                #     objs = models.BaiduSmallProgramManagement.objects.filter(appid='14794638')
+                #     baidu_tripartite_platform = baidu_tripartite_platform_oper()
+                #     token = baidu_tripartite_platform.determines_whether_access_token_expired('14794638')  # 判断appid是否过期
+                #     response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
+                #     response_data = response.data.get('list')[0]
+                #     data = {
+                #         'appid': objs[0].appid,
+                #         'token': objs[0].access_token,
+                #         'version': response_data.get('user_version'),
+                #         'template_id': response_data.get('template_id'),
+                #         'id': template_id,
+                #         'user_id': user_id,
+                #         'user_token': user_obj.token,
+                #     }
+                #     print('data-=-------------------------> ', data)
+                #     baidu_tripartite_platform.upload_small_program_code(data)
+                #     time.sleep(3)
+                #     response_data = baidu_tripartite_platform.gets_list_small_packages(token)
+                #     package_id = response_data.data[0].get('package_id')
+                #     print('package_id---------------------> ', package_id)
+                #     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, token)
+                #     template_obj.baidu_xcx_qrcode = baidu_xcx_qrcode
+                #     template_obj.save()
                 response.code = 200
                 response.msg = '查询成功'
                 response.data = {
