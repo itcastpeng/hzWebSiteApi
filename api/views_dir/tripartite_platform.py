@@ -362,30 +362,30 @@ def tripartite_platform_oper(request, oper_type):
                             msg = '请先绑定模板'
                     ret_data['xcx_code'] = xcx_code
                 # 百度小程序
-                if baidu_appid:
-                    baidu_objs = models.BaiduSmallProgramManagement.objects.filter(appid=baidu_appid)
-                    get_experience_qr_code_template_id = baidu_objs[0].template_id
-                    baidu_tripartite_platform = baidu_tripartite_platform_oper()
-                    response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
-                    response_data = response.data.get('list')[0]
-                    print('response_data--------------------------> ', response_data)
-                    data = {
-                        'appid': baidu_objs[0].appid,
-                        'token': baidu_objs[0].access_token,
-                        'version': response_data.get('user_version'),
-                        'template_id': response_data.get('template_id'),
-                        'id': get_experience_qr_code_template_id,
-                        'user_id': user_id,
-                        'user_token': user_obj.token,
-                    }
-                    baidu_tripartite_platform.web_the_switch(baidu_objs[0].access_token, 2) # 关闭web化开关
-                    baidu_tripartite_platform.upload_small_program_code(data)
-                    time.sleep(3)
-                    response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
-                    package_id = response_data.data[0].get('package_id')
-                    print('package_idpackage_idpackage_idpackage_idpackage_idpackage_idpackage_id=============== > ', package_id)
-                    baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, baidu_objs[0].access_token)
-                    ret_data['baidu_xcx_code'] = baidu_xcx_qrcode
+                # if baidu_appid:
+                #     baidu_objs = models.BaiduSmallProgramManagement.objects.filter(appid=baidu_appid)
+                #     get_experience_qr_code_template_id = baidu_objs[0].template_id
+                #     baidu_tripartite_platform = baidu_tripartite_platform_oper()
+                #     response = baidu_tripartite_platform.get_template_list(1, 10)  # 获取模板列表
+                #     response_data = response.data.get('list')[0]
+                #     print('response_data--------------------------> ', response_data)
+                #     data = {
+                #         'appid': baidu_objs[0].appid,
+                #         'token': baidu_objs[0].access_token,
+                #         'version': response_data.get('user_version'),
+                #         'template_id': response_data.get('template_id'),
+                #         'id': get_experience_qr_code_template_id,
+                #         'user_id': user_id,
+                #         'user_token': user_obj.token,
+                #     }
+                #     baidu_tripartite_platform.web_the_switch(baidu_objs[0].access_token, 2) # 关闭web化开关
+                #     baidu_tripartite_platform.upload_small_program_code(data)
+                #     time.sleep(3)
+                #     response_data = baidu_tripartite_platform.gets_list_small_packages(baidu_objs[0].access_token)
+                #     package_id = response_data.data[0].get('package_id')
+                #     print('package_idpackage_idpackage_idpackage_idpackage_idpackage_idpackage_id=============== > ', package_id)
+                #     baidu_xcx_qrcode = baidu_tripartite_platform.get_qr_code(package_id, 200, baidu_objs[0].access_token)
+                #     ret_data['baidu_xcx_code'] = baidu_xcx_qrcode
 
                 if get_experience_qr_code_template_id:
                     template_obj = models.Template.objects.get(id=get_experience_qr_code_template_id)
