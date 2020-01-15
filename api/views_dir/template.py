@@ -15,6 +15,7 @@ import json
 from publicFunc.redisOper import get_redis_obj
 import datetime
 import time
+from publicFunc import base64_encryption
 
 
 
@@ -34,6 +35,7 @@ def template(request):
                 'id': '',
                 'name': '__contains',
                 'template_class_id': '',
+                'create_user_id': '',
                 'create_datetime': '',
                 'template_class__class_type': '',
             }
@@ -52,7 +54,7 @@ def template(request):
                 q.add(Q(create_user__role_id__in=[6, 8]), Q.AND)
 
             print('q----------> ', q)
-            objs = models.Template.objects.select_related('template_class').filter(q).order_by(order)
+            objs = models.Template.objects.select_related('template_class', 'create_user').filter(q).order_by(order)
             count = objs.count()
 
             if length != 0 and not request.GET.get('id'):
@@ -99,6 +101,7 @@ def template(request):
                     'thumbnail': obj.thumbnail,
                     'template_class_name': template_class_name,
                     'template_class_id': template_class_id,
+                    'create_user__username': base64_encryption.b64decode(obj.create_user.name),
                     'create_datetime': obj.create_datetime.strftime('%Y-%m-%d %H:%M:%S'),
                 }
                 if request.GET.get('id'):
@@ -134,6 +137,12 @@ def template(request):
                 'share_qr_code': '分享二维码',
                 'logo_img': 'logo图片',
                 'is_authorization': '是否授权',
+
+                "搜索条件": {
+                    "name": "模板名称,支持模糊搜索",
+                    "template_class_id": "模板分类id",
+                    "create_user_id": "创建人id",
+                }
             }
         else:
             response.code = 402
