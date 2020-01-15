@@ -32,16 +32,16 @@ class AddForm(forms.Form):
         }
     )
     # 查询名称是否存在
-    def clean_name(self):
-        name = self.data['name']
-
-        objs = models.Template.objects.filter(
-            name=name
-        )
-        if objs:
-            self.add_error('name', '模板名称已存在')
-        else:
-            return name
+    # def clean_name(self):
+    #     name = self.data['name']
+    #
+    #     objs = models.Template.objects.filter(
+    #         name=name
+    #     )
+    #     if objs:
+    #         self.add_error('name', '模板名称已存在')
+    #     else:
+    #         return name
 
 
 # 更新
@@ -76,18 +76,18 @@ class UpdateForm(forms.Form):
     )
 
     # 判断名称是否存在
-    def clean_name(self):
-        o_id = self.data['o_id']
-        name = self.data['name']
-        objs = models.Template.objects.filter(
-            name=name
-        ).exclude(
-            id=o_id
-        )
-        if objs:
-            self.add_error('username', '模板名称已存在')
-        else:
-            return name
+    # def clean_name(self):
+    #     o_id = self.data['o_id']
+    #     name = self.data['name']
+    #     objs = models.Template.objects.filter(
+    #         name=name
+    #     ).exclude(
+    #         id=o_id
+    #     )
+    #     if objs:
+    #         self.add_error('username', '模板名称已存在')
+    #     else:
+    #         return name
 
 # 更新过期时间
 class UpdateExpireDateForm(forms.Form):
