@@ -85,31 +85,32 @@ class tripartite_platform_oper():
         ret = requests.get(url)     # 获取小程序基础信息
         print('ret.json()----------> ', ret.json(), self.access_token)
         ret_json = ret.json().get('data')
-        print('v-获取小程序基础信息---------------------> ', ret_json)
-        app_id = ret_json.get('app_id')
-        small_data = {
-            'appid':app_id,
-            'access_token':access_token,
-            'refresh_token': ret_json_credentials.get('refresh_token'),
-            'access_token_time': int(time.time()) + int(ret_json_credentials.get('expires_in')),
-            'program_name': ret_json.get('app_name'),     # 小程序的名称
-            'app_key': ret_json.get('app_key'),       # 小程序的key
-            'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
-            'photo_addr': json.loads(ret_json.get('photo_addr'))[0].get('cover'), # 小程序图标
-            'template_id': template_id,
-            'user_id': user_id,
-        }
-        print('small_data----------> ', small_data)
-        # qualification = ret_json.get('qualification')   # 小程序账号对应的主体信息
-        # qualification_name = qualification.name     # 主体名称
+        if ret_json:
+            print('v-获取小程序基础信息---------------------> ', ret_json)
+            app_id = ret_json.get('app_id')
+            small_data = {
+                'appid':app_id,
+                'access_token':access_token,
+                'refresh_token': ret_json_credentials.get('refresh_token'),
+                'access_token_time': int(time.time()) + int(ret_json_credentials.get('expires_in')),
+                'program_name': ret_json.get('app_name'),     # 小程序的名称
+                'app_key': ret_json.get('app_key'),       # 小程序的key
+                'app_desc': ret_json.get('app_desc'),     # 小程序的介绍内容
+                'photo_addr': json.loads(ret_json.get('photo_addr'))[0].get('cover'), # 小程序图标
+                'template_id': template_id,
+                'user_id': user_id,
+            }
+            print('small_data----------> ', small_data)
+            # qualification = ret_json.get('qualification')   # 小程序账号对应的主体信息
+            # qualification_name = qualification.name     # 主体名称
 
-        objs = models.BaiduSmallProgramManagement.objects.filter(
-            appid=app_id
-        )
-        if objs:
-            objs.update(**small_data)
-        else:
-            models.BaiduSmallProgramManagement.objects.create(**small_data)
+            objs = models.BaiduSmallProgramManagement.objects.filter(
+                appid=app_id
+            )
+            if objs:
+                objs.update(**small_data)
+            else:
+                models.BaiduSmallProgramManagement.objects.create(**small_data)
 
 
     # 未授权的小程序账号上传小程序代码
