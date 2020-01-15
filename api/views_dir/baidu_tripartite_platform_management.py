@@ -310,6 +310,8 @@ def baidu_platform_management_admin(request, oper_type, o_id):
 
 # 百度小程序后台 通知
 def baidu_tongzhi(request):
+    print('request.POST -->', request.POST)
+    print('request.body -->', request.body)
     postdata = json.loads(request.body.decode(encoding='UTF-8'))
     Nonce = postdata.get('Nonce')
     TimeStamp = postdata.get('TimeStamp')
