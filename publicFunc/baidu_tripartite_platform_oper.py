@@ -83,7 +83,7 @@ class tripartite_platform_oper():
 
         url = 'https://openapi.baidu.com/rest/2.0/smartapp/app/info?access_token={}'.format(access_token)
         ret = requests.get(url)     # 获取小程序基础信息
-        print(ret.json())
+        print('ret.json()----------> ', ret.json(), self.access_token)
         ret_json = ret.json().get('data')
         print('v-获取小程序基础信息---------------------> ', ret_json)
         app_id = ret_json.get('app_id')
