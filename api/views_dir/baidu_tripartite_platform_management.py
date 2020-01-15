@@ -351,7 +351,9 @@ def baidu_tongzhi(request):
         return HttpResponse('success')
 
     else:
-        return request.GET.get('echoStr')
+        echoStr = request.GET.get('echoStr')
+
+        return HttpResponse(echoStr)
 
 
 
