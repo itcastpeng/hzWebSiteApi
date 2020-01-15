@@ -322,6 +322,7 @@ def baidu_tongzhi(request):
         'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
     }
     get_ticket_ret = requests.post(get_ticket_url, data=get_ticket_data)
+    print("get_ticket_ret -->", get_ticket_ret)
     get_ticket_ret_json = get_ticket_ret.json()
     data = json.loads(get_ticket_ret_json.get('data'))
     Ticket = data.get('Ticket')
