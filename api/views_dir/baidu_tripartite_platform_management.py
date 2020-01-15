@@ -310,16 +310,18 @@ def baidu_platform_management_admin(request, oper_type, o_id):
 
 # 百度小程序后台 通知
 def baidu_tongzhi(request):
-    print(request.body)
-    postdata = request.body.decode(encoding='UTF-8')
-    Nonce = postdata.get('Nonce')
-    TimeStamp = postdata.get('TimeStamp')
-    Encrypt = postdata.get('Encrypt')
-    MsgSignature = postdata.get('MsgSignature')
+    print('request.POST===> ', request.POST)
+    print('request.GET------> ', request.GET)
+    print('request.body----> ', request.body)
+
+    nonce = request.GET.get('nonce')
+    timestamp = request.GET.get('timestamp')
+    signature = request.GET.get('signature')
+    echoStr = request.GET.get('echoStr')
 
     get_ticket_url = 'http://a.yingxiaobao.org.cn/api/baidu-openssl-decrypt/decrypt'
     get_ticket_data = {
-        'encrypted':Encrypt,
+        'encrypted':echoStr,
         'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
     }
     get_ticket_ret = requests.post(get_ticket_url, data=get_ticket_data)
