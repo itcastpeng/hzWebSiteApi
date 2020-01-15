@@ -312,43 +312,46 @@ def baidu_platform_management_admin(request, oper_type, o_id):
 def baidu_tongzhi(request):
     print('request.POST -->', request.POST)
     print('request.body -->', request.body)
-    postdata = json.loads(request.body.decode(encoding='UTF-8'))
-    Nonce = postdata.get('Nonce')
-    TimeStamp = postdata.get('TimeStamp')
-    Encrypt = postdata.get('Encrypt')
-    MsgSignature = postdata.get('MsgSignature')
+    if request.POST:
+        postdata = json.loads(request.body.decode(encoding='UTF-8'))
+        Nonce = postdata.get('Nonce')
+        TimeStamp = postdata.get('TimeStamp')
+        Encrypt = postdata.get('Encrypt')
+        MsgSignature = postdata.get('MsgSignature')
 
-    get_ticket_url = 'http://a.yingxiaobao.org.cn/api/baidu-openssl-decrypt/decrypt'
-    get_ticket_data = {
-        'encrypted':Encrypt,
-        'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
-    }
-    get_ticket_ret = requests.post(get_ticket_url, data=get_ticket_data)
-    print("get_ticket_ret -->", get_ticket_ret)
-    get_ticket_ret_json = get_ticket_ret.json()
-    data = json.loads(get_ticket_ret_json.get('data'))
-    Ticket = data.get('Ticket')
-    FromUserName = data.get('FromUserName')
-    CreateTime = data.get('CreateTime')
-    MsgType = data.get('MsgType')
-    Event = data.get('Event')
+        get_ticket_url = 'http://a.yingxiaobao.org.cn/api/baidu-openssl-decrypt/decrypt'
+        get_ticket_data = {
+            'encrypted':Encrypt,
+            'encodingAesKey':'sisciiZiJCC6PuGOtFWwmDnIHMsZyXmDnIHMsZyX123'
+        }
+        get_ticket_ret = requests.post(get_ticket_url, data=get_ticket_data)
+        print("get_ticket_ret -->", get_ticket_ret)
+        get_ticket_ret_json = get_ticket_ret.json()
+        data = json.loads(get_ticket_ret_json.get('data'))
+        Ticket = data.get('Ticket')
+        FromUserName = data.get('FromUserName')
+        CreateTime = data.get('CreateTime')
+        MsgType = data.get('MsgType')
+        Event = data.get('Event')
 
-    if Event == 'UNAUTHORIZED': # 取消授权通知
-        pass
+        if Event == 'UNAUTHORIZED': # 取消授权通知
+            pass
 
-    elif Event == 'AUTHORIZED': # 授权成功通知
-        pass
+        elif Event == 'AUTHORIZED': # 授权成功通知
+            pass
 
-    elif Event == 'UPDATE_AUTHORIZED': # 授权更新通知
-        pass
+        elif Event == 'UPDATE_AUTHORIZED': # 授权更新通知
+            pass
+
+        else:
+            objs = models.BaiduTripartitePlatformManagement.objects.filter(id=1) # 更新ticket
+            objs.update(
+                ticket=Ticket,
+            )
+        return HttpResponse('success')
 
     else:
-        objs = models.BaiduTripartitePlatformManagement.objects.filter(id=1) # 更新ticket
-        objs.update(
-            ticket=Ticket,
-        )
-
-    return HttpResponse('success')
+        return request.GET.get('echoStr')
 
 
 
