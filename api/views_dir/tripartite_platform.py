@@ -1105,37 +1105,35 @@ def tongzhi(request):
     xml_tree = ET.fromstring(postdata)
     appid = xml_tree.find('AppId').text
     Encrypt = xml_tree.find('Encrypt').text
+    if appid != 'wx1f63785f9acaab9c':
+        print('appid-----------> ', appid, 'Encrypt--', Encrypt, 'msg_signature--', msg_signature, 'timestamp--', timestamp, 'nonce--', nonce)
 
-    print('appid-----------> ', appid, 'Encrypt--', Encrypt, 'msg_signature--', msg_signature, 'timestamp--', timestamp, 'nonce--', nonce)
-
-    objs = models.TripartitePlatform.objects.filter(
-        appid=appid
-    )
-    objs.update(linshi=postdata)
-    wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, appid)
-    ret, decryp_xml = wx_obj.DecryptMsg(postdata, msg_signature, timestamp, nonce)
-    print('ret, decryp_xml -->', ret, decryp_xml)
-    # ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
-    decryp_xml_tree = ET.fromstring(decryp_xml)
-    oper_type = decryp_xml_tree.find("InfoType").text
-    print('*******************//////////*******************/////////******************')
-    if oper_type == 'unauthorized': # 取消授权通知
-        # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
-        print('-------------------取消授权通知-', decryp_xml_tree)
-
-    elif oper_type == 'authorized':  # 授权通知
-        print('-------------------授权成功通知-', decryp_xml_tree)
-
-
-
-    elif oper_type == 'component_verify_ticket': # 获取ticket
-        print('=======================================获取ticket')
-        ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
-        objs.update(
-            component_verify_ticket=ComponentVerifyTicket
+        objs = models.TripartitePlatform.objects.filter(
+            appid=appid
         )
+        objs.update(linshi=postdata)
+        wx_obj = WXBizMsgCrypt(encoding_token, encodingAESKey, appid)
+        ret, decryp_xml = wx_obj.DecryptMsg(postdata, msg_signature, timestamp, nonce)
+        print('ret, decryp_xml -->', ret, decryp_xml)
+        # ret, decryp_xml = wx_obj.DecryptMsg(Encrypt, msg_signature, timestamp, nonce)
+        decryp_xml_tree = ET.fromstring(decryp_xml)
+        oper_type = decryp_xml_tree.find("InfoType").text
+        print('*******************//////////*******************/////////******************')
+        if oper_type == 'unauthorized': # 取消授权通知
+            # ComponentVerifyTicket = decryp_xml_tree.find("AppId").text
+            print('-------------------取消授权通知-', decryp_xml_tree)
+
+        elif oper_type == 'authorized':  # 授权通知
+            print('-------------------授权成功通知-', decryp_xml_tree)
 
 
+
+        elif oper_type == 'component_verify_ticket': # 获取ticket
+            print('=======================================获取ticket')
+            ComponentVerifyTicket = decryp_xml_tree.find("ComponentVerifyTicket").text
+            objs.update(
+                component_verify_ticket=ComponentVerifyTicket
+            )
 
     return HttpResponse('success')
 
